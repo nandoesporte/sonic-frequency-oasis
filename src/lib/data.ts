@@ -1,234 +1,191 @@
-
 import { FrequencyData } from "./audio-context";
-import { Brain, Heart, Coffee, Zap, MoonStar, Music, Sparkles, Focus, Microscope } from "lucide-react";
+import { Brain, Heart, Coffee, Zap, MoonStar, Music, Sparkles, Focus, Shield, Flower, AlertCircle, Pill, Stethoscope } from "lucide-react";
 
 export type Category = {
   id: string;
   name: string;
   description: string;
-  icon: any;  // Lucide icon component
+  icon: any;
 }
 
 export const categories: Category[] = [
   {
+    id: "pain-relief",
+    name: "Pain Relief",
+    description: "Frequencies for various types of pain management",
+    icon: Pill
+  },
+  {
     id: "healing",
     name: "Healing",
-    description: "Frequencies for physical healing and pain relief",
+    description: "General healing and regeneration frequencies",
     icon: Heart
   },
   {
     id: "relaxation",
     name: "Relaxation",
-    description: "Calm your mind and reduce stress",
+    description: "Frequencies for stress relief and relaxation",
     icon: MoonStar
   },
   {
-    id: "focus",
-    name: "Focus",
-    description: "Enhance concentration and productivity",
+    id: "emotional",
+    name: "Emotional",
+    description: "Balance emotional states and mood",
     icon: Brain
   },
   {
-    id: "energy",
-    name: "Energy",
-    description: "Boost your energy and vitality",
+    id: "immune",
+    name: "Immune System",
+    description: "Support immune system function",
+    icon: Shield
+  },
+  {
+    id: "detox",
+    name: "Detoxification",
+    description: "Support body's natural detox processes",
     icon: Zap
   },
   {
-    id: "meditation",
-    name: "Meditation",
-    description: "Deepen your meditation practice",
-    icon: Sparkles
-  },
-  {
-    id: "sleep",
-    name: "Sleep",
-    description: "Improve sleep quality and relaxation",
-    icon: MoonStar
-  },
-  {
-    id: "creativity",
-    name: "Creativity",
-    description: "Enhance artistic expression and imagination",
-    icon: Music
+    id: "wellness",
+    name: "General Wellness",
+    description: "Overall health and wellbeing frequencies",
+    icon: Stethoscope
   },
   {
     id: "research",
     name: "Research",
-    description: "Experimental frequencies based on research",
-    icon: Microscope
+    description: "Experimental and research frequencies",
+    icon: Focus
   }
 ];
 
 export const frequencies: FrequencyData[] = [
   {
     id: "1",
-    name: "Delta Healing",
-    hz: 1.5,
-    purpose: "Pain Relief",
+    name: "General Healing",
+    hz: 7.83,
+    purpose: "Schumann Resonance",
     category: "healing",
-    description: "Deep healing for physical pain and inflammation with delta wave frequency",
+    description: "Earth's natural frequency for overall healing and wellbeing",
     trending: true
   },
   {
     id: "2",
-    name: "Theta Calmness",
-    hz: 5.5,
-    purpose: "Deep Relaxation",
-    category: "relaxation",
-    description: "Promote deep states of relaxation, meditation, and enhanced creativity"
+    name: "Pain Relief",
+    hz: 3.0,
+    purpose: "General Pain Management",
+    category: "pain-relief",
+    description: "General pain relief frequency",
   },
   {
     id: "3",
-    name: "Alpha Focus",
-    hz: 10.5,
-    purpose: "Concentration",
-    category: "focus",
-    description: "Enhance mental clarity, focus, and reduce anxiety levels"
-  },
-  {
-    id: "4",
-    name: "Beta Energy",
-    hz: 20,
-    purpose: "Mental Energy",
-    category: "energy",
-    description: "Increase alertness, concentration, and cognitive function",
+    name: "Deep Relaxation",
+    hz: 396,
+    purpose: "Liberating Guilt & Fear",
+    category: "relaxation",
+    description: "Ancient Solfeggio frequency for deep relaxation",
     trending: true
   },
   {
+    id: "4",
+    name: "Emotional Balance",
+    hz: 528,
+    purpose: "DNA Repair",
+    category: "emotional",
+    description: "Known as the 'Miracle' frequency for emotional healing",
+    premium: true
+  },
+  {
     id: "5",
-    name: "Gamma Cognition",
-    hz: 40,
-    purpose: "Cognitive Enhancement",
-    category: "focus",
-    description: "Support high-level information processing and cognitive function",
+    name: "Immune Boost",
+    hz: 5000,
+    purpose: "Immune System Support",
+    category: "immune",
+    description: "Stimulate immune system function",
     premium: true
   },
   {
     id: "6",
-    name: "Theta Meditation",
-    hz: 6,
-    purpose: "Deep Meditation",
-    category: "meditation",
-    description: "Access deep meditative states and enhanced spirituality"
+    name: "Detox",
+    hz: 10000,
+    purpose: "Body Detoxification",
+    category: "detox",
+    description: "Support natural detoxification processes"
   },
   {
     id: "7",
-    name: "Schumann Resonance",
-    hz: 7.83,
-    purpose: "Earth Harmony",
+    name: "Inflammation",
+    hz: 3.6,
+    purpose: "Reduce Inflammation",
     category: "healing",
-    description: "Align with Earth's natural electromagnetic frequency for improved wellbeing",
+    description: "Anti-inflammatory frequency",
     trending: true
   },
   {
     id: "8",
-    name: "Alpha Sleep",
-    hz: 8,
-    purpose: "Sleep Induction",
-    category: "sleep",
-    description: "Promote relaxation and prepare the mind for restful sleep"
+    name: "Delta Sleep",
+    hz: 2.5,
+    purpose: "Deep Sleep",
+    category: "relaxation",
+    description: "Promote deep, restorative sleep"
   },
   {
     id: "9",
-    name: "Creativity Boost",
-    hz: 12.5,
-    purpose: "Creative Enhancement",
-    category: "creativity",
-    description: "Stimulate creative thinking and artistic expression"
+    name: "Anxiety Relief",
+    hz: 6.3,
+    purpose: "Reduce Anxiety",
+    category: "emotional",
+    description: "Calming frequency for anxiety relief"
   },
   {
     id: "10",
-    name: "Delta Deep Sleep",
-    hz: 2,
-    purpose: "Deep Sleep",
-    category: "sleep",
-    description: "Support deep, restorative sleep phases"
+    name: "Energy Boost",
+    hz: 20,
+    purpose: "Vitality",
+    category: "wellness",
+    description: "Increase energy and vitality",
+    trending: true
   },
   {
     id: "11",
-    name: "Study Focus",
-    hz: 14,
-    purpose: "Learning",
-    category: "focus",
-    description: "Optimize brain function for learning and information retention"
+    name: "Mental Clarity",
+    hz: 10.5,
+    purpose: "Focus Enhancement",
+    category: "wellness",
+    description: "Improve mental clarity and focus"
   },
   {
     id: "12",
-    name: "Gamma Insight",
-    hz: 35,
-    purpose: "Spiritual Insight",
-    category: "meditation",
-    description: "Access transcendent states of consciousness and spiritual awareness",
+    name: "Spiritual",
+    hz: 963,
+    purpose: "Spiritual Connection",
+    category: "research",
+    description: "Higher consciousness frequency",
     premium: true
   },
   {
     id: "13",
-    name: "Solfeggio 396 Hz",
-    hz: 396,
-    purpose: "Guilt Release",
+    name: "Cell Regeneration",
+    hz: 432,
+    purpose: "Cellular Health",
     category: "healing",
-    description: "Ancient frequency to liberate from guilt and fear"
+    description: "Support cellular repair and regeneration"
   },
   {
     id: "14",
-    name: "Solfeggio 417 Hz",
-    hz: 417,
-    purpose: "Change Facilitation",
-    category: "healing",
-    description: "Facilitate change and let go of old patterns"
+    name: "Circulation",
+    hz: 45,
+    purpose: "Blood Flow",
+    category: "wellness",
+    description: "Improve blood circulation"
   },
   {
     id: "15",
-    name: "Solfeggio 528 Hz",
-    hz: 528,
-    purpose: "DNA Repair",
-    category: "healing",
-    description: "Known as the 'miracle tone' for healing and DNA repair",
-    trending: true,
-    premium: true
-  },
-  {
-    id: "16",
-    name: "Solfeggio 639 Hz",
-    hz: 639,
-    purpose: "Relationships",
-    category: "healing",
-    description: "Harmonize relationships and enhance communication"
-  },
-  {
-    id: "17",
-    name: "Solfeggio 741 Hz",
-    hz: 741,
-    purpose: "Problem Solving",
-    category: "focus",
-    description: "Awaken intuition and enhance problem-solving abilities"
-  },
-  {
-    id: "18",
-    name: "Solfeggio 852 Hz",
-    hz: 852,
-    purpose: "Spiritual Awareness",
-    category: "meditation",
-    description: "Return to spiritual order and higher consciousness",
-    premium: true
-  },
-  {
-    id: "19",
-    name: "432 Hz Tuning",
-    hz: 432,
-    purpose: "Natural Harmony",
-    category: "relaxation",
-    description: "Alternative musical tuning aligned with natural vibrations",
-    trending: true
-  },
-  {
-    id: "20",
-    name: "936 Hz Pineal",
-    hz: 936,
-    purpose: "Pineal Activation",
-    category: "meditation",
-    description: "Activates the pineal gland and awakens intuition",
+    name: "Joint Relief",
+    hz: 147.0,
+    purpose: "Joint Pain",
+    category: "pain-relief",
+    description: "Specific frequency for joint pain relief",
     premium: true
   }
 ];
