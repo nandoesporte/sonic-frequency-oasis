@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,19 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Frequency app custom colors
+				purple: {
+					light: '#D6BCFA',
+					DEFAULT: '#9b87f5',
+					dark: '#7E69AB'
+				},
+				blue: {
+					light: '#D3E4FD'
+				},
+				neutral: {
+					DEFAULT: '#8E9196',
+					dark: '#1A1F2C'
 				}
 			},
 			borderRadius: {
@@ -84,11 +98,30 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'wave': {
+					'0%, 100%': { transform: 'scaleY(0.5)' },
+					'50%': { transform: 'scaleY(1.5)' }
+				},
+				'pulse-soft': {
+					'0%, 100%': { opacity: '0.8' },
+					'50%': { opacity: '1' }
+				},
+				'slide-up': {
+					'0%': { transform: 'translateY(20px)', opacity: '0' },
+					'100%': { transform: 'translateY(0)', opacity: '1' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'wave': 'wave 1.2s ease-in-out infinite',
+				'pulse-soft': 'pulse-soft 2s ease-in-out infinite',
+				'slide-up': 'slide-up 0.4s ease-out'
+			},
+			fontFamily: {
+				sans: ['Inter', 'sans-serif'],
+				heading: ['DM Sans', 'sans-serif']
 			}
 		}
 	},
