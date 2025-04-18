@@ -6,7 +6,7 @@ import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { AudioProvider } from "@/lib/audio-context";
 import { categories, getCategoryCount, getTrendingFrequencies } from "@/lib/data";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Crown } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
