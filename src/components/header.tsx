@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -10,7 +9,6 @@ export function Header() {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   
-  // Add scroll detection
   if (typeof window !== 'undefined') {
     window.addEventListener('scroll', () => {
       setIsScrolled(window.scrollY > 10);
@@ -22,9 +20,9 @@ export function Header() {
   };
   
   const navLinks = [
-    { name: "Home", path: "/", icon: <Home className="w-4 h-4 mr-2" /> },
-    { name: "Favorites", path: "/favorites", icon: <Heart className="w-4 h-4 mr-2" /> },
-    { name: "History", path: "/history", icon: <History className="w-4 h-4 mr-2" /> }
+    { name: "Início", path: "/", icon: <Home className="w-4 h-4 mr-2" /> },
+    { name: "Favoritos", path: "/favorites", icon: <Heart className="w-4 h-4 mr-2" /> },
+    { name: "Histórico", path: "/history", icon: <History className="w-4 h-4 mr-2" /> }
   ];
 
   return (
@@ -66,7 +64,7 @@ export function Header() {
           
           <Button variant="default" size="sm" className="hidden sm:flex">
             <Crown className="mr-2 h-4 w-4" />
-            Get Premium
+            Obter Premium
           </Button>
           
           <Sheet>
@@ -93,7 +91,7 @@ export function Header() {
                 
                 <Button variant="default" className="mt-4">
                   <Crown className="mr-2 h-4 w-4" />
-                  Get Premium
+                  Obter Premium
                 </Button>
               </div>
             </SheetContent>

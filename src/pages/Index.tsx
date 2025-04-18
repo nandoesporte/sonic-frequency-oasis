@@ -1,4 +1,3 @@
-
 import { AudioPlayer } from "@/components/audio-player";
 import { CategoryCard } from "@/components/category-card";
 import { FrequencyCard } from "@/components/frequency-card";
@@ -21,14 +20,14 @@ const Index = () => {
         <section className="pt-32 pb-12 px-4">
           <div className="container mx-auto text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-              <span className="text-purple-dark dark:text-purple-light">Experience</span> Therapeutic Sound
+              <span className="text-purple-dark dark:text-purple-light">Experimente</span> o Som Terapêutico
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              Explore healing frequencies for relaxation, focus, and well-being
+              Explore frequências curativas para relaxamento, foco e bem-estar
             </p>
             <Button asChild size="lg" className="rounded-full">
               <Link to="/category/healing">
-                Start Healing Now
+                Comece a Curar Agora
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -39,10 +38,10 @@ const Index = () => {
         <section className="py-12 px-4">
           <div className="container mx-auto">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl md:text-3xl font-bold">Trending Now</h2>
+              <h2 className="text-2xl md:text-3xl font-bold">Em Alta</h2>
               <Button variant="ghost" asChild>
                 <Link to="/trending">
-                  View All
+                  Ver Todos
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
@@ -63,7 +62,7 @@ const Index = () => {
         {/* Categories Section */}
         <section className="py-12 px-4">
           <div className="container mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Categories</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">Categorias</h2>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {categories.map((category) => {
@@ -89,14 +88,14 @@ const Index = () => {
             <div className="bg-gradient-to-r from-purple-light/20 to-blue-light/20 dark:from-purple/30 dark:to-blue-light/10 rounded-2xl p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-bold mb-4">Unlock Premium Frequencies</h2>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-4">Desbloqueie Frequências Premium</h2>
                   <p className="text-muted-foreground mb-6">
-                    Access our full library of specialized healing frequencies, 
-                    personalized recommendations, and advanced features.
+                    Acesse nossa biblioteca completa de frequências curativas especializadas, 
+                    recomendações personalizadas e recursos avançados.
                   </p>
                   <Button size="lg">
                     <Crown className="mr-2 h-4 w-4" />
-                    Get Premium
+                    Obter Premium
                   </Button>
                 </div>
                 

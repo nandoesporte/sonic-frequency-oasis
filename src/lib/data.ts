@@ -11,50 +11,50 @@ export type Category = {
 export const categories: Category[] = [
   {
     id: "pain-relief",
-    name: "Pain Relief",
-    description: "Frequencies for various types of pain management",
+    name: "Alívio da Dor",
+    description: "Frequências para diversos tipos de controle da dor",
     icon: Pill
   },
   {
     id: "healing",
-    name: "Healing",
-    description: "General healing and regeneration frequencies",
+    name: "Cura",
+    description: "Frequências para cura e regeneração geral",
     icon: Heart
   },
   {
     id: "relaxation",
-    name: "Relaxation",
-    description: "Frequencies for stress relief and relaxation",
+    name: "Relaxamento",
+    description: "Frequências para alívio do estresse e relaxamento",
     icon: MoonStar
   },
   {
     id: "emotional",
-    name: "Emotional",
-    description: "Balance emotional states and mood",
+    name: "Emocional",
+    description: "Equilibre estados emocionais e humor",
     icon: Brain
   },
   {
     id: "immune",
-    name: "Immune System",
-    description: "Support immune system function",
+    name: "Sistema Imunológico",
+    description: "Suporte para função do sistema imunológico",
     icon: Shield
   },
   {
     id: "detox",
-    name: "Detoxification",
-    description: "Support body's natural detox processes",
+    name: "Desintoxicação",
+    description: "Apoio aos processos naturais de desintoxicação",
     icon: Zap
   },
   {
     id: "wellness",
-    name: "General Wellness",
-    description: "Overall health and wellbeing frequencies",
+    name: "Bem-Estar Geral",
+    description: "Frequências para saúde e bem-estar geral",
     icon: Stethoscope
   },
   {
     id: "research",
-    name: "Research",
-    description: "Experimental and research frequencies",
+    name: "Pesquisa",
+    description: "Frequências experimentais e de pesquisa",
     icon: Focus
   }
 ];
@@ -62,130 +62,130 @@ export const categories: Category[] = [
 export const frequencies: FrequencyData[] = [
   {
     id: "1",
-    name: "General Healing",
+    name: "Cura Geral",
     hz: 7.83,
-    purpose: "Schumann Resonance",
+    purpose: "Ressonância Schumann",
     category: "healing",
-    description: "Earth's natural frequency for overall healing and wellbeing",
+    description: "Frequência natural da Terra para cura e bem-estar geral",
     trending: true
   },
   {
     id: "2",
-    name: "Pain Relief",
+    name: "Alívio da Dor",
     hz: 3.0,
-    purpose: "General Pain Management",
+    purpose: "Controle Geral da Dor",
     category: "pain-relief",
-    description: "General pain relief frequency",
+    description: "Frequência para alívio geral da dor",
   },
   {
     id: "3",
-    name: "Deep Relaxation",
+    name: "Relaxamento Profundo",
     hz: 396,
-    purpose: "Liberating Guilt & Fear",
+    purpose: "Liberação de Culpa e Medo",
     category: "relaxation",
-    description: "Ancient Solfeggio frequency for deep relaxation",
+    description: "Frequência Solfeggio antiga para relaxamento profundo",
     trending: true
   },
   {
     id: "4",
-    name: "Emotional Balance",
+    name: "Equilíbrio Emocional",
     hz: 528,
-    purpose: "DNA Repair",
+    purpose: "Reparo do DNA",
     category: "emotional",
-    description: "Known as the 'Miracle' frequency for emotional healing",
+    description: "Conhecida como frequência 'Milagre' para cura emocional",
     premium: true
   },
   {
     id: "5",
-    name: "Immune Boost",
+    name: "Impulso Imunológico",
     hz: 5000,
-    purpose: "Immune System Support",
+    purpose: "Suporte Imunológico",
     category: "immune",
-    description: "Stimulate immune system function",
+    description: "Estimula a função do sistema imunológico",
     premium: true
   },
   {
     id: "6",
-    name: "Detox",
+    name: "Desintoxicação",
     hz: 10000,
-    purpose: "Body Detoxification",
+    purpose: "Desintoxicação do Corpo",
     category: "detox",
-    description: "Support natural detoxification processes"
+    description: "Apoia os processos naturais de desintoxicação"
   },
   {
     id: "7",
-    name: "Inflammation",
+    name: "Inflamação",
     hz: 3.6,
-    purpose: "Reduce Inflammation",
+    purpose: "Reduzir Inflamação",
     category: "healing",
-    description: "Anti-inflammatory frequency",
+    description: "Frequência anti-inflamatória",
     trending: true
   },
   {
     id: "8",
-    name: "Delta Sleep",
+    name: "Sono Delta",
     hz: 2.5,
-    purpose: "Deep Sleep",
+    purpose: "Sono Profundo",
     category: "relaxation",
-    description: "Promote deep, restorative sleep"
+    description: "Promove sono profundo e restaurador"
   },
   {
     id: "9",
-    name: "Anxiety Relief",
+    name: "Alívio da Ansiedade",
     hz: 6.3,
-    purpose: "Reduce Anxiety",
+    purpose: "Reduzir Ansiedade",
     category: "emotional",
-    description: "Calming frequency for anxiety relief"
+    description: "Frequência calmante para alívio da ansiedade"
   },
   {
     id: "10",
-    name: "Energy Boost",
+    name: "Impulso de Energia",
     hz: 20,
-    purpose: "Vitality",
+    purpose: "Vitalidade",
     category: "wellness",
-    description: "Increase energy and vitality",
+    description: "Aumenta a energia e a vitalidade",
     trending: true
   },
   {
     id: "11",
-    name: "Mental Clarity",
+    name: "Clareza Mental",
     hz: 10.5,
-    purpose: "Focus Enhancement",
+    purpose: "Melhora do Foco",
     category: "wellness",
-    description: "Improve mental clarity and focus"
+    description: "Melhora a clareza mental e o foco"
   },
   {
     id: "12",
-    name: "Spiritual",
+    name: "Espiritual",
     hz: 963,
-    purpose: "Spiritual Connection",
+    purpose: "Conexão Espiritual",
     category: "research",
-    description: "Higher consciousness frequency",
+    description: "Frequência de consciência superior",
     premium: true
   },
   {
     id: "13",
-    name: "Cell Regeneration",
+    name: "Regeneração Celular",
     hz: 432,
-    purpose: "Cellular Health",
+    purpose: "Saúde Celular",
     category: "healing",
-    description: "Support cellular repair and regeneration"
+    description: "Apoia o reparo e a regeneração celular"
   },
   {
     id: "14",
-    name: "Circulation",
+    name: "Circulação",
     hz: 45,
-    purpose: "Blood Flow",
+    purpose: "Fluxo Sanguíneo",
     category: "wellness",
-    description: "Improve blood circulation"
+    description: "Melhora a circulação sanguínea"
   },
   {
     id: "15",
-    name: "Joint Relief",
+    name: "Alívio Articular",
     hz: 147.0,
-    purpose: "Joint Pain",
+    purpose: "Dor Articular",
     category: "pain-relief",
-    description: "Specific frequency for joint pain relief",
+    description: "Frequência específica para alívio da dor articular",
     premium: true
   }
 ];

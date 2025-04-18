@@ -109,7 +109,7 @@ export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardP
           )}
         >
           <Play className="mr-2 h-4 w-4" />
-          {isCurrentlyPlaying ? "Playing" : "Play Now"}
+          {isCurrentlyPlaying ? "Tocando" : "Tocar Agora"}
         </Button>
         
         <Button 

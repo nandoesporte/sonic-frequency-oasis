@@ -12,8 +12,8 @@ const FavoritesContent = () => {
   
   return (
     <div className="container pt-32 pb-12 px-4">
-      <h1 className="text-3xl md:text-4xl font-bold mb-2">Your Favorites</h1>
-      <p className="text-muted-foreground mb-8">Frequencies you've saved for quick access</p>
+      <h1 className="text-3xl md:text-4xl font-bold mb-2">Seus Favoritos</h1>
+      <p className="text-muted-foreground mb-8">Frequências que você salvou para acesso rápido</p>
       
       {favorites.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -24,13 +24,13 @@ const FavoritesContent = () => {
       ) : (
         <div className="text-center py-12 bg-muted/20 rounded-xl">
           <HeartOff className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-          <h2 className="text-xl font-semibold mb-2">No favorites yet</h2>
+          <h2 className="text-xl font-semibold mb-2">Nenhum favorito ainda</h2>
           <p className="text-muted-foreground mb-6">
-            Start exploring frequencies and save your favorites for quick access
+            Comece a explorar frequências e salve seus favoritos para acesso rápido
           </p>
           <Button asChild>
             <Link to="/">
-              Explore Frequencies
+              Explorar Frequências
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
