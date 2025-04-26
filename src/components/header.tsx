@@ -1,13 +1,16 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Heart, Crown, History, Menu, Home } from "lucide-react";
+import { Heart, Crown, History, Menu, Home, LogOut, User } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function Header() {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
+  const { user, signOut } = useAuth();
   
   if (typeof window !== 'undefined') {
     window.addEventListener('scroll', () => {
@@ -62,6 +65,21 @@ export function Header() {
         <div className="flex items-center gap-2">
           <ThemeToggle />
           
+          {user ? (
+            <>
+              <Button variant="ghost" size="icon" onClick={() => signOut()} className="hidden sm:flex">
+                <LogOut className="h-5 w-5" />
+              </Button>
+            </>
+          ) : (
+            <Button variant="default" size="sm" asChild className="hidden sm:flex">
+              <Link to="/auth">
+                <User className="mr-2 h-4 w-4" />
+                Entrar
+              </Link>
+            </Button>
+          )}
+          
           <Button variant="default" size="sm" className="hidden sm:flex">
             <Crown className="mr-2 h-4 w-4" />
             Obter Premium
@@ -88,6 +106,20 @@ export function Header() {
                     </Link>
                   </Button>
                 ))}
+                
+                {user ? (
+                  <Button variant="ghost" onClick={() => signOut()} className="justify-start">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sair
+                  </Button>
+                ) : (
+                  <Button variant="default" asChild className="justify-start">
+                    <Link to="/auth">
+                      <User className="mr-2 h-4 w-4" />
+                      Entrar
+                    </Link>
+                  </Button>
+                )}
                 
                 <Button variant="default" className="mt-4">
                   <Crown className="mr-2 h-4 w-4" />
