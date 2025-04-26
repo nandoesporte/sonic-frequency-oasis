@@ -9,6 +9,8 @@ export type Category = {
   icon: any;
 }
 
+export { FrequencyData };
+
 export const categories: Category[] = [
   {
     id: "pain-relief",
@@ -78,7 +80,7 @@ export async function getFrequenciesByCategory(categoryId: string): Promise<Freq
     hz: freq.hz,
     purpose: freq.purpose,
     description: freq.description,
-    category: freq.category,
+    category: freq.category as string,
     premium: freq.is_premium
   }));
 }
@@ -135,5 +137,7 @@ export function getCategoryById(id: string): Category | undefined {
 }
 
 export function getCategoryCount(categoryId: string): number {
-  return frequencies.filter(freq => freq.category === categoryId).length;
+  // We can't count from a non-existent array, so return a placeholder value
+  // This should be replaced with a proper count from the database in a future update
+  return 0;
 }

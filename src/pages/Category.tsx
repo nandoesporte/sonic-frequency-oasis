@@ -7,11 +7,27 @@ import { AudioProvider } from "@/lib/audio-context";
 import { getCategoryById, getFrequenciesByCategory } from "@/lib/data";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { FrequencyData } from "@/lib/audio-context";
 
 const Category = () => {
   const { id } = useParams<{ id: string }>();
   const category = id ? getCategoryById(id) : undefined;
-  const frequencies = id ? getFrequenciesByCategory(id) : [];
+  const [frequencies, setFrequencies] = useState<FrequencyData[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchFrequencies = async () => {
+      if (id) {
+        setLoading(true);
+        const data = await getFrequenciesByCategory(id);
+        setFrequencies(data);
+        setLoading(false);
+      }
+    };
+    
+    fetchFrequencies();
+  }, [id]);
   
   if (!category) {
     return (
@@ -54,7 +70,11 @@ const Category = () => {
             </div>
           </div>
           
-          {frequencies.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Loading frequencies...</p>
+            </div>
+          ) : frequencies.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {frequencies.map((frequency) => (
                 <FrequencyCard key={frequency.id} frequency={frequency} />
