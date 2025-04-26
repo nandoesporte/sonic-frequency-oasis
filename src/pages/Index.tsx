@@ -1,15 +1,30 @@
+
+import { useEffect, useState } from 'react';
 import { AudioPlayer } from "@/components/audio-player";
 import { CategoryCard } from "@/components/category-card";
 import { FrequencyCard } from "@/components/frequency-card";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { AudioProvider } from "@/lib/audio-context";
-import { categories, getCategoryCount, getTrendingFrequencies } from "@/lib/data";
-import { ArrowRight, Crown } from "lucide-react";
+import { categories, getTrendingFrequencies, FrequencyData } from "@/lib/data";
+import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
-  const trendingFrequencies = getTrendingFrequencies();
+  const [trendingFrequencies, setTrendingFrequencies] = useState<FrequencyData[]>([]);
+  const { user } = useAuth();
+  
+  useEffect(() => {
+    const fetchTrendingFrequencies = async () => {
+      const frequencies = await getTrendingFrequencies();
+      setTrendingFrequencies(frequencies);
+    };
+    
+    if (user) {
+      fetchTrendingFrequencies();
+    }
+  }, [user]);
 
   return (
     <AudioProvider>
@@ -26,38 +41,47 @@ const Index = () => {
               Explore frequências curativas para relaxamento, foco e bem-estar
             </p>
             <Button asChild size="lg" className="rounded-full">
-              <Link to="/category/healing">
-                Comece a Curar Agora
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
+              {user ? (
+                <Link to="/category/healing">
+                  Comece a Curar Agora
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              ) : (
+                <Link to="/auth">
+                  Entre para Começar
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              )}
             </Button>
           </div>
         </section>
         
         {/* Trending Section */}
-        <section className="py-12 px-4">
-          <div className="container mx-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl md:text-3xl font-bold">Em Alta</h2>
-              <Button variant="ghost" asChild>
-                <Link to="/trending">
-                  Ver Todos
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
+        {user && trendingFrequencies.length > 0 && (
+          <section className="py-12 px-4">
+            <div className="container mx-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold">Em Alta</h2>
+                <Button variant="ghost" asChild>
+                  <Link to="/trending">
+                    Ver Todos
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {trendingFrequencies.map((frequency) => (
+                  <FrequencyCard
+                    key={frequency.id}
+                    frequency={frequency}
+                    variant="trending"
+                  />
+                ))}
+              </div>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {trendingFrequencies.map((frequency) => (
-                <FrequencyCard
-                  key={frequency.id}
-                  frequency={frequency}
-                  variant="trending"
-                />
-              ))}
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
         
         {/* Categories Section */}
         <section className="py-12 px-4">
@@ -74,7 +98,7 @@ const Index = () => {
                     name={category.name}
                     description={category.description}
                     icon={<CategoryIcon className="h-6 w-6" />}
-                    count={getCategoryCount(category.id)}
+                    requiresAuth={!user}
                   />
                 );
               })}

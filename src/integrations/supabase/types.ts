@@ -81,6 +81,42 @@ export type Database = {
         }
         Relationships: []
       }
+      frequencies: {
+        Row: {
+          category: Database["public"]["Enums"]["frequency_category"]
+          created_at: string | null
+          description: string | null
+          hz: number
+          id: string
+          is_premium: boolean | null
+          name: string
+          purpose: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["frequency_category"]
+          created_at?: string | null
+          description?: string | null
+          hz: number
+          id?: string
+          is_premium?: boolean | null
+          name: string
+          purpose: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["frequency_category"]
+          created_at?: string | null
+          description?: string | null
+          hz?: number
+          id?: string
+          is_premium?: boolean | null
+          name?: string
+          purpose?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       insurance_policies: {
         Row: {
           attachment_url: string | null
@@ -615,7 +651,16 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      frequency_category:
+        | "sleep"
+        | "healing"
+        | "meditation"
+        | "pain_relief"
+        | "emotional"
+        | "cognitive"
+        | "solfeggio"
+        | "spiritual"
+        | "physical"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -730,6 +775,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      frequency_category: [
+        "sleep",
+        "healing",
+        "meditation",
+        "pain_relief",
+        "emotional",
+        "cognitive",
+        "solfeggio",
+        "spiritual",
+        "physical",
+      ],
+    },
   },
 } as const

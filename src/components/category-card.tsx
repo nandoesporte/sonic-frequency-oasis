@@ -1,37 +1,35 @@
 
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
-interface CategoryProps {
+interface CategoryCardProps {
   id: string;
   name: string;
   description: string;
   icon: React.ReactNode;
-  count: number;
+  count?: number;
+  requiresAuth?: boolean;
 }
 
-export function CategoryCard({ id, name, description, icon, count }: CategoryProps) {
+export function CategoryCard({ id, name, description, icon, count, requiresAuth }: CategoryCardProps) {
   return (
-    <Link to={`/category/${id}`}>
-      <Card className="overflow-hidden hover-scale transition-all h-full">
-        <CardContent className="p-6">
-          <div className="flex flex-col h-full">
-            <div className={cn(
-              "rounded-full w-12 h-12 flex items-center justify-center mb-4",
-              "bg-primary/10 text-primary"
-            )}>
-              {icon}
-            </div>
-            
-            <h3 className="text-xl font-bold mb-2">{name}</h3>
-            <p className="text-muted-foreground text-sm mb-2">{description}</p>
-            <div className="text-sm text-primary mt-auto">
-              {count} frequencies
-            </div>
+    <Card className={cn(
+      "overflow-hidden relative group hover:shadow-md transition-all duration-200",
+      "hover:scale-[1.02] active:scale-[0.98]"
+    )}>
+      <Link to={requiresAuth ? "/auth" : `/category/${id}`}>
+        <CardHeader>
+          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            {icon}
           </div>
-        </CardContent>
-      </Card>
-    </Link>
+          <CardTitle className="flex items-center gap-2">
+            {name}
+            {count && <span className="text-sm text-muted-foreground">({count})</span>}
+          </CardTitle>
+          <CardDescription>{requiresAuth ? "Entre para acessar" : description}</CardDescription>
+        </CardHeader>
+      </Link>
+    </Card>
   );
 }
