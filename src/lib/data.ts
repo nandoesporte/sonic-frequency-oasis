@@ -1,3 +1,4 @@
+
 import type { FrequencyData } from "./audio-context";
 import { supabase } from "@/integrations/supabase/client";
 import { Brain, Heart, Coffee, Zap, MoonStar, Music, Sparkles, Focus, Shield, Flower, AlertCircle, Pill, Stethoscope } from "lucide-react";
@@ -14,7 +15,7 @@ export type { FrequencyData };
 
 export const categories: Category[] = [
   {
-    id: "pain-relief",
+    id: "pain_relief",
     name: "Alívio da Dor",
     description: "Frequências para diversos tipos de controle da dor",
     icon: Pill
@@ -63,11 +64,35 @@ export const categories: Category[] = [
   }
 ];
 
+// Define valid database categories based on the error message
+type ValidDatabaseCategory = "healing" | "emotional" | "sleep" | "meditation" | 
+  "pain_relief" | "cognitive" | "solfeggio" | "spiritual" | "physical";
+
+// Map our UI categories to database categories
+const categoryMapping: Record<string, ValidDatabaseCategory> = {
+  "pain_relief": "pain_relief",
+  "healing": "healing",
+  "relaxation": "meditation", // Map to closest equivalent
+  "emotional": "emotional",
+  "immune": "physical", // Map to closest equivalent
+  "detox": "physical", // Map to closest equivalent
+  "wellness": "physical", // Map to closest equivalent
+  "research": "cognitive" // Map to closest equivalent
+};
+
 export async function getFrequenciesByCategory(categoryId: string): Promise<FrequencyData[]> {
+  // Map UI category to database category
+  const dbCategory = categoryMapping[categoryId];
+  
+  if (!dbCategory) {
+    console.error(`Invalid category: ${categoryId}`);
+    return [];
+  }
+  
   const { data, error } = await supabase
     .from('frequencies')
     .select('*')
-    .eq('category', categoryId)
+    .eq('category', dbCategory)
     .order('hz');
 
   if (error) {
