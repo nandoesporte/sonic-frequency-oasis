@@ -1,4 +1,4 @@
-import { FrequencyData } from "./audio-context";
+import type { FrequencyData } from "./audio-context";
 import { supabase } from "@/integrations/supabase/client";
 import { Brain, Heart, Coffee, Zap, MoonStar, Music, Sparkles, Focus, Shield, Flower, AlertCircle, Pill, Stethoscope } from "lucide-react";
 
@@ -9,7 +9,8 @@ export type Category = {
   icon: any;
 }
 
-export { FrequencyData };
+// Re-export as a type to fix the TS1205 error
+export type { FrequencyData };
 
 export const categories: Category[] = [
   {

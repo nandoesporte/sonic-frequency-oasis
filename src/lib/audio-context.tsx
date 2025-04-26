@@ -16,6 +16,7 @@ type AudioContextType = {
   history: FrequencyData[];
 };
 
+// Make sure it's properly exported
 export type FrequencyData = {
   id: string;
   name: string;
