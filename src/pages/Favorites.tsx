@@ -6,6 +6,7 @@ import { AudioProvider, useAudio } from "@/lib/audio-context";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, HeartOff } from "lucide-react";
+import { FrequencyData } from "@/lib/data";
 
 const FavoritesContent = () => {
   const { favorites } = useAudio();

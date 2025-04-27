@@ -1,7 +1,7 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { FrequencyData, useAudio } from "@/lib/audio-context";
+import { useAudio } from "@/lib/audio-context";
+import { FrequencyData } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Play, Heart, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -96,7 +96,7 @@ export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardP
           <Badge variant="secondary">{frequency.hz} Hz</Badge>
           <Badge variant="outline">{frequency.category}</Badge>
         </div>
-        <p className="text-muted-foreground text-sm">{frequency.description || frequency.purpose}</p>
+        <p className="text-muted-foreground text-sm">{frequency.description}</p>
       </CardContent>
       
       <CardFooter className="flex justify-between">

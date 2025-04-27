@@ -1,4 +1,3 @@
-
 import { Brain, Heart, Coffee, Zap, MoonStar, Music, Focus, Shield, Bell, Circle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
@@ -19,7 +18,7 @@ export type FrequencyData = {
   name: string;
   hz: number;
   purpose: string;
-  description?: string;
+  description: string; // Made this required
   category: string;
   premium: boolean;
   trending?: boolean;
@@ -113,7 +112,7 @@ export async function getFrequenciesByCategory(categoryId: string): Promise<Freq
     name: freq.name,
     hz: freq.hz,
     purpose: freq.purpose,
-    description: freq.description,
+    description: freq.description || freq.purpose, // Ensure description is never undefined
     category: freq.category as string,
     premium: freq.is_premium
   }));
@@ -136,7 +135,7 @@ export async function getTrendingFrequencies(): Promise<FrequencyData[]> {
     name: freq.name,
     hz: freq.hz,
     purpose: freq.purpose,
-    description: freq.description,
+    description: freq.description || freq.purpose, // Ensure description is never undefined
     category: freq.category,
     premium: freq.is_premium,
     trending: true
@@ -160,7 +159,7 @@ export async function getFrequencyById(id: string): Promise<FrequencyData | null
     name: data.name,
     hz: data.hz,
     purpose: data.purpose,
-    description: data.description,
+    description: data.description || data.purpose, // Ensure description is never undefined
     category: data.category,
     premium: data.is_premium
   };
@@ -240,12 +239,10 @@ export async function seedInitialFrequencies() {
   for (const freq of frequencies) {
     const { error } = await supabase
       .from('frequencies')
-      .insert([
-        { 
-          ...freq,
-          is_premium: freq.hz >= 528 // Make higher frequencies premium
-        }
-      ]);
+      .insert([{ 
+        ...freq,
+        is_premium: freq.hz >= 528 // Make higher frequencies premium
+      }]);
     
     if (error && error.code !== '23505') { // Ignore duplicate key errors
       console.error('Error seeding frequency:', error);

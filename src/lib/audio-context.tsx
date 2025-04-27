@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { toast } from '@/components/ui/sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,17 +16,6 @@ type AudioContextType = {
   removeFromFavorites: (id: string) => void;
   favorites: FrequencyData[];
   history: FrequencyData[];
-};
-
-export type FrequencyData = {
-  id: string;
-  name: string;
-  hz: number;
-  purpose: string;
-  category: string;
-  description: string;
-  trending?: boolean;
-  premium?: boolean;
 };
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);

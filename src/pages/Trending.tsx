@@ -4,7 +4,7 @@ import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
 import { FrequencyCard } from "@/components/frequency-card";
 import { AudioProvider } from "@/lib/audio-context";
-import { FrequencyData } from "@/lib/audio-context";
+import { FrequencyData } from "@/lib/data";
 import { supabase } from "@/integrations/supabase/client";
 
 const TrendingContent = () => {
@@ -29,7 +29,7 @@ const TrendingContent = () => {
         name: freq.name,
         hz: freq.hz,
         purpose: freq.purpose,
-        description: freq.description,
+        description: freq.description || freq.purpose, // Ensure description is never undefined
         category: freq.category,
         premium: freq.is_premium,
         trending: true
