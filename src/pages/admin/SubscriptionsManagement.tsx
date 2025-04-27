@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from '@/components/ui/use-toast';
 
-// Define simple flat types with no circular references
+// Define simple types with no circular references
 interface Plan {
   id: string;
   name: string;
@@ -42,28 +42,6 @@ interface Subscriber {
   updated_at: string;
   user_id: UserProfile | null;
   plan_id: Plan | null;
-}
-
-// Type for raw data from Supabase
-interface RawSubscriberData {
-  id: string;
-  email: string;
-  subscription_end: string;
-  created_at: string;
-  last_payment_date: string | null;
-  subscribed: boolean;
-  updated_at: string;
-  user_id: {
-    id: string;
-    email?: Array<{email: string}> | null;
-    name?: Array<{full_name: string}> | null;
-  } | null;
-  plan_id: {
-    id: string;
-    name: string;
-    price: number;
-    interval: string;
-  } | null;
 }
 
 export const SubscriptionsManagement = () => {
@@ -113,7 +91,8 @@ export const SubscriptionsManagement = () => {
         if (error) throw error;
         
         // Transform the database response to simpler types
-        const transformedData = (data || []).map((item: RawSubscriberData) => {
+        const transformedData: Subscriber[] = (data || []).map((item: any) => {
+          // Start with base subscriber properties
           const subscriber: Subscriber = {
             id: item.id,
             email: item.email,
@@ -126,17 +105,17 @@ export const SubscriptionsManagement = () => {
             plan_id: null
           };
           
-          // Safely extract user data
-          if (item.user_id) {
+          // Safely extract user data if it exists
+          if (item.user_id && typeof item.user_id === 'object' && 'id' in item.user_id) {
             subscriber.user_id = {
               id: item.user_id.id,
-              email: item.user_id.email?.[0]?.email || null,
-              name: item.user_id.name?.[0]?.full_name || null
+              email: item.user_id.email && item.user_id.email[0] ? item.user_id.email[0].email : null,
+              name: item.user_id.name && item.user_id.name[0] ? item.user_id.name[0].full_name : null
             };
           }
           
-          // Safely extract plan data
-          if (item.plan_id) {
+          // Safely extract plan data if it exists
+          if (item.plan_id && typeof item.plan_id === 'object' && 'id' in item.plan_id) {
             subscriber.plan_id = {
               id: item.plan_id.id,
               name: item.plan_id.name,
