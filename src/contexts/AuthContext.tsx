@@ -53,31 +53,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = async (email: string, password: string) => {
     try {
       console.log('Attempting login with email:', email);
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      
+      const { data, error } = await supabase.auth.signInWithPassword({ 
+        email, 
+        password 
+      });
+
       if (error) {
-        console.error("Login error:", error);
+        console.error('Login error:', error.message);
         toast({
           title: "Erro ao fazer login",
-          description: "Email ou senha incorretos.",
+          description: error.message === 'Invalid login credentials'
+            ? "Email ou senha incorretos."
+            : "Erro ao tentar fazer login. Tente novamente.",
           variant: "destructive",
         });
-        throw error;
+        return { user: null, session: null };
       }
-      
-      console.log('Login successful:', data);
-      
+
+      console.log('Login successful:', data.user?.email);
       toast({
-        title: "Bem-vindo de volta!",
-        description: "Login realizado com sucesso.",
+        title: "Login realizado com sucesso",
+        description: "Bem-vindo de volta!",
       });
-      
+
       return { user: data.user, session: data.session };
     } catch (error) {
-      console.error("Login error details:", error);
+      console.error('Unexpected login error:', error);
       toast({
         title: "Erro ao fazer login",
-        description: "Email ou senha incorretos.",
+        description: "Ocorreu um erro inesperado. Tente novamente.",
         variant: "destructive",
       });
       return { user: null, session: null };
@@ -86,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
-      console.log('Attempting signup with email:', email);
+      console.log('Attempting signup for:', email);
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -96,30 +100,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           },
         },
       });
-      
+
       if (error) {
-        console.error("Signup error:", error);
+        console.error('Signup error:', error.message);
         toast({
           title: "Erro ao criar conta",
-          description: "Tente novamente mais tarde.",
+          description: "Não foi possível criar sua conta. Tente novamente.",
           variant: "destructive",
         });
-        throw error;
+        return { user: null, session: null };
       }
-      
-      console.log('Signup successful:', data);
-      
+
+      console.log('Signup successful:', data.user?.email);
       toast({
-        title: "Conta criada com sucesso!",
+        title: "Conta criada com sucesso",
         description: "Verifique seu email para confirmar sua conta.",
       });
-      
+
       return { user: data.user, session: data.session };
     } catch (error) {
-      console.error("Signup error details:", error);
+      console.error('Unexpected signup error:', error);
       toast({
         title: "Erro ao criar conta",
-        description: "Tente novamente mais tarde.",
+        description: "Ocorreu um erro inesperado. Tente novamente.",
         variant: "destructive",
       });
       return { user: null, session: null };
@@ -128,26 +131,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      console.log('Attempting to sign out');
       const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        console.error("Logout error:", error);
-        throw error;
-      }
-      
-      console.log('Signout successful');
-      navigate('/auth');
-      
+      if (error) throw error;
+
       toast({
-        title: "Até logo!",
+        title: "Logout realizado",
         description: "Você foi desconectado com sucesso.",
       });
+      navigate('/auth');
     } catch (error) {
-      console.error("Logout error details:", error);
+      console.error('Signout error:', error);
       toast({
         title: "Erro ao sair",
-        description: "Tente novamente mais tarde.",
+        description: "Não foi possível fazer logout. Tente novamente.",
         variant: "destructive",
       });
     }

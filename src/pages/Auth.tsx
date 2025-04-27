@@ -18,14 +18,16 @@ const authSchema = z.object({
   fullName: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres').optional(),
 });
 
+type FormData = z.infer<typeof authSchema>;
+
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const { signIn, signUp, user, loading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const navigate = useNavigate();
-  
-  const form = useForm<z.infer<typeof authSchema>>({
+
+  const form = useForm<FormData>({
     resolver: zodResolver(authSchema),
     defaultValues: {
       email: '',
@@ -34,76 +36,68 @@ export default function Auth() {
     },
   });
 
+  // Reset form and error when switching between login and register
   useEffect(() => {
-    // Limpar erro quando o usuário muda entre login e registro
-    if (authError) setAuthError(null);
-    
-    // Resetar o formulário ao alternar entre login e registro
-    form.reset({
-      email: '',
-      password: '',
-      fullName: '',
-    });
+    setAuthError(null);
+    form.reset();
   }, [isLogin, form]);
 
+  // Show loading state
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
 
+  // Redirect if user is already logged in
   if (user) {
-    console.log("Usuário já autenticado, redirecionando para a página inicial");
+    console.log('User is already authenticated, redirecting to home');
     return <Navigate to="/" replace />;
   }
 
-  const onSubmit = async (values: z.infer<typeof authSchema>) => {
+  const onSubmit = async (values: FormData) => {
     try {
       setIsSubmitting(true);
       setAuthError(null);
-      
+
       if (isLogin) {
-        console.log("Tentando fazer login com:", values.email);
+        console.log('Attempting login for:', values.email);
         const result = await signIn(values.email, values.password);
-        console.log("Resultado do login:", result);
         
         if (result.user) {
-          console.log("Login realizado com sucesso, redirecionando...");
-          // O navigate é chamado aqui para garantir que o redirecionamento ocorra
+          console.log('Login successful, redirecting to home');
           navigate('/', { replace: true });
-          return;
         } else {
-          console.error("Login falhou: usuário é nulo");
-          setAuthError("Falha no login. Verifique seu email e senha.");
+          setAuthError('Email ou senha incorretos.');
         }
       } else {
-        if (values.fullName) {
-          console.log("Tentando registrar:", values.email);
-          const result = await signUp(values.email, values.password, values.fullName);
-          console.log("Resultado do registro:", result);
-          
-          if (result.user) {
-            console.log("Registro bem-sucedido, alternando para login");
-            setIsLogin(true);
-            form.reset({
-              email: values.email,
-              password: '',
-              fullName: '',
-            });
-          } else {
-            console.error("Registro falhou: usuário é nulo");
-            setAuthError("Falha ao criar conta. Este email pode já estar em uso ou ocorreu um erro no servidor.");
-          }
+        if (!values.fullName) {
+          setAuthError('Nome completo é obrigatório para criar conta.');
+          return;
+        }
+
+        console.log('Attempting signup for:', values.email);
+        const result = await signUp(values.email, values.password, values.fullName);
+        
+        if (result.user) {
+          console.log('Signup successful, switching to login');
+          setIsLogin(true);
+          form.reset({
+            email: values.email,
+            password: '',
+          });
+        } else {
+          setAuthError('Não foi possível criar sua conta. Tente novamente.');
         }
       }
     } catch (error) {
       console.error('Authentication error:', error);
       setAuthError(
         isLogin 
-          ? 'Falha no login. Verifique seu email e senha.'
-          : 'Falha ao criar conta. Este email pode já estar em uso ou ocorreu um erro no servidor.'
+          ? 'Erro ao fazer login. Tente novamente.'
+          : 'Erro ao criar conta. Tente novamente.'
       );
     } finally {
       setIsSubmitting(false);
@@ -130,7 +124,7 @@ export default function Auth() {
                   <AlertDescription>{authError}</AlertDescription>
                 </Alert>
               )}
-              
+
               {!isLogin && (
                 <FormField
                   control={form.control}
@@ -146,6 +140,7 @@ export default function Auth() {
                   )}
                 />
               )}
+
               <FormField
                 control={form.control}
                 name="email"
@@ -153,12 +148,18 @@ export default function Auth() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="seu@email.com" {...field} />
+                      <Input 
+                        type="email" 
+                        placeholder="seu@email.com" 
+                        autoComplete="email"
+                        {...field} 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="password"
@@ -166,13 +167,19 @@ export default function Auth() {
                   <FormItem>
                     <FormLabel>Senha</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••" {...field} />
+                      <Input 
+                        type="password" 
+                        placeholder="••••••" 
+                        autoComplete={isLogin ? "current-password" : "new-password"}
+                        {...field} 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </CardContent>
+
             <CardFooter className="flex flex-col space-y-4">
               <Button 
                 type="submit" 
@@ -188,6 +195,7 @@ export default function Auth() {
                   isLogin ? 'Entrar' : 'Criar Conta'
                 )}
               </Button>
+
               <Button
                 type="button"
                 variant="ghost"
