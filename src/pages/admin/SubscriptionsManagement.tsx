@@ -41,7 +41,7 @@ interface Subscription {
   subscribed: boolean;
   updated_at: string;
   user_id: string | null;
-  plan_id: string | null;
+  subscription_tier: string | null; // Used instead of plan_id
   userProfile: UserProfile | null;
   plan: Plan | null;
 }
@@ -79,10 +79,17 @@ export const SubscriptionsManagement = () => {
           return;
         }
         
-        // Filter by plan if needed
+        // Filter subscribers if needed
         let filteredSubscribers = subscribersData;
-        if (filterPlan !== 'all') {
-          filteredSubscribers = subscribersData.filter(sub => sub.plan_id === filterPlan);
+        if (filterPlan !== 'all' && filteredSubscribers) {
+          // Since plan_id doesn't exist, we'll use subscription_tier instead
+          // assuming subscription_tier might contain plan information
+          filteredSubscribers = subscribersData.filter(sub => {
+            if (sub.subscription_tier) {
+              return sub.subscription_tier === filterPlan;
+            }
+            return false;
+          });
         }
         
         // Prepare enhanced subscriptions array
@@ -110,12 +117,12 @@ export const SubscriptionsManagement = () => {
             }
           }
           
-          // Fetch plan if there's a plan_id
-          if (subscription.plan_id) {
+          // Fetch plan if there's a subscription_tier that matches a plan name
+          if (subscription.subscription_tier) {
             const { data: planData } = await supabase
               .from('subscription_plans')
               .select('id, name, price, interval')
-              .eq('id', subscription.plan_id)
+              .eq('name', subscription.subscription_tier)
               .single();
             
             if (planData) {
@@ -184,7 +191,7 @@ export const SubscriptionsManagement = () => {
                 <SelectContent>
                   <SelectItem value="all">Todos os planos</SelectItem>
                   {plans.map(plan => (
-                    <SelectItem key={plan.id} value={plan.id}>
+                    <SelectItem key={plan.id} value={plan.name}>
                       {plan.name}
                     </SelectItem>
                   ))}
@@ -225,7 +232,7 @@ export const SubscriptionsManagement = () => {
                             {subscription.userProfile?.email || subscription.email || 'N/A'}
                           </TableCell>
                           <TableCell>
-                            {subscription.plan?.name || 'Plano Desconhecido'}
+                            {subscription.plan?.name || subscription.subscription_tier || 'Plano Desconhecido'}
                           </TableCell>
                           <TableCell>
                             {subscription.plan ? (
