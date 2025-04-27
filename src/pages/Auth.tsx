@@ -65,14 +65,18 @@ export default function Auth() {
       setAuthError(null);
       
       if (isLogin) {
-        await signIn(values.email, values.password);
-        navigate('/');
+        const data = await signIn(values.email, values.password);
+        if (data.user) {
+          navigate('/');
+        }
       } else {
         if (values.fullName) {
-          await signUp(values.email, values.password, values.fullName);
-          // Após o registro bem-sucedido, vamos alternar para o login
-          setIsLogin(true);
-          form.reset();
+          const data = await signUp(values.email, values.password, values.fullName);
+          if (data.user) {
+            // Após o registro bem-sucedido, vamos alternar para o login
+            setIsLogin(true);
+            form.reset();
+          }
         }
       }
     } catch (error) {

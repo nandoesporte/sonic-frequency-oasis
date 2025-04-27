@@ -8,8 +8,14 @@ import { toast } from '@/components/ui/use-toast';
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, fullName: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<{
+    user: User | null;
+    session: Session | null;
+  }>;
+  signUp: (email: string, password: string, fullName: string) => Promise<{
+    user: User | null;
+    session: Session | null;
+  }>;
   signOut: () => Promise<void>;
   loading: boolean;
 }
