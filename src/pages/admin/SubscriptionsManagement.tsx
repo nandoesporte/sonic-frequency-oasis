@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from '@/components/ui/use-toast';
 
-// Simplify types to avoid circular references
+// Use simple flat types to avoid circular references
 interface Plan {
   id: string;
   name: string;
@@ -32,7 +32,7 @@ interface UserProfile {
   full_name: string | null;
 }
 
-interface Subscriber {
+interface Subscription {
   id: string;
   email: string;
   subscription_end: string;
@@ -46,21 +46,8 @@ interface Subscriber {
   plan: Plan | null;
 }
 
-// Raw data from database
-interface DbSubscriber {
-  id: string;
-  email: string;
-  subscription_end: string;
-  created_at: string;
-  last_payment_date: string | null;
-  subscribed: boolean;
-  updated_at: string;
-  user_id: string | null;
-  plan_id: string | null;
-}
-
 export const SubscriptionsManagement = () => {
-  const [subscriptions, setSubscriptions] = useState<Subscriber[]>([]);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(true);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [filterPlan, setFilterPlan] = useState('all');
@@ -78,75 +65,78 @@ export const SubscriptionsManagement = () => {
         if (plansError) throw plansError;
         setPlans(plansData || []);
         
-        // Fetch subscribers data with basic fields only
-        const query = supabase
+        // Fetch subscribers with basic query
+        const { data: subscribersData, error: subscribersError } = await supabase
           .from('subscribers')
-          .select('id, email, subscription_end, created_at, last_payment_date, subscribed, updated_at, user_id, plan_id')
+          .select('*')
           .eq('subscribed', true);
         
-        if (filterPlan !== 'all') {
-          query.eq('plan_id', filterPlan);
-        }
-        
-        const { data: subscribersData, error: subscribersError } = await query.order('subscription_end', { ascending: true });
-        
         if (subscribersError) throw subscribersError;
+        
         if (!subscribersData) {
           setSubscriptions([]);
+          setLoading(false);
           return;
         }
         
-        // Process subscribers data with additional fetches for related data
-        const processedSubscribers: Subscriber[] = [];
+        // Filter by plan if needed
+        let filteredSubscribers = subscribersData;
+        if (filterPlan !== 'all') {
+          filteredSubscribers = subscribersData.filter(sub => sub.plan_id === filterPlan);
+        }
         
-        for (const subscriber of subscribersData as DbSubscriber[]) {
+        // Prepare enhanced subscriptions array
+        const enhancedSubscriptions: Subscription[] = [];
+        
+        // Process each subscription to fetch related data
+        for (const subscription of filteredSubscribers) {
           let userProfile: UserProfile | null = null;
           let plan: Plan | null = null;
           
-          // Fetch related user profile if user_id exists
-          if (subscriber.user_id) {
+          // Fetch user profile if there's a user_id
+          if (subscription.user_id) {
             const { data: profileData } = await supabase
               .from('user_profiles')
               .select('id, full_name')
-              .eq('id', subscriber.user_id)
+              .eq('id', subscription.user_id)
               .single();
-              
+            
             if (profileData) {
               userProfile = {
                 id: profileData.id,
-                email: subscriber.email, // Use subscriber email as fallback
+                email: subscription.email,
                 full_name: profileData.full_name
               };
             }
           }
           
-          // Fetch plan details if plan_id exists
-          if (subscriber.plan_id) {
+          // Fetch plan if there's a plan_id
+          if (subscription.plan_id) {
             const { data: planData } = await supabase
               .from('subscription_plans')
               .select('id, name, price, interval')
-              .eq('id', subscriber.plan_id)
+              .eq('id', subscription.plan_id)
               .single();
-              
+            
             if (planData) {
-              plan = {
-                id: planData.id,
-                name: planData.name,
-                price: planData.price,
-                interval: planData.interval
-              };
+              plan = planData;
             }
           }
           
-          // Add processed subscriber
-          processedSubscribers.push({
-            ...subscriber,
+          // Add subscription with related data
+          enhancedSubscriptions.push({
+            ...subscription,
             userProfile,
             plan
           });
         }
         
-        setSubscriptions(processedSubscribers);
+        // Sort by subscription end date
+        enhancedSubscriptions.sort((a, b) => 
+          new Date(a.subscription_end).getTime() - new Date(b.subscription_end).getTime()
+        );
+        
+        setSubscriptions(enhancedSubscriptions);
       } catch (error) {
         console.error('Error loading subscriptions data:', error);
         toast({
