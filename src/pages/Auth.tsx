@@ -86,12 +86,12 @@ export default function Auth() {
         console.log('Attempting login for:', values.email);
         const result = await signIn(values.email, values.password);
         
-        if (result.user) {
+        if (result && result.user) {
           console.log('Login successful, redirecting to home');
           navigate('/', { replace: true });
         } else {
-          console.error('Login failed:', result.error);
-          setAuthError(result.error || 'Email ou senha incorretos.');
+          console.error('Login failed:', result?.error || 'Unknown error');
+          setAuthError(result?.error || 'Email ou senha incorretos.');
         }
       } else {
         // Type assertion to access fullName in the registration path
@@ -106,7 +106,7 @@ export default function Auth() {
         console.log('Attempting signup for:', values.email);
         const result = await signUp(values.email, values.password, registerValues.fullName);
         
-        if (result.user) {
+        if (result && result.user) {
           console.log('Signup successful, switching to login');
           setIsLogin(true);
           form.reset({
@@ -114,11 +114,11 @@ export default function Auth() {
             password: '',
           });
         } else {
-          console.error('Signup failed:', result.error);
-          setAuthError(result.error || 'Não foi possível criar sua conta. Tente novamente.');
+          console.error('Signup failed:', result?.error || 'Unknown error');
+          setAuthError(result?.error || 'Não foi possível criar sua conta. Tente novamente.');
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Authentication error:', error);
       setAuthError(
         isLogin 

@@ -1,4 +1,3 @@
-
 import { useParams, Link, Navigate } from "react-router-dom";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
@@ -9,7 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { toast } from "@/components/ui/sonner";
-import { useAuth } from "@/hooks";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Category = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,8 +18,8 @@ const Category = () => {
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
   
-  // Redirect to login if not authenticated
   if (!user) {
+    console.log("User not authenticated, redirecting to login");
     toast.error("Você precisa fazer login para acessar as frequências");
     return <Navigate to="/auth" replace />;
   }
