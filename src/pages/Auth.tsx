@@ -12,13 +12,22 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 
-const authSchema = z.object({
+// Define proper schema for login and registration
+const loginSchema = z.object({
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
-  fullName: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres').optional(),
 });
 
-type FormData = z.infer<typeof authSchema>;
+const registerSchema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
+  fullName: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres'),
+});
+
+// Use discriminated union type to handle different form modes
+type LoginFormData = z.infer<typeof loginSchema>;
+type RegisterFormData = z.infer<typeof registerSchema>;
+type FormData = LoginFormData | RegisterFormData;
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -30,19 +39,26 @@ export default function Auth() {
 
   console.log('Auth page rendered, user:', user, 'loading:', loading);
 
+  // Use the appropriate schema based on the current mode
+  const currentSchema = isLogin ? loginSchema : registerSchema;
+
   const form = useForm<FormData>({
-    resolver: zodResolver(authSchema),
+    resolver: zodResolver(currentSchema),
     defaultValues: {
       email: '',
       password: '',
-      fullName: '',
+      ...(isLogin ? {} : { fullName: '' }),
     },
   });
 
   // Reset form and error when switching between login and register
   useEffect(() => {
     setAuthError(null);
-    form.reset();
+    form.reset({
+      email: '',
+      password: '',
+      ...(isLogin ? {} : { fullName: '' }),
+    });
   }, [isLogin, form]);
 
   // Show loading state
@@ -78,14 +94,17 @@ export default function Auth() {
           setAuthError(result.error || 'Email ou senha incorretos.');
         }
       } else {
-        if (!values.fullName) {
+        // Type assertion to access fullName in the registration path
+        const registerValues = values as RegisterFormData;
+        
+        if (!registerValues.fullName) {
           setAuthError('Nome completo é obrigatório para criar conta.');
           setIsSubmitting(false);
           return;
         }
 
         console.log('Attempting signup for:', values.email);
-        const result = await signUp(values.email, values.password, values.fullName);
+        const result = await signUp(values.email, values.password, registerValues.fullName);
         
         if (result.user) {
           console.log('Signup successful, switching to login');
