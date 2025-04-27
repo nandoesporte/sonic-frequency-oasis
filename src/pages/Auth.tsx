@@ -24,6 +24,10 @@ const registerSchema = z.object({
   fullName: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres'),
 });
 
+// Define the form types to match the schemas
+type LoginFormValues = z.infer<typeof loginSchema>;
+type RegisterFormValues = z.infer<typeof registerSchema>;
+
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const { signIn, signUp, user, loading } = useAuth();
@@ -34,28 +38,33 @@ export default function Auth() {
 
   console.log('Auth page rendered, user:', user, 'loading:', loading);
 
-  // Use the appropriate schema based on the current mode
-  const formSchema = isLogin ? loginSchema : registerSchema;
-
-  // Initialize the form with the selected schema
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  // Use the appropriate form based on the current mode
+  const loginForm = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
-      ...(isLogin ? {} : { fullName: '' })
     },
   });
+
+  const registerForm = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      fullName: '',
+    },
+  });
+
+  // Get the current form based on mode
+  const form = isLogin ? loginForm : registerForm;
 
   // Reset form and error when switching between login and register
   useEffect(() => {
     setAuthError(null);
-    form.reset({
-      email: '',
-      password: '',
-      ...(isLogin ? {} : { fullName: '' })
-    });
-  }, [isLogin, form]);
+    loginForm.reset();
+    registerForm.reset();
+  }, [isLogin, loginForm, registerForm]);
 
   // Redirect if user is already logged in
   if (loading) {
@@ -72,15 +81,17 @@ export default function Auth() {
     return <Navigate to="/" replace />;
   }
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: LoginFormValues | RegisterFormValues) => {
     try {
       console.log('Form submitted:', values);
       setIsSubmitting(true);
       setAuthError(null);
 
       if (isLogin) {
-        console.log('Attempting login for:', values.email);
-        const result = await signIn(values.email, values.password);
+        // Login flow - we know this is LoginFormValues
+        const loginValues = values as LoginFormValues;
+        console.log('Attempting login for:', loginValues.email);
+        const result = await signIn(loginValues.email, loginValues.password);
         
         if (result.user) {
           console.log('Login successful, redirecting to home');
@@ -90,20 +101,23 @@ export default function Auth() {
           setAuthError(result.error || 'Email ou senha incorretos.');
         }
       } else {
-        if (!values.fullName) {
+        // Register flow - we know this is RegisterFormValues
+        const registerValues = values as RegisterFormValues;
+        
+        if (!registerValues.fullName) {
           setAuthError('Nome completo é obrigatório para criar conta.');
           setIsSubmitting(false);
           return;
         }
 
-        console.log('Attempting signup for:', values.email);
-        const result = await signUp(values.email, values.password, values.fullName);
+        console.log('Attempting signup for:', registerValues.email);
+        const result = await signUp(registerValues.email, registerValues.password, registerValues.fullName);
         
         if (result.user) {
           console.log('Signup successful, switching to login');
           setIsLogin(true);
-          form.reset({
-            email: values.email,
+          loginForm.reset({
+            email: registerValues.email,
             password: '',
           });
         } else {
@@ -150,7 +164,7 @@ export default function Auth() {
 
               {!isLogin && (
                 <FormField
-                  control={form.control}
+                  control={registerForm.control}
                   name="fullName"
                   render={({ field }) => (
                     <FormItem>
