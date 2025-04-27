@@ -89,17 +89,23 @@ export const SubscriptionsManagement = () => {
         // Safely transform the data to match our expected types
         const transformedData = (data || []).map(sub => {
           // Check if plan_id exists and has the expected structure
-          const planId = typeof sub.plan_id === 'object' && sub.plan_id !== null && 
-            'id' in sub.plan_id && 'name' in sub.plan_id && 
-            'price' in sub.plan_id && 'interval' in sub.plan_id
-            ? sub.plan_id as Plan
-            : null;
+          let planId = null;
+          if (sub.plan_id && typeof sub.plan_id === 'object') {
+            // Only cast if it has all the required fields
+            if ('id' in sub.plan_id && 'name' in sub.plan_id && 
+                'price' in sub.plan_id && 'interval' in sub.plan_id) {
+              planId = sub.plan_id as Plan;
+            }
+          }
           
           // Check if user_id exists and has the expected structure
-          const userId = typeof sub.user_id === 'object' && sub.user_id !== null && 
-            'id' in sub.user_id
-            ? sub.user_id as UserProfile
-            : null;
+          let userId = null;
+          if (sub.user_id && typeof sub.user_id === 'object') {
+            // Only cast if it has the required id field
+            if ('id' in sub.user_id) {
+              userId = sub.user_id as UserProfile;
+            }
+          }
             
           return {
             ...sub,
