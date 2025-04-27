@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { AudioPlayer } from "@/components/audio-player";
 import { CategoryCard } from "@/components/category-card";
@@ -6,11 +5,10 @@ import { FrequencyCard } from "@/components/frequency-card";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { AudioProvider } from "@/lib/audio-context";
-import { categories, getTrendingFrequencies } from "@/lib/data";
+import { categories, getTrendingFrequencies, FrequencyData } from "@/lib/data";
 import { ArrowRight, Crown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { FrequencyData } from "@/lib/audio-context";
 import { PricingSection } from "@/components/subscription/PricingSection";
 import { FrequencyRanges } from "@/components/home/FrequencyRanges";
 import { ScientificEvidence } from "@/components/home/ScientificEvidence";

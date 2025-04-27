@@ -1,7 +1,9 @@
+
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { toast } from '@/components/ui/sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePremium } from '@/hooks/use-premium';
+import { FrequencyData } from '@/lib/data';
 
 type AudioContextType = {
   isPlaying: boolean;

@@ -1,14 +1,12 @@
-
 import { useParams, Link } from "react-router-dom";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
 import { FrequencyCard } from "@/components/frequency-card";
 import { AudioProvider } from "@/lib/audio-context";
-import { getCategoryById, getFrequenciesByCategory } from "@/lib/data";
+import { getCategoryById, getFrequenciesByCategory, FrequencyData } from "@/lib/data";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { FrequencyData } from "@/lib/audio-context";
 
 const Category = () => {
   const { id } = useParams<{ id: string }>();
