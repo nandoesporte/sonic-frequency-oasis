@@ -24,10 +24,6 @@ const registerSchema = z.object({
   fullName: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres'),
 });
 
-// Define the form types to match the schemas
-type LoginFormValues = z.infer<typeof loginSchema>;
-type RegisterFormValues = z.infer<typeof registerSchema>;
-
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const { signIn, signUp, user, loading } = useAuth();
@@ -38,17 +34,12 @@ export default function Auth() {
 
   console.log('Auth page rendered, user:', user, 'loading:', loading);
 
-  // Use the appropriate form based on the current mode
-  const loginForm = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  });
+  // Use the appropriate schema based on the current mode
+  const formSchema = isLogin ? loginSchema : registerSchema;
 
-  const registerForm = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
+  // Initialize the form with the selected schema
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -59,9 +50,8 @@ export default function Auth() {
   // Reset form and error when switching between login and register
   useEffect(() => {
     setAuthError(null);
-    loginForm.reset();
-    registerForm.reset();
-  }, [isLogin, loginForm, registerForm]);
+    form.reset();
+  }, [isLogin, form]);
 
   // Redirect if user is already logged in
   if (loading) {
@@ -78,17 +68,15 @@ export default function Auth() {
     return <Navigate to="/" replace />;
   }
 
-  const onSubmit = async (values: LoginFormValues | RegisterFormValues) => {
+  const onSubmit = async (values: any) => {
     try {
       console.log('Form submitted:', values);
       setIsSubmitting(true);
       setAuthError(null);
 
       if (isLogin) {
-        // Login flow - we know this is LoginFormValues
-        const loginValues = values as LoginFormValues;
-        console.log('Attempting login for:', loginValues.email);
-        const result = await signIn(loginValues.email, loginValues.password);
+        console.log('Attempting login for:', values.email);
+        const result = await signIn(values.email, values.password);
         
         if (result.user) {
           console.log('Login successful, redirecting to home');
@@ -98,23 +86,20 @@ export default function Auth() {
           setAuthError(result.error || 'Email ou senha incorretos.');
         }
       } else {
-        // Register flow - we know this is RegisterFormValues
-        const registerValues = values as RegisterFormValues;
-        
-        if (!registerValues.fullName) {
+        if (!values.fullName) {
           setAuthError('Nome completo é obrigatório para criar conta.');
           setIsSubmitting(false);
           return;
         }
 
-        console.log('Attempting signup for:', registerValues.email);
-        const result = await signUp(registerValues.email, registerValues.password, registerValues.fullName);
+        console.log('Attempting signup for:', values.email);
+        const result = await signUp(values.email, values.password, values.fullName);
         
         if (result.user) {
           console.log('Signup successful, switching to login');
           setIsLogin(true);
-          loginForm.reset({
-            email: registerValues.email,
+          form.reset({
+            email: values.email,
             password: '',
           });
         } else {
@@ -149,8 +134,8 @@ export default function Auth() {
               : 'Preencha os dados abaixo para criar sua conta'}
           </CardDescription>
         </CardHeader>
-        <Form {...(isLogin ? loginForm : registerForm)}>
-          <form onSubmit={isLogin ? loginForm.handleSubmit(onSubmit) : registerForm.handleSubmit(onSubmit)}>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardContent className="space-y-4">
               {authError && (
                 <Alert variant="destructive">
@@ -161,7 +146,7 @@ export default function Auth() {
 
               {!isLogin && (
                 <FormField
-                  control={registerForm.control}
+                  control={form.control}
                   name="fullName"
                   render={({ field }) => (
                     <FormItem>
@@ -176,7 +161,7 @@ export default function Auth() {
               )}
 
               <FormField
-                control={isLogin ? loginForm.control : registerForm.control}
+                control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -195,7 +180,7 @@ export default function Auth() {
               />
 
               <FormField
-                control={isLogin ? loginForm.control : registerForm.control}
+                control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
