@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -17,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from '@/components/ui/use-toast';
 
-// Define simple types with no circular references
+// Define simple, flat types to avoid circular references
 interface Plan {
   id: string;
   name: string;
@@ -53,7 +54,7 @@ export const SubscriptionsManagement = () => {
     const loadData = async () => {
       setLoading(true);
       try {
-        // Load subscription plans
+        // Load subscription plans - this query is simple and doesn't need complex joins
         const { data: plansData, error: plansError } = await supabase
           .from('subscription_plans')
           .select('*')
@@ -62,10 +63,10 @@ export const SubscriptionsManagement = () => {
         if (plansError) throw plansError;
         setPlans(plansData || []);
         
-        // Fetch subscribers with a simpler approach to avoid deep type issues
+        // Fetch subscribers data
         const query = supabase
           .from('subscribers')
-          .select('*, user_id(id), plan_id(id, name, price, interval)')
+          .select('id, email, subscription_end, created_at, last_payment_date, subscribed, updated_at, user_id, plan_id')
           .eq('subscribed', true);
         
         if (filterPlan !== 'all') {
@@ -75,61 +76,68 @@ export const SubscriptionsManagement = () => {
         const { data: subscribersData, error } = await query.order('subscription_end', { ascending: true });
         
         if (error) throw error;
+        if (!subscribersData) {
+          setSubscriptions([]);
+          return;
+        }
         
-        // Now fetch user profiles in a separate query for subscribers that have a user_id
-        const userIds = subscribersData
-          .filter(sub => sub.user_id)
-          .map(sub => sub.user_id.id);
+        // Process subscribers data
+        const processedSubscribers: Subscriber[] = [];
         
-        // Only fetch user profiles if we have user IDs
-        let userProfiles: Record<string, { email: string | null, name: string | null }> = {};
-        
-        if (userIds.length > 0) {
-          const { data: profilesData, error: profilesError } = await supabase
-            .from('user_profiles')
-            .select('id, full_name')
-            .in('id', userIds);
+        for (const subscriber of subscribersData) {
+          // Fetch related user profile if user_id exists
+          let userProfile: UserProfile | null = null;
           
-          if (profilesError) throw profilesError;
+          if (subscriber.user_id) {
+            const { data: profileData } = await supabase
+              .from('user_profiles')
+              .select('id, full_name')
+              .eq('id', subscriber.user_id)
+              .single();
+              
+            if (profileData) {
+              userProfile = {
+                id: profileData.id,
+                email: subscriber.email, // Use subscriber email as fallback
+                name: profileData.full_name
+              };
+            }
+          }
           
-          // Create a lookup map for user profiles
-          profilesData?.forEach(profile => {
-            userProfiles[profile.id] = {
-              email: null, // We'll get this from auth later if needed
-              name: profile.full_name
-            };
+          // Fetch plan details if plan_id exists
+          let plan: Plan | null = null;
+          
+          if (subscriber.plan_id) {
+            const { data: planData } = await supabase
+              .from('subscription_plans')
+              .select('id, name, price, interval')
+              .eq('id', subscriber.plan_id)
+              .single();
+              
+            if (planData) {
+              plan = {
+                id: planData.id,
+                name: planData.name,
+                price: planData.price,
+                interval: planData.interval
+              };
+            }
+          }
+          
+          processedSubscribers.push({
+            id: subscriber.id,
+            email: subscriber.email,
+            subscription_end: subscriber.subscription_end,
+            created_at: subscriber.created_at,
+            last_payment_date: subscriber.last_payment_date,
+            subscribed: subscriber.subscribed,
+            updated_at: subscriber.updated_at,
+            user_id: userProfile,
+            plan_id: plan
           });
         }
         
-        // Transform the data into our simplified format
-        const transformedSubscribers: Subscriber[] = subscribersData.map(sub => {
-          const userProfile = sub.user_id ? {
-            id: sub.user_id.id,
-            email: sub.email, // Use the email from subscriber as fallback
-            name: userProfiles[sub.user_id.id]?.name || null
-          } : null;
-          
-          const plan = sub.plan_id ? {
-            id: sub.plan_id.id,
-            name: sub.plan_id.name,
-            price: sub.plan_id.price,
-            interval: sub.plan_id.interval
-          } : null;
-          
-          return {
-            id: sub.id,
-            email: sub.email,
-            subscription_end: sub.subscription_end,
-            created_at: sub.created_at,
-            last_payment_date: sub.last_payment_date,
-            subscribed: sub.subscribed,
-            updated_at: sub.updated_at,
-            user_id: userProfile,
-            plan_id: plan
-          };
-        });
-        
-        setSubscriptions(transformedSubscribers);
+        setSubscriptions(processedSubscribers);
       } catch (error) {
         console.error('Error loading subscriptions data:', error);
         toast({
