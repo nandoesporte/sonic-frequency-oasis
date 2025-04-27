@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from '@/components/ui/use-toast';
 
-// Fix: Break the circular reference by simplifying types
+// Simplify types to avoid circular references
 type Plan = {
   id: string;
   name: string;
@@ -26,21 +26,33 @@ type Plan = {
   interval: string;
 };
 
-// Define user profile without circular references
+// Define database user profile type
 type UserProfile = {
   id: string;
   email?: { email: string; }[];
   name?: { full_name: string; }[];
 };
 
-// Simplify subscriber type
+// Define subscriber type
 type Subscriber = {
   id: string;
   user_id: UserProfile | null;
   plan_id: Plan | null;
   email: string;
   subscription_end: string;
-  // Include other necessary fields without circular references
+  created_at: string;
+  last_payment_date: string | null;
+  subscribed: boolean;
+  updated_at: string;
+};
+
+// Define raw database response type
+type RawSubscriberData = {
+  id: string;
+  user_id: UserProfile | null;
+  plan_id: Plan | null;
+  email: string;
+  subscription_end: string;
   created_at: string;
   last_payment_date: string | null;
   subscribed: boolean;
@@ -93,32 +105,13 @@ export const SubscriptionsManagement = () => {
         
         if (error) throw error;
         
-        // Safely transform the data to match our expected types
-        const transformedData = (data || []).map(sub => {
-          // Check if plan_id exists and has the expected structure
-          let planId = null;
-          if (sub.plan_id && typeof sub.plan_id === 'object') {
-            // Only cast if it has all the required fields
-            if ('id' in sub.plan_id && 'name' in sub.plan_id && 
-                'price' in sub.plan_id && 'interval' in sub.plan_id) {
-              planId = sub.plan_id as Plan;
-            }
-          }
-          
-          // Check if user_id exists and has the expected structure
-          let userId = null;
-          if (sub.user_id && typeof sub.user_id === 'object') {
-            // Only cast if it has the required id field
-            if ('id' in sub.user_id) {
-              userId = sub.user_id as UserProfile;
-            }
-          }
-            
+        // Transform the data to match our expected types
+        const transformedData: Subscriber[] = (data || []).map((sub: RawSubscriberData) => {
           return {
             ...sub,
-            user_id: userId,
-            plan_id: planId
-          } as Subscriber;
+            user_id: sub.user_id || null,
+            plan_id: sub.plan_id || null,
+          };
         });
         
         setSubscriptions(transformedData);
