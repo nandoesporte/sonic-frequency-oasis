@@ -12,13 +12,17 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 
-const authSchema = z.object({
+// Define the form validation schema
+const loginSchema = z.object({
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
-  fullName: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres').optional(),
 });
 
-type FormData = z.infer<typeof authSchema>;
+const registerSchema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
+  fullName: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres'),
+});
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -30,8 +34,12 @@ export default function Auth() {
 
   console.log('Auth page rendered, user:', user, 'loading:', loading);
 
-  const form = useForm<FormData>({
-    resolver: zodResolver(authSchema),
+  // Use the appropriate schema based on the current mode
+  const formSchema = isLogin ? loginSchema : registerSchema;
+
+  // Initialize the form with the selected schema
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -45,7 +53,7 @@ export default function Auth() {
     form.reset();
   }, [isLogin, form]);
 
-  // Show loading state
+  // Redirect if user is already logged in
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -60,7 +68,7 @@ export default function Auth() {
     return <Navigate to="/" replace />;
   }
 
-  const onSubmit = async (values: FormData) => {
+  const onSubmit = async (values: any) => {
     try {
       console.log('Form submitted:', values);
       setIsSubmitting(true);
