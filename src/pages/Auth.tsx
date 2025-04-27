@@ -12,13 +12,21 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 
-const authSchema = z.object({
+// Define the form validation schema
+const loginSchema = z.object({
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
-  fullName: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres').optional(),
 });
 
-type FormData = z.infer<typeof authSchema>;
+const registerSchema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
+  fullName: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres'),
+});
+
+// Define the form types to match the schemas
+type LoginFormValues = z.infer<typeof loginSchema>;
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -30,8 +38,17 @@ export default function Auth() {
 
   console.log('Auth page rendered, user:', user, 'loading:', loading);
 
-  const form = useForm<FormData>({
-    resolver: zodResolver(authSchema),
+  // Use the appropriate form based on the current mode
+  const loginForm = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const registerForm = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -42,10 +59,11 @@ export default function Auth() {
   // Reset form and error when switching between login and register
   useEffect(() => {
     setAuthError(null);
-    form.reset();
-  }, [isLogin, form]);
+    loginForm.reset();
+    registerForm.reset();
+  }, [isLogin, loginForm, registerForm]);
 
-  // Show loading state
+  // Redirect if user is already logged in
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -60,15 +78,17 @@ export default function Auth() {
     return <Navigate to="/" replace />;
   }
 
-  const onSubmit = async (values: FormData) => {
+  const onSubmit = async (values: LoginFormValues | RegisterFormValues) => {
     try {
       console.log('Form submitted:', values);
       setIsSubmitting(true);
       setAuthError(null);
 
       if (isLogin) {
-        console.log('Attempting login for:', values.email);
-        const result = await signIn(values.email, values.password);
+        // Login flow - we know this is LoginFormValues
+        const loginValues = values as LoginFormValues;
+        console.log('Attempting login for:', loginValues.email);
+        const result = await signIn(loginValues.email, loginValues.password);
         
         if (result.user) {
           console.log('Login successful, redirecting to home');
@@ -78,20 +98,23 @@ export default function Auth() {
           setAuthError(result.error || 'Email ou senha incorretos.');
         }
       } else {
-        if (!values.fullName) {
+        // Register flow - we know this is RegisterFormValues
+        const registerValues = values as RegisterFormValues;
+        
+        if (!registerValues.fullName) {
           setAuthError('Nome completo é obrigatório para criar conta.');
           setIsSubmitting(false);
           return;
         }
 
-        console.log('Attempting signup for:', values.email);
-        const result = await signUp(values.email, values.password, values.fullName);
+        console.log('Attempting signup for:', registerValues.email);
+        const result = await signUp(registerValues.email, registerValues.password, registerValues.fullName);
         
         if (result.user) {
           console.log('Signup successful, switching to login');
           setIsLogin(true);
-          form.reset({
-            email: values.email,
+          loginForm.reset({
+            email: registerValues.email,
             password: '',
           });
         } else {
@@ -126,8 +149,8 @@ export default function Auth() {
               : 'Preencha os dados abaixo para criar sua conta'}
           </CardDescription>
         </CardHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+        <Form {...(isLogin ? loginForm : registerForm)}>
+          <form onSubmit={isLogin ? loginForm.handleSubmit(onSubmit) : registerForm.handleSubmit(onSubmit)}>
             <CardContent className="space-y-4">
               {authError && (
                 <Alert variant="destructive">
@@ -138,7 +161,7 @@ export default function Auth() {
 
               {!isLogin && (
                 <FormField
-                  control={form.control}
+                  control={registerForm.control}
                   name="fullName"
                   render={({ field }) => (
                     <FormItem>
@@ -153,7 +176,7 @@ export default function Auth() {
               )}
 
               <FormField
-                control={form.control}
+                control={isLogin ? loginForm.control : registerForm.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -172,7 +195,7 @@ export default function Auth() {
               />
 
               <FormField
-                control={form.control}
+                control={isLogin ? loginForm.control : registerForm.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
