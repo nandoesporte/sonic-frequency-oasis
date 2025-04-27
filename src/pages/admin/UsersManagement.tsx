@@ -47,6 +47,7 @@ export const UsersManagement = () => {
       
       const startIndex = (pageNumber - 1) * PAGE_SIZE;
       
+      // Fix: Remove the second argument from select()
       const { data, error, count } = await query
         .order('created_at', { ascending: false })
         .range(startIndex, startIndex + PAGE_SIZE - 1)

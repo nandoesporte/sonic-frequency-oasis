@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from '@/components/ui/use-toast';
 
-// Define types without circular references
+// Fix: Break the circular reference by simplifying types
 type Plan = {
   id: string;
   name: string;
@@ -26,18 +26,25 @@ type Plan = {
   interval: string;
 };
 
+// Define user profile without circular references
 type UserProfile = {
   id: string;
-  email: { email: string; }[];
-  name: { full_name: string; }[];
+  email?: { email: string; }[];
+  name?: { full_name: string; }[];
 };
 
+// Simplify subscriber type
 type Subscriber = {
   id: string;
   user_id: UserProfile | null;
   plan_id: Plan | null;
   email: string;
   subscription_end: string;
+  // Include other necessary fields without circular references
+  created_at: string;
+  last_payment_date: string | null;
+  subscribed: boolean;
+  updated_at: string;
 };
 
 export const SubscriptionsManagement = () => {
