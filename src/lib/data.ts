@@ -88,34 +88,44 @@ const categoryMapping: Record<string, ValidDatabaseCategory> = {
 };
 
 export async function getFrequenciesByCategory(categoryId: string): Promise<FrequencyData[]> {
-  // Map UI category to database category
-  const dbCategory = categoryMapping[categoryId];
-  
-  if (!dbCategory) {
-    console.error(`Invalid category: ${categoryId}`);
-    return [];
-  }
-  
-  const { data, error } = await supabase
-    .from('frequencies')
-    .select('*')
-    .eq('category', dbCategory)
-    .order('hz');
+  try {
+    // Map UI category to database category
+    const dbCategory = categoryMapping[categoryId];
+    
+    if (!dbCategory) {
+      console.error(`Invalid category: ${categoryId}`);
+      return [];
+    }
+    
+    const { data, error } = await supabase
+      .from('frequencies')
+      .select('*')
+      .eq('category', dbCategory)
+      .order('hz');
 
-  if (error) {
-    console.error('Error fetching frequencies:', error);
-    return [];
-  }
+    if (error) {
+      console.error('Error fetching frequencies:', error);
+      throw error;
+    }
 
-  return data.map(freq => ({
-    id: freq.id,
-    name: freq.name,
-    hz: freq.hz,
-    purpose: freq.purpose,
-    description: freq.description || freq.purpose, // Ensure description is never undefined
-    category: freq.category as string,
-    premium: freq.is_premium
-  }));
+    if (!data || data.length === 0) {
+      console.log(`No frequencies found for category: ${dbCategory}`);
+      return [];
+    }
+
+    return data.map(freq => ({
+      id: freq.id,
+      name: freq.name,
+      hz: freq.hz,
+      purpose: freq.purpose,
+      description: freq.description || freq.purpose, // Ensure description is never undefined
+      category: freq.category as string,
+      premium: freq.is_premium
+    }));
+  } catch (error) {
+    console.error('Error in getFrequenciesByCategory:', error);
+    throw error;
+  }
 }
 
 export async function getTrendingFrequencies(): Promise<FrequencyData[]> {

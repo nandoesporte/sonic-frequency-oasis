@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { toast } from '@/components/ui/sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -46,128 +47,174 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     return () => {
       if (oscillatorRef.current) {
-        oscillatorRef.current.stop();
-        oscillatorRef.current.disconnect();
+        try {
+          oscillatorRef.current.stop();
+          oscillatorRef.current.disconnect();
+        } catch (e) {
+          console.error('Error stopping oscillator:', e);
+        }
       }
       if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-        audioContextRef.current.close();
+        try {
+          audioContextRef.current.close();
+        } catch (e) {
+          console.error('Error closing audio context:', e);
+        }
       }
     };
   }, []);
 
   useEffect(() => {
-    const savedFavorites = localStorage.getItem('frequency-favorites');
-    if (savedFavorites) {
-      try {
+    try {
+      const savedFavorites = localStorage.getItem('frequency-favorites');
+      if (savedFavorites) {
         setFavorites(JSON.parse(savedFavorites));
-      } catch (e) {
-        console.error('Failed to parse favorites:', e);
       }
-    }
 
-    const savedHistory = localStorage.getItem('frequency-history');
-    if (savedHistory) {
-      try {
+      const savedHistory = localStorage.getItem('frequency-history');
+      if (savedHistory) {
         setHistory(JSON.parse(savedHistory));
-      } catch (e) {
-        console.error('Failed to parse history:', e);
       }
+    } catch (e) {
+      console.error('Failed to load data from localStorage:', e);
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('frequency-favorites', JSON.stringify(favorites));
+    try {
+      localStorage.setItem('frequency-favorites', JSON.stringify(favorites));
+    } catch (e) {
+      console.error('Failed to save favorites to localStorage:', e);
+    }
   }, [favorites]);
 
   useEffect(() => {
-    localStorage.setItem('frequency-history', JSON.stringify(history));
+    try {
+      localStorage.setItem('frequency-history', JSON.stringify(history));
+    } catch (e) {
+      console.error('Failed to save history to localStorage:', e);
+    }
   }, [history]);
 
   const play = (frequency: FrequencyData) => {
-    if (frequency.premium && !isPremium) {
-      toast.error("Esta frequência é exclusiva para usuários premium");
-      return;
-    }
-
-    if (!audioContextRef.current) {
-      try {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      } catch (e) {
-        console.error('Web Audio API is not supported in this browser.', e);
-        toast.error('Your browser does not support Web Audio API');
+    try {
+      if (frequency.premium && !isPremium) {
+        toast.error("Esta frequência é exclusiva para usuários premium");
         return;
       }
-    }
-    
-    const ctx = audioContextRef.current;
-    
-    if (oscillatorRef.current) {
-      const oldGain = gainNodeRef.current;
-      if (oldGain) {
-        oldGain.gain.setValueAtTime(oldGain.gain.value, ctx.currentTime);
-        oldGain.gain.linearRampToValueAtTime(0, ctx.currentTime + fadeTime);
-        setTimeout(() => {
-          oscillatorRef.current?.stop();
-          oscillatorRef.current?.disconnect();
-          oldGain.disconnect();
-        }, fadeTime * 1000);
-      } else {
-        oscillatorRef.current.stop();
-        oscillatorRef.current.disconnect();
+
+      if (!audioContextRef.current) {
+        try {
+          audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        } catch (e) {
+          console.error('Web Audio API is not supported in this browser.', e);
+          toast.error('Seu navegador não suporta Web Audio API');
+          return;
+        }
       }
+      
+      const ctx = audioContextRef.current;
+      
+      // Stop any current playing sound with a smooth fade out
+      if (oscillatorRef.current) {
+        const oldGain = gainNodeRef.current;
+        if (oldGain) {
+          oldGain.gain.setValueAtTime(oldGain.gain.value, ctx.currentTime);
+          oldGain.gain.linearRampToValueAtTime(0, ctx.currentTime + fadeTime);
+          setTimeout(() => {
+            if (oscillatorRef.current) {
+              try {
+                oscillatorRef.current.stop();
+                oscillatorRef.current.disconnect();
+              } catch (e) {
+                console.error('Error stopping oscillator:', e);
+              }
+            }
+            if (oldGain) oldGain.disconnect();
+          }, fadeTime * 1000);
+        } else {
+          try {
+            oscillatorRef.current.stop();
+            oscillatorRef.current.disconnect();
+          } catch (e) {
+            console.error('Error stopping oscillator:', e);
+          }
+        }
+      }
+      
+      // Create new oscillator and gain node
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(frequency.hz, ctx.currentTime);
+      
+      // Start with zero gain and fade in for a smooth start
+      gainNode.gain.setValueAtTime(0, ctx.currentTime);
+      gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + fadeTime);
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      
+      oscillator.start();
+      
+      oscillatorRef.current = oscillator;
+      gainNodeRef.current = gainNode;
+      
+      setIsPlaying(true);
+      setCurrentFrequency(frequency);
+      
+      // Add to history
+      setHistory(prev => {
+        const filtered = prev.filter(item => item.id !== frequency.id);
+        return [frequency, ...filtered].slice(0, 20);
+      });
+      
+      toast.success(`Tocando ${frequency.name} (${frequency.hz}Hz)`);
+    } catch (error) {
+      console.error('Error playing frequency:', error);
+      toast.error("Não foi possível reproduzir a frequência. Tente novamente.");
     }
-    
-    const oscillator = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-    
-    oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(frequency.hz, ctx.currentTime);
-    
-    gainNode.gain.setValueAtTime(0, ctx.currentTime);
-    gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + fadeTime);
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(ctx.destination);
-    
-    oscillator.start();
-    
-    oscillatorRef.current = oscillator;
-    gainNodeRef.current = gainNode;
-    
-    setIsPlaying(true);
-    setCurrentFrequency(frequency);
-    
-    setHistory(prev => {
-      const filtered = prev.filter(item => item.id !== frequency.id);
-      return [frequency, ...filtered].slice(0, 20);
-    });
   };
 
   const pause = () => {
-    if (oscillatorRef.current && gainNodeRef.current && audioContextRef.current) {
-      const currentTime = audioContextRef.current.currentTime;
-      gainNodeRef.current.gain.setValueAtTime(gainNodeRef.current.gain.value, currentTime);
-      gainNodeRef.current.gain.linearRampToValueAtTime(0, currentTime + fadeTime);
-      
-      setTimeout(() => {
-        if (oscillatorRef.current) {
-          oscillatorRef.current.stop();
-          oscillatorRef.current.disconnect();
-          oscillatorRef.current = null;
-        }
-        if (gainNodeRef.current) {
-          gainNodeRef.current.disconnect();
-          gainNodeRef.current = null;
-        }
-      }, fadeTime * 1000);
+    try {
+      if (oscillatorRef.current && gainNodeRef.current && audioContextRef.current) {
+        const currentTime = audioContextRef.current.currentTime;
+        gainNodeRef.current.gain.setValueAtTime(gainNodeRef.current.gain.value, currentTime);
+        gainNodeRef.current.gain.linearRampToValueAtTime(0, currentTime + fadeTime);
+        
+        setTimeout(() => {
+          if (oscillatorRef.current) {
+            try {
+              oscillatorRef.current.stop();
+              oscillatorRef.current.disconnect();
+              oscillatorRef.current = null;
+            } catch (e) {
+              console.error('Error stopping oscillator:', e);
+            }
+          }
+          if (gainNodeRef.current) {
+            gainNodeRef.current.disconnect();
+            gainNodeRef.current = null;
+          }
+        }, fadeTime * 1000);
+      }
+      setIsPlaying(false);
+    } catch (error) {
+      console.error('Error pausing frequency:', error);
+      setIsPlaying(false);
     }
-    setIsPlaying(false);
   };
 
   const updateVolume = (newVolume: number) => {
     setVolume(newVolume);
     if (gainNodeRef.current) {
-      gainNodeRef.current.gain.value = newVolume;
+      try {
+        gainNodeRef.current.gain.value = newVolume;
+      } catch (e) {
+        console.error('Error updating volume:', e);
+      }
     }
   };
 
@@ -176,22 +223,36 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       pause();
     } else if (currentFrequency) {
       play(currentFrequency);
+    } else {
+      toast.info("Selecione uma frequência para tocar");
     }
   };
 
   const addToFavorites = (frequency: FrequencyData) => {
-    if (!favorites.some(f => f.id === frequency.id)) {
-      setFavorites(prev => [...prev, frequency]);
-      toast.success(`Added ${frequency.name} to favorites`);
+    try {
+      if (!favorites.some(f => f.id === frequency.id)) {
+        setFavorites(prev => [...prev, frequency]);
+        toast.success(`${frequency.name} adicionada aos favoritos`);
+      } else {
+        toast.info("Esta frequência já está nos favoritos");
+      }
+    } catch (error) {
+      console.error('Error adding to favorites:', error);
+      toast.error("Não foi possível adicionar aos favoritos");
     }
   };
 
   const removeFromFavorites = (id: string) => {
-    setFavorites(prev => {
-      const newFavorites = prev.filter(f => f.id !== id);
-      return newFavorites;
-    });
-    toast.success('Removed from favorites');
+    try {
+      setFavorites(prev => {
+        const newFavorites = prev.filter(f => f.id !== id);
+        return newFavorites;
+      });
+      toast.success('Removido dos favoritos');
+    } catch (error) {
+      console.error('Error removing from favorites:', error);
+      toast.error("Não foi possível remover dos favoritos");
+    }
   };
 
   return (
