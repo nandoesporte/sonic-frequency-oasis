@@ -27,7 +27,8 @@ export function Header() {
   const navLinks = [
     { name: "Início", path: "/", icon: <Home className="w-4 h-4 mr-2" /> },
     { name: "Favoritos", path: "/favorites", icon: <Heart className="w-4 h-4 mr-2" /> },
-    { name: "Histórico", path: "/history", icon: <History className="w-4 h-4 mr-2" /> }
+    { name: "Histórico", path: "/history", icon: <History className="w-4 h-4 mr-2" /> },
+    { name: "Guia de Uso", path: "/guide", icon: <Book className="w-4 h-4 mr-2" /> }
   ];
 
   return (

@@ -46,6 +46,7 @@ const App = () => {
               <Route path="/premium" element={<Premium />} />
               <Route path="/trending" element={<Trending />} />
               <Route path="/payment" element={<Payment />} />
+              <Route path="/guide" element={<Guide />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
