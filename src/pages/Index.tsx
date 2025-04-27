@@ -1,12 +1,12 @@
-
 import { useEffect, useState } from 'react';
 import { AudioPlayer } from "@/components/audio-player";
+import { CategoryCard } from "@/components/category-card";
 import { FrequencyCard } from "@/components/frequency-card";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { AudioProvider } from "@/lib/audio-context";
-import { getTrendingFrequencies, FrequencyData } from "@/lib/data";
-import { ArrowRight } from "lucide-react";
+import { categories, getTrendingFrequencies, FrequencyData } from "@/lib/data";
+import { ArrowRight, Crown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { PricingSection } from "@/components/subscription/PricingSection";
@@ -33,7 +33,7 @@ const Index = () => {
       <div className="min-h-screen pb-24">
         <Header />
         
-        {/* Hero Section - More impactful with gradient and animation */}
+        {/* Hero Section */}
         <section className="pt-32 pb-12 px-4 bg-gradient-to-b from-purple-50/50 to-background dark:from-purple-900/10">
           <div className="container mx-auto text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 animate-fade-in">
@@ -93,6 +93,29 @@ const Index = () => {
             </div>
           </section>
         )}
+        
+        {/* Categories Section */}
+        <section className="py-12 px-4">
+          <div className="container mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">Categorias</h2>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {categories.map((category) => {
+                const CategoryIcon = category.icon;
+                return (
+                  <CategoryCard
+                    key={category.id}
+                    id={category.id}
+                    name={category.name}
+                    description={category.description}
+                    icon={<CategoryIcon className="h-6 w-6" />}
+                    requiresAuth={!user}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        </section>
         
         <AudioPlayer />
       </div>
