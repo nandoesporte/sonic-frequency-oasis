@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 
 const authSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -25,7 +25,10 @@ export default function Auth() {
   const { signIn, signUp, user, loading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+
+  console.log('Auth page rendered, user:', user, 'loading:', loading);
 
   const form = useForm<FormData>({
     resolver: zodResolver(authSchema),
@@ -59,6 +62,7 @@ export default function Auth() {
 
   const onSubmit = async (values: FormData) => {
     try {
+      console.log('Form submitted:', values);
       setIsSubmitting(true);
       setAuthError(null);
 
@@ -70,11 +74,13 @@ export default function Auth() {
           console.log('Login successful, redirecting to home');
           navigate('/', { replace: true });
         } else {
-          setAuthError('Email ou senha incorretos.');
+          console.error('Login failed:', result.error);
+          setAuthError(result.error || 'Email ou senha incorretos.');
         }
       } else {
         if (!values.fullName) {
           setAuthError('Nome completo é obrigatório para criar conta.');
+          setIsSubmitting(false);
           return;
         }
 
@@ -89,7 +95,8 @@ export default function Auth() {
             password: '',
           });
         } else {
-          setAuthError('Não foi possível criar sua conta. Tente novamente.');
+          console.error('Signup failed:', result.error);
+          setAuthError(result.error || 'Não foi possível criar sua conta. Tente novamente.');
         }
       }
     } catch (error) {
@@ -102,6 +109,10 @@ export default function Auth() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -167,12 +178,23 @@ export default function Auth() {
                   <FormItem>
                     <FormLabel>Senha</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="password" 
-                        placeholder="••••••" 
-                        autoComplete={isLogin ? "current-password" : "new-password"}
-                        {...field} 
-                      />
+                      <div className="relative">
+                        <Input 
+                          type={showPassword ? "text" : "password"}
+                          placeholder="••••••" 
+                          autoComplete={isLogin ? "current-password" : "new-password"}
+                          {...field} 
+                        />
+                        <Button 
+                          type="button"
+                          variant="ghost" 
+                          size="icon"
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                          onClick={togglePasswordVisibility}
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </Button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

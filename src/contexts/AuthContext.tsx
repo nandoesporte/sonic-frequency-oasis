@@ -11,10 +11,12 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{
     user: User | null;
     session: Session | null;
+    error?: string;
   }>;
   signUp: (email: string, password: string, fullName: string) => Promise<{
     user: User | null;
     session: Session | null;
+    error?: string;
   }>;
   signOut: () => Promise<void>;
   loading: boolean;
@@ -29,6 +31,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('AuthProvider initialized');
+    
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
@@ -67,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             : "Erro ao tentar fazer login. Tente novamente.",
           variant: "destructive",
         });
-        return { user: null, session: null };
+        return { user: null, session: null, error: error.message };
       }
 
       console.log('Login successful:', data.user?.email);
@@ -77,14 +81,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       return { user: data.user, session: data.session };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Unexpected login error:', error);
       toast({
         title: "Erro ao fazer login",
         description: "Ocorreu um erro inesperado. Tente novamente.",
         variant: "destructive",
       });
-      return { user: null, session: null };
+      return { user: null, session: null, error: error?.message };
     }
   };
 
@@ -108,7 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           description: "Não foi possível criar sua conta. Tente novamente.",
           variant: "destructive",
         });
-        return { user: null, session: null };
+        return { user: null, session: null, error: error.message };
       }
 
       console.log('Signup successful:', data.user?.email);
@@ -118,14 +122,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       return { user: data.user, session: data.session };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Unexpected signup error:', error);
       toast({
         title: "Erro ao criar conta",
         description: "Ocorreu um erro inesperado. Tente novamente.",
         variant: "destructive",
       });
-      return { user: null, session: null };
+      return { user: null, session: null, error: error?.message };
     }
   };
 
