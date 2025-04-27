@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,13 +11,12 @@ import Favorites from "./pages/Favorites";
 import History from "./pages/History";
 import Premium from "./pages/Premium";
 import NotFound from "./pages/NotFound";
-import { useEffect } from "react";
 import Trending from "./pages/Trending";
+import Payment from "./pages/Payment";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  // Initialize theme from localStorage or system preference
   useEffect(() => {
     const theme = localStorage.getItem("theme") || 
       (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
@@ -45,6 +43,8 @@ const App = () => {
               <Route path="/history" element={<History />} />
               <Route path="/premium" element={<Premium />} />
               <Route path="/trending" element={<Trending />} />
+              <Route path="/payment/success" element={<Payment />} />
+              <Route path="/payment/failure" element={<Payment />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
@@ -11,6 +10,7 @@ import { Crown } from "lucide-react";
 import { usePremium } from "@/hooks/use-premium";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
+import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 
 const PremiumContent = () => {
   const [frequencies, setFrequencies] = useState<FrequencyData[]>([]);
@@ -61,16 +61,15 @@ const PremiumContent = () => {
 
   if (!isPremium) {
     return (
-      <div className="container pt-32 pb-12 px-4 text-center">
-        <Crown className="w-12 h-12 mx-auto mb-4 text-primary" />
-        <h1 className="text-3xl md:text-4xl font-bold mb-4">Frequências Premium</h1>
-        <p className="text-muted-foreground mb-8">
-          Atualize para o plano premium para acessar frequências exclusivas
-        </p>
-        <Button>
-          <Crown className="mr-2 h-4 w-4" />
-          Obter Premium
-        </Button>
+      <div className="container pt-32 pb-12 px-4">
+        <div className="text-center mb-12">
+          <Crown className="w-12 h-12 mx-auto mb-4 text-primary" />
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">Frequências Premium</h1>
+          <p className="text-muted-foreground mb-8">
+            Escolha um plano e tenha acesso a todas as frequências premium
+          </p>
+        </div>
+        <SubscriptionPlans />
       </div>
     );
   }

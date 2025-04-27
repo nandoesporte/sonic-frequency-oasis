@@ -216,6 +216,42 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_history: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string
+          id: string
+          payment_id: string | null
+          payment_method: string | null
+          status: string
+          subscription_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          currency?: string
+          id?: string
+          payment_id?: string | null
+          payment_method?: string | null
+          status: string
+          subscription_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string
+          id?: string
+          payment_id?: string | null
+          payment_method?: string | null
+          status?: string
+          subscription_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       policies: {
         Row: {
           coverage_amount: string
@@ -516,6 +552,9 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          last_payment_date: string | null
+          mercado_pago_customer_id: string | null
+          mercado_pago_subscription_id: string | null
           stripe_customer_id: string | null
           subscribed: boolean
           subscription_end: string | null
@@ -527,6 +566,9 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          last_payment_date?: string | null
+          mercado_pago_customer_id?: string | null
+          mercado_pago_subscription_id?: string | null
           stripe_customer_id?: string | null
           subscribed?: boolean
           subscription_end?: string | null
@@ -538,12 +580,51 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          last_payment_date?: string | null
+          mercado_pago_customer_id?: string | null
+          mercado_pago_subscription_id?: string | null
           stripe_customer_id?: string | null
           subscribed?: boolean
           subscription_end?: string | null
           subscription_tier?: string | null
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      subscription_plans: {
+        Row: {
+          active: boolean
+          created_at: string | null
+          currency: string
+          description: string | null
+          id: string
+          interval: string
+          name: string
+          price: number
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          id?: string
+          interval?: string
+          name: string
+          price: number
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          id?: string
+          interval?: string
+          name?: string
+          price?: number
+          updated_at?: string | null
         }
         Relationships: []
       }
