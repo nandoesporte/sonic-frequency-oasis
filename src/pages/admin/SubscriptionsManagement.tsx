@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from '@/components/ui/use-toast';
 
-// Define simple, flat types to avoid circular references
+// Simplify types to avoid circular references
 interface Plan {
   id: string;
   name: string;
@@ -29,7 +29,7 @@ interface Plan {
 interface UserProfile {
   id: string;
   email: string | null;
-  name: string | null;
+  full_name: string | null;
 }
 
 interface Subscriber {
@@ -40,8 +40,23 @@ interface Subscriber {
   last_payment_date: string | null;
   subscribed: boolean;
   updated_at: string;
-  user_id: UserProfile | null;
-  plan_id: Plan | null;
+  user_id: string | null;
+  plan_id: string | null;
+  userProfile: UserProfile | null;
+  plan: Plan | null;
+}
+
+// Raw data from database
+interface DbSubscriber {
+  id: string;
+  email: string;
+  subscription_end: string;
+  created_at: string;
+  last_payment_date: string | null;
+  subscribed: boolean;
+  updated_at: string;
+  user_id: string | null;
+  plan_id: string | null;
 }
 
 export const SubscriptionsManagement = () => {
@@ -54,16 +69,16 @@ export const SubscriptionsManagement = () => {
     const loadData = async () => {
       setLoading(true);
       try {
-        // Load subscription plans - this query is simple and doesn't need complex joins
+        // Load subscription plans
         const { data: plansData, error: plansError } = await supabase
           .from('subscription_plans')
-          .select('*')
+          .select('id, name, price, interval')
           .order('price', { ascending: true });
         
         if (plansError) throw plansError;
         setPlans(plansData || []);
         
-        // Fetch subscribers data
+        // Fetch subscribers data with basic fields only
         const query = supabase
           .from('subscribers')
           .select('id, email, subscription_end, created_at, last_payment_date, subscribed, updated_at, user_id, plan_id')
@@ -73,21 +88,22 @@ export const SubscriptionsManagement = () => {
           query.eq('plan_id', filterPlan);
         }
         
-        const { data: subscribersData, error } = await query.order('subscription_end', { ascending: true });
+        const { data: subscribersData, error: subscribersError } = await query.order('subscription_end', { ascending: true });
         
-        if (error) throw error;
+        if (subscribersError) throw subscribersError;
         if (!subscribersData) {
           setSubscriptions([]);
           return;
         }
         
-        // Process subscribers data
+        // Process subscribers data with additional fetches for related data
         const processedSubscribers: Subscriber[] = [];
         
-        for (const subscriber of subscribersData) {
-          // Fetch related user profile if user_id exists
+        for (const subscriber of subscribersData as DbSubscriber[]) {
           let userProfile: UserProfile | null = null;
+          let plan: Plan | null = null;
           
+          // Fetch related user profile if user_id exists
           if (subscriber.user_id) {
             const { data: profileData } = await supabase
               .from('user_profiles')
@@ -99,14 +115,12 @@ export const SubscriptionsManagement = () => {
               userProfile = {
                 id: profileData.id,
                 email: subscriber.email, // Use subscriber email as fallback
-                name: profileData.full_name
+                full_name: profileData.full_name
               };
             }
           }
           
           // Fetch plan details if plan_id exists
-          let plan: Plan | null = null;
-          
           if (subscriber.plan_id) {
             const { data: planData } = await supabase
               .from('subscription_plans')
@@ -124,16 +138,11 @@ export const SubscriptionsManagement = () => {
             }
           }
           
+          // Add processed subscriber
           processedSubscribers.push({
-            id: subscriber.id,
-            email: subscriber.email,
-            subscription_end: subscriber.subscription_end,
-            created_at: subscriber.created_at,
-            last_payment_date: subscriber.last_payment_date,
-            subscribed: subscriber.subscribed,
-            updated_at: subscriber.updated_at,
-            user_id: userProfile,
-            plan_id: plan
+            ...subscriber,
+            userProfile,
+            plan
           });
         }
         
@@ -220,23 +229,23 @@ export const SubscriptionsManagement = () => {
                       return (
                         <TableRow key={subscription.id}>
                           <TableCell className="font-medium">
-                            {subscription.user_id?.name || 'N/A'}
+                            {subscription.userProfile?.full_name || 'N/A'}
                           </TableCell>
                           <TableCell>
-                            {subscription.user_id?.email || subscription.email || 'N/A'}
+                            {subscription.userProfile?.email || subscription.email || 'N/A'}
                           </TableCell>
                           <TableCell>
-                            {subscription.plan_id?.name || 'Plano Desconhecido'}
+                            {subscription.plan?.name || 'Plano Desconhecido'}
                           </TableCell>
                           <TableCell>
-                            {subscription.plan_id ? (
+                            {subscription.plan ? (
                               <div>
                                 {new Intl.NumberFormat('pt-BR', { 
                                   style: 'currency', 
                                   currency: 'BRL'
-                                }).format(subscription.plan_id.price)}
+                                }).format(subscription.plan.price)}
                                 <span className="text-xs text-muted-foreground ml-1">
-                                  /{subscription.plan_id.interval === 'month' ? 'mês' : 'ano'}
+                                  /{subscription.plan.interval === 'month' ? 'mês' : 'ano'}
                                 </span>
                               </div>
                             ) : 'N/A'}
