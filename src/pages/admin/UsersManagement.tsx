@@ -47,7 +47,7 @@ export const UsersManagement = () => {
       
       const startIndex = (pageNumber - 1) * PAGE_SIZE;
       
-      // Fix: Pass count: 'exact' as an option, not a separate argument
+      // Fix: Count exact needs to be in the options object
       const { data, error, count } = await query
         .order('created_at', { ascending: false })
         .range(startIndex, startIndex + PAGE_SIZE - 1)

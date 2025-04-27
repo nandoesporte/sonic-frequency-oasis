@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from '@/components/ui/use-toast';
 
-// Define simple flat types to avoid circular references
+// Define simple flat types without circular references
 type Plan = {
   id: string;
   name: string;
@@ -26,28 +26,14 @@ type Plan = {
   interval: string;
 };
 
-// Define simple user profile type
+// Simple user profile without circular references
 type UserProfile = {
   id: string;
-  email?: { email: string }[];
-  name?: { full_name: string }[];
+  email?: string;
+  name?: string;
 };
 
-// Simplified type for database response to prevent deep nesting
-type DbUserProfile = {
-  id: string;
-  email?: any[];
-  name?: any[];
-};
-
-type DbPlan = {
-  id: string;
-  name: string;
-  price: number;
-  interval: string;
-};
-
-// Define subscriber type with flat references
+// Define subscriber type that avoids deep nesting
 type Subscriber = {
   id: string;
   user_id: UserProfile | null;
@@ -58,20 +44,6 @@ type Subscriber = {
   last_payment_date: string | null;
   subscribed: boolean;
   updated_at: string;
-};
-
-// Define raw database response type
-type DbSubscriber = {
-  id: string;
-  user_id: DbUserProfile | null;
-  plan_id: DbPlan | null;
-  email: string;
-  subscription_end: string;
-  created_at: string;
-  last_payment_date: string | null;
-  subscribed: boolean;
-  updated_at: string;
-  [key: string]: any; // For additional properties
 };
 
 export const SubscriptionsManagement = () => {
@@ -120,22 +92,29 @@ export const SubscriptionsManagement = () => {
         
         if (error) throw error;
         
-        // Transform data to correct type - avoiding deep instantiation
-        const transformedData: Subscriber[] = (data || []).map((item: any) => {
-          return {
-            id: item.id,
-            email: item.email,
-            subscription_end: item.subscription_end,
-            created_at: item.created_at,
-            last_payment_date: item.last_payment_date,
-            subscribed: item.subscribed,
-            updated_at: item.updated_at,
-            // Safely handle potentially null or invalid user_id
-            user_id: item.user_id && typeof item.user_id === 'object' ? item.user_id : null,
-            // Safely handle potentially null or invalid plan_id
-            plan_id: item.plan_id && typeof item.plan_id === 'object' ? item.plan_id : null
-          };
-        });
+        // Transform database response into our simplified types to avoid deep nesting
+        const transformedData: Subscriber[] = (data || []).map((item: any) => ({
+          id: item.id,
+          email: item.email,
+          subscription_end: item.subscription_end,
+          created_at: item.created_at,
+          last_payment_date: item.last_payment_date,
+          subscribed: item.subscribed,
+          updated_at: item.updated_at,
+          // Extract user data safely
+          user_id: item.user_id ? {
+            id: item.user_id.id,
+            email: item.user_id.email?.[0]?.email,
+            name: item.user_id.name?.[0]?.full_name
+          } : null,
+          // Extract plan data safely
+          plan_id: item.plan_id ? {
+            id: item.plan_id.id,
+            name: item.plan_id.name,
+            price: item.plan_id.price,
+            interval: item.plan_id.interval
+          } : null
+        }));
         
         setSubscriptions(transformedData);
       } catch (error) {
@@ -220,10 +199,10 @@ export const SubscriptionsManagement = () => {
                       return (
                         <TableRow key={subscription.id}>
                           <TableCell className="font-medium">
-                            {subscription.user_id?.name?.[0]?.full_name || 'N/A'}
+                            {subscription.user_id?.name || 'N/A'}
                           </TableCell>
                           <TableCell>
-                            {subscription.user_id?.email?.[0]?.email || subscription.email || 'N/A'}
+                            {subscription.user_id?.email || subscription.email || 'N/A'}
                           </TableCell>
                           <TableCell>
                             {subscription.plan_id?.name || 'Plano Desconhecido'}
