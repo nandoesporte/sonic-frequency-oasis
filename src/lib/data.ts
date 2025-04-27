@@ -1,7 +1,5 @@
-
-import type { FrequencyData } from "./audio-context";
+import { Brain, Heart, Coffee, Zap, MoonStar, Music, Focus, Shield, Bell, Circle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Brain, Heart, Coffee, Zap, MoonStar, Music, Sparkles, Focus, Shield, Flower, AlertCircle, Pill, Stethoscope } from "lucide-react";
 
 export type Category = {
   id: string;
@@ -10,74 +8,69 @@ export type Category = {
   icon: any;
 }
 
-// Re-export as a type to fix the TS1205 error
 export type { FrequencyData };
 
 export const categories: Category[] = [
   {
-    id: "pain_relief",
-    name: "Alívio da Dor",
-    description: "Frequências para diversos tipos de controle da dor",
-    icon: Pill
-  },
-  {
-    id: "healing",
-    name: "Cura",
-    description: "Frequências para cura e regeneração geral",
-    icon: Heart
-  },
-  {
-    id: "relaxation",
-    name: "Relaxamento",
-    description: "Frequências para alívio do estresse e relaxamento",
+    id: "sleep_meditation",
+    name: "Sono e Meditação",
+    description: "Frequências para sono profundo e práticas meditativas",
     icon: MoonStar
   },
   {
+    id: "healing",
+    name: "Cura e Regeneração",
+    description: "Frequências para regeneração celular e cura física",
+    icon: Heart
+  },
+  {
     id: "emotional",
-    name: "Emocional",
-    description: "Equilibre estados emocionais e humor",
+    name: "Equilíbrio Emocional",
+    description: "Harmonização de estados emocionais e traumas",
     icon: Brain
   },
   {
-    id: "immune",
-    name: "Sistema Imunológico",
-    description: "Suporte para função do sistema imunológico",
-    icon: Shield
-  },
-  {
-    id: "detox",
-    name: "Desintoxicação",
-    description: "Apoio aos processos naturais de desintoxicação",
+    id: "pain_relief",
+    name: "Alívio da Dor",
+    description: "Frequências específicas para diferentes tipos de dor",
     icon: Zap
   },
   {
-    id: "wellness",
-    name: "Bem-Estar Geral",
-    description: "Frequências para saúde e bem-estar geral",
-    icon: Stethoscope
+    id: "cognitive",
+    name: "Função Cognitiva",
+    description: "Melhoria do foco, memória e aprendizado",
+    icon: Focus
   },
   {
-    id: "research",
-    name: "Pesquisa",
-    description: "Frequências experimentais e de pesquisa",
-    icon: Focus
+    id: "solfeggio",
+    name: "Solfeggio",
+    description: "Frequências sagradas para harmonização integral",
+    icon: Music
+  },
+  {
+    id: "spiritual",
+    name: "Espiritual",
+    description: "Despertar espiritual e expansão da consciência",
+    icon: Bell
+  },
+  {
+    id: "physical",
+    name: "Saúde Física",
+    description: "Suporte para funções corporais e imunidade",
+    icon: Shield
   }
 ];
 
-// Define valid database categories based on the error message
-type ValidDatabaseCategory = "healing" | "emotional" | "sleep" | "meditation" | 
-  "pain_relief" | "cognitive" | "solfeggio" | "spiritual" | "physical";
-
 // Map our UI categories to database categories
 const categoryMapping: Record<string, ValidDatabaseCategory> = {
-  "pain_relief": "pain_relief",
+  "sleep_meditation": "sleep",
   "healing": "healing",
-  "relaxation": "meditation", // Map to closest equivalent
   "emotional": "emotional",
-  "immune": "physical", // Map to closest equivalent
-  "detox": "physical", // Map to closest equivalent
-  "wellness": "physical", // Map to closest equivalent
-  "research": "cognitive" // Map to closest equivalent
+  "pain_relief": "pain_relief",
+  "cognitive": "cognitive",
+  "solfeggio": "solfeggio",
+  "spiritual": "spiritual",
+  "physical": "physical"
 };
 
 export async function getFrequenciesByCategory(categoryId: string): Promise<FrequencyData[]> {
@@ -166,4 +159,82 @@ export function getCategoryCount(categoryId: string): number {
   // We can't count from a non-existent array, so return a placeholder value
   // This should be replaced with a proper count from the database in a future update
   return 0;
+}
+
+export async function seedInitialFrequencies() {
+  const frequencies = [
+    {
+      hz: 1.5,
+      name: "Delta Profundo",
+      purpose: "Sono profundo e regeneração celular",
+      description: "Estímulo de ondas delta para sono profundo e regeneração celular",
+      category: "sleep"
+    },
+    {
+      hz: 3.5,
+      name: "Alívio da Dor Crônica",
+      purpose: "Redução da dor e alteração da consciência",
+      description: "Alívio de dor crônica e estados de consciência alterada",
+      category: "pain_relief"
+    },
+    {
+      hz: 7.83,
+      name: "Ressonância Schumann",
+      purpose: "Equilíbrio mental e redução da ansiedade",
+      description: "Frequência natural da Terra para equilíbrio e harmonia",
+      category: "meditation"
+    },
+    {
+      hz: 40,
+      name: "Integração Gamma",
+      purpose: "Melhoria cognitiva e consciência",
+      description: "Integração sensorial e estímulo da consciência",
+      category: "cognitive"
+    },
+    {
+      hz: 174,
+      name: "Solfeggio Fundamental",
+      purpose: "Alívio da dor e relaxamento",
+      description: "Primeira frequência Solfeggio para cura física",
+      category: "solfeggio"
+    },
+    {
+      hz: 432,
+      name: "Frequência Natural",
+      purpose: "Harmonização musical e emocional",
+      description: "Frequência harmônica natural para equilíbrio",
+      category: "spiritual"
+    },
+    {
+      hz: 528,
+      name: "Frequência do Amor",
+      purpose: "Regeneração celular e harmonia",
+      description: "Conhecida como frequência milagrosa do amor",
+      category: "solfeggio"
+    },
+    {
+      hz: 963,
+      name: "Despertar Pineal",
+      purpose: "Ativação espiritual",
+      description: "Frequência mais alta de Solfeggio para consciência cósmica",
+      category: "spiritual"
+    },
+    // Add more frequencies following the same pattern...
+  ];
+
+  for (const freq of frequencies) {
+    const { error } = await supabase
+      .from('frequencies')
+      .insert([
+        { 
+          ...freq,
+          is_premium: freq.hz >= 528 // Make higher frequencies premium
+        }
+      ])
+      .single();
+    
+    if (error && error.code !== '23505') { // Ignore duplicate key errors
+      console.error('Error seeding frequency:', error);
+    }
+  }
 }

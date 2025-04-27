@@ -7,42 +7,42 @@ export function FrequencyRanges() {
     {
       id: 1,
       icon: HeartPulse,
-      title: "1-50 Hz",
-      description: "Controle de humor, sono, dor e regeneração emocional através de batidas binaurais.",
+      title: "1-40 Hz",
+      description: "Ondas cerebrais para sono profundo, regeneração celular, relaxamento e foco.",
       color: "from-blue-500/20 to-purple-500/20"
     },
     {
       id: 2,
       icon: Speaker,
-      title: "100-1000 Hz",
-      description: "Efeitos profundos na estrutura energética e psicoemocional.",
+      title: "40-174 Hz",
+      description: "Frequências para dor, função imunológica e modulação de humor.",
       color: "from-purple-500/20 to-pink-500/20"
     },
     {
       id: 3,
       icon: Music,
       title: "174-963 Hz",
-      description: "Escala Solfeggio para meditações e terapias vibracionais.",
+      description: "Escala Solfeggio completa para harmonização física, emocional e espiritual.",
       color: "from-pink-500/20 to-orange-500/20"
     },
     {
       id: 4,
       icon: Waves,
       title: "+1000 Hz",
-      description: "Áudio de estimulação energética e terapia vibracional experimental.",
+      description: "Frequências avançadas para regeneração profunda e harmonização energética.",
       color: "from-orange-500/20 to-yellow-500/20"
     }
   ];
 
   return (
-    <section className="py-16 px-4">
+    <section className="py-16 px-4 bg-gradient-to-b from-background to-purple-50/10">
       <div className="container mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Faixas de <span className="text-primary">Frequência</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Cada faixa de frequência tem benefícios específicos para seu bem-estar
+            Cada faixa de frequência tem benefícios específicos comprovados cientificamente
           </p>
         </div>
 
@@ -52,9 +52,9 @@ export function FrequencyRanges() {
             return (
               <Card 
                 key={range.id} 
-                className="hover-scale overflow-hidden relative"
+                className="hover-scale overflow-hidden relative group"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${range.color} opacity-10`} />
+                <div className={`absolute inset-0 bg-gradient-to-br ${range.color} opacity-10 group-hover:opacity-20 transition-opacity`} />
                 <CardHeader>
                   <Icon className="h-10 w-10 text-primary mb-2" />
                   <CardTitle>{range.title}</CardTitle>
