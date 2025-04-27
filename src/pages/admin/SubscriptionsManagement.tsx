@@ -29,8 +29,22 @@ type Plan = {
 // Define simple user profile type
 type UserProfile = {
   id: string;
-  email?: { email: string; }[];
-  name?: { full_name: string; }[];
+  email?: { email: string }[];
+  name?: { full_name: string }[];
+};
+
+// Simplified type for database response to prevent deep nesting
+type DbUserProfile = {
+  id: string;
+  email?: any[];
+  name?: any[];
+};
+
+type DbPlan = {
+  id: string;
+  name: string;
+  price: number;
+  interval: string;
 };
 
 // Define subscriber type with flat references
@@ -49,8 +63,8 @@ type Subscriber = {
 // Define raw database response type
 type DbSubscriber = {
   id: string;
-  user_id: any;
-  plan_id: any;
+  user_id: DbUserProfile | null;
+  plan_id: DbPlan | null;
   email: string;
   subscription_end: string;
   created_at: string;
@@ -106,8 +120,8 @@ export const SubscriptionsManagement = () => {
         
         if (error) throw error;
         
-        // Transform data to correct type
-        const transformedData: Subscriber[] = (data || []).map((item: DbSubscriber) => {
+        // Transform data to correct type - avoiding deep instantiation
+        const transformedData: Subscriber[] = (data || []).map((item: any) => {
           return {
             id: item.id,
             email: item.email,

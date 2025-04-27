@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -46,6 +47,7 @@ export const UsersManagement = () => {
       
       const startIndex = (pageNumber - 1) * PAGE_SIZE;
       
+      // Fix: Pass count: 'exact' as an option, not a separate argument
       const { data, error, count } = await query
         .order('created_at', { ascending: false })
         .range(startIndex, startIndex + PAGE_SIZE - 1)
