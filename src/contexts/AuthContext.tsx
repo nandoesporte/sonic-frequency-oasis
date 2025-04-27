@@ -147,16 +147,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-
+      console.log('Attempting to sign out');
+      // First clear local state
+      setUser(null);
+      setSession(null);
       setIsAdmin(false);
+      
+      // Then call Supabase signOut
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('Error during signout:', error);
+        throw error;
+      }
+      
+      console.log('Sign out successful');
       
       toast({
         title: "Logout realizado",
         description: "Você foi desconectado com sucesso.",
       });
-      navigate('/auth');
+      
+      // Navigate after state is cleared to prevent redirect loops
+      setTimeout(() => {
+        navigate('/auth');
+      }, 100);
+      
     } catch (error) {
       console.error('Signout error:', error);
       toast({
