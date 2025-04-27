@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { getSubscribedUsers } from '@/contexts/admin-utils';
 import { 
   Table, TableHeader, TableBody, TableHead, 
   TableRow, TableCell
@@ -19,10 +18,33 @@ import {
 } from "@/components/ui/select";
 import { toast } from '@/components/ui/use-toast';
 
+type Plan = {
+  id: string;
+  name: string;
+  price: number;
+  interval: string;
+};
+
+type Subscriber = {
+  id: string;
+  user_id: {
+    id: string;
+    email: {
+      email: string;
+    }[];
+    name: {
+      full_name: string;
+    }[];
+  };
+  plan_id: Plan;
+  email: string;
+  subscription_end: string;
+};
+
 export const SubscriptionsManagement = () => {
-  const [subscriptions, setSubscriptions] = useState<any[]>([]);
+  const [subscriptions, setSubscriptions] = useState<Subscriber[]>([]);
   const [loading, setLoading] = useState(true);
-  const [plans, setPlans] = useState<any[]>([]);
+  const [plans, setPlans] = useState<Plan[]>([]);
   const [filterPlan, setFilterPlan] = useState('all');
   
   useEffect(() => {

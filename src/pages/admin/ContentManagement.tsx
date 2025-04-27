@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 import { 
   Table, TableHeader, TableBody, TableHead, 
   TableRow, TableCell
@@ -32,6 +33,9 @@ import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 
+// Define the FrequencyCategory type based on the database enum
+type FrequencyCategory = Database['public']['Enums']['frequency_category'];
+
 export const ContentManagement = () => {
   const [frequencies, setFrequencies] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -45,7 +49,7 @@ export const ContentManagement = () => {
     hz: '',
     description: '',
     purpose: '',
-    category: '',
+    category: '' as FrequencyCategory,
     is_premium: false
   });
   
@@ -100,7 +104,7 @@ export const ContentManagement = () => {
       hz: '',
       description: '',
       purpose: '',
-      category: '',
+      category: '' as FrequencyCategory,
       is_premium: false
     });
   };
@@ -112,7 +116,7 @@ export const ContentManagement = () => {
       hz: frequency.hz ? String(frequency.hz) : '',
       description: frequency.description || '',
       purpose: frequency.purpose || '',
-      category: frequency.category || '',
+      category: frequency.category as FrequencyCategory,
       is_premium: Boolean(frequency.is_premium)
     });
     setIsEditDialogOpen(true);
@@ -125,6 +129,16 @@ export const ContentManagement = () => {
   
   const handleAddFrequency = async () => {
     try {
+      // Validate that category is a valid FrequencyCategory
+      if (!isValidFrequencyCategory(formData.category)) {
+        toast({
+          title: "Categoria inválida",
+          description: "Por favor, selecione uma categoria válida.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const { data, error } = await supabase
         .from('frequencies')
         .insert({
@@ -161,6 +175,16 @@ export const ContentManagement = () => {
     if (!currentFrequency) return;
     
     try {
+      // Validate that category is a valid FrequencyCategory
+      if (!isValidFrequencyCategory(formData.category)) {
+        toast({
+          title: "Categoria inválida",
+          description: "Por favor, selecione uma categoria válida.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const { error } = await supabase
         .from('frequencies')
         .update({
@@ -191,6 +215,22 @@ export const ContentManagement = () => {
         variant: "destructive",
       });
     }
+  };
+
+  // Function to validate if a string is a valid FrequencyCategory
+  const isValidFrequencyCategory = (category: string): category is FrequencyCategory => {
+    const validCategories = [
+      'sleep', 
+      'healing', 
+      'meditation', 
+      'pain_relief', 
+      'emotional', 
+      'cognitive', 
+      'solfeggio', 
+      'spiritual', 
+      'physical'
+    ];
+    return validCategories.includes(category as FrequencyCategory);
   };
   
   const handleDeleteFrequency = async () => {
@@ -351,16 +391,24 @@ export const ContentManagement = () => {
             
             <div className="space-y-2">
               <Label htmlFor="category">Categoria</Label>
-              <Select name="category" value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
+              <Select 
+                name="category"
+                value={formData.category} 
+                onValueChange={(value) => setFormData(prev => ({ ...prev, category: value as FrequencyCategory }))}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione uma categoria" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map(category => (
-                    <SelectItem key={category.id} value={category.type}>
-                      {category.title}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="sleep">Sono</SelectItem>
+                  <SelectItem value="healing">Cura</SelectItem>
+                  <SelectItem value="meditation">Meditação</SelectItem>
+                  <SelectItem value="pain_relief">Alívio de Dor</SelectItem>
+                  <SelectItem value="emotional">Emocional</SelectItem>
+                  <SelectItem value="cognitive">Cognitivo</SelectItem>
+                  <SelectItem value="solfeggio">Solfeggio</SelectItem>
+                  <SelectItem value="spiritual">Espiritual</SelectItem>
+                  <SelectItem value="physical">Física</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -445,16 +493,24 @@ export const ContentManagement = () => {
             
             <div className="space-y-2">
               <Label htmlFor="edit-category">Categoria</Label>
-              <Select name="category" value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
+              <Select 
+                name="category" 
+                value={formData.category} 
+                onValueChange={(value) => setFormData(prev => ({ ...prev, category: value as FrequencyCategory }))}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione uma categoria" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map(category => (
-                    <SelectItem key={category.id} value={category.type}>
-                      {category.title}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="sleep">Sono</SelectItem>
+                  <SelectItem value="healing">Cura</SelectItem>
+                  <SelectItem value="meditation">Meditação</SelectItem>
+                  <SelectItem value="pain_relief">Alívio de Dor</SelectItem>
+                  <SelectItem value="emotional">Emocional</SelectItem>
+                  <SelectItem value="cognitive">Cognitivo</SelectItem>
+                  <SelectItem value="solfeggio">Solfeggio</SelectItem>
+                  <SelectItem value="spiritual">Espiritual</SelectItem>
+                  <SelectItem value="physical">Física</SelectItem>
                 </SelectContent>
               </Select>
             </div>
