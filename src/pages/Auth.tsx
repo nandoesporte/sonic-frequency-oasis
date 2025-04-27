@@ -43,14 +43,18 @@ export default function Auth() {
     defaultValues: {
       email: '',
       password: '',
-      fullName: '',
+      ...(isLogin ? {} : { fullName: '' })
     },
   });
 
   // Reset form and error when switching between login and register
   useEffect(() => {
     setAuthError(null);
-    form.reset();
+    form.reset({
+      email: '',
+      password: '',
+      ...(isLogin ? {} : { fullName: '' })
+    });
   }, [isLogin, form]);
 
   // Redirect if user is already logged in
