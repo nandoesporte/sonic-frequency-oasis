@@ -28,20 +28,42 @@ interface Plan {
 
 interface UserProfile {
   id: string;
-  email?: string | null;
-  name?: string | null;
+  email: string | null;
+  name: string | null;
 }
 
 interface Subscriber {
   id: string;
-  user_id: UserProfile | null;
-  plan_id: Plan | null;
   email: string;
   subscription_end: string;
   created_at: string;
   last_payment_date: string | null;
   subscribed: boolean;
   updated_at: string;
+  user_id: UserProfile | null;
+  plan_id: Plan | null;
+}
+
+// Type for raw data from Supabase
+interface RawSubscriberData {
+  id: string;
+  email: string;
+  subscription_end: string;
+  created_at: string;
+  last_payment_date: string | null;
+  subscribed: boolean;
+  updated_at: string;
+  user_id: {
+    id: string;
+    email?: Array<{email: string}> | null;
+    name?: Array<{full_name: string}> | null;
+  } | null;
+  plan_id: {
+    id: string;
+    name: string;
+    price: number;
+    interval: string;
+  } | null;
 }
 
 export const SubscriptionsManagement = () => {
@@ -90,8 +112,8 @@ export const SubscriptionsManagement = () => {
         
         if (error) throw error;
         
-        // Transform the database response to simpler types to avoid deep nesting
-        const transformedData = (data || []).map((item: any) => {
+        // Transform the database response to simpler types
+        const transformedData = (data || []).map((item: RawSubscriberData) => {
           const subscriber: Subscriber = {
             id: item.id,
             email: item.email,
@@ -108,8 +130,8 @@ export const SubscriptionsManagement = () => {
           if (item.user_id) {
             subscriber.user_id = {
               id: item.user_id.id,
-              email: item.user_id.email?.[0]?.email,
-              name: item.user_id.name?.[0]?.full_name
+              email: item.user_id.email?.[0]?.email || null,
+              name: item.user_id.name?.[0]?.full_name || null
             };
           }
           
