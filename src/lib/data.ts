@@ -1,5 +1,7 @@
+
 import { Brain, Heart, Coffee, Zap, MoonStar, Music, Focus, Shield, Bell, Circle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 
 export type Category = {
   id: string;
@@ -8,7 +10,20 @@ export type Category = {
   icon: any;
 }
 
-export type { FrequencyData };
+// Define the type based on the Supabase database enum
+export type ValidDatabaseCategory = Database["public"]["Enums"]["frequency_category"];
+
+// Define the FrequencyData type
+export type FrequencyData = {
+  id: string;
+  name: string;
+  hz: number;
+  purpose: string;
+  description?: string;
+  category: string;
+  premium: boolean;
+  trending?: boolean;
+};
 
 export const categories: Category[] = [
   {
@@ -168,56 +183,56 @@ export async function seedInitialFrequencies() {
       name: "Delta Profundo",
       purpose: "Sono profundo e regeneração celular",
       description: "Estímulo de ondas delta para sono profundo e regeneração celular",
-      category: "sleep"
+      category: "sleep" as ValidDatabaseCategory
     },
     {
       hz: 3.5,
       name: "Alívio da Dor Crônica",
       purpose: "Redução da dor e alteração da consciência",
       description: "Alívio de dor crônica e estados de consciência alterada",
-      category: "pain_relief"
+      category: "pain_relief" as ValidDatabaseCategory
     },
     {
       hz: 7.83,
       name: "Ressonância Schumann",
       purpose: "Equilíbrio mental e redução da ansiedade",
       description: "Frequência natural da Terra para equilíbrio e harmonia",
-      category: "meditation"
+      category: "meditation" as ValidDatabaseCategory
     },
     {
       hz: 40,
       name: "Integração Gamma",
       purpose: "Melhoria cognitiva e consciência",
       description: "Integração sensorial e estímulo da consciência",
-      category: "cognitive"
+      category: "cognitive" as ValidDatabaseCategory
     },
     {
       hz: 174,
       name: "Solfeggio Fundamental",
       purpose: "Alívio da dor e relaxamento",
       description: "Primeira frequência Solfeggio para cura física",
-      category: "solfeggio"
+      category: "solfeggio" as ValidDatabaseCategory
     },
     {
       hz: 432,
       name: "Frequência Natural",
       purpose: "Harmonização musical e emocional",
       description: "Frequência harmônica natural para equilíbrio",
-      category: "spiritual"
+      category: "spiritual" as ValidDatabaseCategory
     },
     {
       hz: 528,
       name: "Frequência do Amor",
       purpose: "Regeneração celular e harmonia",
       description: "Conhecida como frequência milagrosa do amor",
-      category: "solfeggio"
+      category: "solfeggio" as ValidDatabaseCategory
     },
     {
       hz: 963,
       name: "Despertar Pineal",
       purpose: "Ativação espiritual",
       description: "Frequência mais alta de Solfeggio para consciência cósmica",
-      category: "spiritual"
+      category: "spiritual" as ValidDatabaseCategory
     },
     // Add more frequencies following the same pattern...
   ];
@@ -230,8 +245,7 @@ export async function seedInitialFrequencies() {
           ...freq,
           is_premium: freq.hz >= 528 // Make higher frequencies premium
         }
-      ])
-      .single();
+      ]);
     
     if (error && error.code !== '23505') { // Ignore duplicate key errors
       console.error('Error seeding frequency:', error);
