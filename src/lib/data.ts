@@ -169,10 +169,21 @@ export function getCategoryById(id: string): Category | undefined {
   return categories.find(cat => cat.id === id);
 }
 
-export function getCategoryCount(categoryId: string): number {
-  // We can't count from a non-existent array, so return a placeholder value
-  // This should be replaced with a proper count from the database in a future update
-  return 0;
+export async function getCategoryCount(categoryId: string): Promise<number> {
+  const dbCategory = categoryMapping[categoryId];
+  if (!dbCategory) return 0;
+  
+  const { count, error } = await supabase
+    .from('frequencies')
+    .select('*', { count: 'exact', head: true })
+    .eq('category', dbCategory);
+    
+  if (error) {
+    console.error('Error getting category count:', error);
+    return 0;
+  }
+  
+  return count || 0;
 }
 
 export async function seedInitialFrequencies() {
