@@ -41,6 +41,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
 
+  const fadeTime = 0.1; // 100ms fade time
+
   useEffect(() => {
     return () => {
       if (oscillatorRef.current) {
@@ -97,19 +99,32 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     }
     
+    const ctx = audioContextRef.current;
+    
     if (oscillatorRef.current) {
-      oscillatorRef.current.stop();
-      oscillatorRef.current.disconnect();
+      const oldGain = gainNodeRef.current;
+      if (oldGain) {
+        oldGain.gain.setValueAtTime(oldGain.gain.value, ctx.currentTime);
+        oldGain.gain.linearRampToValueAtTime(0, ctx.currentTime + fadeTime);
+        setTimeout(() => {
+          oscillatorRef.current?.stop();
+          oscillatorRef.current?.disconnect();
+          oldGain.disconnect();
+        }, fadeTime * 1000);
+      } else {
+        oscillatorRef.current.stop();
+        oscillatorRef.current.disconnect();
+      }
     }
     
-    const ctx = audioContextRef.current;
     const oscillator = ctx.createOscillator();
     const gainNode = ctx.createGain();
     
     oscillator.type = 'sine';
     oscillator.frequency.setValueAtTime(frequency.hz, ctx.currentTime);
     
-    gainNode.gain.value = volume;
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + fadeTime);
     
     oscillator.connect(gainNode);
     gainNode.connect(ctx.destination);
@@ -129,10 +144,22 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const pause = () => {
-    if (oscillatorRef.current) {
-      oscillatorRef.current.stop();
-      oscillatorRef.current.disconnect();
-      oscillatorRef.current = null;
+    if (oscillatorRef.current && gainNodeRef.current && audioContextRef.current) {
+      const currentTime = audioContextRef.current.currentTime;
+      gainNodeRef.current.gain.setValueAtTime(gainNodeRef.current.gain.value, currentTime);
+      gainNodeRef.current.gain.linearRampToValueAtTime(0, currentTime + fadeTime);
+      
+      setTimeout(() => {
+        if (oscillatorRef.current) {
+          oscillatorRef.current.stop();
+          oscillatorRef.current.disconnect();
+          oscillatorRef.current = null;
+        }
+        if (gainNodeRef.current) {
+          gainNodeRef.current.disconnect();
+          gainNodeRef.current = null;
+        }
+      }, fadeTime * 1000);
     }
     setIsPlaying(false);
   };
