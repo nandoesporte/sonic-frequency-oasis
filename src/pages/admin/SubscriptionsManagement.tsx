@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from '@/components/ui/use-toast';
+import { Database } from '@/integrations/supabase/types';
 
 type Plan = {
   id: string;
@@ -25,17 +26,15 @@ type Plan = {
   interval: string;
 };
 
+type UserProfile = {
+  id: string;
+  email: { email: string; }[];
+  name: { full_name: string; }[];
+};
+
 type Subscriber = {
   id: string;
-  user_id: {
-    id: string;
-    email: {
-      email: string;
-    }[];
-    name: {
-      full_name: string;
-    }[];
-  };
+  user_id: UserProfile | null;
   plan_id: Plan;
   email: string;
   subscription_end: string;
@@ -86,7 +85,15 @@ export const SubscriptionsManagement = () => {
         const { data, error } = await query.order('subscription_end', { ascending: true });
         
         if (error) throw error;
-        setSubscriptions(data || []);
+        
+        // Transform the data to match our expected types
+        const transformedData = (data || []).map(sub => ({
+          ...sub,
+          user_id: sub.user_id || null,
+          plan_id: sub.plan_id as Plan
+        }));
+        
+        setSubscriptions(transformedData as Subscriber[]);
       } catch (error) {
         console.error('Error loading subscriptions data:', error);
         toast({
