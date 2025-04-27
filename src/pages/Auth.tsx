@@ -56,9 +56,6 @@ export default function Auth() {
     },
   });
 
-  // Get the current form based on mode
-  const form = isLogin ? loginForm : registerForm;
-
   // Reset form and error when switching between login and register
   useEffect(() => {
     setAuthError(null);
@@ -152,8 +149,8 @@ export default function Auth() {
               : 'Preencha os dados abaixo para criar sua conta'}
           </CardDescription>
         </CardHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+        <Form {...(isLogin ? loginForm : registerForm)}>
+          <form onSubmit={isLogin ? loginForm.handleSubmit(onSubmit) : registerForm.handleSubmit(onSubmit)}>
             <CardContent className="space-y-4">
               {authError && (
                 <Alert variant="destructive">
@@ -179,7 +176,7 @@ export default function Auth() {
               )}
 
               <FormField
-                control={form.control}
+                control={isLogin ? loginForm.control : registerForm.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -198,7 +195,7 @@ export default function Auth() {
               />
 
               <FormField
-                control={form.control}
+                control={isLogin ? loginForm.control : registerForm.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
