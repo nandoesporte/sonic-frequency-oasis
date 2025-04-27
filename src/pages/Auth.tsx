@@ -65,15 +65,20 @@ export default function Auth() {
       setAuthError(null);
       
       if (isLogin) {
-        const data = await signIn(values.email, values.password);
-        if (data.user) {
+        console.log("Iniciando login para:", values.email);
+        const response = await signIn(values.email, values.password);
+        console.log("Resposta do login:", response);
+        if (response.user) {
+          console.log("Login bem-sucedido, redirecionando...");
           navigate('/');
         }
       } else {
         if (values.fullName) {
-          const data = await signUp(values.email, values.password, values.fullName);
-          if (data.user) {
-            // Após o registro bem-sucedido, vamos alternar para o login
+          console.log("Iniciando registro para:", values.email);
+          const response = await signUp(values.email, values.password, values.fullName);
+          console.log("Resposta do registro:", response);
+          if (response.user) {
+            console.log("Registro bem-sucedido, alternando para login");
             setIsLogin(true);
             form.reset();
           }
