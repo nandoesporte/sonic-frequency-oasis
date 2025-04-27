@@ -1,3 +1,4 @@
+
 import { useParams, Link } from "react-router-dom";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
@@ -10,22 +11,24 @@ import { useEffect, useState } from "react";
 
 const Category = () => {
   const { id } = useParams<{ id: string }>();
-  const category = id ? getCategoryById(id) : undefined;
+  const categoryId = id || '';
+  const category = getCategoryById(categoryId);
   const [frequencies, setFrequencies] = useState<FrequencyData[]>([]);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     const fetchFrequencies = async () => {
-      if (id) {
+      if (categoryId) {
         setLoading(true);
-        const data = await getFrequenciesByCategory(id);
+        console.log("Fetching frequencies for category:", categoryId);
+        const data = await getFrequenciesByCategory(categoryId);
         setFrequencies(data);
         setLoading(false);
       }
     };
     
     fetchFrequencies();
-  }, [id]);
+  }, [categoryId]);
   
   if (!category) {
     return (
