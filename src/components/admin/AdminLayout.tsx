@@ -1,16 +1,26 @@
 
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, 
   SidebarFooter, SidebarGroup, SidebarGroupLabel, 
   SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { LayoutDashboard, Users, CreditCard, FileText, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const AdminLayout = () => {
   const { user, isAdmin, loading } = useAuth();
+  const location = useLocation();
+  const [authChecked, setAuthChecked] = useState(false);
   
-  // Show loading state
+  useEffect(() => {
+    // Set auth check as complete when loading is done
+    if (!loading) {
+      setAuthChecked(true);
+    }
+  }, [loading]);
+  
+  // Show loading state while initial auth check is happening
   if (loading) {
     return (
       <div className="flex items-center justify-center w-full h-screen">
@@ -19,11 +29,12 @@ export const AdminLayout = () => {
     );
   }
   
-  // Redirect if not authenticated or not an admin
-  if (!loading && (!user || !isAdmin)) {
-    return <Navigate to="/auth" replace />;
+  // Only redirect once we've finished checking authentication
+  if (authChecked && (!user || !isAdmin)) {
+    return <Navigate to="/auth" state={{ from: location }} replace />;
   }
   
+  // Only render the admin layout if user is authenticated and is an admin
   return (
     <SidebarProvider>
       <div className="bg-muted/40 min-h-screen flex w-full">
@@ -38,46 +49,46 @@ export const AdminLayout = () => {
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild tooltip="Dashboard">
-                    <a href="/admin">
+                    <Link to="/admin">
                       <LayoutDashboard />
                       <span>Dashboard</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild tooltip="Usuários">
-                    <a href="/admin/users">
+                    <Link to="/admin/users">
                       <Users />
                       <span>Usuários</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild tooltip="Assinaturas">
-                    <a href="/admin/subscriptions">
+                    <Link to="/admin/subscriptions">
                       <CreditCard />
                       <span>Assinaturas</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild tooltip="Conteúdo">
-                    <a href="/admin/content">
+                    <Link to="/admin/content">
                       <FileText />
                       <span>Conteúdo</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild tooltip="Configurações">
-                    <a href="/admin/settings">
+                    <Link to="/admin/settings">
                       <Settings />
                       <span>Configurações</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
