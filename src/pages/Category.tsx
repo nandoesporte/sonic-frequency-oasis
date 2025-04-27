@@ -1,5 +1,5 @@
 
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, Navigate } from "react-router-dom";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
 import { FrequencyCard } from "@/components/frequency-card";
@@ -9,6 +9,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { toast } from "@/components/ui/sonner";
+import { useAuth } from "@/hooks";
 
 const Category = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +17,13 @@ const Category = () => {
   const [frequencies, setFrequencies] = useState<FrequencyData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
+  
+  // Redirect to login if not authenticated
+  if (!user) {
+    toast.error("Você precisa fazer login para acessar as frequências");
+    return <Navigate to="/auth" replace />;
+  }
   
   useEffect(() => {
     const fetchFrequencies = async () => {
@@ -23,7 +31,9 @@ const Category = () => {
         setLoading(true);
         setError(null);
         try {
+          console.log("Fetching frequencies for category:", id);
           const data = await getFrequenciesByCategory(id);
+          console.log("Frequencies fetched:", data);
           setFrequencies(data);
         } catch (err) {
           console.error("Error fetching frequencies:", err);
