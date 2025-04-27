@@ -17,8 +17,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from '@/components/ui/use-toast';
-import { Database } from '@/integrations/supabase/types';
 
+// Define types without circular references
 type Plan = {
   id: string;
   name: string;
@@ -35,7 +35,7 @@ type UserProfile = {
 type Subscriber = {
   id: string;
   user_id: UserProfile | null;
-  plan_id: Plan;
+  plan_id: Plan | null;
   email: string;
   subscription_end: string;
 };
@@ -86,14 +86,29 @@ export const SubscriptionsManagement = () => {
         
         if (error) throw error;
         
-        // Transform the data to match our expected types
-        const transformedData = (data || []).map(sub => ({
-          ...sub,
-          user_id: sub.user_id || null,
-          plan_id: sub.plan_id as Plan
-        }));
+        // Safely transform the data to match our expected types
+        const transformedData = (data || []).map(sub => {
+          // Check if plan_id exists and has the expected structure
+          const planId = typeof sub.plan_id === 'object' && sub.plan_id !== null && 
+            'id' in sub.plan_id && 'name' in sub.plan_id && 
+            'price' in sub.plan_id && 'interval' in sub.plan_id
+            ? sub.plan_id as Plan
+            : null;
+          
+          // Check if user_id exists and has the expected structure
+          const userId = typeof sub.user_id === 'object' && sub.user_id !== null && 
+            'id' in sub.user_id
+            ? sub.user_id as UserProfile
+            : null;
+            
+          return {
+            ...sub,
+            user_id: userId,
+            plan_id: planId
+          } as Subscriber;
+        });
         
-        setSubscriptions(transformedData as Subscriber[]);
+        setSubscriptions(transformedData);
       } catch (error) {
         console.error('Error loading subscriptions data:', error);
         toast({
