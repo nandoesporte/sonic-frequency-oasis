@@ -29,7 +29,7 @@ serve(async (req) => {
       });
     }
 
-    // Autenticar usuário
+    // Authenticate user
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Não autorizado' }), {
@@ -49,7 +49,14 @@ serve(async (req) => {
       });
     }
 
-    // Buscar plano
+    // Get user profile for better customer identification
+    const { data: profile } = await supabaseClient
+      .from('profiles')
+      .select('name, email')
+      .eq('id', user.id)
+      .single();
+
+    // Fetch plan details
     const { data: plan, error: planError } = await supabaseClient
       .from('subscription_plans')
       .select('*')
@@ -64,15 +71,20 @@ serve(async (req) => {
       });
     }
 
-    // Verificar se já existe assinatura ativa
+    // Check for existing subscription
     const { data: existingSubscription } = await supabaseClient
       .from('subscribers')
       .select('*')
       .eq('user_id', user.id)
       .eq('subscribed', true)
       .maybeSingle();
+    
+    if (existingSubscription) {
+      console.log("Assinatura existente encontrada:", existingSubscription);
+      // If there's an active subscription, we could offer to update it or cancel it
+    }
 
-    // Configurar Mercado Pago - Using direct fetch instead of SDK to avoid compatibility issues
+    // Configure Mercado Pago
     const mercadoPagoToken = Deno.env.get('MERCADO_PAGO_ACCESS_TOKEN');
     if (!mercadoPagoToken) {
       console.error("Token do Mercado Pago não configurado");
@@ -87,24 +99,45 @@ serve(async (req) => {
     // Get the origin URL from the request
     const origin = req.headers.get('origin') || 'https://fd15ed9d-b283-4894-9de2-5d9a8c0d8a8e.lovableproject.com';
     
-    // Create preference using direct API call instead of SDK
+    // Create a better preference with proper metadata and auto_recurring for subscriptions
     const preferenceData = {
+      // For recurrence using preapproval
+      auto_recurring: {
+        frequency: plan.interval === 'month' ? 1 : 12,
+        frequency_type: plan.interval === 'month' ? "months" : "months",
+        transaction_amount: Number(plan.price),
+        currency_id: plan.currency,
+      },
+      // Standard preference data
       items: [{
         title: plan.name,
+        description: plan.description || `Assinatura ${plan.interval === 'month' ? 'mensal' : 'anual'} do plano premium`,
         quantity: 1,
         currency_id: plan.currency,
         unit_price: Number(plan.price),
       }],
+      payer: {
+        name: profile?.name || user.email?.split('@')[0],
+        email: profile?.email || user.email,
+        identification: {
+          type: "CPF",  // Default to CPF for Brazilian users
+        }
+      },
       back_urls: {
         success: `${origin}/payment?status=success`,
         failure: `${origin}/payment?status=failure`,
+        pending: `${origin}/payment?status=pending`,
       },
       auto_return: "approved",
+      statement_descriptor: "Frequenceas Premium",
+      external_reference: user.id,
       metadata: {
         user_id: user.id,
         plan_id: planId,
         interval: plan.interval,
+        email: user.email,
       },
+      notification_url: `${Deno.env.get("SUPABASE_URL") || ''}/functions/v1/handle-webhook`,
     };
     
     console.log("Enviando dados para Mercado Pago:", JSON.stringify(preferenceData));
@@ -138,9 +171,26 @@ serve(async (req) => {
       });
     }
 
+    // Save the pending subscription
+    const { error: pendingSubError } = await supabaseClient
+      .from('subscribers')
+      .upsert({
+        user_id: user.id,
+        email: user.email,
+        plan_id: planId,
+        subscribed: false, // Will be updated to true when payment is confirmed
+        mercado_pago_preference_id: mpData.id,
+        updated_at: new Date().toISOString()
+      });
+
+    if (pendingSubError) {
+      console.error("Erro ao salvar assinatura pendente:", pendingSubError);
+    }
+
     return new Response(JSON.stringify({
       init_point: mpData.init_point,
-      id: mpData.id
+      id: mpData.id,
+      preference_id: mpData.id
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
