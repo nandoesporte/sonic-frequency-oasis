@@ -1,8 +1,7 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Heart, Crown, History, Menu, Home, LogOut, User } from "lucide-react";
+import { Heart, Crown, History, Menu, Home, LogOut, User, Book } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";

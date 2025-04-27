@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -15,6 +14,7 @@ import Premium from "./pages/Premium";
 import NotFound from "./pages/NotFound";
 import Trending from "./pages/Trending";
 import Payment from "./pages/Payment";
+import Guide from "./pages/Guide";
 
 const queryClient = new QueryClient();
 
