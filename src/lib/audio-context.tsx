@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { toast } from '@/components/ui/sonner';
-import { useAuth, usePremium } from '@/hooks';
+import { useAuth } from '@/contexts/AuthContext';
+import { usePremium } from '@/hooks/use-premium';
 
 type AudioContextType = {
   isPlaying: boolean;
@@ -92,10 +93,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const play = (frequency: FrequencyData) => {
     if (frequency.premium && !isPremium) {
-      toast({
-        title: "Acesso Restrito",
-        description: "Esta frequência é exclusiva para usuários premium",
-      });
+      toast.error("Esta frequência é exclusiva para usuários premium");
       return;
     }
 

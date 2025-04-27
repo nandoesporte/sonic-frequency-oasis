@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +9,7 @@ import Auth from "./pages/Auth";
 import Category from "./pages/Category";
 import Favorites from "./pages/Favorites";
 import History from "./pages/History";
+import Premium from "./pages/Premium";
 import NotFound from "./pages/NotFound";
 import { useEffect } from "react";
 
