@@ -41,6 +41,7 @@ const App = () => {
               <Route path="/category/:id" element={<Category />} />
               <Route path="/favorites" element={<Favorites />} />
               <Route path="/history" element={<History />} />
+              <Route path="/premium" element={<Premium />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>

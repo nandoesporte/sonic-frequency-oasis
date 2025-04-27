@@ -1,6 +1,6 @@
-
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { toast } from '@/components/ui/sonner';
+import { useAuth, usePremium } from '@/hooks';
 
 type AudioContextType = {
   isPlaying: boolean;
@@ -16,7 +16,6 @@ type AudioContextType = {
   history: FrequencyData[];
 };
 
-// Make sure it's properly exported
 export type FrequencyData = {
   id: string;
   name: string;
@@ -44,15 +43,15 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [volume, setVolume] = useState(0.7);
   const [favorites, setFavorites] = useState<FrequencyData[]>([]);
   const [history, setHistory] = useState<FrequencyData[]>([]);
+  const { user } = useAuth();
+  const { isPremium } = usePremium();
   
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
 
-  // Initialize Audio Context
   useEffect(() => {
     return () => {
-      // Cleanup on unmount
       if (oscillatorRef.current) {
         oscillatorRef.current.stop();
         oscillatorRef.current.disconnect();
@@ -63,7 +62,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, []);
 
-  // Load favorites and history from localStorage
   useEffect(() => {
     const savedFavorites = localStorage.getItem('frequency-favorites');
     if (savedFavorites) {
@@ -84,7 +82,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, []);
 
-  // Save favorites and history to localStorage
   useEffect(() => {
     localStorage.setItem('frequency-favorites', JSON.stringify(favorites));
   }, [favorites]);
@@ -94,7 +91,14 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [history]);
 
   const play = (frequency: FrequencyData) => {
-    // Create Audio Context if it doesn't exist
+    if (frequency.premium && !isPremium) {
+      toast({
+        title: "Acesso Restrito",
+        description: "Esta frequência é exclusiva para usuários premium",
+      });
+      return;
+    }
+
     if (!audioContextRef.current) {
       try {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -105,43 +109,34 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     }
     
-    // Stop current oscillator if it exists
     if (oscillatorRef.current) {
       oscillatorRef.current.stop();
       oscillatorRef.current.disconnect();
     }
     
-    // Create new oscillator and gain node
     const ctx = audioContextRef.current;
     const oscillator = ctx.createOscillator();
     const gainNode = ctx.createGain();
     
-    // Set oscillator properties
-    oscillator.type = 'sine'; // sine, square, sawtooth, triangle
+    oscillator.type = 'sine';
     oscillator.frequency.setValueAtTime(frequency.hz, ctx.currentTime);
     
-    // Set gain (volume)
     gainNode.gain.value = volume;
     
-    // Connect nodes
     oscillator.connect(gainNode);
     gainNode.connect(ctx.destination);
     
-    // Start oscillator
     oscillator.start();
     
-    // Save references
     oscillatorRef.current = oscillator;
     gainNodeRef.current = gainNode;
     
-    // Update state
     setIsPlaying(true);
     setCurrentFrequency(frequency);
     
-    // Add to history (avoiding duplicates at the top)
     setHistory(prev => {
       const filtered = prev.filter(item => item.id !== frequency.id);
-      return [frequency, ...filtered].slice(0, 20); // Keep only last 20 items
+      return [frequency, ...filtered].slice(0, 20);
     });
   };
 
