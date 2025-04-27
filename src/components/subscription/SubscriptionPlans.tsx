@@ -72,6 +72,7 @@ export function SubscriptionPlans() {
 
       setProcessingPlanId(planId);
       
+      // Use the user's session token for authorization
       const response = await supabase.functions.invoke('create-subscription', {
         body: { planId },
       });

@@ -23,7 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Set up auth state listener
+    // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
         setSession(currentSession);
@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     );
 
-    // Check for existing session
+    // Then check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
@@ -57,6 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         description: "Email ou senha incorretos.",
         variant: "destructive",
       });
+      console.error("Login error:", error);
       throw error;
     }
   };
@@ -83,6 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         description: "Tente novamente mais tarde.",
         variant: "destructive",
       });
+      console.error("Signup error:", error);
       throw error;
     }
   };
@@ -101,6 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         description: "Tente novamente mais tarde.",
         variant: "destructive",
       });
+      console.error("Logout error:", error);
     }
   };
 

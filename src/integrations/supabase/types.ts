@@ -266,6 +266,7 @@ export type Database = {
           premium_value: string
           start_date: string
           status: string
+          updated_at: string | null
           user_id: string | null
         }
         Insert: {
@@ -281,6 +282,7 @@ export type Database = {
           premium_value: string
           start_date: string
           status: string
+          updated_at?: string | null
           user_id?: string | null
         }
         Update: {
@@ -296,6 +298,7 @@ export type Database = {
           premium_value?: string
           start_date?: string
           status?: string
+          updated_at?: string | null
           user_id?: string | null
         }
         Relationships: []
