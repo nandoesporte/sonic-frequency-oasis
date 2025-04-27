@@ -4,7 +4,6 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -56,6 +55,7 @@ export default function Auth() {
   }
 
   if (user) {
+    console.log("Usuário já autenticado, redirecionando para a página inicial");
     return <Navigate to="/" replace />;
   }
 
@@ -65,22 +65,36 @@ export default function Auth() {
       setAuthError(null);
       
       if (isLogin) {
-        console.log("Iniciando login para:", values.email);
-        const response = await signIn(values.email, values.password);
-        console.log("Resposta do login:", response);
-        if (response.user) {
-          console.log("Login bem-sucedido, redirecionando...");
-          navigate('/');
+        console.log("Tentando fazer login com:", values.email);
+        const result = await signIn(values.email, values.password);
+        console.log("Resultado do login:", result);
+        
+        if (result.user) {
+          console.log("Login realizado com sucesso, redirecionando...");
+          // O navigate é chamado aqui para garantir que o redirecionamento ocorra
+          navigate('/', { replace: true });
+          return;
+        } else {
+          console.error("Login falhou: usuário é nulo");
+          setAuthError("Falha no login. Verifique seu email e senha.");
         }
       } else {
         if (values.fullName) {
-          console.log("Iniciando registro para:", values.email);
-          const response = await signUp(values.email, values.password, values.fullName);
-          console.log("Resposta do registro:", response);
-          if (response.user) {
+          console.log("Tentando registrar:", values.email);
+          const result = await signUp(values.email, values.password, values.fullName);
+          console.log("Resultado do registro:", result);
+          
+          if (result.user) {
             console.log("Registro bem-sucedido, alternando para login");
             setIsLogin(true);
-            form.reset();
+            form.reset({
+              email: values.email,
+              password: '',
+              fullName: '',
+            });
+          } else {
+            console.error("Registro falhou: usuário é nulo");
+            setAuthError("Falha ao criar conta. Este email pode já estar em uso ou ocorreu um erro no servidor.");
           }
         }
       }

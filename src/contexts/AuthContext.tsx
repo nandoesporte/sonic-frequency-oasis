@@ -57,18 +57,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (error) {
         console.error("Login error:", error);
+        toast({
+          title: "Erro ao fazer login",
+          description: "Email ou senha incorretos.",
+          variant: "destructive",
+        });
         throw error;
       }
       
       console.log('Login successful:', data);
       
-      // Não navegamos aqui, deixamos o componente Auth fazer isso
       toast({
         title: "Bem-vindo de volta!",
         description: "Login realizado com sucesso.",
       });
       
-      return data;
+      return { user: data.user, session: data.session };
     } catch (error) {
       console.error("Login error details:", error);
       toast({
@@ -76,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         description: "Email ou senha incorretos.",
         variant: "destructive",
       });
-      throw error;
+      return { user: null, session: null };
     }
   };
 
@@ -95,6 +99,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (error) {
         console.error("Signup error:", error);
+        toast({
+          title: "Erro ao criar conta",
+          description: "Tente novamente mais tarde.",
+          variant: "destructive",
+        });
         throw error;
       }
       
@@ -105,7 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         description: "Verifique seu email para confirmar sua conta.",
       });
       
-      return data;
+      return { user: data.user, session: data.session };
     } catch (error) {
       console.error("Signup error details:", error);
       toast({
@@ -113,7 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         description: "Tente novamente mais tarde.",
         variant: "destructive",
       });
-      throw error;
+      return { user: null, session: null };
     }
   };
 
