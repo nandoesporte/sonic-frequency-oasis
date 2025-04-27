@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { AdminDashboard } from '@/pages/admin/Dashboard';
 import { UsersManagement } from '@/pages/admin/UsersManagement';
@@ -11,12 +11,14 @@ import { AdminSettings } from '@/pages/admin/Settings';
 const Admin = () => {
   return (
     <Routes>
-      <Route path="/" element={<AdminLayout />}>
+      <Route element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
         <Route path="users" element={<UsersManagement />} />
         <Route path="subscriptions" element={<SubscriptionsManagement />} />
         <Route path="content" element={<ContentManagement />} />
         <Route path="settings" element={<AdminSettings />} />
+        {/* Redirect any unmatched admin routes to the admin dashboard */}
+        <Route path="*" element={<Navigate to="/admin" replace />} />
       </Route>
     </Routes>
   );
