@@ -18,23 +18,21 @@ import {
 } from "@/components/ui/select";
 import { toast } from '@/components/ui/use-toast';
 
-// Define simple flat types without circular references
-type Plan = {
+// Define simple flat types
+interface Plan {
   id: string;
   name: string;
   price: number;
   interval: string;
-};
+}
 
-// Simple user profile without circular references
-type UserProfile = {
+interface UserProfile {
   id: string;
   email?: string;
   name?: string;
-};
+}
 
-// Define subscriber type that avoids deep nesting
-type Subscriber = {
+interface Subscriber {
   id: string;
   user_id: UserProfile | null;
   plan_id: Plan | null;
@@ -44,7 +42,7 @@ type Subscriber = {
   last_payment_date: string | null;
   subscribed: boolean;
   updated_at: string;
-};
+}
 
 export const SubscriptionsManagement = () => {
   const [subscriptions, setSubscriptions] = useState<Subscriber[]>([]);
@@ -92,8 +90,8 @@ export const SubscriptionsManagement = () => {
         
         if (error) throw error;
         
-        // Transform database response into our simplified types to avoid deep nesting
-        const transformedData: Subscriber[] = (data || []).map((item: any) => ({
+        // Transform the database response to our simpler types
+        const transformedData = (data || []).map((item: any): Subscriber => ({
           id: item.id,
           email: item.email,
           subscription_end: item.subscription_end,
@@ -101,13 +99,11 @@ export const SubscriptionsManagement = () => {
           last_payment_date: item.last_payment_date,
           subscribed: item.subscribed,
           updated_at: item.updated_at,
-          // Extract user data safely
           user_id: item.user_id ? {
             id: item.user_id.id,
             email: item.user_id.email?.[0]?.email,
             name: item.user_id.name?.[0]?.full_name
           } : null,
-          // Extract plan data safely
           plan_id: item.plan_id ? {
             id: item.plan_id.id,
             name: item.plan_id.name,
