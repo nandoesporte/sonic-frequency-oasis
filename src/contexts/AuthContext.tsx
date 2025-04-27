@@ -1,27 +1,10 @@
-
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
-
-interface AuthContextType {
-  user: User | null;
-  session: Session | null;
-  signIn: (email: string, password: string) => Promise<{
-    user: User | null;
-    session: Session | null;
-    error?: string;
-  }>;
-  signUp: (email: string, password: string, fullName: string) => Promise<{
-    user: User | null;
-    session: Session | null;
-    error?: string;
-  }>;
-  signOut: () => Promise<void>;
-  loading: boolean;
-  isAdmin: boolean; // New property to check admin status
-}
+import { AuthContextType } from './auth-types';
+import { checkAdminStatus } from './admin-utils';
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -31,29 +14,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
-
-  // Check if the current user is an admin
-  const checkAdminStatus = async (userId: string) => {
-    if (!userId) return false;
-    
-    try {
-      const { data, error } = await supabase
-        .from('admin_users')
-        .select('user_id')
-        .eq('user_id', userId)
-        .single();
-      
-      if (error) {
-        console.error('Error checking admin status:', error);
-        return false;
-      }
-      
-      return data ? true : false;
-    } catch (err) {
-      console.error('Unexpected error checking admin status:', err);
-      return false;
-    }
-  };
 
   useEffect(() => {
     console.log('AuthProvider initialized');
