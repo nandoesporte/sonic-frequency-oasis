@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,6 +13,7 @@ import History from "./pages/History";
 import Premium from "./pages/Premium";
 import NotFound from "./pages/NotFound";
 import { useEffect } from "react";
+import Trending from "./pages/Trending";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +44,7 @@ const App = () => {
               <Route path="/favorites" element={<Favorites />} />
               <Route path="/history" element={<History />} />
               <Route path="/premium" element={<Premium />} />
+              <Route path="/trending" element={<Trending />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
