@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { toast } from '@/components/ui/sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -41,23 +40,13 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
-  const fadeIntervalRef = useRef<number | null>(null);
-
-  // Fade duration in milliseconds
-  const fadeDuration = 300;
 
   useEffect(() => {
     return () => {
-      // Clean up on unmount
-      if (fadeIntervalRef.current) {
-        window.clearInterval(fadeIntervalRef.current);
-      }
-      
       if (oscillatorRef.current) {
         oscillatorRef.current.stop();
         oscillatorRef.current.disconnect();
       }
-      
       if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
         audioContextRef.current.close();
       }
@@ -92,71 +81,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem('frequency-history', JSON.stringify(history));
   }, [history]);
 
-  const fadeIn = (startVolume: number, targetVolume: number) => {
-    if (fadeIntervalRef.current) {
-      window.clearInterval(fadeIntervalRef.current);
-    }
-    
-    if (!gainNodeRef.current) return;
-    
-    const step = (targetVolume - startVolume) / (fadeDuration / 10);
-    let currentVolume = startVolume;
-    gainNodeRef.current.gain.value = currentVolume;
-    
-    fadeIntervalRef.current = window.setInterval(() => {
-      if (!gainNodeRef.current) {
-        if (fadeIntervalRef.current) window.clearInterval(fadeIntervalRef.current);
-        return;
-      }
-      
-      currentVolume += step;
-      
-      if ((step > 0 && currentVolume >= targetVolume) || 
-          (step < 0 && currentVolume <= targetVolume)) {
-        currentVolume = targetVolume;
-        gainNodeRef.current.gain.value = currentVolume;
-        if (fadeIntervalRef.current) window.clearInterval(fadeIntervalRef.current);
-        return;
-      }
-      
-      gainNodeRef.current.gain.value = currentVolume;
-    }, 10);
-  };
-
-  const fadeOut = (startVolume: number, callback: () => void) => {
-    if (fadeIntervalRef.current) {
-      window.clearInterval(fadeIntervalRef.current);
-    }
-    
-    if (!gainNodeRef.current) {
-      callback();
-      return;
-    }
-    
-    const step = startVolume / (fadeDuration / 10);
-    let currentVolume = startVolume;
-    
-    fadeIntervalRef.current = window.setInterval(() => {
-      if (!gainNodeRef.current) {
-        if (fadeIntervalRef.current) window.clearInterval(fadeIntervalRef.current);
-        callback();
-        return;
-      }
-      
-      currentVolume -= step;
-      
-      if (currentVolume <= 0) {
-        currentVolume = 0;
-        gainNodeRef.current.gain.value = 0;
-        if (fadeIntervalRef.current) window.clearInterval(fadeIntervalRef.current);
-        callback();
-        return;
-      }
-      
-      gainNodeRef.current.gain.value = currentVolume;
-    }, 10);
-  };
-
   const play = (frequency: FrequencyData) => {
     if (frequency.premium && !isPremium) {
       toast.error("Esta frequência é exclusiva para usuários premium");
@@ -173,27 +97,27 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     }
     
-    // If we have an oscillator already playing, fade it out first
     if (oscillatorRef.current) {
-      const oldOscillator = oscillatorRef.current;
-      const currentGainValue = gainNodeRef.current?.gain.value || 0;
-      
-      // Create new oscillator setup while old one is still playing
-      setupNewOscillator(frequency);
-      
-      // Fade out old oscillator, then stop it
-      fadeOut(currentGainValue, () => {
-        oldOscillator.stop();
-        oldOscillator.disconnect();
-        
-        // After old oscillator is stopped, fade in the new one
-        fadeIn(0, volume);
-      });
-    } else {
-      // First time playing, just set up and fade in
-      setupNewOscillator(frequency);
-      fadeIn(0, volume);
+      oscillatorRef.current.stop();
+      oscillatorRef.current.disconnect();
     }
+    
+    const ctx = audioContextRef.current;
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+    
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(frequency.hz, ctx.currentTime);
+    
+    gainNode.gain.value = volume;
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    
+    oscillator.start();
+    
+    oscillatorRef.current = oscillator;
+    gainNodeRef.current = gainNode;
     
     setIsPlaying(true);
     setCurrentFrequency(frequency);
@@ -203,50 +127,20 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return [frequency, ...filtered].slice(0, 20);
     });
   };
-  
-  const setupNewOscillator = (frequency: FrequencyData) => {
-    const ctx = audioContextRef.current!;
-    const oscillator = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-    
-    oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(frequency.hz, ctx.currentTime);
-    
-    // Start with volume 0 for fade in
-    gainNode.gain.value = 0;
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(ctx.destination);
-    
-    oscillator.start();
-    
-    oscillatorRef.current = oscillator;
-    gainNodeRef.current = gainNode;
-  };
 
   const pause = () => {
-    if (oscillatorRef.current && gainNodeRef.current) {
-      const currentVolume = gainNodeRef.current.gain.value;
-      
-      // Fade out then stop
-      fadeOut(currentVolume, () => {
-        if (oscillatorRef.current) {
-          oscillatorRef.current.stop();
-          oscillatorRef.current.disconnect();
-          oscillatorRef.current = null;
-        }
-      });
+    if (oscillatorRef.current) {
+      oscillatorRef.current.stop();
+      oscillatorRef.current.disconnect();
+      oscillatorRef.current = null;
     }
-    
     setIsPlaying(false);
   };
 
   const updateVolume = (newVolume: number) => {
     setVolume(newVolume);
-    if (gainNodeRef.current && isPlaying) {
-      // For volume changes while playing, apply immediately but with smooth transition
-      const currentVolume = gainNodeRef.current.gain.value;
-      fadeIn(currentVolume, newVolume);
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = newVolume;
     }
   };
 
