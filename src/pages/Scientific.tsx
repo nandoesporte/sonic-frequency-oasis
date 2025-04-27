@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { Header } from "@/components/header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, Heart, Sleep, Headphones, Check, Star } from "lucide-react";
+import { Brain, Heart, Clock, Headphones, Check, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const benefits = [
@@ -28,7 +27,7 @@ const benefits = [
   {
     id: "sleep",
     title: "Melhora do Sono",
-    icon: Sleep,
+    icon: Clock,
     frequencies: ["1.5 Hz", "3.5 Hz", "4 Hz (delta)"],
     studies: [
       {
