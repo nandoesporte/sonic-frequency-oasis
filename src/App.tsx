@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import Trending from "./pages/Trending";
 import Payment from "./pages/Payment";
 import Guide from "./pages/Guide";
+import Scientific from "./pages/Scientific";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => {
               <Route path="/trending" element={<Trending />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/guide" element={<Guide />} />
+              <Route path="/scientific" element={<Scientific />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
