@@ -5,7 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { Check, Crown } from 'lucide-react';
+import { Check, Crown, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Plan {
   id: string;
@@ -20,28 +21,36 @@ export function SubscriptionPlans() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingPlanId, setProcessingPlanId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPlans = async () => {
-      const { data, error } = await supabase
-        .from('subscription_plans')
-        .select('*')
-        .eq('active', true)
-        .order('price');
+      try {
+        const { data, error } = await supabase
+          .from('subscription_plans')
+          .select('*')
+          .eq('active', true)
+          .order('price');
 
-      if (error) {
-        toast({
-          title: "Erro ao carregar planos",
-          description: "Não foi possível carregar os planos disponíveis.",
-          variant: "destructive",
-        });
-        return;
+        if (error) {
+          console.error("Erro ao carregar planos:", error);
+          toast({
+            title: "Erro ao carregar planos",
+            description: "Não foi possível carregar os planos disponíveis.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        setPlans(data || []);
+      } catch (err) {
+        console.error("Exceção ao carregar planos:", err);
+      } finally {
+        setLoading(false);
       }
-
-      setPlans(data);
-      setLoading(false);
     };
 
     fetchPlans();
@@ -49,12 +58,15 @@ export function SubscriptionPlans() {
 
   const handleSubscribe = async (planId: string) => {
     try {
+      setError(null);
+      
       if (!user) {
         toast({
           title: "Faça login primeiro",
           description: "Você precisa estar logado para assinar um plano.",
           variant: "destructive",
         });
+        navigate('/auth');
         return;
       }
 
@@ -64,12 +76,22 @@ export function SubscriptionPlans() {
         body: { planId },
       });
 
-      if (response.error) throw new Error(response.error.message);
+      if (response.error) {
+        console.error("Erro na função create-subscription:", response.error);
+        throw new Error(response.error.message || "Erro ao processar assinatura");
+      }
+      
+      if (!response.data || !response.data.init_point) {
+        throw new Error("Link de pagamento não gerado");
+      }
       
       // Redirecionar para página de pagamento do Mercado Pago
       window.location.href = response.data.init_point;
     } catch (error) {
       setProcessingPlanId(null);
+      const errorMessage = error instanceof Error ? error.message : "Ocorreu um erro desconhecido";
+      
+      setError(errorMessage);
       toast({
         title: "Erro ao processar assinatura",
         description: "Ocorreu um erro ao processar sua assinatura. Tente novamente.",
@@ -83,6 +105,16 @@ export function SubscriptionPlans() {
     return (
       <div className="flex justify-center items-center min-h-[200px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (plans.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+        <h3 className="text-xl font-medium mb-2">Nenhum plano disponível</h3>
+        <p className="text-muted-foreground">No momento não há planos disponíveis para assinatura.</p>
       </div>
     );
   }
@@ -168,6 +200,13 @@ export function SubscriptionPlans() {
           </Card>
         );
       })}
+      
+      {error && (
+        <div className="col-span-full mt-4 p-4 border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800 rounded-md text-center">
+          <AlertCircle className="h-5 w-5 text-red-500 inline-block mr-2 mb-1" />
+          <span>Erro: {error}. Por favor, tente novamente ou contate o suporte.</span>
+        </div>
+      )}
     </div>
   );
 }

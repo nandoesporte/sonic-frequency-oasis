@@ -8,6 +8,7 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -19,42 +20,76 @@ serve(async (req) => {
     );
 
     const data = await req.json();
+    console.log("Webhook recebido:", JSON.stringify(data));
+
     const { action, data: paymentData } = data;
 
+    // Verificar se é um pagamento aprovado
     if (action === "payment.created" && paymentData.status === "approved") {
+      console.log("Pagamento aprovado:", JSON.stringify(paymentData));
       const { metadata } = paymentData;
-      const { user_id, plan_id } = metadata;
+      
+      if (!metadata || !metadata.user_id) {
+        console.error("Metadata inválida no webhook:", JSON.stringify(metadata));
+        return new Response(JSON.stringify({ error: 'Metadata inválida' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      const { user_id, plan_id, interval } = metadata;
+      const subscriptionEndDate = new Date();
+      
+      // Calcular data de término da assinatura
+      if (interval === 'month') {
+        subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1);
+      } else if (interval === 'year') {
+        subscriptionEndDate.setFullYear(subscriptionEndDate.getFullYear() + 1);
+      } else {
+        console.error("Intervalo inválido:", interval);
+      }
 
       // Atualizar status do assinante
-      await supabaseClient
+      const { error: subscriberError } = await supabaseClient
         .from('subscribers')
         .upsert({
           user_id,
           subscribed: true,
-          subscription_end: new Date(Date.now() + (metadata.interval === 'month' ? 30 : 365) * 24 * 60 * 60 * 1000).toISOString(),
+          subscription_end: subscriptionEndDate.toISOString(),
           mercado_pago_customer_id: paymentData.payer.id,
           mercado_pago_subscription_id: paymentData.id,
           last_payment_date: new Date().toISOString(),
+          plan_id,
         });
 
+      if (subscriberError) {
+        console.error("Erro ao atualizar assinante:", subscriberError);
+      }
+
       // Registrar pagamento
-      await supabaseClient
+      const { error: paymentError } = await supabaseClient
         .from('payment_history')
         .insert({
           user_id,
           amount: paymentData.transaction_amount,
           currency: paymentData.currency_id,
           status: 'completed',
-          payment_method: paymentData.payment_method.type,
+          payment_method: paymentData.payment_method?.type || 'mercado_pago',
           payment_id: paymentData.id,
         });
+
+      if (paymentError) {
+        console.error("Erro ao registrar pagamento:", paymentError);
+      }
     }
 
     return new Response(JSON.stringify({ received: true }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error("Erro ao processar webhook:", error);
+    return new Response(JSON.stringify({ error: error.message || 'Erro interno do servidor' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
