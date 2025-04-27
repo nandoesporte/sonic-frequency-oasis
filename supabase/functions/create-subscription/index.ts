@@ -1,7 +1,6 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
-import { MercadoPagoConfig, Preference } from "https://esm.sh/mercadopago@2.0.6";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -16,8 +15,8 @@ serve(async (req) => {
 
   try {
     const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+      Deno.env.get("SUPABASE_URL") ?? '',
+      Deno.env.get("SUPABASE_ANON_KEY") ?? ''
     );
 
     // Parse request body
@@ -26,7 +25,7 @@ serve(async (req) => {
     if (!planId) {
       return new Response(JSON.stringify({ error: 'ID do plano não fornecido' }), {
         status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -35,7 +34,7 @@ serve(async (req) => {
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Não autorizado' }), {
         status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -46,7 +45,7 @@ serve(async (req) => {
       console.error("Erro de autenticação:", userError);
       return new Response(JSON.stringify({ error: 'Usuário não autenticado' }), {
         status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -61,7 +60,7 @@ serve(async (req) => {
       console.error("Erro ao buscar plano:", planError);
       return new Response(JSON.stringify({ error: 'Plano não encontrado' }), {
         status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -73,26 +72,22 @@ serve(async (req) => {
       .eq('subscribed', true)
       .maybeSingle();
 
-    // Configurar Mercado Pago
+    // Configurar Mercado Pago - Using direct fetch instead of SDK to avoid compatibility issues
     const mercadoPagoToken = Deno.env.get('MERCADO_PAGO_ACCESS_TOKEN');
     if (!mercadoPagoToken) {
       console.error("Token do Mercado Pago não configurado");
       return new Response(JSON.stringify({ error: 'Erro de configuração do servidor' }), {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const client = new MercadoPagoConfig({ 
-      accessToken: mercadoPagoToken
-    });
-
     console.log("Criando preferência de pagamento para usuário:", user.id, "plano:", planId);
-    const preference = new Preference(client);
     
     // Get the origin URL from the request
     const origin = req.headers.get('origin') || 'https://fd15ed9d-b283-4894-9de2-5d9a8c0d8a8e.lovableproject.com';
     
+    // Create preference using direct API call instead of SDK
     const preferenceData = {
       items: [{
         title: plan.name,
@@ -114,20 +109,39 @@ serve(async (req) => {
     
     console.log("Enviando dados para Mercado Pago:", JSON.stringify(preferenceData));
     
-    const response = await preference.create({
-      body: preferenceData,
+    // Make direct API call to Mercado Pago
+    const mpResponse = await fetch("https://api.mercadopago.com/checkout/preferences", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${mercadoPagoToken}`
+      },
+      body: JSON.stringify(preferenceData)
     });
     
-    console.log("Resposta do Mercado Pago:", JSON.stringify(response));
+    const mpData = await mpResponse.json();
+    
+    if (!mpResponse.ok) {
+      console.error("Erro na resposta do Mercado Pago:", mpData);
+      return new Response(JSON.stringify({ error: 'Falha ao gerar link de pagamento', details: mpData }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    
+    console.log("Resposta do Mercado Pago:", JSON.stringify(mpData));
 
-    if (!response || !response.init_point) {
+    if (!mpData || !mpData.init_point) {
       return new Response(JSON.stringify({ error: 'Falha ao gerar link de pagamento' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    return new Response(JSON.stringify(response), {
+    return new Response(JSON.stringify({
+      init_point: mpData.init_point,
+      id: mpData.id
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     });
