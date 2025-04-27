@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from '@/components/ui/use-toast';
 
-// Define simple flat types
+// Define simple flat types with no circular references
 interface Plan {
   id: string;
   name: string;
@@ -28,8 +28,8 @@ interface Plan {
 
 interface UserProfile {
   id: string;
-  email?: string;
-  name?: string;
+  email?: string | null;
+  name?: string | null;
 }
 
 interface Subscriber {
@@ -90,27 +90,41 @@ export const SubscriptionsManagement = () => {
         
         if (error) throw error;
         
-        // Transform the database response to our simpler types
-        const transformedData = (data || []).map((item: any): Subscriber => ({
-          id: item.id,
-          email: item.email,
-          subscription_end: item.subscription_end,
-          created_at: item.created_at,
-          last_payment_date: item.last_payment_date,
-          subscribed: item.subscribed,
-          updated_at: item.updated_at,
-          user_id: item.user_id ? {
-            id: item.user_id.id,
-            email: item.user_id.email?.[0]?.email,
-            name: item.user_id.name?.[0]?.full_name
-          } : null,
-          plan_id: item.plan_id ? {
-            id: item.plan_id.id,
-            name: item.plan_id.name,
-            price: item.plan_id.price,
-            interval: item.plan_id.interval
-          } : null
-        }));
+        // Transform the database response to simpler types to avoid deep nesting
+        const transformedData = (data || []).map((item: any) => {
+          const subscriber: Subscriber = {
+            id: item.id,
+            email: item.email,
+            subscription_end: item.subscription_end,
+            created_at: item.created_at,
+            last_payment_date: item.last_payment_date,
+            subscribed: item.subscribed,
+            updated_at: item.updated_at,
+            user_id: null,
+            plan_id: null
+          };
+          
+          // Safely extract user data
+          if (item.user_id) {
+            subscriber.user_id = {
+              id: item.user_id.id,
+              email: item.user_id.email?.[0]?.email,
+              name: item.user_id.name?.[0]?.full_name
+            };
+          }
+          
+          // Safely extract plan data
+          if (item.plan_id) {
+            subscriber.plan_id = {
+              id: item.plan_id.id,
+              name: item.plan_id.name,
+              price: item.plan_id.price,
+              interval: item.plan_id.interval
+            };
+          }
+          
+          return subscriber;
+        });
         
         setSubscriptions(transformedData);
       } catch (error) {

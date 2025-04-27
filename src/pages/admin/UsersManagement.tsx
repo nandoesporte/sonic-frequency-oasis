@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -38,7 +39,7 @@ export const UsersManagement = () => {
           created_at,
           updated_at,
           subscribers!left(subscribed, subscription_end)
-        `);
+        `, { count: 'exact' });
       
       if (search) {
         query = query.or(`full_name.ilike.%${search}%,username.ilike.%${search}%`);
@@ -48,8 +49,7 @@ export const UsersManagement = () => {
       
       const { data, error, count } = await query
         .order('created_at', { ascending: false })
-        .range(startIndex, startIndex + PAGE_SIZE - 1)
-        .select('*', { count: 'exact' });
+        .range(startIndex, startIndex + PAGE_SIZE - 1);
       
       if (error) throw error;
       
