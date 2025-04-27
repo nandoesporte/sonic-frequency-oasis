@@ -1,6 +1,6 @@
 
-import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle, Loader2 } from 'lucide-react';
 
 const authSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -20,6 +22,10 @@ const authSchema = z.object({
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const { signIn, signUp, user, loading } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  
   const form = useForm<z.infer<typeof authSchema>>({
     resolver: zodResolver(authSchema),
     defaultValues: {
@@ -28,6 +34,18 @@ export default function Auth() {
       fullName: '',
     },
   });
+
+  useEffect(() => {
+    // Limpar erro quando o usuário muda entre login e registro
+    if (authError) setAuthError(null);
+    
+    // Resetar o formulário ao alternar entre login e registro
+    form.reset({
+      email: '',
+      password: '',
+      fullName: '',
+    });
+  }, [isLogin, form]);
 
   if (loading) {
     return (
@@ -43,15 +61,29 @@ export default function Auth() {
 
   const onSubmit = async (values: z.infer<typeof authSchema>) => {
     try {
+      setIsSubmitting(true);
+      setAuthError(null);
+      
       if (isLogin) {
         await signIn(values.email, values.password);
+        navigate('/');
       } else {
         if (values.fullName) {
           await signUp(values.email, values.password, values.fullName);
+          // Após o registro bem-sucedido, vamos alternar para o login
+          setIsLogin(true);
+          form.reset();
         }
       }
     } catch (error) {
       console.error('Authentication error:', error);
+      setAuthError(
+        isLogin 
+          ? 'Falha no login. Verifique seu email e senha.'
+          : 'Falha ao criar conta. Este email pode já estar em uso ou ocorreu um erro no servidor.'
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -69,6 +101,13 @@ export default function Auth() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardContent className="space-y-4">
+              {authError && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{authError}</AlertDescription>
+                </Alert>
+              )}
+              
               {!isLogin && (
                 <FormField
                   control={form.control}
@@ -112,14 +151,26 @@ export default function Auth() {
               />
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
-              <Button type="submit" className="w-full">
-                {isLogin ? 'Entrar' : 'Criar Conta'}
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {isLogin ? 'Entrando...' : 'Criando conta...'}
+                  </>
+                ) : (
+                  isLogin ? 'Entrar' : 'Criar Conta'
+                )}
               </Button>
               <Button
                 type="button"
                 variant="ghost"
                 className="w-full"
                 onClick={() => setIsLogin(!isLogin)}
+                disabled={isSubmitting}
               >
                 {isLogin
                   ? 'Não tem uma conta? Criar conta'
