@@ -12,6 +12,8 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { FrequencyData } from "@/lib/audio-context";
 import { PricingSection } from "@/components/subscription/PricingSection";
+import { FrequencyRanges } from "@/components/home/FrequencyRanges";
+import { ScientificEvidence } from "@/components/home/ScientificEvidence";
 
 const Index = () => {
   const [trendingFrequencies, setTrendingFrequencies] = useState<FrequencyData[]>([]);
@@ -34,18 +36,18 @@ const Index = () => {
         <Header />
         
         {/* Hero Section */}
-        <section className="pt-32 pb-12 px-4">
+        <section className="pt-32 pb-12 px-4 bg-gradient-to-b from-purple-50/50 to-background dark:from-purple-900/10">
           <div className="container mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 animate-fade-in">
               <span className="text-purple-dark dark:text-purple-light">Experimente</span> o Som Terapêutico
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              Explore frequências curativas para relaxamento, foco e bem-estar
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in">
+              Explore frequências curativas cientificamente comprovadas para relaxamento, foco e bem-estar
             </p>
-            <Button asChild size="lg" className="rounded-full">
+            <Button asChild size="lg" className="rounded-full animate-fade-in">
               {user ? (
                 <Link to="/category/healing">
-                  Comece a Curar Agora
+                  Comece Sua Jornada de Cura
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               ) : (
@@ -57,6 +59,15 @@ const Index = () => {
             </Button>
           </div>
         </section>
+
+        {/* Frequency Ranges Section */}
+        <FrequencyRanges />
+        
+        {/* Scientific Evidence Section */}
+        <ScientificEvidence />
+        
+        {/* Pricing Section */}
+        <PricingSection />
         
         {/* Trending Section */}
         {user && trendingFrequencies.length > 0 && (
@@ -84,9 +95,6 @@ const Index = () => {
             </div>
           </section>
         )}
-        
-        {/* Pricing Section - Nova seção de preços */}
-        <PricingSection />
         
         {/* Categories Section */}
         <section className="py-12 px-4">
