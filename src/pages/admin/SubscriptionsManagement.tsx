@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from '@/components/ui/use-toast';
 
-// Simplify types to avoid circular references
+// Simplified types to avoid circular references
 type Plan = {
   id: string;
   name: string;
@@ -26,7 +26,7 @@ type Plan = {
   interval: string;
 };
 
-// Define database user profile type
+// Define database user profile type without circular references
 type UserProfile = {
   id: string;
   email?: { email: string; }[];
@@ -46,17 +46,18 @@ type Subscriber = {
   updated_at: string;
 };
 
-// Define raw database response type
-type RawSubscriberData = {
+// Define the type for raw data coming from the database
+type DbSubscriber = {
   id: string;
-  user_id: UserProfile | null;
-  plan_id: Plan | null;
+  user_id: any;
+  plan_id: any;
   email: string;
   subscription_end: string;
   created_at: string;
   last_payment_date: string | null;
   subscribed: boolean;
   updated_at: string;
+  [key: string]: any; // For any additional properties
 };
 
 export const SubscriptionsManagement = () => {
@@ -105,12 +106,20 @@ export const SubscriptionsManagement = () => {
         
         if (error) throw error;
         
-        // Transform the data to match our expected types
-        const transformedData: Subscriber[] = (data || []).map((sub: RawSubscriberData) => {
+        // Safely transform the data
+        const transformedData: Subscriber[] = (data || []).map((item: DbSubscriber) => {
           return {
-            ...sub,
-            user_id: sub.user_id || null,
-            plan_id: sub.plan_id || null,
+            id: item.id,
+            email: item.email,
+            subscription_end: item.subscription_end,
+            created_at: item.created_at,
+            last_payment_date: item.last_payment_date,
+            subscribed: item.subscribed,
+            updated_at: item.updated_at,
+            // Safely handle potentially null or invalid user_id
+            user_id: item.user_id && typeof item.user_id === 'object' ? item.user_id : null,
+            // Safely handle potentially null or invalid plan_id
+            plan_id: item.plan_id && typeof item.plan_id === 'object' ? item.plan_id : null
           };
         });
         

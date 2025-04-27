@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -47,7 +46,6 @@ export const UsersManagement = () => {
       
       const startIndex = (pageNumber - 1) * PAGE_SIZE;
       
-      // Fixed: Removed the second argument from select()
       const { data, error, count } = await query
         .order('created_at', { ascending: false })
         .range(startIndex, startIndex + PAGE_SIZE - 1)
