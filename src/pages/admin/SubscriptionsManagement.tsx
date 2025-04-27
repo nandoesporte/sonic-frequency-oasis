@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from '@/components/ui/use-toast';
 
-// Simplified types to avoid circular references
+// Define simple flat types to avoid circular references
 type Plan = {
   id: string;
   name: string;
@@ -26,14 +26,14 @@ type Plan = {
   interval: string;
 };
 
-// Define database user profile type without circular references
+// Define simple user profile type
 type UserProfile = {
   id: string;
   email?: { email: string; }[];
   name?: { full_name: string; }[];
 };
 
-// Define subscriber type
+// Define subscriber type with flat references
 type Subscriber = {
   id: string;
   user_id: UserProfile | null;
@@ -46,7 +46,7 @@ type Subscriber = {
   updated_at: string;
 };
 
-// Define the type for raw data coming from the database
+// Define raw database response type
 type DbSubscriber = {
   id: string;
   user_id: any;
@@ -57,7 +57,7 @@ type DbSubscriber = {
   last_payment_date: string | null;
   subscribed: boolean;
   updated_at: string;
-  [key: string]: any; // For any additional properties
+  [key: string]: any; // For additional properties
 };
 
 export const SubscriptionsManagement = () => {
@@ -106,7 +106,7 @@ export const SubscriptionsManagement = () => {
         
         if (error) throw error;
         
-        // Safely transform the data
+        // Transform data to correct type
         const transformedData: Subscriber[] = (data || []).map((item: DbSubscriber) => {
           return {
             id: item.id,
