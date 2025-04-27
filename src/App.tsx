@@ -45,8 +45,7 @@ const App = () => {
               <Route path="/history" element={<History />} />
               <Route path="/premium" element={<Premium />} />
               <Route path="/trending" element={<Trending />} />
-              <Route path="/payment/success" element={<Payment />} />
-              <Route path="/payment/failure" element={<Payment />} />
+              <Route path="/payment" element={<Payment />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>

@@ -6,11 +6,13 @@ import { Heart, Crown, History, Menu, Home, LogOut, User } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePremium } from "@/hooks/use-premium";
 
 export function Header() {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const { user, signOut } = useAuth();
+  const { isPremium } = usePremium();
   
   if (typeof window !== 'undefined') {
     window.addEventListener('scroll', () => {
@@ -70,20 +72,31 @@ export function Header() {
               <Button variant="ghost" size="icon" onClick={() => signOut()} className="hidden sm:flex">
                 <LogOut className="h-5 w-5" />
               </Button>
+              
+              <Button variant={isPremium ? "ghost" : "default"} size="sm" asChild className="hidden sm:flex">
+                <Link to="/premium">
+                  <Crown className="mr-2 h-4 w-4" />
+                  {isPremium ? "Premium Ativo" : "Obter Premium"}
+                </Link>
+              </Button>
             </>
           ) : (
-            <Button variant="default" size="sm" asChild className="hidden sm:flex">
-              <Link to="/auth">
-                <User className="mr-2 h-4 w-4" />
-                Entrar
-              </Link>
-            </Button>
+            <>
+              <Button variant="default" size="sm" asChild className="hidden sm:flex">
+                <Link to="/auth">
+                  <User className="mr-2 h-4 w-4" />
+                  Entrar
+                </Link>
+              </Button>
+              
+              <Button variant="default" size="sm" asChild className="hidden sm:flex">
+                <Link to="/premium">
+                  <Crown className="mr-2 h-4 w-4" />
+                  Obter Premium
+                </Link>
+              </Button>
+            </>
           )}
-          
-          <Button variant="default" size="sm" className="hidden sm:flex">
-            <Crown className="mr-2 h-4 w-4" />
-            Obter Premium
-          </Button>
           
           <Sheet>
             <SheetTrigger asChild>
@@ -108,23 +121,36 @@ export function Header() {
                 ))}
                 
                 {user ? (
-                  <Button variant="ghost" onClick={() => signOut()} className="justify-start">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sair
-                  </Button>
+                  <>
+                    <Button variant="ghost" onClick={() => signOut()} className="justify-start">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sair
+                    </Button>
+                    
+                    <Button variant={isPremium ? "ghost" : "default"} className="justify-start" asChild>
+                      <Link to="/premium">
+                        <Crown className="mr-2 h-4 w-4" />
+                        {isPremium ? "Premium Ativo" : "Obter Premium"}
+                      </Link>
+                    </Button>
+                  </>
                 ) : (
-                  <Button variant="default" asChild className="justify-start">
-                    <Link to="/auth">
-                      <User className="mr-2 h-4 w-4" />
-                      Entrar
-                    </Link>
-                  </Button>
+                  <>
+                    <Button variant="default" asChild className="justify-start">
+                      <Link to="/auth">
+                        <User className="mr-2 h-4 w-4" />
+                        Entrar
+                      </Link>
+                    </Button>
+                    
+                    <Button variant="default" className="mt-4" asChild>
+                      <Link to="/premium">
+                        <Crown className="mr-2 h-4 w-4" />
+                        Obter Premium
+                      </Link>
+                    </Button>
+                  </>
                 )}
-                
-                <Button variant="default" className="mt-4">
-                  <Crown className="mr-2 h-4 w-4" />
-                  Obter Premium
-                </Button>
               </div>
             </SheetContent>
           </Sheet>
