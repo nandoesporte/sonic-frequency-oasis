@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 export const checkAdminStatus = async (userId: string): Promise<boolean> => {
@@ -69,6 +68,55 @@ export const getSystemStats = async (): Promise<{
   } catch (error) {
     console.error('Unexpected error getting system stats:', error);
     return null;
+  }
+};
+
+export const addAdminUser = async (email: string): Promise<{ success: boolean; error?: string }> => {
+  try {
+    // First, get the user ID from user_profiles
+    const { data: userData, error: userError } = await supabase
+      .from('user_profiles')
+      .select('id')
+      .eq('id', email)
+      .single();
+    
+    if (userError || !userData) {
+      // If no direct match with ID, try to find by email in subscribers table
+      const { data: subscriberData, error: subscriberError } = await supabase
+        .from('subscribers')
+        .select('user_id')
+        .eq('email', email)
+        .single();
+      
+      if (subscriberError || !subscriberData?.user_id) {
+        return { success: false, error: 'User not found' };
+      }
+      
+      // Insert into admin_users using the user_id from subscribers
+      const { error: insertError } = await supabase
+        .from('admin_users')
+        .insert([{ user_id: subscriberData.user_id }]);
+        
+      if (insertError) {
+        return { success: false, error: insertError.message };
+      }
+      
+      return { success: true };
+    }
+    
+    // If we found the user directly in user_profiles
+    const { error: insertError } = await supabase
+      .from('admin_users')
+      .insert([{ user_id: userData.id }]);
+      
+    if (insertError) {
+      return { success: false, error: insertError.message };
+    }
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Error adding admin user:', error);
+    return { success: false, error: 'Unexpected error adding admin user' };
   }
 };
 
