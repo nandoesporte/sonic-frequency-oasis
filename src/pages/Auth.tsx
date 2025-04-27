@@ -35,6 +35,7 @@ export default function Auth() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
 
   console.log('Auth page rendered, user:', user, 'loading:', loading);
@@ -61,6 +62,18 @@ export default function Auth() {
     });
   }, [isLogin, form]);
 
+  // Handle authenticated user - with protection against redirecting multiple times
+  useEffect(() => {
+    if (user && !redirecting && !loading) {
+      console.log('User is authenticated, redirecting to home');
+      setRedirecting(true);
+      // Use a small timeout to prevent potential race conditions
+      setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 100);
+    }
+  }, [user, loading, navigate, redirecting]);
+
   // Show loading state
   if (loading) {
     return (
@@ -70,11 +83,8 @@ export default function Auth() {
     );
   }
 
-  // Redirect if user is already logged in
-  if (user) {
-    console.log('User is already authenticated, redirecting to home');
-    return <Navigate to="/" replace />;
-  }
+  // No need for manual Navigate here since we handle it in the useEffect
+  // This prevents the redirect loop
 
   const onSubmit = async (values: FormData) => {
     try {
@@ -87,8 +97,8 @@ export default function Auth() {
         const result = await signIn(values.email, values.password);
         
         if (result && result.user) {
-          console.log('Login successful, redirecting to home');
-          navigate('/', { replace: true });
+          console.log('Login successful');
+          // No need to navigate here, useEffect will handle it
         } else {
           console.error('Login failed:', result?.error || 'Unknown error');
           setAuthError(result?.error || 'Email ou senha incorretos.');

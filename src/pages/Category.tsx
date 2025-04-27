@@ -1,3 +1,4 @@
+
 import { useParams, Link, Navigate } from "react-router-dom";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
@@ -16,9 +17,19 @@ const Category = () => {
   const [frequencies, setFrequencies] = useState<FrequencyData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   
-  if (!user) {
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // Only redirect after we've confirmed auth is not loading
+  if (!user && !authLoading) {
     console.log("User not authenticated, redirecting to login");
     toast.error("Você precisa fazer login para acessar as frequências");
     return <Navigate to="/auth" replace />;
@@ -26,7 +37,7 @@ const Category = () => {
   
   useEffect(() => {
     const fetchFrequencies = async () => {
-      if (id) {
+      if (id && user) {
         setLoading(true);
         setError(null);
         try {
@@ -44,8 +55,10 @@ const Category = () => {
       }
     };
     
-    fetchFrequencies();
-  }, [id]);
+    if (user) {
+      fetchFrequencies();
+    }
+  }, [id, user]);
   
   if (!category) {
     return (
