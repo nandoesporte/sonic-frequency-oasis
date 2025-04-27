@@ -88,9 +88,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         title: "Login realizado com sucesso",
         description: "Bem-vindo de volta!",
       });
-
-      // Redirect to home after successful login
-      navigate('/');
       
       return { user: data.user, session: data.session };
     } catch (error: any) {
@@ -147,30 +144,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      console.log('Attempting to sign out');
-      
-      // Call Supabase signOut first
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        console.error('Error during signout:', error);
-        throw error;
-      }
-      
-      console.log('Sign out successful');
-      
-      // Then clear local state
+      // First clear local state so UI updates immediately
       setUser(null);
       setSession(null);
       setIsAdmin(false);
+      
+      // Then sign out from Supabase
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      console.log('User signed out successfully');
       
       toast({
         title: "Logout realizado",
         description: "Você foi desconectado com sucesso.",
       });
       
-      // Navigate after state is cleared to prevent redirect loops
-      navigate('/auth');
+      // Use a short timeout to ensure state is cleared before navigation
+      setTimeout(() => {
+        navigate('/auth');
+      }, 100);
     } catch (error) {
       console.error('Signout error:', error);
       toast({

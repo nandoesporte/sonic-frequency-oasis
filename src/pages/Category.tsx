@@ -1,4 +1,3 @@
-
 import { useParams, Link } from "react-router-dom";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
@@ -8,49 +7,35 @@ import { getCategoryById, getFrequenciesByCategory, FrequencyData } from "@/lib/
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { toast } from "@/components/ui/use-toast";
 
 const Category = () => {
   const { id } = useParams<{ id: string }>();
-  const categoryId = id || '';
-  const category = getCategoryById(categoryId);
+  const category = id ? getCategoryById(id) : undefined;
   const [frequencies, setFrequencies] = useState<FrequencyData[]>([]);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     const fetchFrequencies = async () => {
-      if (categoryId) {
-        try {
-          setLoading(true);
-          console.log("Fetching frequencies for category:", categoryId);
-          const data = await getFrequenciesByCategory(categoryId);
-          setFrequencies(data);
-          console.log("Fetched frequencies:", data.length);
-        } catch (error) {
-          console.error("Error fetching frequencies:", error);
-          toast({
-            title: "Erro ao carregar frequências",
-            description: "Não foi possível carregar as frequências desta categoria.",
-            variant: "destructive",
-          });
-        } finally {
-          setLoading(false);
-        }
+      if (id) {
+        setLoading(true);
+        const data = await getFrequenciesByCategory(id);
+        setFrequencies(data);
+        setLoading(false);
       }
     };
     
     fetchFrequencies();
-  }, [categoryId]);
+  }, [id]);
   
   if (!category) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Categoria não encontrada</h2>
+          <h2 className="text-2xl font-bold mb-4">Category not found</h2>
           <Button asChild>
             <Link to="/">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Voltar para Home
+              Back to Home
             </Link>
           </Button>
         </div>
@@ -69,7 +54,7 @@ const Category = () => {
           <Button variant="ghost" asChild className="mb-6">
             <Link to="/">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Voltar para Categorias
+              Back to Categories
             </Link>
           </Button>
           
@@ -85,7 +70,7 @@ const Category = () => {
           
           {loading ? (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">Carregando frequências...</p>
+              <p className="text-muted-foreground">Loading frequencies...</p>
             </div>
           ) : frequencies.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -95,7 +80,7 @@ const Category = () => {
             </div>
           ) : (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">Nenhuma frequência encontrada nesta categoria.</p>
+              <p className="text-muted-foreground">No frequencies found in this category.</p>
             </div>
           )}
         </div>
