@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -63,71 +62,74 @@ export const SubscriptionsManagement = () => {
         if (plansError) throw plansError;
         setPlans(plansData || []);
         
-        // Load subscribers
+        // Fetch subscribers with a simpler approach to avoid deep type issues
         const query = supabase
           .from('subscribers')
-          .select(`
-            *,
-            user_id (
-              id,
-              email:user_profiles(email),
-              name:user_profiles(full_name)
-            ),
-            plan_id (
-              id,
-              name,
-              price,
-              interval
-            )
-          `)
+          .select('*, user_id(id), plan_id(id, name, price, interval)')
           .eq('subscribed', true);
         
         if (filterPlan !== 'all') {
           query.eq('plan_id', filterPlan);
         }
         
-        const { data, error } = await query.order('subscription_end', { ascending: true });
+        const { data: subscribersData, error } = await query.order('subscription_end', { ascending: true });
         
         if (error) throw error;
         
-        // Transform the database response to simpler types
-        const transformedData: Subscriber[] = (data || []).map((item: any) => {
-          // Start with base subscriber properties
-          const subscriber: Subscriber = {
-            id: item.id,
-            email: item.email,
-            subscription_end: item.subscription_end,
-            created_at: item.created_at,
-            last_payment_date: item.last_payment_date,
-            subscribed: item.subscribed,
-            updated_at: item.updated_at,
-            user_id: null,
-            plan_id: null
+        // Now fetch user profiles in a separate query for subscribers that have a user_id
+        const userIds = subscribersData
+          .filter(sub => sub.user_id)
+          .map(sub => sub.user_id.id);
+        
+        // Only fetch user profiles if we have user IDs
+        let userProfiles: Record<string, { email: string | null, name: string | null }> = {};
+        
+        if (userIds.length > 0) {
+          const { data: profilesData, error: profilesError } = await supabase
+            .from('user_profiles')
+            .select('id, full_name')
+            .in('id', userIds);
+          
+          if (profilesError) throw profilesError;
+          
+          // Create a lookup map for user profiles
+          profilesData?.forEach(profile => {
+            userProfiles[profile.id] = {
+              email: null, // We'll get this from auth later if needed
+              name: profile.full_name
+            };
+          });
+        }
+        
+        // Transform the data into our simplified format
+        const transformedSubscribers: Subscriber[] = subscribersData.map(sub => {
+          const userProfile = sub.user_id ? {
+            id: sub.user_id.id,
+            email: sub.email, // Use the email from subscriber as fallback
+            name: userProfiles[sub.user_id.id]?.name || null
+          } : null;
+          
+          const plan = sub.plan_id ? {
+            id: sub.plan_id.id,
+            name: sub.plan_id.name,
+            price: sub.plan_id.price,
+            interval: sub.plan_id.interval
+          } : null;
+          
+          return {
+            id: sub.id,
+            email: sub.email,
+            subscription_end: sub.subscription_end,
+            created_at: sub.created_at,
+            last_payment_date: sub.last_payment_date,
+            subscribed: sub.subscribed,
+            updated_at: sub.updated_at,
+            user_id: userProfile,
+            plan_id: plan
           };
-          
-          // Safely extract user data if it exists
-          if (item.user_id && typeof item.user_id === 'object' && 'id' in item.user_id) {
-            subscriber.user_id = {
-              id: item.user_id.id,
-              email: item.user_id.email && item.user_id.email[0] ? item.user_id.email[0].email : null,
-              name: item.user_id.name && item.user_id.name[0] ? item.user_id.name[0].full_name : null
-            };
-          }
-          
-          // Safely extract plan data if it exists
-          if (item.plan_id && typeof item.plan_id === 'object' && 'id' in item.plan_id) {
-            subscriber.plan_id = {
-              id: item.plan_id.id,
-              name: item.plan_id.name,
-              price: item.plan_id.price,
-              interval: item.plan_id.interval
-            };
-          }
-          
-          return subscriber;
         });
         
-        setSubscriptions(transformedData);
+        setSubscriptions(transformedSubscribers);
       } catch (error) {
         console.error('Error loading subscriptions data:', error);
         toast({
