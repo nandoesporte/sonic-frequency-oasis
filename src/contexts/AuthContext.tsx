@@ -20,6 +20,7 @@ interface AuthContextType {
   }>;
   signOut: () => Promise<void>;
   loading: boolean;
+  isAdmin: boolean; // New property to check admin status
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -28,26 +29,66 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
+
+  // Check if the current user is an admin
+  const checkAdminStatus = async (userId: string) => {
+    if (!userId) return false;
+    
+    try {
+      const { data, error } = await supabase
+        .from('admin_users')
+        .select('user_id')
+        .eq('user_id', userId)
+        .single();
+      
+      if (error) {
+        console.error('Error checking admin status:', error);
+        return false;
+      }
+      
+      return data ? true : false;
+    } catch (err) {
+      console.error('Unexpected error checking admin status:', err);
+      return false;
+    }
+  };
 
   useEffect(() => {
     console.log('AuthProvider initialized');
     
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         console.log('Auth state change event:', event);
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
+        
+        // Check admin status when user changes
+        if (currentSession?.user) {
+          const adminStatus = await checkAdminStatus(currentSession.user.id);
+          setIsAdmin(adminStatus);
+        } else {
+          setIsAdmin(false);
+        }
+        
         setLoading(false);
       }
     );
 
     // Then check for existing session
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+    supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
       console.log('Initial session check:', currentSession ? 'Session found' : 'No session');
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
+      
+      // Check admin status for initial session
+      if (currentSession?.user) {
+        const adminStatus = await checkAdminStatus(currentSession.user.id);
+        setIsAdmin(adminStatus);
+      }
+      
       setLoading(false);
     });
 
@@ -75,11 +116,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       console.log('Login successful:', data.user?.email);
+      
+      // Check and set admin status
+      if (data.user) {
+        const adminStatus = await checkAdminStatus(data.user.id);
+        setIsAdmin(adminStatus);
+      }
+      
       toast({
         title: "Login realizado com sucesso",
         description: "Bem-vindo de volta!",
       });
 
+      // Redirect to home after successful login
+      navigate('/');
+      
       return { user: data.user, session: data.session };
     } catch (error: any) {
       console.error('Unexpected login error:', error);
@@ -138,6 +189,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 
+      setIsAdmin(false);
+      
       toast({
         title: "Logout realizado",
         description: "Você foi desconectado com sucesso.",
@@ -154,7 +207,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, signIn, signUp, signOut, loading }}>
+    <AuthContext.Provider value={{ user, session, signIn, signUp, signOut, loading, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );
