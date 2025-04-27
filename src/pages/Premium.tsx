@@ -1,9 +1,10 @@
+
 import { useEffect, useState } from "react";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
 import { FrequencyCard } from "@/components/frequency-card";
 import { AudioProvider } from "@/lib/audio-context";
-import { FrequencyData } from "@/lib/audio-context";
+import { FrequencyData } from "@/lib/data";  // Change this import
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Crown } from "lucide-react";
