@@ -1,5 +1,7 @@
 
-import { Check, Lightbulb } from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function ScientificEvidence() {
@@ -38,12 +40,12 @@ export function ScientificEvidence() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {studies.map((study) => (
-            <Card key={study.id} className="hover-scale">
+            <Card key={study.id} className="hover:bg-accent/5 transition-colors">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Lightbulb className="h-5 w-5 text-primary" />
+                  <Check className="h-5 w-5 text-primary" />
                   {study.title}
                 </CardTitle>
               </CardHeader>
@@ -52,6 +54,15 @@ export function ScientificEvidence() {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        <div className="text-center">
+          <Button asChild className="group" variant="outline" size="lg">
+            <Link to="/scientific">
+              Veja Mais Evidências Científicas
+              <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </Button>
         </div>
       </div>
     </section>

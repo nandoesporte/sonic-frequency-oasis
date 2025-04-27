@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Header } from "@/components/header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -99,16 +98,7 @@ const benefits = [
 
 export default function Scientific() {
   const [activeTab, setActiveTab] = useState("anxiety");
-  const [expandedStudy, setExpandedStudy] = useState<number | null>(null);
-
-  const toggleStudy = (index: number) => {
-    if (expandedStudy === index) {
-      setExpandedStudy(null);
-    } else {
-      setExpandedStudy(index);
-    }
-  };
-
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50/50 to-background dark:from-purple-900/10">
       <Header />
@@ -141,22 +131,24 @@ export default function Scientific() {
 
         <div className="mb-10">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="flex flex-wrap w-full overflow-x-auto pb-1 gap-2">
-              {benefits.map((benefit) => (
-                <TabsTrigger
-                  key={benefit.id}
-                  value={benefit.id}
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground whitespace-nowrap"
-                >
-                  <benefit.icon className="h-4 w-4 mr-2" />
-                  {benefit.title}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+            <div className="max-w-full overflow-hidden">
+              <TabsList className="inline-flex w-auto px-4 py-2 overflow-x-auto no-scrollbar">
+                {benefits.map((benefit) => (
+                  <TabsTrigger
+                    key={benefit.id}
+                    value={benefit.id}
+                    className="min-w-fit data-[state=active]:bg-primary/90 data-[state=active]:text-primary-foreground whitespace-nowrap transition-colors"
+                  >
+                    <benefit.icon className="h-4 w-4 mr-2" />
+                    {benefit.title}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
 
             {benefits.map((benefit) => (
               <TabsContent key={benefit.id} value={benefit.id}>
-                <Card>
+                <Card className="border-primary/20">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl">
                       <benefit.icon className="h-6 w-6 text-primary" />
@@ -166,7 +158,10 @@ export default function Scientific() {
                       <h4 className="text-sm font-medium text-muted-foreground">Frequências utilizadas:</h4>
                       <div className="flex flex-wrap gap-2 mt-1">
                         {benefit.frequencies.map((freq, idx) => (
-                          <span key={idx} className="bg-primary/10 text-primary-foreground/90 px-2 py-1 rounded-full text-xs">
+                          <span 
+                            key={idx} 
+                            className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium"
+                          >
                             {freq}
                           </span>
                         ))}
