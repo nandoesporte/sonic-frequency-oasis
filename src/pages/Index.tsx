@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { AudioPlayer } from "@/components/audio-player";
 import { CategoryCard } from "@/components/category-card";
@@ -33,43 +34,38 @@ const Index = () => {
       <div className="min-h-screen pb-24">
         <Header />
         
-        {/* Hero Section */}
-        <section className="pt-32 pb-12 px-4 bg-gradient-to-b from-purple-50/50 to-background dark:from-purple-900/10">
-          <div className="container mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 animate-fade-in">
-              <span className="text-purple-dark dark:text-purple-light">Experimente</span> o Som Terapêutico
-            </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in">
-              Explore frequências curativas cientificamente comprovadas para relaxamento, foco e bem-estar
-            </p>
-            <Button asChild size="lg" className="rounded-full animate-fade-in">
-              {user ? (
-                <Link to="/category/healing">
-                  Comece Sua Jornada de Cura
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              ) : (
+        {/* Hero Section - Only show for non-logged in users */}
+        {!user && (
+          <section className="pt-32 pb-12 px-4 bg-gradient-to-b from-purple-50/50 to-background dark:from-purple-900/10">
+            <div className="container mx-auto text-center">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 animate-fade-in">
+                <span className="text-purple-dark dark:text-purple-light">Experimente</span> o Som Terapêutico
+              </h1>
+              <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in">
+                Explore frequências curativas cientificamente comprovadas para relaxamento, foco e bem-estar
+              </p>
+              <Button asChild size="lg" className="rounded-full animate-fade-in">
                 <Link to="/auth">
                   Entre para Começar
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
-              )}
-            </Button>
-          </div>
-        </section>
-
-        {/* Frequency Ranges Section */}
-        <FrequencyRanges />
+              </Button>
+            </div>
+          </section>
+        )}
         
-        {/* Scientific Evidence Section */}
-        <ScientificEvidence />
+        {/* Frequency Ranges Section - Only show for non-logged in users */}
+        {!user && <FrequencyRanges />}
         
-        {/* Pricing Section */}
-        <PricingSection />
+        {/* Scientific Evidence Section - Only show for non-logged in users */}
+        {!user && <ScientificEvidence />}
+        
+        {/* Pricing Section - Only show for non-logged in users */}
+        {!user && <PricingSection />}
         
         {/* Trending Section */}
         {user && trendingFrequencies.length > 0 && (
-          <section className="py-12 px-4">
+          <section className="py-12 px-4 mt-20">
             <div className="container mx-auto">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl md:text-3xl font-bold">Em Alta</h2>
@@ -95,7 +91,7 @@ const Index = () => {
         )}
         
         {/* Categories Section */}
-        <section className="py-12 px-4">
+        <section className={`py-12 px-4 ${user ? 'mt-20' : ''}`}>
           <div className="container mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold mb-6">Categorias</h2>
             
