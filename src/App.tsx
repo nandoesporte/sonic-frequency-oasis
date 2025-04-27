@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -16,10 +16,11 @@ import Trending from "./pages/Trending";
 import Payment from "./pages/Payment";
 import Guide from "./pages/Guide";
 import Scientific from "./pages/Scientific";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
-const App = () => {
+function App() {
   useEffect(() => {
     const theme = localStorage.getItem("theme") || 
       (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
@@ -34,28 +35,32 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <BrowserRouter>
+        <Router>
           <AuthProvider>
             <Toaster />
             <Sonner />
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/category/:id" element={<Category />} />
+              <Route path="/scientific" element={<Scientific />} />
+              <Route path="/categories/:category" element={<Category />} />
+              <Route path="/trending" element={<Trending />} />
               <Route path="/favorites" element={<Favorites />} />
+              <Route path="/guide" element={<Guide />} />
               <Route path="/history" element={<History />} />
               <Route path="/premium" element={<Premium />} />
-              <Route path="/trending" element={<Trending />} />
-              <Route path="/payment" element={<Payment />} />
-              <Route path="/guide" element={<Guide />} />
-              <Route path="/scientific" element={<Scientific />} />
+              <Route path="/payment/:planId" element={<Payment />} />
+              <Route path="/auth" element={<Auth />} />
+              
+              {/* Admin routes */}
+              <Route path="/admin/*" element={<Admin />} />
+              
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
-        </BrowserRouter>
+        </Router>
       </TooltipProvider>
     </QueryClientProvider>
   );
-};
+}
 
 export default App;
