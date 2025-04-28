@@ -90,8 +90,6 @@ export default function Auth() {
     );
   }
 
-  // No need for manual Navigate here since we handle it in the useEffect
-
   const onSubmit = async (values: FormData) => {
     try {
       console.log('Form submitted:', values);
@@ -108,9 +106,6 @@ export default function Auth() {
         } else {
           console.error('Login failed:', result?.error || 'Unknown error');
           setAuthError(result?.error || 'Email ou senha incorretos.');
-          toast.error('Falha no login', {
-            description: result?.error || 'Email ou senha incorretos.'
-          });
         }
       } else {
         // Type assertion to access fullName in the registration path
@@ -141,9 +136,6 @@ export default function Auth() {
         } else {
           console.error('Signup failed:', result?.error || 'Unknown error');
           setAuthError(result?.error || 'Não foi possível criar sua conta. Tente novamente.');
-          toast.error('Erro ao registrar', {
-            description: result?.error || 'Não foi possível criar sua conta. Tente novamente.'
-          });
         }
       }
     } catch (error: any) {
@@ -153,11 +145,6 @@ export default function Auth() {
           ? 'Erro ao fazer login. Tente novamente.'
           : 'Erro ao criar conta. Tente novamente.'
       );
-      toast.error('Erro de autenticação', {
-        description: isLogin 
-          ? 'Erro ao fazer login. Tente novamente.'
-          : 'Erro ao criar conta. Tente novamente.'
-      });
     } finally {
       setIsSubmitting(false);
     }

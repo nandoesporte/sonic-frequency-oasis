@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/components/ui/sonner';
 import { AuthContextType } from './auth-types';
 import { checkAdminStatus } from './admin-utils';
 
@@ -66,12 +66,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         console.error('Login error:', error.message);
-        toast({
-          title: "Erro ao fazer login",
+        toast.error('Erro ao fazer login', {
           description: error.message === 'Invalid login credentials'
-            ? "Email ou senha incorretos."
-            : "Erro ao tentar fazer login. Tente novamente.",
-          variant: "destructive",
+            ? 'Email ou senha incorretos.'
+            : 'Erro ao tentar fazer login. Tente novamente.'
         });
         return { user: null, session: null, error: error.message };
       }
@@ -84,18 +82,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsAdmin(adminStatus);
       }
       
-      toast({
-        title: "Login realizado com sucesso",
-        description: "Bem-vindo de volta!",
+      toast.success('Login realizado com sucesso', {
+        description: 'Bem-vindo de volta!'
       });
       
       return { user: data.user, session: data.session };
     } catch (error: any) {
       console.error('Unexpected login error:', error);
-      toast({
-        title: "Erro ao fazer login",
-        description: "Ocorreu um erro inesperado. Tente novamente.",
-        variant: "destructive",
+      toast.error('Erro ao fazer login', {
+        description: 'Ocorreu um erro inesperado. Tente novamente.'
       });
       return { user: null, session: null, error: error?.message };
     }
@@ -116,27 +111,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         console.error('Signup error:', error.message);
-        toast({
-          title: "Erro ao criar conta",
-          description: "Não foi possível criar sua conta. Tente novamente.",
-          variant: "destructive",
+        toast.error('Erro ao criar conta', {
+          description: 'Não foi possível criar sua conta. Tente novamente.'
         });
         return { user: null, session: null, error: error.message };
       }
 
       console.log('Signup successful:', data.user?.email);
-      toast({
-        title: "Conta criada com sucesso",
-        description: "Verifique seu email para confirmar sua conta.",
+      toast.success('Conta criada com sucesso', {
+        description: 'Verifique seu email para confirmar sua conta.'
       });
 
       return { user: data.user, session: data.session };
     } catch (error: any) {
       console.error('Unexpected signup error:', error);
-      toast({
-        title: "Erro ao criar conta",
-        description: "Ocorreu um erro inesperado. Tente novamente.",
-        variant: "destructive",
+      toast.error('Erro ao criar conta', {
+        description: 'Ocorreu um erro inesperado. Tente novamente.'
       });
       return { user: null, session: null, error: error?.message };
     }
@@ -144,6 +134,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
+      console.log('Signing out user');
+      
       // First clear local state so UI updates immediately
       setUser(null);
       setSession(null);
@@ -151,25 +143,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Then sign out from Supabase
       const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      
+      if (error) {
+        console.error('Signout error:', error);
+        toast.error('Erro ao sair', {
+          description: 'Não foi possível fazer logout. Tente novamente.'
+        });
+        throw error;
+      }
       
       console.log('User signed out successfully');
       
-      toast({
-        title: "Logout realizado",
-        description: "Você foi desconectado com sucesso.",
+      toast.success('Logout realizado', {
+        description: 'Você foi desconectado com sucesso.'
       });
       
-      // Use a short timeout to ensure state is cleared before navigation
-      setTimeout(() => {
-        navigate('/auth');
-      }, 100);
+      // Navigate after signout is complete
+      navigate('/auth');
     } catch (error) {
       console.error('Signout error:', error);
-      toast({
-        title: "Erro ao sair",
-        description: "Não foi possível fazer logout. Tente novamente.",
-        variant: "destructive",
+      toast.error('Erro ao sair', {
+        description: 'Não foi possível fazer logout. Tente novamente.'
       });
     }
   };

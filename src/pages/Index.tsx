@@ -26,8 +26,16 @@ const Index = () => {
       
       try {
         setLoading(true);
+        console.log("Fetching trending frequencies for homepage...");
         const frequencies = await getTrendingFrequencies();
+        console.log("Received trending frequencies:", frequencies);
         setTrendingFrequencies(frequencies);
+        
+        if (frequencies.length === 0) {
+          toast.info('Sem frequências', {
+            description: 'Não foram encontradas frequências em alta.'
+          });
+        }
       } catch (error) {
         console.error('Error fetching trending frequencies:', error);
         toast.error('Erro ao carregar frequências', {
@@ -75,7 +83,7 @@ const Index = () => {
         {/* Pricing Section - Only show for non-logged in users */}
         {!user && <PricingSection />}
         
-        {/* Trending Section */}
+        {/* Trending Section - Only show for logged in users */}
         {user && (
           <section className="py-12 px-4 mt-20">
             <div className="container mx-auto">

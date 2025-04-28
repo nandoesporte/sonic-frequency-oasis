@@ -114,7 +114,7 @@ const Trending = () => {
       toast.error('Acesso negado', {
         description: 'É necessário estar logado para acessar esta página.'
       });
-      navigate('/auth', { replace: true });
+      navigate('/auth');
     }
   }, [user, loading, navigate]);
 
@@ -128,8 +128,8 @@ const Trending = () => {
     );
   }
 
-  // Only render content when authenticated
-  if (!user) {
+  // Don't render content if not authenticated
+  if (!user && !loading) {
     return null; // Return null as useEffect will handle redirection
   }
   

@@ -1,5 +1,5 @@
 
-import { useParams, Link, Navigate, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
 import { FrequencyCard } from "@/components/frequency-card";
@@ -43,7 +43,7 @@ const Category = () => {
       toast.error("Acesso negado", {
         description: "Você precisa fazer login para acessar as frequências"
       });
-      navigate("/auth", { replace: true });
+      navigate("/auth");
     }
   }, [user, authLoading, navigate]);
   
@@ -97,9 +97,9 @@ const Category = () => {
     );
   }
 
-  // Don't render main content while redirecting
+  // Don't render main content if not authenticated
   if (!user && !authLoading) {
-    return null; // useEffect will handle redirection
+    return null; // Return null as useEffect will handle redirection
   }
   
   if (!categoryData && !loading) {
