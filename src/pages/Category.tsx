@@ -12,8 +12,8 @@ import { toast } from "@/components/ui/sonner";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Category = () => {
-  const { id } = useParams<{ id: string }>();
-  const category = id ? getCategoryById(id) : undefined;
+  const { category } = useParams<{ category: string }>();
+  const categoryData = category ? getCategoryById(category) : undefined;
   const [frequencies, setFrequencies] = useState<FrequencyData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,12 +37,12 @@ const Category = () => {
   
   useEffect(() => {
     const fetchFrequencies = async () => {
-      if (id && user) {
+      if (category && user) {
         setLoading(true);
         setError(null);
         try {
-          console.log("Fetching frequencies for category:", id);
-          const data = await getFrequenciesByCategory(id);
+          console.log("Fetching frequencies for category:", category);
+          const data = await getFrequenciesByCategory(category);
           console.log("Frequencies fetched:", data);
           setFrequencies(data);
         } catch (err) {
@@ -58,9 +58,9 @@ const Category = () => {
     if (user) {
       fetchFrequencies();
     }
-  }, [id, user]);
+  }, [category, user]);
   
-  if (!category) {
+  if (!categoryData) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -76,7 +76,7 @@ const Category = () => {
     );
   }
 
-  const CategoryIcon = category.icon;
+  const CategoryIcon = categoryData.icon;
 
   return (
     <AudioProvider>
@@ -96,8 +96,8 @@ const Category = () => {
               <CategoryIcon className="h-8 w-8 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold">{category.name}</h1>
-              <p className="text-muted-foreground">{category.description}</p>
+              <h1 className="text-3xl md:text-4xl font-bold">{categoryData.name}</h1>
+              <p className="text-muted-foreground">{categoryData.description}</p>
             </div>
           </div>
           
