@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -10,7 +11,7 @@ import { usePremium } from "@/hooks/use-premium";
 export function Header() {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
   const { isPremium } = usePremium();
   
   if (typeof window !== 'undefined') {
@@ -70,6 +71,15 @@ export function Header() {
           
           {user ? (
             <>
+              {isAdmin && (
+                <Button variant="outline" size="sm" asChild className="hidden sm:flex">
+                  <Link to="/admin">
+                    <User className="mr-2 h-4 w-4" />
+                    Admin
+                  </Link>
+                </Button>
+              )}
+              
               <Button variant="ghost" size="icon" onClick={() => signOut()} className="hidden sm:flex">
                 <LogOut className="h-5 w-5" />
               </Button>
@@ -123,6 +133,15 @@ export function Header() {
                 
                 {user ? (
                   <>
+                    {isAdmin && (
+                      <Button variant="outline" asChild className="justify-start">
+                        <Link to="/admin">
+                          <User className="mr-2 h-4 w-4" />
+                          Admin
+                        </Link>
+                      </Button>
+                    )}
+                    
                     <Button variant="ghost" onClick={() => signOut()} className="justify-start">
                       <LogOut className="mr-2 h-4 w-4" />
                       Sair

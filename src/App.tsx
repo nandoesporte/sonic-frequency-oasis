@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -51,7 +52,7 @@ function App() {
               <Route path="/payment/:planId" element={<Payment />} />
               <Route path="/auth" element={<Auth />} />
               
-              {/* Admin routes */}
+              {/* Admin routes - correctly configured with wildcard */}
               <Route path="/admin/*" element={<Admin />} />
               
               <Route path="*" element={<NotFound />} />
