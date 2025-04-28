@@ -3,16 +3,33 @@ import { useAudio } from "@/lib/audio-context";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { Heart, Pause, Play, Volume2 } from "lucide-react";
+import { Clock, Heart, Pause, Play, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 
 export function AudioPlayer() {
-  const { isPlaying, currentFrequency, volume, togglePlayPause, setVolume, addToFavorites, favorites } = useAudio();
+  const { 
+    isPlaying, 
+    currentFrequency, 
+    volume, 
+    togglePlayPause, 
+    setVolume, 
+    addToFavorites, 
+    favorites, 
+    remainingTime 
+  } = useAudio();
   const [waves, setWaves] = useState<number[]>([]);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   
   const isFavorite = currentFrequency ? favorites.some(f => f.id === currentFrequency.id) : false;
+
+  // Format remaining time as MM:SS
+  const formatTime = (seconds: number | null) => {
+    if (seconds === null) return "--:--";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   // Generate random wave heights for animation
   useEffect(() => {
@@ -57,6 +74,12 @@ export function AudioPlayer() {
             <h3 className="font-bold">{currentFrequency.name}</h3>
             <p className="text-sm text-muted-foreground">
               {currentFrequency.hz} Hz • {currentFrequency.purpose}
+              {isPlaying && remainingTime !== null && (
+                <span className="ml-2 flex items-center text-primary">
+                  <Clock className="h-3.5 w-3.5 mr-1 inline" />
+                  {formatTime(remainingTime)}
+                </span>
+              )}
             </p>
           </div>
         </div>

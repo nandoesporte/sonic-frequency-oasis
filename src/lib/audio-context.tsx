@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { toast } from '@/components/ui/sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,7 +9,7 @@ type AudioContextType = {
   isPlaying: boolean;
   currentFrequency: FrequencyData | null;
   volume: number;
-  play: (frequency: FrequencyData) => void;
+  play: (frequency: FrequencyData) => Promise<void>;
   pause: () => void;
   setVolume: (volume: number) => void;
   togglePlayPause: () => void;
@@ -16,6 +17,7 @@ type AudioContextType = {
   removeFromFavorites: (id: string) => void;
   favorites: FrequencyData[];
   history: FrequencyData[];
+  remainingTime: number | null;
 };
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -34,33 +36,54 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [volume, setVolume] = useState(0.7);
   const [favorites, setFavorites] = useState<FrequencyData[]>([]);
   const [history, setHistory] = useState<FrequencyData[]>([]);
+  const [remainingTime, setRemainingTime] = useState<number | null>(null);
   const { user } = useAuth();
   const { isPremium } = usePremium();
   
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const fadeTime = 0.2; // 200ms fade time for smoother transitions
+  const MAX_PLAY_TIME = 30 * 60; // 30 minutes in seconds
+  const fadeTime = 0.25; // 250ms fade time for smoother transitions
 
-  useEffect(() => {
-    return () => {
-      if (oscillatorRef.current) {
-        const gainNode = gainNodeRef.current;
-        if (gainNode && audioContextRef.current) {
-          gainNode.gain.setValueAtTime(gainNode.gain.value, audioContextRef.current.currentTime);
-          gainNode.gain.linearRampToValueAtTime(0, audioContextRef.current.currentTime + fadeTime);
-        }
+  // Cleanup function for audio resources
+  const cleanupAudioResources = () => {
+    if (oscillatorRef.current && gainNodeRef.current && audioContextRef.current) {
+      try {
+        const currentTime = audioContextRef.current.currentTime;
+        gainNodeRef.current.gain.setValueAtTime(gainNodeRef.current.gain.value, currentTime);
+        gainNodeRef.current.gain.linearRampToValueAtTime(0, currentTime + fadeTime);
         
         setTimeout(() => {
           try {
             oscillatorRef.current?.stop();
             oscillatorRef.current?.disconnect();
+            oscillatorRef.current = null;
+            
+            gainNodeRef.current?.disconnect();
+            gainNodeRef.current = null;
           } catch (e) {
-            console.error('Error stopping oscillator:', e);
+            console.error('Error during audio cleanup:', e);
           }
         }, fadeTime * 1000);
+      } catch (error) {
+        console.error('Error in cleanup audio resources:', error);
       }
+    }
+    
+    // Clear timer if exists
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  // Cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      cleanupAudioResources();
       
       if (audioContextRef.current?.state !== 'closed') {
         try {
@@ -72,6 +95,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, []);
 
+  // Load saved data from localStorage
   useEffect(() => {
     try {
       const savedFavorites = localStorage.getItem('frequency-favorites');
@@ -88,6 +112,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, []);
 
+  // Save favorites to localStorage when they change
   useEffect(() => {
     try {
       localStorage.setItem('frequency-favorites', JSON.stringify(favorites));
@@ -96,6 +121,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [favorites]);
 
+  // Save history to localStorage when it changes
   useEffect(() => {
     try {
       localStorage.setItem('frequency-history', JSON.stringify(history));
@@ -104,6 +130,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [history]);
 
+  // Start playing a frequency
   const play = async (frequency: FrequencyData) => {
     try {
       if (frequency.premium && !isPremium) {
@@ -111,6 +138,13 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return;
       }
 
+      // Clear any existing timer
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+
+      // Create audio context if doesn't exist
       if (!audioContextRef.current) {
         try {
           audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -123,6 +157,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       
       const ctx = audioContextRef.current;
       
+      // Clean up existing oscillator with smooth fade out
       if (oscillatorRef.current) {
         const oldGain = gainNodeRef.current;
         if (oldGain) {
@@ -141,22 +176,26 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
       }
       
+      // Resume audio context if it's suspended
       if (ctx.state === 'suspended') {
         await ctx.resume();
       }
       
+      // Create new oscillator and gain node
       const oscillator = ctx.createOscillator();
       const gainNode = ctx.createGain();
       
       oscillator.type = 'sine';
       oscillator.frequency.setValueAtTime(frequency.hz, ctx.currentTime);
       
+      // Start with zero gain and fade in for smooth start
       gainNode.gain.setValueAtTime(0, ctx.currentTime);
       gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + fadeTime);
       
       oscillator.connect(gainNode);
       gainNode.connect(ctx.destination);
       
+      // Start the oscillator
       oscillator.start();
       
       oscillatorRef.current = oscillator;
@@ -165,45 +204,50 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setIsPlaying(true);
       setCurrentFrequency(frequency);
       
+      // Set initial remaining time to 30 minutes
+      setRemainingTime(MAX_PLAY_TIME);
+      
+      // Start countdown timer
+      timerRef.current = setInterval(() => {
+        setRemainingTime((prev) => {
+          if (prev === null || prev <= 1) {
+            // Time's up, pause the playback
+            clearInterval(timerRef.current!);
+            timerRef.current = null;
+            pause();
+            toast.info(`Reprodução de ${frequency.name} encerrada após 30 minutos`);
+            return null;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      
+      // Add to history
       setHistory(prev => {
         const filtered = prev.filter(item => item.id !== frequency.id);
         return [frequency, ...filtered].slice(0, 20);
       });
       
-      toast.success(`Tocando ${frequency.name} (${frequency.hz}Hz)`);
+      toast.success(`Tocando ${frequency.name} (${frequency.hz}Hz) por até 30 minutos`);
     } catch (error) {
       console.error('Error playing frequency:', error);
       toast.error("Não foi possível reproduzir a frequência. Tente novamente.");
     }
   };
 
+  // Pause the currently playing frequency
   const pause = () => {
     try {
-      if (oscillatorRef.current && gainNodeRef.current && audioContextRef.current) {
-        const currentTime = audioContextRef.current.currentTime;
-        gainNodeRef.current.gain.setValueAtTime(gainNodeRef.current.gain.value, currentTime);
-        gainNodeRef.current.gain.linearRampToValueAtTime(0, currentTime + fadeTime);
-        
-        setTimeout(() => {
-          try {
-            oscillatorRef.current?.stop();
-            oscillatorRef.current?.disconnect();
-            oscillatorRef.current = null;
-            
-            gainNodeRef.current?.disconnect();
-            gainNodeRef.current = null;
-          } catch (e) {
-            console.error('Error during pause cleanup:', e);
-          }
-        }, fadeTime * 1000);
-      }
+      cleanupAudioResources();
       setIsPlaying(false);
+      setRemainingTime(null);
     } catch (error) {
       console.error('Error pausing frequency:', error);
       setIsPlaying(false);
     }
   };
 
+  // Update the volume
   const updateVolume = (newVolume: number) => {
     setVolume(newVolume);
     if (gainNodeRef.current) {
@@ -215,6 +259,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  // Toggle between play and pause
   const togglePlayPause = () => {
     if (isPlaying) {
       pause();
@@ -225,6 +270,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  // Add a frequency to favorites
   const addToFavorites = (frequency: FrequencyData) => {
     try {
       if (!favorites.some(f => f.id === frequency.id)) {
@@ -239,6 +285,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  // Remove a frequency from favorites
   const removeFromFavorites = (id: string) => {
     try {
       setFavorites(prev => {
@@ -265,7 +312,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         addToFavorites,
         removeFromFavorites,
         favorites,
-        history
+        history,
+        remainingTime
       }}
     >
       {children}
