@@ -20,6 +20,8 @@ const Category = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
+  console.log("Category page - Auth state:", { user: !!user, authLoading, category });
+
   useEffect(() => {
     // Update category data when param changes
     if (category) {
@@ -44,17 +46,20 @@ const Category = () => {
         description: "Você precisa fazer login para acessar as frequências"
       });
       navigate("/auth");
+      return;
     }
   }, [user, authLoading, navigate]);
   
   useEffect(() => {
-    const fetchFrequencies = async () => {
-      if (category && user && categoryData) {
-        setLoading(true);
-        setError(null);
-        try {
-          console.log("Fetching frequencies for category:", category);
-          const data = await getFrequenciesByCategory(category);
+    // Only fetch frequencies if we have both user and category data
+    // and authentication check is complete (not loading)
+    if (category && user && categoryData && !authLoading) {
+      console.log("Fetching frequencies for category:", category);
+      setLoading(true);
+      setError(null);
+      
+      getFrequenciesByCategory(category)
+        .then(data => {
           console.log("Frequencies fetched:", data);
           setFrequencies(data);
           
@@ -67,32 +72,30 @@ const Category = () => {
               description: `${data.length} frequências encontradas`
             });
           }
-        } catch (err) {
+        })
+        .catch(err => {
           console.error("Error fetching frequencies:", err);
           setError("Não foi possível carregar as frequências. Tente novamente mais tarde.");
           toast.error("Erro ao carregar frequências", {
             description: "Ocorreu um erro ao buscar as frequências. Tente novamente mais tarde."
           });
-        } finally {
+        })
+        .finally(() => {
           setLoading(false);
-        }
-      }
-    };
-    
-    if (user && categoryData) {
-      fetchFrequencies();
-    } else if (user && !categoryData && category) {
+        });
+    } else if (!authLoading) {
+      // If auth check is complete but there's no category data
       setLoading(false);
-      setError("Categoria não encontrada");
     }
-  }, [category, user, categoryData]);
+  }, [category, user, categoryData, authLoading]);
   
-  // Show loading state while checking authentication
+  // Show a better loading state with immediate feedback
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-        <p className="ml-4 text-muted-foreground">Verificando autenticação...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+        <p className="text-xl font-medium">Verificando autenticação...</p>
+        <p className="text-muted-foreground mt-2">Aguarde um momento</p>
       </div>
     );
   }
