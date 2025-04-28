@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { toast } from '@/components/ui/sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -42,21 +41,30 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
 
-  const fadeTime = 0.1; // 100ms fade time
+  const fadeTime = 0.2; // 200ms fade time for smoother transitions
 
   useEffect(() => {
     return () => {
       if (oscillatorRef.current) {
-        try {
-          oscillatorRef.current.stop();
-          oscillatorRef.current.disconnect();
-        } catch (e) {
-          console.error('Error stopping oscillator:', e);
+        const gainNode = gainNodeRef.current;
+        if (gainNode && audioContextRef.current) {
+          gainNode.gain.setValueAtTime(gainNode.gain.value, audioContextRef.current.currentTime);
+          gainNode.gain.linearRampToValueAtTime(0, audioContextRef.current.currentTime + fadeTime);
         }
+        
+        setTimeout(() => {
+          try {
+            oscillatorRef.current?.stop();
+            oscillatorRef.current?.disconnect();
+          } catch (e) {
+            console.error('Error stopping oscillator:', e);
+          }
+        }, fadeTime * 1000);
       }
-      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+      
+      if (audioContextRef.current?.state !== 'closed') {
         try {
-          audioContextRef.current.close();
+          audioContextRef.current?.close();
         } catch (e) {
           console.error('Error closing audio context:', e);
         }
@@ -115,41 +123,34 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       
       const ctx = audioContextRef.current;
       
-      // Stop any current playing sound with a smooth fade out
       if (oscillatorRef.current) {
         const oldGain = gainNodeRef.current;
         if (oldGain) {
           oldGain.gain.setValueAtTime(oldGain.gain.value, ctx.currentTime);
           oldGain.gain.linearRampToValueAtTime(0, ctx.currentTime + fadeTime);
+          
           setTimeout(() => {
-            if (oscillatorRef.current) {
-              try {
-                oscillatorRef.current.stop();
-                oscillatorRef.current.disconnect();
-              } catch (e) {
-                console.error('Error stopping oscillator:', e);
-              }
+            try {
+              oscillatorRef.current?.stop();
+              oscillatorRef.current?.disconnect();
+              oldGain.disconnect();
+            } catch (e) {
+              console.error('Error cleaning up old oscillator:', e);
             }
-            if (oldGain) oldGain.disconnect();
           }, fadeTime * 1000);
-        } else {
-          try {
-            oscillatorRef.current.stop();
-            oscillatorRef.current.disconnect();
-          } catch (e) {
-            console.error('Error stopping oscillator:', e);
-          }
         }
       }
       
-      // Create new oscillator and gain node
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
+      }
+      
       const oscillator = ctx.createOscillator();
       const gainNode = ctx.createGain();
       
       oscillator.type = 'sine';
       oscillator.frequency.setValueAtTime(frequency.hz, ctx.currentTime);
       
-      // Start with zero gain and fade in for a smooth start
       gainNode.gain.setValueAtTime(0, ctx.currentTime);
       gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + fadeTime);
       
@@ -164,7 +165,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setIsPlaying(true);
       setCurrentFrequency(frequency);
       
-      // Add to history
       setHistory(prev => {
         const filtered = prev.filter(item => item.id !== frequency.id);
         return [frequency, ...filtered].slice(0, 20);
@@ -185,18 +185,15 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         gainNodeRef.current.gain.linearRampToValueAtTime(0, currentTime + fadeTime);
         
         setTimeout(() => {
-          if (oscillatorRef.current) {
-            try {
-              oscillatorRef.current.stop();
-              oscillatorRef.current.disconnect();
-              oscillatorRef.current = null;
-            } catch (e) {
-              console.error('Error stopping oscillator:', e);
-            }
-          }
-          if (gainNodeRef.current) {
-            gainNodeRef.current.disconnect();
+          try {
+            oscillatorRef.current?.stop();
+            oscillatorRef.current?.disconnect();
+            oscillatorRef.current = null;
+            
+            gainNodeRef.current?.disconnect();
             gainNodeRef.current = null;
+          } catch (e) {
+            console.error('Error during pause cleanup:', e);
           }
         }, fadeTime * 1000);
       }
