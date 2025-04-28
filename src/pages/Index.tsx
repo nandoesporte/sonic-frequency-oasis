@@ -13,20 +13,32 @@ import { useAuth } from "@/contexts/AuthContext";
 import { PricingSection } from "@/components/subscription/PricingSection";
 import { FrequencyRanges } from "@/components/home/FrequencyRanges";
 import { ScientificEvidence } from "@/components/home/ScientificEvidence";
+import { toast } from "@/components/ui/sonner";
 
 const Index = () => {
   const [trendingFrequencies, setTrendingFrequencies] = useState<FrequencyData[]>([]);
+  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   
   useEffect(() => {
     const fetchTrendingFrequencies = async () => {
-      const frequencies = await getTrendingFrequencies();
-      setTrendingFrequencies(frequencies);
+      if (!user) return;
+      
+      try {
+        setLoading(true);
+        const frequencies = await getTrendingFrequencies();
+        setTrendingFrequencies(frequencies);
+      } catch (error) {
+        console.error('Error fetching trending frequencies:', error);
+        toast.error('Erro ao carregar frequências', {
+          description: 'Não foi possível carregar as frequências em alta.'
+        });
+      } finally {
+        setLoading(false);
+      }
     };
     
-    if (user) {
-      fetchTrendingFrequencies();
-    }
+    fetchTrendingFrequencies();
   }, [user]);
 
   return (
@@ -64,7 +76,7 @@ const Index = () => {
         {!user && <PricingSection />}
         
         {/* Trending Section */}
-        {user && trendingFrequencies.length > 0 && (
+        {user && (
           <section className="py-12 px-4 mt-20">
             <div className="container mx-auto">
               <div className="flex justify-between items-center mb-6">
@@ -77,15 +89,25 @@ const Index = () => {
                 </Button>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {trendingFrequencies.map((frequency) => (
-                  <FrequencyCard
-                    key={frequency.id}
-                    frequency={frequency}
-                    variant="trending"
-                  />
-                ))}
-              </div>
+              {loading ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : trendingFrequencies.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {trendingFrequencies.map((frequency) => (
+                    <FrequencyCard
+                      key={frequency.id}
+                      frequency={frequency}
+                      variant="trending"
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">Nenhuma frequência em alta encontrada.</p>
+                </div>
+              )}
             </div>
           </section>
         )}
