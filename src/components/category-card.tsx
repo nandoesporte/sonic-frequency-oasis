@@ -26,19 +26,24 @@ export function CategoryCard({ id, name, description, icon, requiresAuth = false
     const loadCount = async () => {
       try {
         if (user) {
+          console.log(`Loading count for category: ${id}`);
           const frequencyCount = await getCategoryCount(id);
           setCount(frequencyCount);
+          console.log(`Category ${id} has ${frequencyCount} frequencies`);
         }
       } catch (error) {
         console.error("Error fetching category count:", error);
       }
     };
     
-    loadCount();
+    if (user) {
+      loadCount();
+    }
   }, [id, user]);
   
   const handleClick = () => {
-    if (requiresAuth) {
+    if (requiresAuth && !user) {
+      console.log("Auth required, redirecting to login");
       toast.info("Faça login para acessar", {
         description: "É necessário estar logado para acessar esta categoria"
       });
@@ -47,6 +52,7 @@ export function CategoryCard({ id, name, description, icon, requiresAuth = false
     }
     
     // Normal navigation
+    console.log(`Navigating to category: ${id}`);
     navigate(`/categories/${id}`);
   };
   
@@ -54,7 +60,7 @@ export function CategoryCard({ id, name, description, icon, requiresAuth = false
     <Card 
       className={cn(
         "overflow-hidden hover-scale cursor-pointer", 
-        requiresAuth && "opacity-80 hover:opacity-100"
+        requiresAuth && !user && "opacity-80 hover:opacity-100"
       )}
       onClick={handleClick}
     >
@@ -64,7 +70,7 @@ export function CategoryCard({ id, name, description, icon, requiresAuth = false
             {icon}
             <CardTitle className="ml-2">{name}</CardTitle>
           </div>
-          {requiresAuth && <Lock className="h-4 w-4 text-muted-foreground" />}
+          {requiresAuth && !user && <Lock className="h-4 w-4 text-muted-foreground" />}
         </div>
       </CardHeader>
       
@@ -78,8 +84,8 @@ export function CategoryCard({ id, name, description, icon, requiresAuth = false
             </span>
           )}
           
-          <Button variant="ghost" size="sm" className="ml-auto" asChild>
-            <span>
+          <Button variant="ghost" size="sm" className="ml-auto">
+            <span className="flex items-center">
               Explorar <ArrowRight className="ml-1 h-3 w-3" />
             </span>
           </Button>

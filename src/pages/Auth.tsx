@@ -11,6 +11,7 @@ import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
+import { toast } from '@/components/ui/sonner';
 
 // Define proper schema for login and registration
 const loginSchema = z.object({
@@ -67,10 +68,16 @@ export default function Auth() {
     if (user && !redirecting && !loading) {
       console.log('User is authenticated, redirecting to home');
       setRedirecting(true);
+      
+      // Provide visual feedback before redirecting
+      toast.success('Login bem-sucedido!', {
+        description: 'Redirecionando para a página inicial...',
+      });
+
       // Use a small timeout to prevent potential race conditions
       setTimeout(() => {
         navigate('/', { replace: true });
-      }, 100);
+      }, 500);
     }
   }, [user, loading, navigate, redirecting]);
 
@@ -84,7 +91,6 @@ export default function Auth() {
   }
 
   // No need for manual Navigate here since we handle it in the useEffect
-  // This prevents the redirect loop
 
   const onSubmit = async (values: FormData) => {
     try {
@@ -98,10 +104,13 @@ export default function Auth() {
         
         if (result && result.user) {
           console.log('Login successful');
-          // No need to navigate here, useEffect will handle it
+          // Feedback is now handled in the useEffect
         } else {
           console.error('Login failed:', result?.error || 'Unknown error');
           setAuthError(result?.error || 'Email ou senha incorretos.');
+          toast.error('Falha no login', {
+            description: result?.error || 'Email ou senha incorretos.'
+          });
         }
       } else {
         // Type assertion to access fullName in the registration path
@@ -109,6 +118,9 @@ export default function Auth() {
         
         if (!registerValues.fullName) {
           setAuthError('Nome completo é obrigatório para criar conta.');
+          toast.error('Erro ao registrar', {
+            description: 'Nome completo é obrigatório para criar conta.'
+          });
           setIsSubmitting(false);
           return;
         }
@@ -118,6 +130,9 @@ export default function Auth() {
         
         if (result && result.user) {
           console.log('Signup successful, switching to login');
+          toast.success('Conta criada com sucesso!', {
+            description: 'Por favor, faça login.'
+          });
           setIsLogin(true);
           form.reset({
             email: values.email,
@@ -126,6 +141,9 @@ export default function Auth() {
         } else {
           console.error('Signup failed:', result?.error || 'Unknown error');
           setAuthError(result?.error || 'Não foi possível criar sua conta. Tente novamente.');
+          toast.error('Erro ao registrar', {
+            description: result?.error || 'Não foi possível criar sua conta. Tente novamente.'
+          });
         }
       }
     } catch (error: any) {
@@ -135,6 +153,11 @@ export default function Auth() {
           ? 'Erro ao fazer login. Tente novamente.'
           : 'Erro ao criar conta. Tente novamente.'
       );
+      toast.error('Erro de autenticação', {
+        description: isLogin 
+          ? 'Erro ao fazer login. Tente novamente.'
+          : 'Erro ao criar conta. Tente novamente.'
+      });
     } finally {
       setIsSubmitting(false);
     }

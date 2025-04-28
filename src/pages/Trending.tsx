@@ -8,16 +8,18 @@ import { FrequencyData } from "@/lib/data";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/sonner";
 import { useAuth } from "@/contexts/AuthContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const TrendingContent = () => {
   const [frequencies, setFrequencies] = useState<FrequencyData[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   useEffect(() => {
     const fetchTrendingFrequencies = async () => {
       try {
+        console.log("Fetching trending frequencies...");
         setLoading(true);
         const { data, error } = await supabase
           .from('frequencies')
@@ -33,6 +35,17 @@ const TrendingContent = () => {
           return;
         }
         
+        console.log("Frequencies data received:", data);
+        
+        if (!data || data.length === 0) {
+          console.log("No frequencies found");
+          toast.info('Sem frequências', {
+            description: 'Não foram encontradas frequências em alta.'
+          });
+          setFrequencies([]);
+          return;
+        }
+        
         setFrequencies(data.map(freq => ({
           id: freq.id,
           name: freq.name,
@@ -43,6 +56,10 @@ const TrendingContent = () => {
           premium: freq.is_premium,
           trending: true
         })));
+        
+        toast.success('Frequências carregadas', {
+          description: `${data.length} frequências em alta encontradas`
+        });
       } catch (err) {
         console.error('Unexpected error:', err);
         toast.error('Erro ao carregar frequências', {
@@ -54,7 +71,11 @@ const TrendingContent = () => {
     };
 
     if (user) {
+      console.log("User authenticated, fetching frequencies");
       fetchTrendingFrequencies();
+    } else {
+      console.log("No user, skipping fetch");
+      setLoading(false);
     }
   }, [user]);
 
@@ -84,11 +105,32 @@ const TrendingContent = () => {
 };
 
 const Trending = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
   
-  // Redirect to auth if not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      console.log("User not authenticated, redirecting to auth page");
+      toast.error('Acesso negado', {
+        description: 'É necessário estar logado para acessar esta página.'
+      });
+      navigate('/auth', { replace: true });
+    }
+  }, [user, loading, navigate]);
+
+  // Show loading state while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+        <p className="ml-4 text-muted-foreground">Verificando autenticação...</p>
+      </div>
+    );
+  }
+
+  // Only render content when authenticated
   if (!user) {
-    return <Navigate to="/auth" replace />;
+    return null; // Return null as useEffect will handle redirection
   }
   
   return (
