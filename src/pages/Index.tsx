@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { AudioPlayer } from "@/components/audio-player";
 import { CategoryCard } from "@/components/category-card";
@@ -7,7 +6,7 @@ import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { AudioProvider } from "@/lib/audio-context";
 import { categories, getTrendingFrequencies, FrequencyData } from "@/lib/data";
-import { ArrowRight, Crown } from "lucide-react";
+import { ArrowRight, BookOpen, Crown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { PricingSection } from "@/components/subscription/PricingSection";
@@ -54,6 +53,29 @@ const Index = () => {
       <div className="min-h-screen pb-24">
         <Header />
         
+        {/* Welcome Section - Only show for logged in users */}
+        {user && (
+          <section className="w-full bg-gradient-to-b from-purple-50/50 to-background dark:from-purple-900/10 pt-32 pb-12">
+            <div className="container mx-auto px-4">
+              <div className="max-w-4xl mx-auto text-center">
+                <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in">
+                  Bem-vindo ao Guia de Frequências
+                </h1>
+                <p className="text-lg text-muted-foreground mb-8 animate-fade-in">
+                  Aprenda a maximizar os benefícios das frequências sonoras terapêuticas com nosso guia completo.
+                </p>
+                <Button asChild size="lg" className="rounded-full animate-fade-in hover-scale">
+                  <Link to="/guide" className="gap-2">
+                    <BookOpen className="h-5 w-5" />
+                    Acessar o Guia de Uso
+                    <ArrowRight className="h-5 w-5" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </section>
+        )}
+        
         {/* Hero Section - Only show for non-logged in users */}
         {!user && (
           <section className="pt-32 pb-12 px-4 bg-gradient-to-b from-purple-50/50 to-background dark:from-purple-900/10">
@@ -83,45 +105,8 @@ const Index = () => {
         {/* Pricing Section - Only show for non-logged in users */}
         {!user && <PricingSection />}
         
-        {/* Trending Section - Only show for logged in users */}
-        {user && (
-          <section className="py-12 px-4 mt-20">
-            <div className="container mx-auto">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl md:text-3xl font-bold">Em Alta</h2>
-                <Button variant="ghost" asChild>
-                  <Link to="/trending">
-                    Ver Todos
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-              
-              {loading ? (
-                <div className="flex justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                </div>
-              ) : trendingFrequencies.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {trendingFrequencies.map((frequency) => (
-                    <FrequencyCard
-                      key={frequency.id}
-                      frequency={frequency}
-                      variant="trending"
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">Nenhuma frequência em alta encontrada.</p>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-        
         {/* Categories Section */}
-        <section className={`py-12 px-4 ${user ? 'mt-20' : ''}`}>
+        <section className={`py-12 px-4 ${user ? '' : ''}`}>
           <div className="container mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold mb-6">Categorias</h2>
             
