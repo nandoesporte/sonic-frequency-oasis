@@ -28,6 +28,5 @@ const Toaster = ({ ...props }: ToasterProps) => {
   )
 }
 
-// Export toast from the sonner library directly
 export { Toaster }
 export { toast } from "sonner"

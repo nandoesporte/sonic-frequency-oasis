@@ -28,20 +28,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log('Auth state change event:', event);
         if (!mounted) return;
         
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
-        
-        // Check admin status when user changes
-        if (currentSession?.user) {
-          checkAdminStatus(currentSession.user.id)
-            .then(adminStatus => {
-              if (mounted) setIsAdmin(adminStatus);
-            });
-        } else {
+        if (event === 'SIGNED_OUT') {
+          setSession(null);
+          setUser(null);
           setIsAdmin(false);
+        } else {
+          setSession(currentSession);
+          setUser(currentSession?.user ?? null);
+          
+          // Check admin status when user changes
+          if (currentSession?.user) {
+            checkAdminStatus(currentSession.user.id)
+              .then(adminStatus => {
+                if (mounted) setIsAdmin(adminStatus);
+              });
+          }
         }
         
-        // Only set loading to false after handling the auth state change
+        // Set loading to false after handling the auth state change
         setLoading(false);
       }
     );
@@ -159,12 +163,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('Signing out user');
       setLoading(true);
       
-      // First clear local state so UI updates immediately
-      setUser(null);
-      setSession(null);
-      setIsAdmin(false);
-      
-      // Then sign out from Supabase
       const { error } = await supabase.auth.signOut();
       
       if (error) {
@@ -174,6 +172,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         throw error;
       }
+      
+      // Clear local state AFTER successful signout
+      setUser(null);
+      setSession(null);
+      setIsAdmin(false);
       
       console.log('User signed out successfully');
       
