@@ -104,7 +104,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [history]);
 
-  const play = (frequency: FrequencyData) => {
+  const play = async (frequency: FrequencyData) => {
     try {
       if (frequency.premium && !isPremium) {
         toast.error("Esta frequência é exclusiva para usuários premium");
