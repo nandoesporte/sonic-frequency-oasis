@@ -17,6 +17,7 @@ const Admin = () => {
         <Route path="subscriptions" element={<SubscriptionsManagement />} />
         <Route path="content" element={<ContentManagement />} />
         <Route path="settings" element={<AdminSettings />} />
+        
         {/* Redirect any unmatched admin routes to the admin dashboard */}
         <Route path="*" element={<Navigate to="/admin" replace />} />
       </Route>

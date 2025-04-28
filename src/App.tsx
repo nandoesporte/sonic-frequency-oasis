@@ -52,9 +52,10 @@ function App() {
               <Route path="/payment/:planId" element={<Payment />} />
               <Route path="/auth" element={<Auth />} />
               
-              {/* Admin routes - correctly configured with wildcard */}
+              {/* Admin routes with proper nesting */}
               <Route path="/admin/*" element={<Admin />} />
               
+              {/* Catch all route for 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
