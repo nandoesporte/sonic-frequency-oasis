@@ -80,7 +80,7 @@ export const addAdminUser = async (email: string): Promise<{ success: boolean; e
       perPage: 100 // Get more users to increase chance of finding the right one
     });
     
-    // Fix: Define a proper interface for the user object and use correct type guards
+    // Define a proper interface for the user object
     interface AuthUser {
       id: string;
       email?: string;
@@ -133,11 +133,17 @@ export const addAdminUser = async (email: string): Promise<{ success: boolean; e
       return { success: true };
     }
     
+    // Explicitly type the users array to avoid 'never' type issues
+    const users = authUserData.users as any[];
+    
     // Filter the users manually after receiving the data
-    const matchingUser = authUserData.users.find((user): user is AuthUser => {
-      return user && typeof user === 'object' && 'email' in user && 
-        typeof user.email === 'string' && user.email === email;
-    });
+    const matchingUser = users.find(user => {
+      return user && 
+             typeof user === 'object' && 
+             'email' in user && 
+             typeof user.email === 'string' && 
+             user.email === email;
+    }) as AuthUser | undefined;
     
     if (!matchingUser) {
       return { success: false, error: 'User not found in auth database' };
