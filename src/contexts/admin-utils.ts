@@ -75,15 +75,16 @@ export const getSystemStats = async (): Promise<{
 export const addAdminUser = async (email: string): Promise<{ success: boolean; error?: string }> => {
   try {
     // First try to find the user by email in auth.users using the auth API
+    // Fix: Remove the filter parameter and use page/perPage with query parameter instead
     const { data: authUser, error: authError } = await supabase.auth.admin.listUsers({
       page: 1,
-      perPage: 1,
-      filter: {
-        email: `eq.${email}`
-      }
+      perPage: 1
     });
     
-    if (authError || !authUser || authUser.users.length === 0) {
+    // Filter the users manually after receiving the data
+    const matchingUser = authUser?.users.find(user => user.email === email);
+    
+    if (authError || !authUser || !matchingUser) {
       console.error('Error finding user by email:', authError || 'User not found');
       
       // Alternative approach: try to find user by email in subscribers table
@@ -130,7 +131,7 @@ export const addAdminUser = async (email: string): Promise<{ success: boolean; e
     }
     
     // Found user in auth.users, add to admin_users
-    const userId = authUser.users[0].id;
+    const userId = matchingUser.id;
     
     // Check if user is already an admin to avoid duplicates
     const { data: existingAdmin } = await supabase
