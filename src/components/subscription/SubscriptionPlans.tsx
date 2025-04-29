@@ -14,7 +14,7 @@ interface Plan {
   price: number;
   currency: string;
   interval: string;
-  kiwify_url: string;  // New field for Kiwify URLs
+  kiwify_url?: string;  // Made optional with "?"
 }
 
 interface SubscriberInfo {
@@ -51,7 +51,19 @@ export function SubscriptionPlans() {
           return;
         }
 
-        setPlans(plansData || []);
+        // Convert the data to match our Plan interface
+        if (plansData) {
+          const formattedPlans: Plan[] = plansData.map(plan => ({
+            id: plan.id,
+            name: plan.name,
+            description: plan.description,
+            price: plan.price,
+            currency: plan.currency,
+            interval: plan.interval,
+            kiwify_url: plan.kiwify_url || '' // Handle case where kiwify_url might be missing
+          }));
+          setPlans(formattedPlans);
+        }
         
         // If user is logged in, fetch their subscription status
         if (user) {
@@ -243,7 +255,7 @@ export function SubscriptionPlans() {
                 <Button 
                   onClick={() => handleSubscribe(plan)} 
                   className="w-full"
-                  disabled={isCurrentPlan}
+                  disabled={isCurrentPlan || !plan.kiwify_url}
                   variant={isMonthly ? "outline" : "default"}
                 >
                   {isCurrentPlan ? (
@@ -251,6 +263,8 @@ export function SubscriptionPlans() {
                       <Check className="mr-2 h-4 w-4" />
                       Plano Atual
                     </>
+                  ) : !plan.kiwify_url ? (
+                    'Em breve'
                   ) : (
                     'Assinar agora'
                   )}
