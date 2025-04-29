@@ -75,14 +75,14 @@ export const getSystemStats = async (): Promise<{
 export const addAdminUser = async (email: string): Promise<{ success: boolean; error?: string }> => {
   try {
     // First try to find the user by email in auth.users using the auth API
-    // Fix: Remove the filter parameter and use page/perPage with query parameter instead
     const { data: authUser, error: authError } = await supabase.auth.admin.listUsers({
       page: 1,
-      perPage: 1
+      perPage: 100 // Get more users to increase chance of finding the right one
     });
     
     // Filter the users manually after receiving the data
-    const matchingUser = authUser?.users.find(user => user.email === email);
+    // Fix: Use proper type checking to avoid TypeScript error
+    const matchingUser = authUser?.users?.find(user => user && typeof user === 'object' && 'email' in user && user.email === email);
     
     if (authError || !authUser || !matchingUser) {
       console.error('Error finding user by email:', authError || 'User not found');
