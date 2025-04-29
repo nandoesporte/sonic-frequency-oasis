@@ -6,7 +6,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/components/ui/sonner';
 import { addAdminUser } from '@/contexts/admin-utils';
 
 export const AdminAccess = () => {
@@ -17,10 +17,8 @@ export const AdminAccess = () => {
     e.preventDefault();
     
     if (!email.trim()) {
-      toast({
-        title: "Email obrigatório",
-        description: "Por favor, insira um email válido",
-        variant: "destructive"
+      toast.error("Email obrigatório", {
+        description: "Por favor, insira um email válido"
       });
       return;
     }
@@ -31,25 +29,19 @@ export const AdminAccess = () => {
       const result = await addAdminUser(email);
       
       if (result.success) {
-        toast({
-          title: "Usuário adicionado com sucesso",
-          description: `${email} agora tem acesso de administrador`,
-          variant: "default"
+        toast.success("Usuário adicionado com sucesso", {
+          description: `${email} agora tem acesso de administrador`
         });
         setEmail('');
       } else {
-        toast({
-          title: "Erro ao adicionar usuário",
-          description: result.error || "Não foi possível adicionar este usuário como administrador",
-          variant: "destructive"
+        toast.error("Erro ao adicionar usuário", {
+          description: result.error || "Não foi possível adicionar este usuário como administrador"
         });
       }
     } catch (error) {
       console.error("Error adding admin user:", error);
-      toast({
-        title: "Erro inesperado",
-        description: "Ocorreu um erro ao adicionar o usuário como administrador",
-        variant: "destructive"
+      toast.error("Erro inesperado", {
+        description: "Ocorreu um erro ao adicionar o usuário como administrador"
       });
     } finally {
       setIsSubmitting(false);
