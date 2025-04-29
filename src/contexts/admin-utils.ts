@@ -81,8 +81,12 @@ export const addAdminUser = async (email: string): Promise<{ success: boolean; e
     });
     
     // Filter the users manually after receiving the data
-    // Fix: Use proper type checking to avoid TypeScript error
-    const matchingUser = authUser?.users?.find(user => user && typeof user === 'object' && 'email' in user && user.email === email);
+    // Fix: Use proper type checking and explicit typing to avoid TypeScript error
+    type UserWithEmail = { id: string, email?: string };
+    const matchingUser = authUser?.users?.find((user): user is UserWithEmail => {
+      return user && typeof user === 'object' && 'email' in user && 
+        typeof user.email === 'string' && user.email === email;
+    });
     
     if (authError || !authUser || !matchingUser) {
       console.error('Error finding user by email:', authError || 'User not found');
