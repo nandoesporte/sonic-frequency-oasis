@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, 
   SidebarFooter, SidebarGroup, SidebarGroupLabel, 
   SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { LayoutDashboard, Users, CreditCard, FileText, Settings } from 'lucide-react';
+import { LayoutDashboard, Users, CreditCard, FileText, Settings, ShieldAlert } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const AdminLayout = () => {
@@ -79,6 +79,15 @@ export const AdminLayout = () => {
                     <Link to="/admin/content">
                       <FileText />
                       <span>Conteúdo</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Acesso de Admin">
+                    <Link to="/admin/access">
+                      <ShieldAlert />
+                      <span>Acesso de Admin</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

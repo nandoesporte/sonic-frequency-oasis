@@ -17,6 +17,7 @@ import Trending from "./pages/Trending";
 import Guide from "./pages/Guide";
 import Scientific from "./pages/Scientific";
 import Admin from "./pages/Admin";
+import { setupAdminUser } from "./utils/setupAdminUser";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,9 @@ function App() {
     } else {
       document.documentElement.classList.remove("dark");
     }
+    
+    // Set up admin access for the specified user
+    setupAdminUser();
   }, []);
 
   return (

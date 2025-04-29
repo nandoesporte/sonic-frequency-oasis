@@ -7,6 +7,7 @@ import { UsersManagement } from '@/pages/admin/UsersManagement';
 import { SubscriptionsManagement } from '@/pages/admin/SubscriptionsManagement';
 import { ContentManagement } from '@/pages/admin/ContentManagement';
 import { AdminSettings } from '@/pages/admin/Settings';
+import { AdminAccess } from '@/pages/admin/AdminAccess';
 
 const Admin = () => {
   return (
@@ -17,6 +18,7 @@ const Admin = () => {
         <Route path="subscriptions" element={<SubscriptionsManagement />} />
         <Route path="content" element={<ContentManagement />} />
         <Route path="settings" element={<AdminSettings />} />
+        <Route path="access" element={<AdminAccess />} />
         
         {/* Redirect any unmatched admin routes to the admin dashboard */}
         <Route path="*" element={<Navigate to="/admin" replace />} />
