@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 export const checkAdminStatus = async (userId: string): Promise<boolean> => {
@@ -133,17 +132,16 @@ export const addAdminUser = async (email: string): Promise<{ success: boolean; e
       return { success: true };
     }
     
-    // Explicitly type the users array to avoid 'never' type issues
-    const users = authUserData.users as any[];
+    // Cast users to a properly typed array
+    const users = authUserData.users as Array<{id: string; email?: string}>;
     
-    // Filter the users manually after receiving the data
+    // Use a properly typed function to find the matching user
     const matchingUser = users.find(user => {
       return user && 
              typeof user === 'object' && 
-             'email' in user && 
-             typeof user.email === 'string' && 
+             user.email !== undefined && 
              user.email === email;
-    }) as AuthUser | undefined;
+    });
     
     if (!matchingUser) {
       return { success: false, error: 'User not found in auth database' };
