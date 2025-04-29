@@ -75,21 +75,20 @@ export const getSystemStats = async (): Promise<{
 export const addAdminUser = async (email: string): Promise<{ success: boolean; error?: string }> => {
   try {
     // First try to find the user by email in auth.users using the auth API
-    const { data: authUser, error: authError } = await supabase.auth.admin.listUsers({
+    const { data: authUserData, error: authError } = await supabase.auth.admin.listUsers({
       page: 1,
       perPage: 100 // Get more users to increase chance of finding the right one
     });
     
-    // Filter the users manually after receiving the data
-    // Fix: Use proper type checking and explicit typing to avoid TypeScript error
-    type UserWithEmail = { id: string, email?: string };
-    const matchingUser = authUser?.users?.find((user): user is UserWithEmail => {
-      return user && typeof user === 'object' && 'email' in user && 
-        typeof user.email === 'string' && user.email === email;
-    });
+    // Fix: Define a proper interface for the user object and use correct type guards
+    interface AuthUser {
+      id: string;
+      email?: string;
+    }
     
-    if (authError || !authUser || !matchingUser) {
-      console.error('Error finding user by email:', authError || 'User not found');
+    // Only proceed with authUserData if it exists and has a users property that's an array
+    if (authError || !authUserData || !Array.isArray(authUserData.users)) {
+      console.error('Error finding user by email:', authError || 'Invalid response format');
       
       // Alternative approach: try to find user by email in subscribers table
       const { data: subscriberData, error: subscriberError } = await supabase
@@ -132,6 +131,16 @@ export const addAdminUser = async (email: string): Promise<{ success: boolean; e
       }
       
       return { success: true };
+    }
+    
+    // Filter the users manually after receiving the data
+    const matchingUser = authUserData.users.find((user): user is AuthUser => {
+      return user && typeof user === 'object' && 'email' in user && 
+        typeof user.email === 'string' && user.email === email;
+    });
+    
+    if (!matchingUser) {
+      return { success: false, error: 'User not found in auth database' };
     }
     
     // Found user in auth.users, add to admin_users
