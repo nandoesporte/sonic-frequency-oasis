@@ -57,6 +57,9 @@ function App() {
               {/* Admin routes with proper nesting */}
               <Route path="/admin/*" element={<Admin />} />
               
+              {/* Redirect /settings to admin/settings for backward compatibility */}
+              <Route path="/settings" element={<Admin />} />
+              
               {/* Catch all route for 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>

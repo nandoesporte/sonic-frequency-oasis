@@ -1,30 +1,37 @@
 
+import { supabase } from '@/integrations/supabase/client';
 import { addAdminUser } from '@/contexts/admin-utils';
 import { toast } from '@/components/ui/sonner';
 
 export const setupAdminUser = async () => {
+  // Define the admin email
+  const adminEmail = 'nandomartin21@msn.com';
+  
   try {
-    // Add the specified user as admin
-    const email = 'nandomartin21@msn.com';
-    console.log(`Attempting to grant admin access to ${email}...`);
+    console.log(`Attempting to grant admin access to ${adminEmail}...`);
     
-    const result = await addAdminUser(email);
-    
-    if (result.success) {
-      console.log(`User ${email} has been granted admin access.`);
-      toast.success('Admin configurado', {
-        description: `${email} possui acesso administrativo`
-      });
-    } else {
-      console.error(`Failed to grant admin access to ${email}:`, result.error);
-      toast.error('Erro ao configurar admin', {
-        description: result.error || 'Não foi possível conceder acesso de administrador'
-      });
+    // First check if there are any existing admins
+    const { count, error: countError } = await supabase
+      .from('admin_users')
+      .select('*', { count: 'exact', head: true });
+      
+    if (countError) {
+      console.error('Error checking admin users:', countError);
+      return;
     }
-  } catch (error) {
-    console.error("Error setting up admin user:", error);
-    toast.error('Erro ao configurar admin', {
-      description: 'Ocorreu um erro inesperado ao configurar o usuário administrador'
-    });
+    
+    // Only try to add the default admin if there are no admins yet
+    if (count === 0) {
+      const result = await addAdminUser(adminEmail);
+      
+      if (result.success) {
+        console.log(`Admin access granted to ${adminEmail}`);
+      } else {
+        console.error(`Failed to grant admin access to ${adminEmail}: ${result.error}`);
+        // Don't show toast error on initial setup to avoid confusing users
+      }
+    }
+  } catch (error: any) {
+    console.error(`Failed to grant admin access to ${adminEmail}: ${error.message || error}`);
   }
 };

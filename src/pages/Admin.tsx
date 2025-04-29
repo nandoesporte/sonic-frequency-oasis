@@ -20,7 +20,7 @@ const Admin = () => {
         <Route path="settings" element={<AdminSettings />} />
         <Route path="access" element={<AdminAccess />} />
         
-        {/* Redirect any unmatched admin routes to the admin dashboard */}
+        {/* Default route to handle direct navigation to /admin/settings */}
         <Route path="*" element={<Navigate to="/admin" replace />} />
       </Route>
     </Routes>

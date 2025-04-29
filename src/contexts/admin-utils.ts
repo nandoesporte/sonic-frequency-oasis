@@ -4,18 +4,16 @@ export const checkAdminStatus = async (userId: string): Promise<boolean> => {
   if (!userId) return false;
   
   try {
-    // Direct query without relying on RLS policies to avoid recursion
+    // Use RPC to call the is_admin function to avoid recursion issues
     const { data, error } = await supabase
-      .from('admin_users')
-      .select('user_id')
-      .eq('user_id', userId);
+      .rpc('is_admin', { user_id: userId });
     
     if (error) {
       console.error('Error checking admin status:', error);
       return false;
     }
     
-    return data && data.length > 0;
+    return data === true;
   } catch (err) {
     console.error('Unexpected error checking admin status:', err);
     return false;
