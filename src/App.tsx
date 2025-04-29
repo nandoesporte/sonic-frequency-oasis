@@ -18,6 +18,7 @@ import Guide from "./pages/Guide";
 import Scientific from "./pages/Scientific";
 import Admin from "./pages/Admin";
 import { setupAdminUser } from "./utils/setupAdminUser";
+import AdminMenu from "./components/admin/AdminMenu";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,9 @@ function App() {
           <AuthProvider>
             <Toaster />
             <Sonner />
+            <div className="fixed top-0 right-0 z-50 m-4">
+              <AdminMenu />
+            </div>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/scientific" element={<Scientific />} />
