@@ -14,7 +14,6 @@ import History from "./pages/History";
 import Premium from "./pages/Premium";
 import NotFound from "./pages/NotFound";
 import Trending from "./pages/Trending";
-import Payment from "./pages/Payment";
 import Guide from "./pages/Guide";
 import Scientific from "./pages/Scientific";
 import Admin from "./pages/Admin";
@@ -49,7 +48,6 @@ function App() {
               <Route path="/guide" element={<Guide />} />
               <Route path="/history" element={<History />} />
               <Route path="/premium" element={<Premium />} />
-              <Route path="/payment/:planId" element={<Payment />} />
               <Route path="/auth" element={<Auth />} />
               
               {/* Admin routes with proper nesting */}

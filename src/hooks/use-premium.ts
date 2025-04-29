@@ -13,15 +13,36 @@ export function usePremium() {
     async function checkPremiumStatus() {
       setError(null);
       
-      // Since all frequencies are now premium, always show premium content if user is logged in
-      if (user) {
-        setIsPremium(true);
+      // If user is not logged in, they're not premium
+      if (!user) {
+        setIsPremium(false);
         setLoading(false);
         return;
       }
 
-      setIsPremium(false);
-      setLoading(false);
+      try {
+        // Check the subscription status in the database
+        const { data: subscriber, error: subscriberError } = await supabase
+          .from('subscribers')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+
+        if (subscriberError && subscriberError.code !== 'PGRST116') {
+          // PGRST116 is "not found" which is expected for non-subscribers
+          console.error("Error checking premium status:", subscriberError);
+          setError("Erro ao verificar status da assinatura");
+        }
+
+        // Set premium status based on subscription record
+        // A user is premium if they have a subscription record and it's active
+        setIsPremium(!!subscriber && subscriber.subscribed);
+      } catch (err) {
+        console.error("Exception checking premium status:", err);
+        setError("Erro ao verificar status da assinatura");
+      } finally {
+        setLoading(false);
+      }
     }
 
     checkPremiumStatus();
@@ -30,13 +51,32 @@ export function usePremium() {
   const refreshStatus = async () => {
     setLoading(true);
     
-    if (user) {
-      setIsPremium(true);
-    } else {
+    if (!user) {
       setIsPremium(false);
+      setLoading(false);
+      return;
     }
-    
-    setLoading(false);
+
+    try {
+      // Check the subscription status in the database
+      const { data: subscriber, error: subscriberError } = await supabase
+        .from('subscribers')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (subscriberError && subscriberError.code !== 'PGRST116') {
+        console.error("Error refreshing premium status:", subscriberError);
+        setError("Erro ao atualizar status da assinatura");
+      }
+
+      setIsPremium(!!subscriber && subscriber.subscribed);
+    } catch (err) {
+      console.error("Exception refreshing premium status:", err);
+      setError("Erro ao atualizar status da assinatura");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return { isPremium, loading, error, refreshStatus };

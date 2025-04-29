@@ -6,7 +6,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { Check, Crown, AlertCircle, Clock } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 interface Plan {
   id: string;
@@ -15,6 +14,7 @@ interface Plan {
   price: number;
   currency: string;
   interval: string;
+  kiwify_url: string;  // New field for Kiwify URLs
 }
 
 interface SubscriberInfo {
@@ -26,12 +26,10 @@ interface SubscriberInfo {
 export function SubscriptionPlans() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
-  const [processingPlanId, setProcessingPlanId] = useState<string | null>(null);
   const [subscriberInfo, setSubscriberInfo] = useState<SubscriberInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPlansAndSubscriptionStatus = async () => {
@@ -81,7 +79,7 @@ export function SubscriptionPlans() {
     fetchPlansAndSubscriptionStatus();
   }, [toast, user]);
 
-  const handleSubscribe = async (planId: string) => {
+  const handleSubscribe = async (plan: Plan) => {
     try {
       setError(null);
       
@@ -91,50 +89,30 @@ export function SubscriptionPlans() {
           description: "Você precisa estar logado para assinar um plano.",
           variant: "destructive",
         });
-        navigate('/auth');
         return;
       }
       
-      // Show processing state
-      setProcessingPlanId(planId);
-      
       // If user is already subscribed to this plan, show a message
-      if (subscriberInfo?.subscribed && subscriberInfo.plan_id === planId) {
+      if (subscriberInfo?.subscribed && subscriberInfo.plan_id === plan.id) {
         toast({
           title: "Você já possui este plano",
           description: "Você já está inscrito neste plano de assinatura.",
           variant: "default",
         });
-        setProcessingPlanId(null);
         return;
       }
       
-      // Use the user's session token for authorization
-      const response = await supabase.functions.invoke('create-subscription', {
-        body: { planId },
-      });
-
-      if (response.error) {
-        console.error("Erro na função create-subscription:", response.error);
-        throw new Error(response.error.message || "Erro ao processar assinatura");
+      // Redirect to Kiwify checkout page
+      if (plan.kiwify_url) {
+        window.location.href = plan.kiwify_url;
+      } else {
+        toast({
+          title: "Link de pagamento não disponível",
+          description: "No momento não é possível realizar a assinatura. Por favor, tente novamente mais tarde.",
+          variant: "destructive",
+        });
       }
-      
-      if (!response.data || !response.data.init_point) {
-        throw new Error("Link de pagamento não gerado");
-      }
-      
-      // Redirecionar para página de pagamento do Mercado Pago
-      toast({
-        title: "Redirecionando para o pagamento",
-        description: "Você será redirecionado para a página de pagamento segura.",
-      });
-      
-      // Small timeout to let the toast appear
-      setTimeout(() => {
-        window.location.href = response.data.init_point;
-      }, 500);
     } catch (error) {
-      setProcessingPlanId(null);
       const errorMessage = error instanceof Error ? error.message : "Ocorreu um erro desconhecido";
       
       setError(errorMessage);
@@ -190,19 +168,12 @@ export function SubscriptionPlans() {
               </p>
             </div>
           </div>
-          {/* Optional: Add a button to manage subscription */}
-          {false && (
-            <Button variant="outline" size="sm">
-              Gerenciar
-            </Button>
-          )}
         </div>
       )}
       
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
         {plans.map((plan) => {
           const isMonthly = plan.interval === 'month';
-          const isPlanProcessing = processingPlanId === plan.id;
           const isCurrentPlan = subscriberInfo?.plan_id === plan.id && subscriberInfo.subscribed;
           
           return (
@@ -270,17 +241,12 @@ export function SubscriptionPlans() {
               
               <CardFooter>
                 <Button 
-                  onClick={() => handleSubscribe(plan.id)} 
+                  onClick={() => handleSubscribe(plan)} 
                   className="w-full"
-                  disabled={isPlanProcessing || isCurrentPlan}
+                  disabled={isCurrentPlan}
                   variant={isMonthly ? "outline" : "default"}
                 >
-                  {isPlanProcessing ? (
-                    <>
-                      <span className="animate-spin mr-2 h-4 w-4 border-b-2 rounded-full border-white inline-block"></span>
-                      Processando...
-                    </>
-                  ) : isCurrentPlan ? (
+                  {isCurrentPlan ? (
                     <>
                       <Check className="mr-2 h-4 w-4" />
                       Plano Atual
