@@ -1,21 +1,22 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 export const checkAdminStatus = async (userId: string): Promise<boolean> => {
   if (!userId) return false;
   
   try {
+    // Direct query without relying on RLS policies to avoid recursion
     const { data, error } = await supabase
       .from('admin_users')
       .select('user_id')
-      .eq('user_id', userId)
-      .single();
+      .eq('user_id', userId);
     
     if (error) {
       console.error('Error checking admin status:', error);
       return false;
     }
     
-    return data ? true : false;
+    return data && data.length > 0;
   } catch (err) {
     console.error('Unexpected error checking admin status:', err);
     return false;
@@ -73,26 +74,50 @@ export const getSystemStats = async (): Promise<{
 
 export const addAdminUser = async (email: string): Promise<{ success: boolean; error?: string }> => {
   try {
-    // First, get the user ID from user_profiles
-    const { data: userData, error: userError } = await supabase
-      .from('user_profiles')
-      .select('id')
-      .eq('id', email)
-      .single();
+    // First try to find the user by email in auth.users using the auth API
+    const { data: authUser, error: authError } = await supabase.auth.admin.listUsers({
+      page: 1,
+      perPage: 1,
+      filter: {
+        email: `eq.${email}`
+      }
+    });
     
-    if (userError || !userData) {
-      // If no direct match with ID, try to find by email in subscribers table
+    if (authError || !authUser || authUser.users.length === 0) {
+      console.error('Error finding user by email:', authError || 'User not found');
+      
+      // Alternative approach: try to find user by email in subscribers table
       const { data: subscriberData, error: subscriberError } = await supabase
         .from('subscribers')
         .select('user_id')
         .eq('email', email)
-        .single();
+        .maybeSingle();
       
       if (subscriberError || !subscriberData?.user_id) {
-        return { success: false, error: 'User not found' };
+        // As a last resort, check user_profiles table
+        const { data: profileData, error: profileError } = await supabase
+          .from('user_profiles')
+          .select('id')
+          .ilike('username', `%${email.split('@')[0]}%`)
+          .maybeSingle();
+          
+        if (profileError || !profileData?.id) {
+          return { success: false, error: 'User not found' };
+        }
+        
+        // Insert into admin_users using the profile id
+        const { error: insertError } = await supabase
+          .from('admin_users')
+          .insert([{ user_id: profileData.id }]);
+          
+        if (insertError) {
+          return { success: false, error: insertError.message };
+        }
+        
+        return { success: true };
       }
       
-      // Insert into admin_users using the user_id from subscribers
+      // Insert into admin_users using the subscriber user_id
       const { error: insertError } = await supabase
         .from('admin_users')
         .insert([{ user_id: subscriberData.user_id }]);
@@ -104,10 +129,23 @@ export const addAdminUser = async (email: string): Promise<{ success: boolean; e
       return { success: true };
     }
     
-    // If we found the user directly in user_profiles
+    // Found user in auth.users, add to admin_users
+    const userId = authUser.users[0].id;
+    
+    // Check if user is already an admin to avoid duplicates
+    const { data: existingAdmin } = await supabase
+      .from('admin_users')
+      .select('user_id')
+      .eq('user_id', userId);
+      
+    if (existingAdmin && existingAdmin.length > 0) {
+      return { success: true, error: 'User is already an admin' };
+    }
+    
+    // Insert into admin_users
     const { error: insertError } = await supabase
       .from('admin_users')
-      .insert([{ user_id: userData.id }]);
+      .insert([{ user_id: userId }]);
       
     if (insertError) {
       return { success: false, error: insertError.message };
