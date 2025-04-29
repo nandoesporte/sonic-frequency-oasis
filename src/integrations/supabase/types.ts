@@ -618,6 +618,7 @@ export type Database = {
           description: string | null
           id: string
           interval: string
+          kiwify_url: string | null
           name: string
           price: number
           updated_at: string | null
@@ -629,6 +630,7 @@ export type Database = {
           description?: string | null
           id?: string
           interval?: string
+          kiwify_url?: string | null
           name: string
           price: number
           updated_at?: string | null
@@ -640,6 +642,7 @@ export type Database = {
           description?: string | null
           id?: string
           interval?: string
+          kiwify_url?: string | null
           name?: string
           price?: number
           updated_at?: string | null

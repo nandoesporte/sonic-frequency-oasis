@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -60,7 +59,7 @@ export function SubscriptionPlans() {
             price: plan.price,
             currency: plan.currency,
             interval: plan.interval,
-            kiwify_url: plan.kiwify_url || '' // Handle case where kiwify_url might be missing
+            kiwify_url: plan.kiwify_url // Handle case where kiwify_url might be missing
           }));
           setPlans(formattedPlans);
         }
