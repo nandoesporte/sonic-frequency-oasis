@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/sonner';
 
@@ -30,7 +31,7 @@ export const setupAdminUser = async () => {
       const username = adminEmail.split('@')[0];
       console.log(`User not found by email, trying username: ${username}`);
       
-      // Fixed type issue: explicitly type the response
+      // Get user by username
       const { data: userByUsername, error: usernameError } = await supabase
         .from('user_profiles')
         .select('id')
@@ -49,15 +50,14 @@ export const setupAdminUser = async () => {
         console.error(`User not found with email ${adminEmail} or username ${username}`);
         
         // As a final fallback, try to get the user ID from auth.session
-        // Correção: Simplificamos o acesso à sessão para evitar recursão de tipos
-        const sessionResponse = await supabase.auth.getSession();
-        const session = sessionResponse.data.session;
+        // Fixing type recursion issue by accessing properties step by step
+        const { data } = await supabase.auth.getSession();
         
-        if (session) {
-          const sessionUser = session.user;
-          if (sessionUser && sessionUser.email === adminEmail) {
-            console.log(`Found user from current session with ID: ${sessionUser.id}`);
-            await ensureAdminAccess(sessionUser.id, adminEmail);
+        if (data && data.session) {
+          const currentUser = data.session.user;
+          if (currentUser && currentUser.email === adminEmail) {
+            console.log(`Found user from current session with ID: ${currentUser.id}`);
+            await ensureAdminAccess(currentUser.id, adminEmail);
           } else {
             toast.error('Admin setup failed', {
               description: `Não foi possível encontrar o usuário ${adminEmail}`
