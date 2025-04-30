@@ -66,12 +66,10 @@ export const setupAdminUser = async () => {
         console.error(`User not found with email ${adminEmail} or username ${username}`);
         
         // As a final fallback, try to get the user ID from auth.session
-        // Use our simplified type to avoid deep type inference
-        const sessionResponse = await supabase.auth.getSession();
-        
-        // Use explicit type casting to avoid deep type inference problems
-        const sessionData = sessionResponse.data as unknown as BasicResponse;
-        const user = sessionData?.session?.user as BasicUser | null;
+        const sessionResult = await supabase.auth.getSession();
+        // Use type assertions to bypass TypeScript's deep type inference
+        const session = (sessionResult.data as any).session;
+        const user = session ? (session.user as any) : null;
         
         if (user && user.id && user.email === adminEmail) {
           console.log(`Found user from current session with ID: ${user.id}`);
