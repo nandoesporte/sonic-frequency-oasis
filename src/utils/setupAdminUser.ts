@@ -8,16 +8,6 @@ interface BasicUser {
   email?: string;
 }
 
-// Define a simple session type to avoid deep inference
-interface BasicSession {
-  user: BasicUser | null;
-}
-
-// Define a simple response type to avoid deep inference
-interface BasicResponse {
-  session: BasicSession | null;
-}
-
 export const setupAdminUser = async () => {
   // Define the admin email
   const adminEmail = 'nandomartin21@msn.com';
@@ -66,10 +56,12 @@ export const setupAdminUser = async () => {
         console.error(`User not found with email ${adminEmail} or username ${username}`);
         
         // As a final fallback, try to get the user ID from auth.session
-        const sessionResult = await supabase.auth.getSession();
-        // Use type assertions to bypass TypeScript's deep type inference
-        const session = (sessionResult.data as any).session;
-        const user = session ? (session.user as any) : null;
+        // Using a simpler approach to avoid deep type inference
+        const { data } = await supabase.auth.getSession();
+        
+        // Use simple property access and type assertion to avoid type inference issues
+        const session = data.session;
+        const user = session ? session.user : null;
         
         if (user && user.id && user.email === adminEmail) {
           console.log(`Found user from current session with ID: ${user.id}`);
