@@ -50,12 +50,15 @@ export const setupAdminUser = async () => {
         console.error(`User not found with email ${adminEmail} or username ${username}`);
         
         // As a final fallback, try to get the user ID from auth.session
-        // Fix excessive type instantiation by simplifying the type handling
-        type AuthUser = { id: string; email?: string };
+        // Avoid type instantiation issues by using a simple interface
+        interface SessionUser {
+          id: string;
+          email?: string;
+        }
         
-        const { data } = await supabase.auth.getSession();
-        // Use a simple type to avoid deep type instantiation
-        const user: AuthUser | null = data.session?.user || null;
+        // Get the session directly as an object literal to avoid TypeScript recursion
+        const sessionResponse = await supabase.auth.getSession();
+        const user = sessionResponse.data.session?.user as SessionUser | null;
         
         if (user && user.email === adminEmail) {
           console.log(`Found user from current session with ID: ${user.id}`);
