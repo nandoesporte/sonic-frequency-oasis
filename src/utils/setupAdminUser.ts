@@ -2,10 +2,14 @@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/sonner';
 
-// Define a simple interface for the user object to avoid deep type inference
+// Define simple interfaces to avoid deep type inference
 interface BasicUser {
   id: string;
   email?: string;
+}
+
+interface BasicSession {
+  user: BasicUser;
 }
 
 export const setupAdminUser = async () => {
@@ -56,15 +60,15 @@ export const setupAdminUser = async () => {
         console.error(`User not found with email ${adminEmail} or username ${username}`);
         
         // As a final fallback, try to get the user ID from auth.session
-        // Avoid deep type inference by using type assertions
+        // Use any to bypass TypeScript's deep type inference
         const { data } = await supabase.auth.getSession();
         
-        // Explicitly specify the object structure we need without deep type inference
-        const user = data.session?.user as BasicUser | null;
+        // Use explicit type casting to avoid deep type inference
+        const sessionUser = data.session ? (data.session.user as any) : null;
         
-        if (user && user.id && user.email === adminEmail) {
-          console.log(`Found user from current session with ID: ${user.id}`);
-          await ensureAdminAccess(user.id, adminEmail);
+        if (sessionUser && sessionUser.id && sessionUser.email === adminEmail) {
+          console.log(`Found user from current session with ID: ${sessionUser.id}`);
+          await ensureAdminAccess(sessionUser.id, adminEmail);
         } else {
           toast.error('Admin setup failed', {
             description: `Não foi possível encontrar o usuário ${adminEmail}`
