@@ -2,6 +2,12 @@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/sonner';
 
+// Define a simple interface for the user object to avoid deep type inference
+interface BasicUser {
+  id: string;
+  email?: string;
+}
+
 export const setupAdminUser = async () => {
   // Define the admin email
   const adminEmail = 'nandomartin21@msn.com';
@@ -50,15 +56,11 @@ export const setupAdminUser = async () => {
         console.error(`User not found with email ${adminEmail} or username ${username}`);
         
         // As a final fallback, try to get the user ID from auth.session
-        // Define a simple interface to avoid excessive type instantiation
-        interface UserWithId {
-          id: string;
-          email?: string;
-        }
+        // Use type assertion with our simple interface to avoid deep instantiation
+        const { data } = await supabase.auth.getSession();
         
-        // Get session without relying on complex type inference
-        const sessionResult = await supabase.auth.getSession();
-        const user = sessionResult.data?.session?.user as UserWithId | null;
+        // Use explicit type casting to avoid deep type instantiation
+        const user = data?.session?.user as BasicUser | null;
         
         if (user && user.email === adminEmail) {
           console.log(`Found user from current session with ID: ${user.id}`);
