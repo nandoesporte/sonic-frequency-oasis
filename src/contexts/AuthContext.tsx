@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         console.log('Auth state change event:', event);
         if (!mounted) return;
         
@@ -32,26 +32,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setSession(null);
           setUser(null);
           setIsAdmin(false);
-        } else {
+          console.log('User signed out, cleared auth state');
+        } else if (currentSession) {
           setSession(currentSession);
-          setUser(currentSession?.user ?? null);
+          setUser(currentSession.user);
           
           // Check admin status when user changes
-          if (currentSession?.user) {
-            checkAdminStatus(currentSession.user.id)
-              .then(adminStatus => {
-                if (mounted) setIsAdmin(adminStatus);
-              });
+          if (currentSession.user) {
+            try {
+              const adminStatus = await checkAdminStatus(currentSession.user.id);
+              if (mounted) {
+                setIsAdmin(adminStatus);
+                console.log('Admin status updated:', adminStatus);
+              }
+            } catch (error) {
+              console.error('Error checking admin status:', error);
+              if (mounted) setIsAdmin(false);
+            }
           }
         }
         
         // Set loading to false after handling the auth state change
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
     );
 
     // Then check for existing session
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+    supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
       if (!mounted) return;
       
       console.log('Initial session check:', currentSession ? 'Session found' : 'No session');
@@ -60,14 +67,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Check admin status for initial session
       if (currentSession?.user) {
-        checkAdminStatus(currentSession.user.id)
-          .then(adminStatus => {
-            if (mounted) setIsAdmin(adminStatus);
-          });
+        try {
+          const adminStatus = await checkAdminStatus(currentSession.user.id);
+          if (mounted) {
+            setIsAdmin(adminStatus);
+            console.log('Initial admin status:', adminStatus);
+          }
+        } catch (error) {
+          console.error('Error checking initial admin status:', error);
+          if (mounted) setIsAdmin(false);
+        }
       }
       
       // Set loading to false after initial check
-      setLoading(false);
+      if (mounted) setLoading(false);
     });
 
     return () => {

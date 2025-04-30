@@ -1,19 +1,27 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 export const checkAdminStatus = async (userId: string): Promise<boolean> => {
   if (!userId) return false;
   
   try {
-    // Use RPC to call the is_admin function to avoid recursion issues
+    console.log('Checking admin status for user:', userId);
+    
+    // Use direct query to admin_users table with proper error handling
     const { data, error } = await supabase
-      .rpc('is_admin', { user_id: userId });
+      .from('admin_users')
+      .select('user_id')
+      .eq('user_id', userId)
+      .maybeSingle();
     
     if (error) {
       console.error('Error checking admin status:', error);
       return false;
     }
     
-    return data === true;
+    const isAdmin = !!data;
+    console.log('Admin status result:', isAdmin);
+    return isAdmin;
   } catch (err) {
     console.error('Unexpected error checking admin status:', err);
     return false;

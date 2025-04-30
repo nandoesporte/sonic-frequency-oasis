@@ -7,6 +7,7 @@ import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent,
   SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { LayoutDashboard, Users, CreditCard, FileText, Settings, ShieldAlert } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { toast } from '@/components/ui/sonner';
 
 export const AdminLayout = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -17,24 +18,38 @@ export const AdminLayout = () => {
     // Set auth check as complete when loading is done
     if (!loading) {
       setAuthChecked(true);
+      
+      // Show toast if access is denied
+      if (!user) {
+        toast.error('Acesso negado', {
+          description: 'Você precisa fazer login para acessar esta página'
+        });
+      } else if (!isAdmin) {
+        toast.error('Acesso negado', {
+          description: 'Você não tem permissão de administrador'
+        });
+      }
     }
-  }, [loading]);
+  }, [loading, user, isAdmin]);
   
-  // Show loading state while initial auth check is happening
+  // Show detailed loading state while initial auth check is happening
   if (loading) {
     return (
-      <div className="flex items-center justify-center w-full h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="flex flex-col items-center justify-center w-full h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+        <p className="text-muted-foreground">Verificando permissões...</p>
       </div>
     );
   }
   
   // Only redirect once we've finished checking authentication
   if (authChecked && (!user || !isAdmin)) {
+    console.log('Access denied to admin area. User:', !!user, 'Admin:', isAdmin);
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
   
   // Only render the admin layout if user is authenticated and is an admin
+  console.log('Rendering admin layout. User is admin:', isAdmin);
   return (
     <SidebarProvider>
       <div className="bg-muted/40 min-h-screen flex w-full">
