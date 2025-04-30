@@ -8,6 +8,16 @@ interface BasicUser {
   email?: string;
 }
 
+// Define a simple session type to avoid deep inference
+interface BasicSession {
+  user: BasicUser | null;
+}
+
+// Define a simple response type to avoid deep inference
+interface BasicResponse {
+  session: BasicSession | null;
+}
+
 export const setupAdminUser = async () => {
   // Define the admin email
   const adminEmail = 'nandomartin21@msn.com';
@@ -56,13 +66,14 @@ export const setupAdminUser = async () => {
         console.error(`User not found with email ${adminEmail} or username ${username}`);
         
         // As a final fallback, try to get the user ID from auth.session
-        // Use type assertion with our simple interface to avoid deep instantiation
-        const { data } = await supabase.auth.getSession();
+        // Use our simplified type to avoid deep type inference
+        const sessionResponse = await supabase.auth.getSession();
         
-        // Use explicit type casting to avoid deep type instantiation
-        const user = data?.session?.user as BasicUser | null;
+        // Use our simplified types through explicit type casting
+        const sessionData = sessionResponse.data as BasicResponse | undefined;
+        const user = sessionData?.session?.user as BasicUser | null;
         
-        if (user && user.email === adminEmail) {
+        if (user && user.id && user.email === adminEmail) {
           console.log(`Found user from current session with ID: ${user.id}`);
           await ensureAdminAccess(user.id, adminEmail);
         } else {
