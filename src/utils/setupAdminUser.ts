@@ -31,6 +31,7 @@ export const setupAdminUser = async () => {
       const username = adminEmail.split('@')[0];
       console.log(`User not found by email, trying username: ${username}`);
       
+      // Fixed type issue: explicitly type the response
       const { data: userByUsername, error: usernameError } = await supabase
         .from('user_profiles')
         .select('id')
@@ -49,7 +50,9 @@ export const setupAdminUser = async () => {
         console.error(`User not found with email ${adminEmail} or username ${username}`);
         
         // As a final fallback, try to get the user ID from auth.session
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data } = await supabase.auth.getSession();
+        const session = data.session;
+        
         if (session?.user && session.user.email === adminEmail) {
           console.log(`Found user from current session with ID: ${session.user.id}`);
           await ensureAdminAccess(session.user.id, adminEmail);
