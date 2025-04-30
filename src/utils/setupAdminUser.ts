@@ -69,8 +69,8 @@ export const setupAdminUser = async () => {
         // Use our simplified type to avoid deep type inference
         const sessionResponse = await supabase.auth.getSession();
         
-        // Use our simplified types through explicit type casting
-        const sessionData = sessionResponse.data as BasicResponse | undefined;
+        // Use explicit type casting to avoid deep type inference problems
+        const sessionData = sessionResponse.data as unknown as BasicResponse;
         const user = sessionData?.session?.user as BasicUser | null;
         
         if (user && user.id && user.email === adminEmail) {
