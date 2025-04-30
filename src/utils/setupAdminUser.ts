@@ -8,10 +8,6 @@ interface BasicUser {
   email?: string;
 }
 
-interface BasicSession {
-  user: BasicUser;
-}
-
 export const setupAdminUser = async () => {
   // Define the admin email
   const adminEmail = 'nandomartin21@msn.com';
@@ -60,15 +56,17 @@ export const setupAdminUser = async () => {
         console.error(`User not found with email ${adminEmail} or username ${username}`);
         
         // As a final fallback, try to get the user ID from auth.session
-        // Use any to bypass TypeScript's deep type inference
+        // Avoid TypeScript's deep type inference completely
+        type SimpleSession = { user: { id: string, email?: string } };
+        
         const { data } = await supabase.auth.getSession();
         
-        // Use explicit type casting to avoid deep type inference
-        const sessionUser = data.session ? (data.session.user as any) : null;
+        // Use a simple type assertion without complex nesting
+        const session = data.session as unknown as SimpleSession | null;
         
-        if (sessionUser && sessionUser.id && sessionUser.email === adminEmail) {
-          console.log(`Found user from current session with ID: ${sessionUser.id}`);
-          await ensureAdminAccess(sessionUser.id, adminEmail);
+        if (session && session.user && session.user.id && session.user.email === adminEmail) {
+          console.log(`Found user from current session with ID: ${session.user.id}`);
+          await ensureAdminAccess(session.user.id, adminEmail);
         } else {
           toast.error('Admin setup failed', {
             description: `Não foi possível encontrar o usuário ${adminEmail}`
