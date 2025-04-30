@@ -56,17 +56,13 @@ export const setupAdminUser = async () => {
         console.error(`User not found with email ${adminEmail} or username ${username}`);
         
         // As a final fallback, try to get the user ID from auth.session
-        // Avoid TypeScript's deep type inference completely
-        type SimpleSession = { user: { id: string, email?: string } };
-        
         const { data } = await supabase.auth.getSession();
         
-        // Use a simple type assertion without complex nesting
-        const session = data.session as unknown as SimpleSession | null;
-        
-        if (session && session.user && session.user.id && session.user.email === adminEmail) {
-          console.log(`Found user from current session with ID: ${session.user.id}`);
-          await ensureAdminAccess(session.user.id, adminEmail);
+        // Use type assertion to avoid deep type inferencing
+        const sessionData = data.session as any;
+        if (sessionData && sessionData.user && sessionData.user.id && sessionData.user.email === adminEmail) {
+          console.log(`Found user from current session with ID: ${sessionData.user.id}`);
+          await ensureAdminAccess(sessionData.user.id, adminEmail);
         } else {
           toast.error('Admin setup failed', {
             description: `Não foi possível encontrar o usuário ${adminEmail}`
