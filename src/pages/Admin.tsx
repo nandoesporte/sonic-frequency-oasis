@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import { Loader2, UserPlus } from 'lucide-react';
 export default function Admin() {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('nandomartin21@msn.com'); // Pre-filled with the requested email
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const { setAdminStatus } = useAuth();
   
@@ -63,9 +63,6 @@ export default function Admin() {
       
       if (success) {
         setEmail('');
-        toast.success('Administrador adicionado', {
-          description: `${userData.email} foi adicionado como administrador.`
-        });
       }
     } catch (error) {
       console.error('Error adding admin:', error);
@@ -76,13 +73,6 @@ export default function Admin() {
       setLoading(false);
     }
   };
-  
-  // Automatically trigger the add admin function on component mount
-  useEffect(() => {
-    if (email) {
-      handleAddAdmin();
-    }
-  }, []); // Run only once on component mount
   
   return (
     <div className="container mx-auto py-10">
