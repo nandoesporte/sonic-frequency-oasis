@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import Trending from "./pages/Trending";
 import Guide from "./pages/Guide";
 import Scientific from "./pages/Scientific";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ function App() {
               <Route path="/history" element={<History />} />
               <Route path="/premium" element={<Premium />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/admin" element={<Admin />} />
               
               {/* Catch all route for 404 */}
               <Route path="*" element={<NotFound />} />

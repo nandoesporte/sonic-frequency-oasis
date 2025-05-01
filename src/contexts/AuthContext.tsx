@@ -12,9 +12,93 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
   console.log('AuthProvider initialized');
+  
+  // Check if user is an admin
+  const checkAdminStatus = async () => {
+    try {
+      if (!user) return false;
+      
+      const { data, error } = await supabase
+        .from('admin_users')
+        .select('user_id')
+        .eq('user_id', user.id)
+        .single();
+      
+      if (error) {
+        console.error('Error checking admin status:', error);
+        return false;
+      }
+      
+      const adminStatus = !!data;
+      setIsAdmin(adminStatus);
+      return adminStatus;
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      return false;
+    }
+  };
+
+  // Set admin status for a user
+  const setAdminStatus = async (userId: string, makeAdmin: boolean) => {
+    try {
+      if (!user) return false;
+      
+      // Check if current user is admin
+      const currentUserIsAdmin = await checkAdminStatus();
+      if (!currentUserIsAdmin) {
+        toast.error('Permissão negada', {
+          description: 'Você não tem permissão para gerenciar administradores.'
+        });
+        return false;
+      }
+      
+      if (makeAdmin) {
+        // Add user to admin_users table
+        const { error } = await supabase
+          .from('admin_users')
+          .insert([{ user_id: userId }]);
+        
+        if (error) {
+          console.error('Error setting admin status:', error);
+          toast.error('Erro', {
+            description: 'Não foi possível adicionar o administrador.'
+          });
+          return false;
+        }
+        
+        toast.success('Sucesso', {
+          description: 'Usuário adicionado como administrador.'
+        });
+        return true;
+      } else {
+        // Remove user from admin_users table
+        const { error } = await supabase
+          .from('admin_users')
+          .delete()
+          .eq('user_id', userId);
+        
+        if (error) {
+          console.error('Error removing admin status:', error);
+          toast.error('Erro', {
+            description: 'Não foi possível remover o administrador.'
+          });
+          return false;
+        }
+        
+        toast.success('Sucesso', {
+          description: 'Usuário removido da lista de administradores.'
+        });
+        return true;
+      }
+    } catch (error) {
+      console.error('Error setting admin status:', error);
+      return false;
+    }
+  };
   
   useEffect(() => {
     let mounted = true;
@@ -22,16 +106,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         console.log('Auth state change event:', event);
         if (!mounted) return;
         
         if (event === 'SIGNED_OUT') {
           setSession(null);
           setUser(null);
+          setIsAdmin(false);
         } else if (currentSession) {
           setSession(currentSession);
           setUser(currentSession.user ?? null);
+          
+          // Check admin status after setting user
+          if (currentSession.user) {
+            setTimeout(() => {
+              checkAdminStatus();
+            }, 0);
+          }
         }
         
         // Set loading to false after handling the auth state change
@@ -48,6 +140,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (currentSession) {
         setSession(currentSession);
         setUser(currentSession.user);
+        
+        // Check admin status after setting user
+        setTimeout(() => {
+          checkAdminStatus();
+        }, 0);
       }
       
       // Set loading to false after initial check
@@ -84,6 +181,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       toast.success('Login realizado com sucesso', {
         description: 'Bem-vindo de volta!'
       });
+      
+      // Check admin status after successful login
+      if (data.user) {
+        setTimeout(() => {
+          checkAdminStatus();
+        }, 0);
+      }
       
       return { user: data.user, session: data.session };
     } catch (error: any) {
@@ -154,6 +258,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Clear local state AFTER successful signout
       setUser(null);
       setSession(null);
+      setIsAdmin(false);
       
       console.log('User signed out successfully');
       
@@ -174,7 +279,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, signIn, signUp, signOut, loading }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      session, 
+      signIn, 
+      signUp, 
+      signOut, 
+      loading, 
+      isAdmin,
+      checkAdminStatus,
+      setAdminStatus 
+    }}>
       {children}
     </AuthContext.Provider>
   );

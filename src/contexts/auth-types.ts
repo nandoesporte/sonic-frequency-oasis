@@ -5,6 +5,7 @@ export interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<{
     user: User | null;
     session: Session | null;
@@ -16,4 +17,6 @@ export interface AuthContextType {
     error?: string;
   }>;
   signOut: () => Promise<void>;
+  checkAdminStatus: () => Promise<boolean>;
+  setAdminStatus: (userId: string, isAdmin: boolean) => Promise<boolean>;
 }
