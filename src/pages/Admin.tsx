@@ -5,15 +5,17 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/components/ui/sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, UserPlus, User, Shield, Webhook, Settings, CreditCard } from 'lucide-react';
+import { Loader2, UserPlus, User, Shield, Webhook, Settings, CreditCard, Lock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SubscriptionPlanManager } from '@/components/admin/SubscriptionPlanManager';
 import { SubscriberManager } from '@/components/admin/SubscriberManager';
 import { AdminDashboard } from '@/components/admin/AdminDashboard';
+import { useForm } from 'react-hook-form';
 
 export default function Admin() {
   const { user } = useAuth();
@@ -23,6 +25,14 @@ export default function Admin() {
   const [initializing, setInitializing] = useState(true);
   const { setAdminStatus } = useAuth();
   const [adminUsers, setAdminUsers] = useState<{id: string, email: string}[]>([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  
+  const passwordForm = useForm({
+    defaultValues: {
+      password: '',
+    }
+  });
   
   // Effect to fetch admin users on mount
   useEffect(() => {
@@ -75,6 +85,22 @@ export default function Admin() {
       </div>
     );
   }
+
+  const handlePasswordSubmit = (data: { password: string }) => {
+    // Check against the specified password
+    if (data.password === 'Nando045+-') {
+      setIsAuthenticated(true);
+      setPasswordError('');
+      toast.success('Acesso permitido', {
+        description: 'Bem-vindo ao painel administrativo'
+      });
+    } else {
+      setPasswordError('Senha incorreta. Tente novamente.');
+      toast.error('Acesso negado', {
+        description: 'A senha fornecida está incorreta'
+      });
+    }
+  };
   
   const handleAddAdmin = async () => {
     if (!user) {
@@ -158,7 +184,53 @@ export default function Admin() {
       setLoading(false);
     }
   };
+
+  // Password protection screen
+  if (!isAuthenticated) {
+    return (
+      <div className="container mx-auto py-10 flex items-center justify-center min-h-[80vh]">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <div className="flex items-center justify-center mb-4">
+              <div className="bg-primary/10 p-3 rounded-full">
+                <Lock className="h-6 w-6 text-primary" />
+              </div>
+            </div>
+            <CardTitle className="text-center">Área Restrita</CardTitle>
+            <CardDescription className="text-center">
+              Digite a senha para acessar o painel administrativo
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={passwordForm.handleSubmit(handlePasswordSubmit)} className="space-y-4">
+              <div className="grid gap-2">
+                <Label htmlFor="password">Senha</Label>
+                <Input 
+                  id="password" 
+                  type="password"
+                  {...passwordForm.register('password')}
+                  className={passwordError ? 'border-destructive' : ''}
+                />
+                {passwordError && (
+                  <p className="text-sm text-destructive">{passwordError}</p>
+                )}
+              </div>
+              <Button type="submit" className="w-full">
+                Acessar
+              </Button>
+            </form>
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            <Button variant="outline" onClick={() => navigate('/')} className="w-full">
+              Voltar ao Início
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
   
+  // Main admin content (shown only after authentication)
   return (
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-8">
