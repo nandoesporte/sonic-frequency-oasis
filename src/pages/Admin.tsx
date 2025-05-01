@@ -9,7 +9,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { toast } from '@/components/ui/sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, UserPlus, User, Shield, Webhook, Settings } from 'lucide-react';
+import { Loader2, UserPlus, User, Shield, Webhook, Settings, CreditCard } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { SubscriptionPlanManager } from '@/components/admin/SubscriptionPlanManager';
 
 export default function Admin() {
   const { user } = useAuth();
@@ -164,103 +166,130 @@ export default function Admin() {
         </Button>
       </div>
       
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Configurações</CardTitle>
-            <CardDescription>
-              Ferramentas de administração disponíveis.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium">Webhooks</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Configurar integração com webhooks de pagamento
-                  </p>
+      <Tabs defaultValue="settings" className="mb-8">
+        <TabsList className="mb-4">
+          <TabsTrigger value="settings">
+            <Settings className="w-4 h-4 mr-2" />
+            Configurações
+          </TabsTrigger>
+          <TabsTrigger value="subscription-plans">
+            <CreditCard className="w-4 h-4 mr-2" />
+            Planos de Assinatura
+          </TabsTrigger>
+          <TabsTrigger value="admins">
+            <Shield className="w-4 h-4 mr-2" />
+            Administradores
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="settings">
+          <div className="grid gap-6 md:grid-cols-1">
+            <Card>
+              <CardHeader>
+                <CardTitle>Configurações</CardTitle>
+                <CardDescription>
+                  Ferramentas de administração disponíveis.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium">Webhooks</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Configurar integração com webhooks de pagamento
+                      </p>
+                    </div>
+                    <Button onClick={() => navigate('/webhook-config')}>
+                      <Webhook className="mr-2 h-4 w-4" />
+                      Configurar
+                    </Button>
+                  </div>
                 </div>
-                <Button onClick={() => navigate('/webhook-config')}>
-                  <Webhook className="mr-2 h-4 w-4" />
-                  Configurar
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Adicionar Administrador</CardTitle>
-            <CardDescription>
-              Adicione outro usuário como administrador do sistema.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-end gap-4">
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="email">Email do usuário</Label>
-                <Input 
-                  id="email"
-                  type="email"
-                  placeholder="usuario@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <Button onClick={handleAddAdmin} disabled={loading}>
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processando...
-                  </>
-                ) : (
-                  <>
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    Adicionar
-                  </>
-                )}
-              </Button>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <p className="text-sm text-muted-foreground">
-              O usuário deve ter uma conta criada previamente para ser adicionado como administrador.
-            </p>
-          </CardFooter>
-        </Card>
+        <TabsContent value="subscription-plans">
+          <SubscriptionPlanManager />
+        </TabsContent>
         
-        {adminUsers.length > 0 && (
-          <Card className="md:col-span-2">
-            <CardHeader>
-              <CardTitle>Administradores Atuais</CardTitle>
-              <CardDescription>
-                Lista de usuários com privilégios de administrador.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Email</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {adminUsers.map((admin) => (
-                    <TableRow key={admin.id}>
-                      <TableCell className="flex items-center">
-                        <Shield className="mr-2 h-4 w-4 text-blue-500" />
-                        {admin.email}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+        <TabsContent value="admins">
+          <div className="grid gap-6 md:grid-cols-1">
+            <Card>
+              <CardHeader>
+                <CardTitle>Adicionar Administrador</CardTitle>
+                <CardDescription>
+                  Adicione outro usuário como administrador do sistema.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-end gap-4">
+                  <div className="grid w-full items-center gap-1.5">
+                    <Label htmlFor="email">Email do usuário</Label>
+                    <Input 
+                      id="email"
+                      type="email"
+                      placeholder="usuario@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <Button onClick={handleAddAdmin} disabled={loading}>
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Processando...
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        Adicionar
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+              <CardFooter className="flex justify-between">
+                <p className="text-sm text-muted-foreground">
+                  O usuário deve ter uma conta criada previamente para ser adicionado como administrador.
+                </p>
+              </CardFooter>
+            </Card>
+            
+            {adminUsers.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Administradores Atuais</CardTitle>
+                  <CardDescription>
+                    Lista de usuários com privilégios de administrador.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Email</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {adminUsers.map((admin) => (
+                        <TableRow key={admin.id}>
+                          <TableCell className="flex items-center">
+                            <Shield className="mr-2 h-4 w-4 text-blue-500" />
+                            {admin.email}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
