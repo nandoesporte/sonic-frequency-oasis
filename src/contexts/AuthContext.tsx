@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         console.log('Auth state change event:', event);
         if (!mounted) return;
         
@@ -38,20 +38,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           // Check admin status when user changes
           if (currentSession?.user) {
-            checkAdminStatus(currentSession.user.id)
-              .then(adminStatus => {
-                if (mounted) setIsAdmin(adminStatus);
-              });
+            try {
+              const adminStatus = await checkAdminStatus(currentSession.user.id);
+              console.log('Admin status check result:', adminStatus);
+              if (mounted) setIsAdmin(adminStatus);
+              
+              // Log the current user's email for debugging
+              console.log('Current user email:', currentSession.user.email);
+              
+              // Special handling for admin email
+              if (currentSession.user.email === 'nandomartin21@msn.com') {
+                console.log('Admin email detected, ensuring admin access');
+                // This will ensure the admin has access
+                await setupAdminUser();
+                
+                // Re-check admin status after setup
+                const updatedStatus = await checkAdminStatus(currentSession.user.id);
+                if (mounted) setIsAdmin(updatedStatus);
+              }
+            } catch (error) {
+              console.error('Error checking admin status:', error);
+            }
           }
         }
         
         // Set loading to false after handling the auth state change
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
     );
 
     // Then check for existing session
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+    supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
       if (!mounted) return;
       
       console.log('Initial session check:', currentSession ? 'Session found' : 'No session');
@@ -60,14 +77,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Check admin status for initial session
       if (currentSession?.user) {
-        checkAdminStatus(currentSession.user.id)
-          .then(adminStatus => {
-            if (mounted) setIsAdmin(adminStatus);
-          });
+        try {
+          const adminStatus = await checkAdminStatus(currentSession.user.id);
+          console.log('Initial admin status check result:', adminStatus);
+          if (mounted) setIsAdmin(adminStatus);
+          
+          // Special handling for admin email on initial load
+          if (currentSession.user.email === 'nandomartin21@msn.com') {
+            console.log('Admin email detected on initial load, ensuring admin access');
+            // Ensure admin access
+            await setupAdminUser();
+            
+            // Re-check admin status after setup
+            const updatedStatus = await checkAdminStatus(currentSession.user.id);
+            if (mounted) setIsAdmin(updatedStatus);
+          }
+        } catch (error) {
+          console.error('Error checking initial admin status:', error);
+        }
       }
       
       // Set loading to false after initial check
-      setLoading(false);
+      if (mounted) setLoading(false);
     });
 
     return () => {

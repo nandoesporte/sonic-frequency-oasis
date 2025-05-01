@@ -33,8 +33,11 @@ function App() {
       document.documentElement.classList.remove("dark");
     }
     
-    // Set up admin access for the specified user
-    setupAdminUser();
+    // Set up admin access for the specified user - adding console logs for debugging
+    console.log("Setting up admin user on app initialization");
+    setupAdminUser()
+      .then(() => console.log("Admin user setup completed"))
+      .catch(err => console.error("Error setting up admin user:", err));
   }, []);
 
   return (

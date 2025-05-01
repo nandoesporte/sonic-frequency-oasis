@@ -7,6 +7,8 @@ import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent,
   SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { LayoutDashboard, Users, CreditCard, FileText, Settings, ShieldAlert } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { toast } from '@/components/ui/sonner';
+import { setupAdminUser } from '@/utils/setupAdminUser';
 
 export const AdminLayout = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -17,8 +19,19 @@ export const AdminLayout = () => {
     // Set auth check as complete when loading is done
     if (!loading) {
       setAuthChecked(true);
+      console.log('Auth check completed in AdminLayout');
+      console.log('User:', user?.email);
+      console.log('isAdmin:', isAdmin);
+      
+      // If the user is logged in but not an admin, make sure to check admin status
+      if (user && !isAdmin && user.email === 'nandomartin21@msn.com') {
+        console.log('User is the admin email but not marked as admin, attempting to fix');
+        setupAdminUser().catch(err => {
+          console.error('Error in setupAdminUser:', err);
+        });
+      }
     }
-  }, [loading]);
+  }, [loading, user, isAdmin]);
   
   // Show loading state while initial auth check is happening
   if (loading) {
@@ -31,6 +44,18 @@ export const AdminLayout = () => {
   
   // Only redirect once we've finished checking authentication
   if (authChecked && (!user || !isAdmin)) {
+    console.log('Access denied to admin area');
+    // Show a toast message to explain why redirecting
+    if (!user) {
+      toast.error('Acesso negado', {
+        description: 'Você precisa fazer login para acessar esta área.'
+      });
+    } else if (!isAdmin) {
+      toast.error('Acesso negado', {
+        description: 'Você não tem permissão para acessar esta área.'
+      });
+    }
+    
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
   
