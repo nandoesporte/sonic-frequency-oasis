@@ -188,7 +188,7 @@ export const addAdminUser = async (email: string): Promise<{ success: boolean; e
     // As a last resort, try to find user through auth API
     console.log('No user found in application tables, trying auth API');
     try {
-      // Instead of using the deprecated getUserByEmail, use admin.listUsers and filter manually
+      // Use admin.listUsers and filter manually
       const { data: authData, error: authError } = await supabase.auth.admin.listUsers();
       
       if (authError || !authData?.users) {
@@ -197,14 +197,14 @@ export const addAdminUser = async (email: string): Promise<{ success: boolean; e
       }
       
       // Find the user with matching email - Fix the typing issue here
-      const user = authData.users.find((user: User) => user.email === email);
+      const foundUser = authData.users.find((user: User) => user.email === email);
       
-      if (!user) {
+      if (!foundUser) {
         console.error('User not found with email:', email);
         return { success: false, error: 'User not found with this email' };
       }
       
-      const userId = user.id;
+      const userId = foundUser.id;
       console.log(`Found user with auth API, ID: ${userId}`);
       
       // Check if user is already an admin

@@ -14,30 +14,41 @@ export const AdminLayout = () => {
   const { user, isAdmin, loading } = useAuth();
   const location = useLocation();
   const [authChecked, setAuthChecked] = useState(false);
+  const [isCheckingAdmin, setIsCheckingAdmin] = useState(false);
   
   useEffect(() => {
     // Set auth check as complete when loading is done
-    if (!loading) {
+    if (!loading && !isCheckingAdmin) {
       setAuthChecked(true);
       console.log('Auth check completed in AdminLayout');
       console.log('User:', user?.email);
       console.log('isAdmin:', isAdmin);
       
       // If the user is logged in but not an admin, make sure to check admin status
-      if (user && !isAdmin && user.email === 'nandomartin21@msn.com') {
+      if (user && !isAdmin && user.email === 'nandomartin21@msn.com' && !isCheckingAdmin) {
         console.log('User is the admin email but not marked as admin, attempting to fix');
-        setupAdminUser().catch(err => {
-          console.error('Error in setupAdminUser:', err);
-        });
+        setIsCheckingAdmin(true);
+        
+        setupAdminUser()
+          .then(() => {
+            console.log('Admin setup attempt completed');
+          })
+          .catch(err => {
+            console.error('Error in setupAdminUser:', err);
+          })
+          .finally(() => {
+            setIsCheckingAdmin(false);
+          });
       }
     }
-  }, [loading, user, isAdmin]);
+  }, [loading, user, isAdmin, isCheckingAdmin]);
   
   // Show loading state while initial auth check is happening
-  if (loading) {
+  if (loading || isCheckingAdmin) {
     return (
       <div className="flex items-center justify-center w-full h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <span className="ml-3 text-lg">Verificando acesso...</span>
       </div>
     );
   }
