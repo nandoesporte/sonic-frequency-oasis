@@ -34,9 +34,7 @@ function App() {
     }
     
     // Set up admin access for the specified user
-    setupAdminUser().catch(err => {
-      console.error("Failed to set up admin user:", err);
-    });
+    setupAdminUser();
   }, []);
 
   return (

@@ -14,31 +14,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [adminCheckComplete, setAdminCheckComplete] = useState(false);
   const navigate = useNavigate();
 
   console.log('AuthProvider initialized');
-  
-  // Function to check admin status
-  const checkAndSetAdminStatus = async (userId: string) => {
-    if (!userId) {
-      setIsAdmin(false);
-      setAdminCheckComplete(true);
-      return;
-    }
-    
-    try {
-      console.log('Checking admin status for user:', userId);
-      const adminStatus = await checkAdminStatus(userId);
-      console.log('Admin status result:', adminStatus);
-      setIsAdmin(adminStatus);
-    } catch (error) {
-      console.error('Error checking admin status:', error);
-      setIsAdmin(false);
-    } finally {
-      setAdminCheckComplete(true);
-    }
-  };
   
   useEffect(() => {
     let mounted = true;
@@ -54,7 +32,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setSession(null);
           setUser(null);
           setIsAdmin(false);
-          setAdminCheckComplete(true);
           console.log('User signed out, cleared auth state');
         } else if (currentSession) {
           setSession(currentSession);
@@ -62,7 +39,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           // Check admin status when user changes
           if (currentSession.user) {
-            await checkAndSetAdminStatus(currentSession.user.id);
+            try {
+              const adminStatus = await checkAdminStatus(currentSession.user.id);
+              if (mounted) {
+                setIsAdmin(adminStatus);
+                console.log('Admin status updated:', adminStatus);
+              }
+            } catch (error) {
+              console.error('Error checking admin status:', error);
+              if (mounted) setIsAdmin(false);
+            }
           }
         }
         
@@ -81,9 +67,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Check admin status for initial session
       if (currentSession?.user) {
-        await checkAndSetAdminStatus(currentSession.user.id);
-      } else {
-        setAdminCheckComplete(true);
+        try {
+          const adminStatus = await checkAdminStatus(currentSession.user.id);
+          if (mounted) {
+            setIsAdmin(adminStatus);
+            console.log('Initial admin status:', adminStatus);
+          }
+        } catch (error) {
+          console.error('Error checking initial admin status:', error);
+          if (mounted) setIsAdmin(false);
+        }
       }
       
       // Set loading to false after initial check
@@ -217,17 +210,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider 
-      value={{ 
-        user, 
-        session, 
-        signIn, 
-        signUp, 
-        signOut, 
-        loading: loading || !adminCheckComplete, 
-        isAdmin 
-      }}
-    >
+    <AuthContext.Provider value={{ user, session, signIn, signUp, signOut, loading, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

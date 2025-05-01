@@ -28,9 +28,6 @@ export const AdminLayout = () => {
         toast.error('Acesso negado', {
           description: 'Você não tem permissão de administrador'
         });
-        console.error('Admin access denied. User:', user?.email, 'isAdmin:', isAdmin);
-      } else {
-        console.log('Admin access granted for:', user.email);
       }
     }
   }, [loading, user, isAdmin]);
@@ -41,9 +38,6 @@ export const AdminLayout = () => {
       <div className="flex flex-col items-center justify-center w-full h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
         <p className="text-muted-foreground">Verificando permissões...</p>
-        <p className="text-xs text-muted-foreground mt-2">
-          Aguarde enquanto verificamos seu acesso ao painel administrativo
-        </p>
       </div>
     );
   }
