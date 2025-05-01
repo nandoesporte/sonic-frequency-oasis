@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { Loader2, UserPlus, User, Shield } from 'lucide-react';
 
 export default function Admin() {
-  const { user, isAdmin, checkAdminStatus } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,84 +20,14 @@ export default function Admin() {
   const { setAdminStatus } = useAuth();
   const [adminUsers, setAdminUsers] = useState<{id: string, email: string}[]>([]);
   
-  // Effect to check admin status on mount and set up target user as admin
+  // Effect to fetch admin users on mount
   useEffect(() => {
-    const verifyAdminStatus = async () => {
-      // Force a recheck of admin status
-      if (user) {
-        const adminStatus = await checkAdminStatus();
-        console.log('Admin status check result:', adminStatus);
-        
-        // If not an admin, try to make the current user an admin if it matches our target email
-        if (!adminStatus && user.email === 'nandomartin21@msn.com') {
-          console.log('Attempting to grant admin access to:', user.email);
-          try {
-            // First check if the user is already an admin to prevent duplicate entries
-            const { data: existingAdmin, error: checkError } = await supabase
-              .from('admin_users')
-              .select('user_id')
-              .eq('user_id', user.id)
-              .maybeSingle();
-            
-            if (checkError) {
-              console.error('Error checking admin status:', checkError);
-            } else if (!existingAdmin) {
-              // User is not an admin yet, add them
-              const { error } = await supabase
-                .from('admin_users')
-                .insert([{ user_id: user.id }]);
-              
-              if (error) {
-                console.error('Error adding admin:', error);
-                // Special case: If we get a "violates row-level security policy" error
-                // try the bootstrap admin insertion (using direct auth inserting)
-                if (error.message?.includes('violates row-level security policy')) {
-                  console.log('Attempting bootstrap admin insertion');
-                  const { error: authError } = await supabase.auth.admin.createUser({
-                    email: user.email,
-                    password: '',
-                    user_metadata: { admin: true },
-                    email_confirm: true
-                  });
-                  
-                  if (authError) {
-                    console.error('Bootstrap admin creation failed:', authError);
-                  } else {
-                    console.log('Bootstrap admin creation might have worked');
-                  }
-                }
-              } else {
-                console.log('Successfully added admin, rechecking status');
-                // Recheck admin status after adding
-                await checkAdminStatus();
-                toast.success('Permissão concedida', {
-                  description: 'Você agora tem acesso de administrador.'
-                });
-              }
-            } else {
-              console.log('User is already an admin, rechecking status');
-              await checkAdminStatus();
-            }
-          } catch (error) {
-            console.error('Error in admin setup:', error);
-          }
-        }
-      }
-      setInitializing(false);
-      
-      // If user is admin, fetch list of admin users
-      if (isAdmin) {
-        fetchAdminUsers();
-      }
-    };
-
-    verifyAdminStatus();
-  }, [user, checkAdminStatus, isAdmin]);
+    fetchAdminUsers();
+    setInitializing(false);
+  }, [user]);
   
-  // Fetch all admin users if current user is admin
+  // Fetch all admin users
   const fetchAdminUsers = async () => {
-    if (!isAdmin) return;
-    
     try {
       // First get all admin user IDs
       const { data: adminData, error: adminError } = await supabase
@@ -137,21 +67,19 @@ export default function Admin() {
     return (
       <div className="container mx-auto py-10 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
-        <p className="ml-2">Verificando permissões...</p>
+        <p className="ml-2">Carregando dados...</p>
       </div>
     );
   }
   
-  // Redirect if not admin
-  if (!isAdmin) {
-    toast.error('Acesso negado', {
-      description: 'Você não tem permissão para acessar esta página.'
-    });
-    navigate('/');
-    return null;
-  }
-  
   const handleAddAdmin = async () => {
+    if (!user) {
+      toast.error('Você precisa estar logado', {
+        description: 'Faça login para adicionar administradores.'
+      });
+      return;
+    }
+    
     if (!email) {
       toast.error('Email obrigatório', {
         description: 'Por favor, informe o email do usuário.'
@@ -197,18 +125,26 @@ export default function Admin() {
         return;
       }
       
-      // Add user as admin
-      const success = await setAdminStatus(userData.id, true);
+      // Add user as admin directly to admin_users table
+      const { error } = await supabase
+        .from('admin_users')
+        .insert([{ user_id: userData.id }]);
       
-      if (success) {
-        setEmail('');
-        toast.success('Administrador adicionado', {
-          description: `${userData.email} agora é um administrador.`
+      if (error) {
+        console.error('Error adding admin:', error);
+        toast.error('Erro', {
+          description: 'Não foi possível adicionar o administrador. Tente novamente.'
         });
-        
-        // Refresh the admin users list
-        fetchAdminUsers();
+        return;
       }
+      
+      setEmail('');
+      toast.success('Administrador adicionado', {
+        description: `${userData.email} agora é um administrador.`
+      });
+      
+      // Refresh the admin users list
+      fetchAdminUsers();
     } catch (error) {
       console.error('Error adding admin:', error);
       toast.error('Erro', {
