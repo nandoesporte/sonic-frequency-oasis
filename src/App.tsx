@@ -16,8 +16,6 @@ import NotFound from "./pages/NotFound";
 import Trending from "./pages/Trending";
 import Guide from "./pages/Guide";
 import Scientific from "./pages/Scientific";
-import Admin from "./pages/Admin";
-import AdminAccessButton from "./components/admin/AdminAccessButton";
 
 const queryClient = new QueryClient();
 
@@ -40,10 +38,6 @@ function App() {
           <AuthProvider>
             <Toaster />
             <Sonner position="top-center" />
-            {/* AdminMenu removed from here as it will be rendered inside components that need auth context */}
-            <div className="fixed bottom-0 right-0 z-50 m-4">
-              <AdminAccessButton />
-            </div>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/scientific" element={<Scientific />} />
@@ -54,9 +48,6 @@ function App() {
               <Route path="/history" element={<History />} />
               <Route path="/premium" element={<Premium />} />
               <Route path="/auth" element={<Auth />} />
-              
-              {/* Admin routes with proper nesting */}
-              <Route path="/admin/*" element={<Admin />} />
               
               {/* Catch all route for 404 */}
               <Route path="*" element={<NotFound />} />

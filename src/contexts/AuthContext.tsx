@@ -1,10 +1,10 @@
+
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/sonner';
 import { AuthContextType } from './auth-types';
-import { checkAdminStatus } from './admin-utils';
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -12,7 +12,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
   console.log('AuthProvider initialized');
@@ -30,20 +29,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (event === 'SIGNED_OUT') {
           setSession(null);
           setUser(null);
-          setIsAdmin(false);
         } else if (currentSession) {
           setSession(currentSession);
           setUser(currentSession.user ?? null);
-          
-          // Check admin status when user changes
-          if (currentSession.user) {
-            checkAdminStatus(currentSession.user.id).then(adminStatus => {
-              console.log('Admin status check result:', adminStatus);
-              if (mounted) setIsAdmin(adminStatus);
-            }).catch(error => {
-              console.error('Error checking admin status:', error);
-            });
-          }
         }
         
         // Set loading to false after handling the auth state change
@@ -60,15 +48,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (currentSession) {
         setSession(currentSession);
         setUser(currentSession.user);
-        
-        // Check admin status for initial session
-        try {
-          const adminStatus = await checkAdminStatus(currentSession.user.id);
-          console.log('Initial admin status check result:', adminStatus);
-          if (mounted) setIsAdmin(adminStatus);
-        } catch (error) {
-          console.error('Error checking initial admin status:', error);
-        }
       }
       
       // Set loading to false after initial check
@@ -101,12 +80,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       console.log('Login successful:', data.user?.email);
-      
-      // Check and set admin status
-      if (data.user) {
-        const adminStatus = await checkAdminStatus(data.user.id);
-        setIsAdmin(adminStatus);
-      }
       
       toast.success('Login realizado com sucesso', {
         description: 'Bem-vindo de volta!'
@@ -181,7 +154,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Clear local state AFTER successful signout
       setUser(null);
       setSession(null);
-      setIsAdmin(false);
       
       console.log('User signed out successfully');
       
@@ -202,7 +174,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, signIn, signUp, signOut, loading, isAdmin }}>
+    <AuthContext.Provider value={{ user, session, signIn, signUp, signOut, loading }}>
       {children}
     </AuthContext.Provider>
   );
