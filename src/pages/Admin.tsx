@@ -12,6 +12,8 @@ import { useNavigate } from 'react-router-dom';
 import { Loader2, UserPlus, User, Shield, Webhook, Settings, CreditCard } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SubscriptionPlanManager } from '@/components/admin/SubscriptionPlanManager';
+import { SubscriberManager } from '@/components/admin/SubscriberManager';
+import { AdminDashboard } from '@/components/admin/AdminDashboard';
 
 export default function Admin() {
   const { user } = useAuth();
@@ -166,21 +168,41 @@ export default function Admin() {
         </Button>
       </div>
       
-      <Tabs defaultValue="settings" className="mb-8">
+      <Tabs defaultValue="dashboard" className="mb-8">
         <TabsList className="mb-4">
+          <TabsTrigger value="dashboard">
+            <User className="w-4 h-4 mr-2" />
+            Dashboard
+          </TabsTrigger>
+          <TabsTrigger value="subscribers">
+            <UserPlus className="w-4 h-4 mr-2" />
+            Assinantes
+          </TabsTrigger>
+          <TabsTrigger value="subscription-plans" id="subscription-plans-tab">
+            <CreditCard className="w-4 h-4 mr-2" />
+            Planos de Assinatura
+          </TabsTrigger>
           <TabsTrigger value="settings">
             <Settings className="w-4 h-4 mr-2" />
             Configurações
-          </TabsTrigger>
-          <TabsTrigger value="subscription-plans">
-            <CreditCard className="w-4 h-4 mr-2" />
-            Planos de Assinatura
           </TabsTrigger>
           <TabsTrigger value="admins">
             <Shield className="w-4 h-4 mr-2" />
             Administradores
           </TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="dashboard">
+          <AdminDashboard />
+        </TabsContent>
+        
+        <TabsContent value="subscribers">
+          <SubscriberManager />
+        </TabsContent>
+        
+        <TabsContent value="subscription-plans">
+          <SubscriptionPlanManager />
+        </TabsContent>
         
         <TabsContent value="settings">
           <div className="grid gap-6 md:grid-cols-1">
@@ -209,10 +231,6 @@ export default function Admin() {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
-        
-        <TabsContent value="subscription-plans">
-          <SubscriptionPlanManager />
         </TabsContent>
         
         <TabsContent value="admins">
