@@ -32,6 +32,10 @@ export function Header() {
     { name: "Guia de Uso", path: "/guide", icon: <Book className="w-4 h-4 mr-2" /> }
   ];
 
+  // Determine if we're on the premium page to avoid adding the hash when already there
+  const isPremiumPage = location.pathname === "/premium";
+  const premiumPath = isPremiumPage ? "/premium#planos" : "/premium";
+
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled ? 'bg-background/80 backdrop-blur-md border-b' : 'bg-transparent'
@@ -76,7 +80,7 @@ export function Header() {
               </Button>
               
               <Button variant={isPremium ? "ghost" : "default"} size="sm" asChild className="hidden sm:flex">
-                <Link to="/premium">
+                <Link to={premiumPath}>
                   <Crown className="mr-2 h-4 w-4" />
                   {isPremium ? "Premium Ativo" : "Obter Premium"}
                 </Link>
@@ -92,7 +96,7 @@ export function Header() {
               </Button>
               
               <Button variant="default" size="sm" asChild className="hidden sm:flex">
-                <Link to="/premium">
+                <Link to={premiumPath}>
                   <Crown className="mr-2 h-4 w-4" />
                   Obter Premium
                 </Link>
@@ -130,7 +134,7 @@ export function Header() {
                     </Button>
                     
                     <Button variant={isPremium ? "ghost" : "default"} className="justify-start" asChild>
-                      <Link to="/premium">
+                      <Link to={premiumPath}>
                         <Crown className="mr-2 h-4 w-4" />
                         {isPremium ? "Premium Ativo" : "Obter Premium"}
                       </Link>
@@ -146,7 +150,7 @@ export function Header() {
                     </Button>
                     
                     <Button variant="default" className="mt-4" asChild>
-                      <Link to="/premium">
+                      <Link to={premiumPath}>
                         <Crown className="mr-2 h-4 w-4" />
                         Obter Premium
                       </Link>

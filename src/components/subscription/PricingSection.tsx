@@ -69,8 +69,8 @@ export function PricingSection() {
       return;
     }
 
-    // Redirecionar para a página de assinatura premium
-    navigate('/premium');
+    // Navigate to premium page with a hash that will scroll to the plans section
+    navigate('/premium#planos');
   };
 
   return (

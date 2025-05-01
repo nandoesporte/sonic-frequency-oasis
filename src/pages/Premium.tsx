@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
 import { FrequencyCard } from "@/components/frequency-card";
@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Crown } from "lucide-react";
 import { usePremium } from "@/hooks/use-premium";
 import { useAuth } from "@/contexts/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 
 const PremiumContent = () => {
@@ -18,6 +18,8 @@ const PremiumContent = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const { isPremium } = usePremium();
+  const plansRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
 
   useEffect(() => {
     const fetchFrequencies = async () => {
@@ -49,6 +51,20 @@ const PremiumContent = () => {
     }
   }, [user]);
 
+  // Scroll to plans section if hash is present or when location changes
+  useEffect(() => {
+    // Check if there's a hash in the URL or if the hash is specifically #planos
+    if (location.hash === '#planos' && plansRef.current) {
+      setTimeout(() => {
+        plansRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [location.hash]);
+
+  const scrollToPlans = () => {
+    plansRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   if (!user) {
     return (
       <div className="container pt-32 pb-12 px-4 text-center">
@@ -79,8 +95,12 @@ const PremiumContent = () => {
             Por apenas R$ 19,90/mês, você tem acesso ilimitado a todas as frequências premium
             e recursos exclusivos.
           </p>
-          <Button asChild variant="default" className="bg-amber-500 hover:bg-amber-600">
-            <a href="#planos">Ver Planos</a>
+          <Button 
+            variant="default" 
+            className="bg-amber-500 hover:bg-amber-600"
+            onClick={scrollToPlans}
+          >
+            Ver Planos
           </Button>
         </div>
       )}
@@ -104,7 +124,7 @@ const PremiumContent = () => {
         </div>
       )}
       
-      <div id="planos" className="pt-8 mt-8 border-t">
+      <div id="planos" className="pt-8 mt-8 border-t" ref={plansRef}>
         <h2 className="text-2xl font-bold mb-8 text-center">Planos de Assinatura</h2>
         <SubscriptionPlans />
       </div>
