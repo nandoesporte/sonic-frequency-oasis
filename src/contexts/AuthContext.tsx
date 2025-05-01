@@ -22,11 +22,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       if (!user) return false;
       
+      // Directly query the admin_users table
       const { data, error } = await supabase
         .from('admin_users')
         .select('user_id')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
       
       if (error) {
         console.error('Error checking admin status:', error);
@@ -34,6 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       
       const adminStatus = !!data;
+      console.log('Admin status checked for', user.email, ':', adminStatus);
       setIsAdmin(adminStatus);
       return adminStatus;
     } catch (error) {

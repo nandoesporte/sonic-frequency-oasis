@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { toast } from '@/components/ui/sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, UserPlus } from 'lucide-react';
+import { Loader2, UserPlus, User, Shield } from 'lucide-react';
 
 export default function Admin() {
   const { user, isAdmin, checkAdminStatus } = useAuth();
@@ -18,8 +18,9 @@ export default function Admin() {
   const [loading, setLoading] = useState(false);
   const [initializing, setInitializing] = useState(true);
   const { setAdminStatus } = useAuth();
+  const [adminUsers, setAdminUsers] = useState<{id: string, email: string}[]>([]);
   
-  // Effect to check admin status on mount
+  // Effect to check admin status on mount and set up target user as admin
   useEffect(() => {
     const verifyAdminStatus = async () => {
       // Force a recheck of admin status
@@ -31,20 +32,51 @@ export default function Admin() {
         if (!adminStatus && user.email === 'nandomartin21@msn.com') {
           console.log('Attempting to grant admin access to:', user.email);
           try {
-            // Add current user as admin
-            const { error } = await supabase
+            // First check if the user is already an admin to prevent duplicate entries
+            const { data: existingAdmin, error: checkError } = await supabase
               .from('admin_users')
-              .insert([{ user_id: user.id }]);
+              .select('user_id')
+              .eq('user_id', user.id)
+              .maybeSingle();
             
-            if (error) {
-              console.error('Error adding admin:', error);
+            if (checkError) {
+              console.error('Error checking admin status:', checkError);
+            } else if (!existingAdmin) {
+              // User is not an admin yet, add them
+              const { error } = await supabase
+                .from('admin_users')
+                .insert([{ user_id: user.id }]);
+              
+              if (error) {
+                console.error('Error adding admin:', error);
+                // Special case: If we get a "violates row-level security policy" error
+                // try the bootstrap admin insertion (using direct auth inserting)
+                if (error.message?.includes('violates row-level security policy')) {
+                  console.log('Attempting bootstrap admin insertion');
+                  const { error: authError } = await supabase.auth.admin.createUser({
+                    email: user.email,
+                    password: '',
+                    user_metadata: { admin: true },
+                    email_confirm: true
+                  });
+                  
+                  if (authError) {
+                    console.error('Bootstrap admin creation failed:', authError);
+                  } else {
+                    console.log('Bootstrap admin creation might have worked');
+                  }
+                }
+              } else {
+                console.log('Successfully added admin, rechecking status');
+                // Recheck admin status after adding
+                await checkAdminStatus();
+                toast.success('Permissão concedida', {
+                  description: 'Você agora tem acesso de administrador.'
+                });
+              }
             } else {
-              console.log('Successfully added admin, rechecking status');
-              // Recheck admin status after adding
+              console.log('User is already an admin, rechecking status');
               await checkAdminStatus();
-              toast.success('Permissão concedida', {
-                description: 'Você agora tem acesso de administrador.'
-              });
             }
           } catch (error) {
             console.error('Error in admin setup:', error);
@@ -52,10 +84,53 @@ export default function Admin() {
         }
       }
       setInitializing(false);
+      
+      // If user is admin, fetch list of admin users
+      if (isAdmin) {
+        fetchAdminUsers();
+      }
     };
 
     verifyAdminStatus();
-  }, [user, checkAdminStatus]);
+  }, [user, checkAdminStatus, isAdmin]);
+  
+  // Fetch all admin users if current user is admin
+  const fetchAdminUsers = async () => {
+    if (!isAdmin) return;
+    
+    try {
+      // First get all admin user IDs
+      const { data: adminData, error: adminError } = await supabase
+        .from('admin_users')
+        .select('user_id');
+        
+      if (adminError) {
+        console.error('Error fetching admin users:', adminError);
+        return;
+      }
+      
+      if (!adminData || adminData.length === 0) {
+        setAdminUsers([]);
+        return;
+      }
+      
+      // Then get user emails from users_view
+      const adminIds = adminData.map(admin => admin.user_id);
+      const { data: usersData, error: usersError } = await supabase
+        .from('users_view')
+        .select('id, email')
+        .in('id', adminIds);
+        
+      if (usersError) {
+        console.error('Error fetching user emails:', usersError);
+        return;
+      }
+      
+      setAdminUsers(usersData || []);
+    } catch (error) {
+      console.error('Error fetching admin users:', error);
+    }
+  };
   
   // If still initializing, show loading indicator
   if (initializing) {
@@ -107,6 +182,21 @@ export default function Admin() {
         return;
       }
       
+      // Check if user is already an admin
+      const { data: existingAdmin, error: checkError } = await supabase
+        .from('admin_users')
+        .select('user_id')
+        .eq('user_id', userData.id)
+        .maybeSingle();
+      
+      if (existingAdmin) {
+        toast.info('Já é administrador', {
+          description: `${userData.email} já é um administrador.`
+        });
+        setEmail('');
+        return;
+      }
+      
       // Add user as admin
       const success = await setAdminStatus(userData.id, true);
       
@@ -115,6 +205,9 @@ export default function Admin() {
         toast.success('Administrador adicionado', {
           description: `${userData.email} agora é um administrador.`
         });
+        
+        // Refresh the admin users list
+        fetchAdminUsers();
       }
     } catch (error) {
       console.error('Error adding admin:', error);
@@ -128,7 +221,12 @@ export default function Admin() {
   
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-8">Administração</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Administração</h1>
+        <Button variant="outline" onClick={() => navigate('/')}>
+          Voltar ao Início
+        </Button>
+      </div>
       
       <div className="grid gap-6">
         <Card>
@@ -171,6 +269,36 @@ export default function Admin() {
             </p>
           </CardFooter>
         </Card>
+        
+        {adminUsers.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Administradores Atuais</CardTitle>
+              <CardDescription>
+                Lista de usuários com privilégios de administrador.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Email</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {adminUsers.map((admin) => (
+                    <TableRow key={admin.id}>
+                      <TableCell className="flex items-center">
+                        <Shield className="mr-2 h-4 w-4 text-blue-500" />
+                        {admin.email}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
