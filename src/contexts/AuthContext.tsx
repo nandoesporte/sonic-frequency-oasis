@@ -20,7 +20,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading: true,
     isAdmin: false
   });
-  const [isCheckingAdmin, setIsCheckingAdmin] = useState(false);
   const navigate = useNavigate();
 
   console.log('AuthProvider initialized');
@@ -40,7 +39,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             ...prev,
             session: null,
             user: null,
-            isAdmin: false
+            isAdmin: false,
+            loading: false
           }));
         } else if (currentSession) {
           setAuthState(prev => ({
@@ -51,21 +51,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           // Check admin status if user is authenticated
           if (currentSession.user) {
-            setIsCheckingAdmin(true);
             const adminStatus = await checkAdminStatus(currentSession.user.id);
             if (mounted) {
               setAuthState(prev => ({
                 ...prev,
-                isAdmin: adminStatus
+                isAdmin: adminStatus,
+                loading: false
               }));
               console.log('Admin status set to:', adminStatus);
-              setIsCheckingAdmin(false);
             }
+          } else {
+            setAuthState(prev => ({ ...prev, loading: false }));
           }
-        }
-        
-        // Set loading to false after handling the auth state change
-        if (mounted) {
+        } else {
           setAuthState(prev => ({ ...prev, loading: false }));
         }
       }
@@ -86,21 +84,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         // Check admin status if user is authenticated
         if (currentSession.user) {
-          setIsCheckingAdmin(true);
           const adminStatus = await checkAdminStatus(currentSession.user.id);
           if (mounted) {
             setAuthState(prev => ({
               ...prev,
-              isAdmin: adminStatus
+              isAdmin: adminStatus,
+              loading: false
             }));
             console.log('Initial admin status set to:', adminStatus);
-            setIsCheckingAdmin(false);
           }
+        } else {
+          setAuthState(prev => ({ ...prev, loading: false }));
         }
-      }
-      
-      // Set loading to false after initial check
-      if (mounted) {
+      } else {
         setAuthState(prev => ({ ...prev, loading: false }));
       }
     });
@@ -111,45 +107,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Refetch admin status when user changes
-  useEffect(() => {
-    if (authState.user && !isCheckingAdmin) {
-      setIsCheckingAdmin(true);
-      checkAdminStatus(authState.user.id).then(status => {
-        setAuthState(prev => ({
-          ...prev,
-          isAdmin: status
-        }));
-        console.log('Admin status refreshed to:', status);
-        setIsCheckingAdmin(false);
-      });
-    }
-  }, [authState.user]);
-
   const signIn = async (email: string, password: string) => {
     setAuthState(prev => ({ ...prev, loading: true }));
     const result = await signInWithEmail(email, password);
-    setAuthState(prev => ({ ...prev, loading: false }));
+    
+    // No need to update isAdmin here as the onAuthStateChange will handle it
+    if (!result.error) {
+      console.log("Login successful, checking admin status...");
+    }
+    
     return result;
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
     setAuthState(prev => ({ ...prev, loading: true }));
     const result = await signUpWithEmail(email, password, fullName);
-    setAuthState(prev => ({ ...prev, loading: false }));
     return result;
   };
 
   const signOut = async () => {
     setAuthState(prev => ({ ...prev, loading: true }));
     await signOutUser();
-    // Clear local state AFTER successful signout
-    setAuthState({
-      user: null,
-      session: null,
-      loading: false,
-      isAdmin: false
-    });
     // Navigate after signout is complete
     navigate('/auth');
   };

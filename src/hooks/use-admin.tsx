@@ -41,24 +41,24 @@ export function useAdmin() {
     }
   }, []);
   
-  // Check admin status only once when user changes
+  // Check admin status when user changes
   useEffect(() => {
     let isMounted = true;
     
-    const checkAdmin = async () => {
-      if (user) {
-        const result = await checkAdminStatus(user.id);
+    if (user) {
+      setIsChecking(true);
+      checkAdminStatus(user.id).then(result => {
         if (isMounted) {
           setIsAdmin(result);
+          setIsChecking(false);
         }
-      } else {
-        if (isMounted) {
-          setIsAdmin(false);
-        }
+      });
+    } else {
+      if (isMounted) {
+        setIsAdmin(false);
+        setIsChecking(false);
       }
-    };
-    
-    checkAdmin();
+    }
     
     return () => {
       isMounted = false;
