@@ -17,6 +17,7 @@ import Guide from "./pages/Guide";
 import Scientific from "./pages/Scientific";
 import Admin from "./pages/Admin";
 import WebhookConfig from "./pages/WebhookConfig";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ function App() {
               <Route path="/guide" element={<Guide />} />
               <Route path="/history" element={<History />} />
               <Route path="/premium" element={<Premium />} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/webhook-config" element={<WebhookConfig />} />
