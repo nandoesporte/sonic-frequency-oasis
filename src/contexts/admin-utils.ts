@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
 
@@ -117,16 +118,16 @@ export const addAdminUser = async (email: string): Promise<{ success: boolean; e
     // If we're not using the current user's ID, try to find the user by email
     console.log('Finding user by email in auth database');
     
-    // Try lookup methods in sequence until we find the user
-    // This is a simplified version that primarily focuses on the current user flow
-    const { data: users, error: lookupError } = await supabase.auth.admin.listUsers();
+    // Fix for the issue: properly type the users data
+    const { data, error: lookupError } = await supabase.auth.admin.listUsers();
     
     if (lookupError) {
       console.error('Error looking up users:', lookupError);
       return { success: false, error: 'Erro ao procurar usuários' };
     }
 
-    const foundUser = users?.users?.find(user => user.email === email);
+    // Properly handle the users array with correct typing
+    const foundUser = data && data.users ? data.users.find(u => u.email === email) : undefined;
     
     if (!foundUser) {
       return { success: false, error: 'Usuário não encontrado com este email' };
