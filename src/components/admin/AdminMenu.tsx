@@ -16,6 +16,7 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
   NavigationMenuTrigger,
+  NavigationMenuLink,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 
@@ -50,106 +51,94 @@ const AdminMenu = () => {
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
               <li>
-                <NavigationMenuLink asChild>
-                  <a
-                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    href="/admin"
-                    onClick={handleNavigate('/admin')}
-                  >
-                    <div className="flex items-center gap-2 text-sm font-medium leading-none">
-                      <LayoutDashboard className="h-4 w-4" />
-                      <span>Dashboard</span>
-                    </div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                      Visão geral da plataforma e estatísticas.
-                    </p>
-                  </a>
-                </NavigationMenuLink>
+                <a
+                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                  href="/admin"
+                  onClick={handleNavigate('/admin')}
+                >
+                  <div className="flex items-center gap-2 text-sm font-medium leading-none">
+                    <LayoutDashboard className="h-4 w-4" />
+                    <span>Dashboard</span>
+                  </div>
+                  <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                    Visão geral da plataforma e estatísticas.
+                  </p>
+                </a>
               </li>
               <li>
-                <NavigationMenuLink asChild>
-                  <a
-                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    href="/admin/users"
-                    onClick={handleNavigate('/admin/users')}
-                  >
-                    <div className="flex items-center gap-2 text-sm font-medium leading-none">
-                      <Users className="h-4 w-4" />
-                      <span>Usuários</span>
-                    </div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                      Gerenciar usuários da plataforma.
-                    </p>
-                  </a>
-                </NavigationMenuLink>
+                <a
+                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                  href="/admin/users"
+                  onClick={handleNavigate('/admin/users')}
+                >
+                  <div className="flex items-center gap-2 text-sm font-medium leading-none">
+                    <Users className="h-4 w-4" />
+                    <span>Usuários</span>
+                  </div>
+                  <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                    Gerenciar usuários da plataforma.
+                  </p>
+                </a>
               </li>
               <li>
-                <NavigationMenuLink asChild>
-                  <a
-                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    href="/admin/subscriptions"
-                    onClick={handleNavigate('/admin/subscriptions')}
-                  >
-                    <div className="flex items-center gap-2 text-sm font-medium leading-none">
-                      <CreditCard className="h-4 w-4" />
-                      <span>Assinaturas</span>
-                    </div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                      Gerenciar assinaturas e pagamentos.
-                    </p>
-                  </a>
-                </NavigationMenuLink>
+                <a
+                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                  href="/admin/subscriptions"
+                  onClick={handleNavigate('/admin/subscriptions')}
+                >
+                  <div className="flex items-center gap-2 text-sm font-medium leading-none">
+                    <CreditCard className="h-4 w-4" />
+                    <span>Assinaturas</span>
+                  </div>
+                  <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                    Gerenciar assinaturas e pagamentos.
+                  </p>
+                </a>
               </li>
               <li>
-                <NavigationMenuLink asChild>
-                  <a
-                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    href="/admin/content"
-                    onClick={handleNavigate('/admin/content')}
-                  >
-                    <div className="flex items-center gap-2 text-sm font-medium leading-none">
-                      <FileText className="h-4 w-4" />
-                      <span>Conteúdo</span>
-                    </div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                      Gerenciar o conteúdo da plataforma.
-                    </p>
-                  </a>
-                </NavigationMenuLink>
+                <a
+                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                  href="/admin/content"
+                  onClick={handleNavigate('/admin/content')}
+                >
+                  <div className="flex items-center gap-2 text-sm font-medium leading-none">
+                    <FileText className="h-4 w-4" />
+                    <span>Conteúdo</span>
+                  </div>
+                  <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                    Gerenciar o conteúdo da plataforma.
+                  </p>
+                </a>
               </li>
               <li>
-                <NavigationMenuLink asChild>
-                  <a
-                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    href="/admin/access"
-                    onClick={handleNavigate('/admin/access')}
-                  >
-                    <div className="flex items-center gap-2 text-sm font-medium leading-none">
-                      <ShieldAlert className="h-4 w-4" />
-                      <span>Acesso de Admin</span>
-                    </div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                      Gerenciar permissões de administradores.
-                    </p>
-                  </a>
-                </NavigationMenuLink>
+                <a
+                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                  href="/admin/access"
+                  onClick={handleNavigate('/admin/access')}
+                >
+                  <div className="flex items-center gap-2 text-sm font-medium leading-none">
+                    <ShieldAlert className="h-4 w-4" />
+                    <span>Acesso de Admin</span>
+                  </div>
+                  <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                    Gerenciar permissões de administradores.
+                  </p>
+                </a>
               </li>
               <li>
-                <NavigationMenuLink asChild>
-                  <a
-                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    href="/admin/settings"
-                    onClick={handleNavigate('/admin/settings')}
-                  >
-                    <div className="flex items-center gap-2 text-sm font-medium leading-none">
-                      <Settings className="h-4 w-4" />
-                      <span>Configurações</span>
-                    </div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                      Configurações gerais do sistema.
-                    </p>
-                  </a>
-                </NavigationMenuLink>
+                <a
+                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                  href="/admin/settings"
+                  onClick={handleNavigate('/admin/settings')}
+                >
+                  <div className="flex items-center gap-2 text-sm font-medium leading-none">
+                    <Settings className="h-4 w-4" />
+                    <span>Configurações</span>
+                  </div>
+                  <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                    Configurações gerais do sistema.
+                  </p>
+                </a>
               </li>
             </ul>
           </NavigationMenuContent>
