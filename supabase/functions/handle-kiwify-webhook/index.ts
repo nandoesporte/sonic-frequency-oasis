@@ -57,7 +57,7 @@ serve(async (req) => {
 
     // Find the user with this email
     const { data: userData, error: userError } = await supabase
-      .from('auth.users')
+      .from('users_view')
       .select('id')
       .eq('email', email)
       .single();

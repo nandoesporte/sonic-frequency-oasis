@@ -17,6 +17,7 @@ import Trending from "./pages/Trending";
 import Guide from "./pages/Guide";
 import Scientific from "./pages/Scientific";
 import Admin from "./pages/Admin";
+import WebhookConfig from "./pages/WebhookConfig";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ function App() {
               <Route path="/premium" element={<Premium />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/webhook-config" element={<WebhookConfig />} />
               
               {/* Catch all route for 404 */}
               <Route path="*" element={<NotFound />} />

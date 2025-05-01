@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { toast } from '@/components/ui/sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, UserPlus, User, Shield } from 'lucide-react';
+import { Loader2, UserPlus, User, Shield, Webhook, Settings } from 'lucide-react';
 
 export default function Admin() {
   const { user } = useAuth();
@@ -164,7 +164,32 @@ export default function Admin() {
         </Button>
       </div>
       
-      <div className="grid gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Configurações</CardTitle>
+            <CardDescription>
+              Ferramentas de administração disponíveis.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-medium">Webhooks</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Configurar integração com webhooks de pagamento
+                  </p>
+                </div>
+                <Button onClick={() => navigate('/webhook-config')}>
+                  <Webhook className="mr-2 h-4 w-4" />
+                  Configurar
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
         <Card>
           <CardHeader>
             <CardTitle>Adicionar Administrador</CardTitle>
@@ -207,7 +232,7 @@ export default function Admin() {
         </Card>
         
         {adminUsers.length > 0 && (
-          <Card>
+          <Card className="md:col-span-2">
             <CardHeader>
               <CardTitle>Administradores Atuais</CardTitle>
               <CardDescription>
