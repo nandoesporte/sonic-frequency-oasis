@@ -15,6 +15,10 @@ interface UserData {
   is_admin: boolean;
 }
 
+interface AdminUser {
+  user_id: string;
+}
+
 export function AdminUsersPage() {
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,12 +26,12 @@ export function AdminUsersPage() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      // Fetch users from auth.users (using admin service role)
-      const { data: authUsers, error: authError } = await supabase
+      // Fetch users from the users_view
+      const { data: viewUsers, error: viewError } = await supabase
         .from('users_view')
         .select('*');
 
-      if (authError) throw authError;
+      if (viewError) throw viewError;
 
       // Fetch admin users to determine who is an admin
       const { data: adminUsers, error: adminError } = await supabase
@@ -37,13 +41,13 @@ export function AdminUsersPage() {
       if (adminError) throw adminError;
 
       // Create a set of admin user IDs for quick lookup
-      const adminUserIds = new Set(adminUsers.map(admin => admin.user_id));
+      const adminUserIds = new Set((adminUsers as AdminUser[]).map(admin => admin.user_id));
 
       // Combine the data
-      const usersWithAdminStatus = authUsers.map(user => ({
+      const usersWithAdminStatus = viewUsers.map(user => ({
         ...user,
         is_admin: adminUserIds.has(user.id)
-      }));
+      })) as UserData[];
 
       setUsers(usersWithAdminStatus);
     } catch (error) {
