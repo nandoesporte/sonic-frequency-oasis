@@ -12,33 +12,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
   console.log('AuthProvider initialized');
-  
-  // Check if user is an admin
-  const checkAdminStatus = async (userId: string) => {
-    if (!userId) return false;
-    
-    try {
-      const { data, error } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
-      
-      if (error) {
-        console.error('Error checking admin status:', error);
-        return false;
-      }
-      
-      return !!data;
-    } catch (error) {
-      console.error('Error checking admin status:', error);
-      return false;
-    }
-  };
   
   useEffect(() => {
     let mounted = true;
@@ -46,23 +22,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
+      (event, currentSession) => {
         console.log('Auth state change event:', event);
         if (!mounted) return;
         
         if (event === 'SIGNED_OUT') {
           setSession(null);
           setUser(null);
-          setIsAdmin(false);
         } else if (currentSession) {
           setSession(currentSession);
           setUser(currentSession.user ?? null);
-          
-          // Check admin status if user is authenticated
-          if (currentSession.user) {
-            const adminStatus = await checkAdminStatus(currentSession.user.id);
-            setIsAdmin(adminStatus);
-          }
         }
         
         // Set loading to false after handling the auth state change
@@ -79,12 +48,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (currentSession) {
         setSession(currentSession);
         setUser(currentSession.user);
-        
-        // Check admin status if user is authenticated
-        if (currentSession.user) {
-          const adminStatus = await checkAdminStatus(currentSession.user.id);
-          setIsAdmin(adminStatus);
-        }
       }
       
       // Set loading to false after initial check
@@ -211,7 +174,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, signIn, signUp, signOut, loading, isAdmin }}>
+    <AuthContext.Provider value={{ user, session, signIn, signUp, signOut, loading }}>
       {children}
     </AuthContext.Provider>
   );
