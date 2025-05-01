@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Shield, ShieldCheck, ShieldX } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface UserData {
   id: string;
@@ -22,6 +23,7 @@ interface AdminUser {
 export function AdminUsersPage() {
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user: currentUser } = useAuth();
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -50,6 +52,7 @@ export function AdminUsersPage() {
       })) as UserData[];
 
       setUsers(usersWithAdminStatus);
+      console.log('Users fetched:', usersWithAdminStatus.length);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast.error('Erro ao carregar usuários');
@@ -65,6 +68,12 @@ export function AdminUsersPage() {
   const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
     try {
       if (currentStatus) {
+        // Prevent removing admin privileges from yourself
+        if (userId === currentUser?.id) {
+          toast.error('Você não pode remover seus próprios privilégios de administrador');
+          return;
+        }
+        
         // Remove admin privileges
         const { error } = await supabase
           .from('admin_users')
@@ -105,6 +114,17 @@ export function AdminUsersPage() {
           <CardTitle>Usuários</CardTitle>
         </CardHeader>
         <CardContent>
+          <div className="mb-4 flex justify-end">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={fetchUsers}
+              disabled={loading}
+            >
+              Atualizar lista
+            </Button>
+          </div>
+          
           {loading ? (
             <div className="flex justify-center py-4">
               <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
@@ -139,6 +159,8 @@ export function AdminUsersPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => toggleAdminStatus(user.id, user.is_admin)}
+                          disabled={user.id === currentUser?.id}
+                          title={user.id === currentUser?.id ? "Você não pode alterar seu próprio status" : ""}
                         >
                           <Shield className="h-4 w-4 mr-2" />
                           {user.is_admin ? 'Remover Admin' : 'Tornar Admin'}

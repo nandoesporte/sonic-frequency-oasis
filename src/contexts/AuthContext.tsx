@@ -13,6 +13,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isCheckingAdmin, setIsCheckingAdmin] = useState(false);
   const navigate = useNavigate();
 
   console.log('AuthProvider initialized');
@@ -22,13 +23,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!userId) return false;
     
     try {
+      setIsCheckingAdmin(true);
       const { data, error } = await supabase
         .from('admin_users')
         .select('*')
         .eq('user_id', userId)
         .single();
       
-      if (error) {
+      if (error && error.code !== 'PGRST116') {
         console.error('Error checking admin status:', error);
         return false;
       }
@@ -37,6 +39,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Error checking admin status:', error);
       return false;
+    } finally {
+      setIsCheckingAdmin(false);
     }
   };
   
@@ -62,6 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (currentSession.user) {
             const adminStatus = await checkAdminStatus(currentSession.user.id);
             setIsAdmin(adminStatus);
+            console.log('Admin status set to:', adminStatus);
           }
         }
         
@@ -83,7 +88,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Check admin status if user is authenticated
         if (currentSession.user) {
           const adminStatus = await checkAdminStatus(currentSession.user.id);
-          setIsAdmin(adminStatus);
+          if (mounted) {
+            setIsAdmin(adminStatus);
+            console.log('Initial admin status set to:', adminStatus);
+          }
         }
       }
       
@@ -96,6 +104,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       subscription.unsubscribe();
     };
   }, []);
+
+  // Refetch admin status when user changes
+  useEffect(() => {
+    if (user && !isCheckingAdmin) {
+      checkAdminStatus(user.id).then(status => {
+        setIsAdmin(status);
+        console.log('Admin status refreshed to:', status);
+      });
+    }
+  }, [user]);
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -117,6 +135,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       console.log('Login successful:', data.user?.email);
+      
+      // Check admin status after successful login
+      if (data.user) {
+        const adminStatus = await checkAdminStatus(data.user.id);
+        setIsAdmin(adminStatus);
+        console.log('Admin status after login:', adminStatus);
+      }
       
       toast.success('Login realizado com sucesso', {
         description: 'Bem-vindo de volta!'
@@ -191,6 +216,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Clear local state AFTER successful signout
       setUser(null);
       setSession(null);
+      setIsAdmin(false);
       
       console.log('User signed out successfully');
       
