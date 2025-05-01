@@ -3,6 +3,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { addAdminUser } from '@/contexts/admin-utils';
 import { toast } from '@/components/ui/sonner';
 
+interface BasicAuthUser {
+  id: string;
+  email?: string;
+}
+
 export const setupAdminUser = async () => {
   // Define the admin email
   const adminEmail = 'nandomartin21@msn.com';
