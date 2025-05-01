@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -7,6 +6,7 @@ import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePremium } from "@/hooks/use-premium";
+import { Logo } from "@/components/ui/logo";
 
 export function Header() {
   const location = useLocation();
@@ -42,16 +42,11 @@ export function Header() {
     }`}>
       <div className="container px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center">
-          <Link to="/" className="flex items-center text-xl font-bold mr-6">
-            <div className="hidden sm:flex items-center">
-              <span className="text-primary">Frequency</span>
-              <span className="ml-1">App</span>
-            </div>
-            <div className="sm:hidden flex items-center">
-              <span className="text-primary">F</span>
-              <span>A</span>
-            </div>
-          </Link>
+          {/* Replace the old text logo with our new Logo component */}
+          <Logo 
+            variant={window.innerWidth < 640 ? "mobile" : "default"} 
+            className="mr-6"
+          />
           
           <nav className="hidden md:flex items-center space-x-1">
             {navLinks.map((link) => (
