@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 export const checkAdminStatus = async (userId: string): Promise<boolean> => {
@@ -186,15 +187,23 @@ export const addAdminUser = async (email: string): Promise<{ success: boolean; e
     // As a last resort, try to find user through auth API
     console.log('No user found in application tables, trying auth API');
     try {
-      // Get the user directly from authentication
-      const { data: authData, error: authError } = await supabase.auth.admin.getUserByEmail(email);
+      // Instead of using the deprecated getUserByEmail, use admin.listUsers and filter manually
+      const { data: authData, error: authError } = await supabase.auth.admin.listUsers();
       
-      if (authError || !authData?.user) {
+      if (authError || !authData?.users) {
         console.error('Error finding user with auth API:', authError);
         return { success: false, error: 'User not found in auth database' };
       }
       
-      const userId = authData.user.id;
+      // Find the user with matching email
+      const user = authData.users.find(user => user.email === email);
+      
+      if (!user) {
+        console.error('User not found with email:', email);
+        return { success: false, error: 'User not found with this email' };
+      }
+      
+      const userId = user.id;
       console.log(`Found user with auth API, ID: ${userId}`);
       
       // Check if user is already an admin
