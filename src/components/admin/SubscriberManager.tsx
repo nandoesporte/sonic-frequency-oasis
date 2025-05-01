@@ -8,6 +8,7 @@ import { toast } from '@/components/ui/sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Check, X, UserSearch } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Subscriber {
   id: string;
@@ -23,6 +24,7 @@ export function SubscriberManager() {
   const [loading, setLoading] = useState(true);
   const [searchEmail, setSearchEmail] = useState('');
   const [filteredSubscribers, setFilteredSubscribers] = useState<Subscriber[]>([]);
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     fetchSubscribers();
@@ -120,8 +122,8 @@ export function SubscriberManager() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center gap-4 mb-4">
-          <div className="relative flex-1">
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 mb-4">
+          <div className="relative flex-1 w-full">
             <UserSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Buscar por email..."
@@ -130,7 +132,7 @@ export function SubscriberManager() {
               className="pl-9"
             />
           </div>
-          <Button variant="outline" onClick={fetchSubscribers} disabled={loading}>
+          <Button variant="outline" onClick={fetchSubscribers} disabled={loading} className="w-full sm:w-auto">
             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Atualizar
           </Button>
@@ -141,21 +143,21 @@ export function SubscriberManager() {
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         ) : filteredSubscribers.length > 0 ? (
-          <div className="rounded-md border">
+          <div className="rounded-md border overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Email</TableHead>
+                  <TableHead className={isMobile ? "hidden md:table-cell" : ""}>Email</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Plano</TableHead>
-                  <TableHead>Expira em</TableHead>
+                  <TableHead className={isMobile ? "hidden sm:table-cell" : ""}>Plano</TableHead>
+                  <TableHead className={isMobile ? "hidden sm:table-cell" : ""}>Expira em</TableHead>
                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredSubscribers.map((subscriber) => (
                   <TableRow key={subscriber.id}>
-                    <TableCell className="font-medium">{subscriber.email}</TableCell>
+                    <TableCell className={`font-medium ${isMobile ? "hidden md:table-cell" : ""}`}>{subscriber.email}</TableCell>
                     <TableCell>
                       {subscriber.subscribed ? (
                         <Badge variant="outline" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800">
@@ -166,17 +168,18 @@ export function SubscriberManager() {
                           Inativo
                         </Badge>
                       )}
+                      {isMobile && <div className="mt-1 text-xs truncate max-w-[150px]">{subscriber.email}</div>}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={isMobile ? "hidden sm:table-cell" : ""}>
                       {subscriber.subscription_tier || 'N/A'}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={isMobile ? "hidden sm:table-cell" : ""}>
                       {formatDate(subscriber.subscription_end)}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="outline"
-                        size="sm"
+                        size={isMobile ? "sm" : "default"}
                         className={subscriber.subscribed ? 
                           "text-red-500 hover:text-red-700 hover:bg-red-50" : 
                           "text-green-500 hover:text-green-700 hover:bg-green-50"
@@ -186,12 +189,12 @@ export function SubscriberManager() {
                         {subscriber.subscribed ? (
                           <>
                             <X className="mr-2 h-4 w-4" />
-                            Desativar
+                            <span className={isMobile ? "hidden sm:inline" : ""}>Desativar</span>
                           </>
                         ) : (
                           <>
                             <Check className="mr-2 h-4 w-4" />
-                            Ativar
+                            <span className={isMobile ? "hidden sm:inline" : ""}>Ativar</span>
                           </>
                         )}
                       </Button>

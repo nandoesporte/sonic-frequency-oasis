@@ -10,12 +10,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { toast } from '@/components/ui/sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, UserPlus, User, Shield, Webhook, Settings, CreditCard, Lock } from 'lucide-react';
+import { Loader2, UserPlus, User, Shield, Webhook, Settings, CreditCard, Lock, Menu } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SubscriptionPlanManager } from '@/components/admin/SubscriptionPlanManager';
 import { SubscriberManager } from '@/components/admin/SubscriberManager';
 import { AdminDashboard } from '@/components/admin/AdminDashboard';
 import { useForm } from 'react-hook-form';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function Admin() {
   const { user } = useAuth();
@@ -27,6 +28,7 @@ export default function Admin() {
   const [adminUsers, setAdminUsers] = useState<{id: string, email: string}[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordError, setPasswordError] = useState('');
+  const isMobile = useIsMobile();
   
   const passwordForm = useForm({
     defaultValues: {
@@ -188,7 +190,7 @@ export default function Admin() {
   // Password protection screen
   if (!isAuthenticated) {
     return (
-      <div className="container mx-auto py-10 flex items-center justify-center min-h-[80vh]">
+      <div className="container mx-auto py-6 md:py-10 px-4 md:px-6 flex items-center justify-center min-h-[80vh]">
         <Card className="w-full max-w-md">
           <CardHeader>
             <div className="flex items-center justify-center mb-4">
@@ -232,37 +234,39 @@ export default function Admin() {
   
   // Main admin content (shown only after authentication)
   return (
-    <div className="container mx-auto py-10">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Administração</h1>
-        <Button variant="outline" onClick={() => navigate('/')}>
+    <div className="container mx-auto py-6 md:py-10 px-4 md:px-6">
+      <div className="flex justify-between items-center mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold">Administração</h1>
+        <Button variant="outline" onClick={() => navigate('/')} size={isMobile ? "sm" : "default"}>
           Voltar ao Início
         </Button>
       </div>
       
-      <Tabs defaultValue="dashboard" className="mb-8">
-        <TabsList className="mb-4">
-          <TabsTrigger value="dashboard">
-            <User className="w-4 h-4 mr-2" />
-            Dashboard
-          </TabsTrigger>
-          <TabsTrigger value="subscribers">
-            <UserPlus className="w-4 h-4 mr-2" />
-            Assinantes
-          </TabsTrigger>
-          <TabsTrigger value="subscription-plans" id="subscription-plans-tab">
-            <CreditCard className="w-4 h-4 mr-2" />
-            Planos de Assinatura
-          </TabsTrigger>
-          <TabsTrigger value="settings">
-            <Settings className="w-4 h-4 mr-2" />
-            Configurações
-          </TabsTrigger>
-          <TabsTrigger value="admins">
-            <Shield className="w-4 h-4 mr-2" />
-            Administradores
-          </TabsTrigger>
-        </TabsList>
+      <Tabs defaultValue="dashboard" className="mb-6 md:mb-8">
+        <div className="overflow-x-auto pb-2">
+          <TabsList className="mb-4">
+            <TabsTrigger value="dashboard" className="flex items-center">
+              <User className="w-4 h-4 mr-1 md:mr-2" />
+              <span className={isMobile ? "hidden sm:inline" : ""}>Dashboard</span>
+            </TabsTrigger>
+            <TabsTrigger value="subscribers" className="flex items-center">
+              <UserPlus className="w-4 h-4 mr-1 md:mr-2" />
+              <span className={isMobile ? "hidden sm:inline" : ""}>Assinantes</span>
+            </TabsTrigger>
+            <TabsTrigger value="subscription-plans" id="subscription-plans-tab" className="flex items-center">
+              <CreditCard className="w-4 h-4 mr-1 md:mr-2" />
+              <span className={isMobile ? "hidden sm:inline" : ""}>Planos</span>
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex items-center">
+              <Settings className="w-4 h-4 mr-1 md:mr-2" />
+              <span className={isMobile ? "hidden sm:inline" : ""}>Config</span>
+            </TabsTrigger>
+            <TabsTrigger value="admins" className="flex items-center">
+              <Shield className="w-4 h-4 mr-1 md:mr-2" />
+              <span className={isMobile ? "hidden sm:inline" : ""}>Admins</span>
+            </TabsTrigger>
+          </TabsList>
+        </div>
         
         <TabsContent value="dashboard">
           <AdminDashboard />
@@ -294,7 +298,7 @@ export default function Admin() {
                         Configurar integração com webhooks de pagamento
                       </p>
                     </div>
-                    <Button onClick={() => navigate('/webhook-config')}>
+                    <Button onClick={() => navigate('/webhook-config')} size={isMobile ? "sm" : "default"}>
                       <Webhook className="mr-2 h-4 w-4" />
                       Configurar
                     </Button>
@@ -315,7 +319,7 @@ export default function Admin() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex items-end gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4">
                   <div className="grid w-full items-center gap-1.5">
                     <Label htmlFor="email">Email do usuário</Label>
                     <Input 
@@ -326,7 +330,11 @@ export default function Admin() {
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
-                  <Button onClick={handleAddAdmin} disabled={loading}>
+                  <Button 
+                    onClick={handleAddAdmin} 
+                    disabled={loading}
+                    className="w-full sm:w-auto"
+                  >
                     {loading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -356,7 +364,7 @@ export default function Admin() {
                     Lista de usuários com privilégios de administrador.
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>

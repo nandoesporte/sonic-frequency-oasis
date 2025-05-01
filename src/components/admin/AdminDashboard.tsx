@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { CreditCard, UserPlus, User, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface DashboardStats {
   totalSubscribers: number;
@@ -20,6 +21,7 @@ export function AdminDashboard() {
   });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     fetchDashboardStats();
@@ -64,9 +66,9 @@ export function AdminDashboard() {
   
   return (
     <div className="space-y-6">
-      <h2 className="text-3xl font-bold">Dashboard</h2>
+      <h2 className="text-2xl md:text-3xl font-bold">Dashboard</h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total de Assinantes</CardTitle>
@@ -89,7 +91,7 @@ export function AdminDashboard() {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="sm:col-span-2 lg:col-span-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Planos Disponíveis</CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
@@ -108,27 +110,34 @@ export function AdminDashboard() {
             <CardDescription>Acesse as ferramentas de administração</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <h3 className="font-medium">Webhooks</h3>
                 <p className="text-sm text-muted-foreground">
                   Configurar integração com webhooks de pagamento
                 </p>
               </div>
-              <Button onClick={() => navigate('/webhook-config')}>
+              <Button 
+                onClick={() => navigate('/webhook-config')}
+                size={isMobile ? "sm" : "default"}
+              >
                 <Settings className="mr-2 h-4 w-4" />
                 Configurar
               </Button>
             </div>
             
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <h3 className="font-medium">Planos de Assinatura</h3>
                 <p className="text-sm text-muted-foreground">
                   Gerenciar os planos disponíveis
                 </p>
               </div>
-              <Button variant="outline" onClick={() => document.getElementById('subscription-plans-tab')?.click()}>
+              <Button 
+                variant="outline" 
+                onClick={() => document.getElementById('subscription-plans-tab')?.click()}
+                size={isMobile ? "sm" : "default"}
+              >
                 <CreditCard className="mr-2 h-4 w-4" />
                 Gerenciar
               </Button>
