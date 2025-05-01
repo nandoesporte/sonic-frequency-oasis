@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { Check, Crown, AlertCircle, Clock } from 'lucide-react';
+import { Check, Crown, AlertCircle } from 'lucide-react';
 
 interface Plan {
   id: string;
@@ -59,7 +59,7 @@ export function SubscriptionPlans() {
             price: plan.price,
             currency: plan.currency,
             interval: plan.interval,
-            kiwify_url: plan.kiwify_url // Handle case where kiwify_url might be missing
+            kiwify_url: plan.kiwify_url 
           }));
           setPlans(formattedPlans);
         }

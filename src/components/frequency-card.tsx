@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAudio } from "@/lib/audio-context";
@@ -5,6 +6,7 @@ import { FrequencyData } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Play, Heart, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePremium } from "@/hooks/use-premium";
 
 interface FrequencyCardProps {
   frequency: FrequencyData;
@@ -13,6 +15,7 @@ interface FrequencyCardProps {
 
 export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardProps) {
   const { play, isPlaying, currentFrequency, addToFavorites, favorites } = useAudio();
+  const { isPremium } = usePremium();
   
   const isCurrentlyPlaying = isPlaying && currentFrequency?.id === frequency.id;
   const isFavorite = favorites.some(f => f.id === frequency.id);
@@ -27,7 +30,8 @@ export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardP
       <Card className={cn(
         "overflow-hidden hover-scale transition-all",
         variant === "trending" && "border-purple-light bg-purple-light/10",
-        isCurrentlyPlaying && "border-primary"
+        isCurrentlyPlaying && "border-primary",
+        frequency.premium && !isPremium && "border-amber-200"
       )}>
         <div className="flex items-center p-4">
           <Button
@@ -77,7 +81,8 @@ export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardP
   return (
     <Card className={cn(
       "overflow-hidden hover-scale transition-all",
-      isCurrentlyPlaying && "border-primary"
+      isCurrentlyPlaying && "border-primary",
+      frequency.premium && !isPremium && "border-amber-200"
     )}>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">

@@ -17,12 +17,14 @@ const PremiumContent = () => {
   const [frequencies, setFrequencies] = useState<FrequencyData[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const { isPremium } = usePremium();
 
   useEffect(() => {
     const fetchFrequencies = async () => {
       const { data, error } = await supabase
         .from('frequencies')
         .select('*')
+        .eq('is_premium', true)  // Only fetch premium frequencies
         .order('hz');
 
       if (error) {
@@ -62,7 +64,7 @@ const PremiumContent = () => {
 
   return (
     <div className="container pt-32 pb-12 px-4">
-      <div className="flex items-center mb-8">
+      <div className="flex items-center mb-6">
         <Crown className="w-8 h-8 text-primary mr-4" />
         <div>
           <h1 className="text-3xl md:text-4xl font-bold">Frequências Exclusivas</h1>
@@ -70,21 +72,42 @@ const PremiumContent = () => {
         </div>
       </div>
 
+      {!isPremium && (
+        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-6 mb-8">
+          <h2 className="text-xl font-semibold mb-2">Assine o plano Premium</h2>
+          <p className="text-muted-foreground mb-4">
+            Por apenas R$ 19,90/mês, você tem acesso ilimitado a todas as frequências premium
+            e recursos exclusivos.
+          </p>
+          <Button asChild variant="default" className="bg-amber-500 hover:bg-amber-600">
+            <a href="#planos">Ver Planos</a>
+          </Button>
+        </div>
+      )}
+
       {loading ? (
         <div className="text-center py-12">
           <p className="text-muted-foreground">Carregando frequências...</p>
         </div>
       ) : frequencies.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {frequencies.map((frequency) => (
-            <FrequencyCard key={frequency.id} frequency={frequency} />
-          ))}
-        </div>
+        <>
+          <h2 className="text-2xl font-bold mb-4">Frequências Premium</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {frequencies.map((frequency) => (
+              <FrequencyCard key={frequency.id} frequency={frequency} />
+            ))}
+          </div>
+        </>
       ) : (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Nenhuma frequência encontrada.</p>
+        <div className="text-center py-12 mb-8">
+          <p className="text-muted-foreground">Nenhuma frequência premium encontrada.</p>
         </div>
       )}
+      
+      <div id="planos" className="pt-8 mt-8 border-t">
+        <h2 className="text-2xl font-bold mb-8 text-center">Planos de Assinatura</h2>
+        <SubscriptionPlans />
+      </div>
     </div>
   );
 };

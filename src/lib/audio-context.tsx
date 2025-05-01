@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { toast } from '@/components/ui/sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -135,6 +134,13 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       if (frequency.premium && !isPremium) {
         toast.error("Esta frequência é exclusiva para usuários premium");
+        toast("Adquira um plano premium", {
+          description: "Acesse a página Premium para conhecer nossos planos",
+          action: {
+            label: "Planos",
+            onClick: () => window.location.href = "/premium"
+          }
+        });
         return;
       }
 
