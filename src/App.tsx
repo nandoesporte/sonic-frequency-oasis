@@ -17,7 +17,6 @@ import Trending from "./pages/Trending";
 import Guide from "./pages/Guide";
 import Scientific from "./pages/Scientific";
 import Admin from "./pages/Admin";
-import AdminMenu from "./components/admin/AdminMenu";
 import AdminAccessButton from "./components/admin/AdminAccessButton";
 
 const queryClient = new QueryClient();
@@ -41,9 +40,7 @@ function App() {
           <AuthProvider>
             <Toaster />
             <Sonner position="top-center" />
-            <div className="fixed top-0 right-0 z-50 m-4">
-              <AdminMenu />
-            </div>
+            {/* AdminMenu removed from here as it will be rendered inside components that need auth context */}
             <div className="fixed bottom-0 right-0 z-50 m-4">
               <AdminAccessButton />
             </div>

@@ -14,16 +14,24 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import { cn } from '@/lib/utils';
 
 const AdminMenu = () => {
-  const { isAdmin } = useAuth();
-  const navigate = useNavigate();
+  // Safe access to useAuth - wrapping in try/catch to prevent app crashes if used outside AuthProvider
+  let isAdmin = false;
+  let navigate;
+  
+  try {
+    const auth = useAuth();
+    isAdmin = auth.isAdmin;
+    navigate = useNavigate();
+  } catch (error) {
+    console.error("AdminMenu must be used within AuthProvider", error);
+    return null; // Return null if not within AuthProvider
+  }
 
   if (!isAdmin) return null;
 

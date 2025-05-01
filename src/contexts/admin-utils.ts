@@ -118,7 +118,7 @@ export const addAdminUser = async (email: string): Promise<{ success: boolean; e
     // If we're not using the current user's ID, try to find the user by email
     console.log('Finding user by email in auth database');
     
-    // Fix for the issue: properly type the users data
+    // Fix for the TypeScript error: ensure proper typing
     const { data, error: lookupError } = await supabase.auth.admin.listUsers();
     
     if (lookupError) {
@@ -126,8 +126,13 @@ export const addAdminUser = async (email: string): Promise<{ success: boolean; e
       return { success: false, error: 'Erro ao procurar usuários' };
     }
 
-    // Properly handle the users array with correct typing
-    const foundUser = data && data.users ? data.users.find(u => u.email === email) : undefined;
+    // Properly type the users array to avoid TypeScript errors
+    type AdminUserResponse = {
+      users?: Array<{id: string, email?: string}>;
+    };
+    
+    const userData = data as AdminUserResponse;
+    const foundUser = userData.users ? userData.users.find(u => u.email === email) : undefined;
     
     if (!foundUser) {
       return { success: false, error: 'Usuário não encontrado com este email' };

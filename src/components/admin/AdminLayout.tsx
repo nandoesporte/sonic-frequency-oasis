@@ -9,6 +9,7 @@ import { LayoutDashboard, Users, CreditCard, FileText, Settings, ShieldAlert } f
 import { Link } from 'react-router-dom';
 import { toast } from '@/components/ui/sonner';
 import { setupAdminUser } from '@/utils/setupAdminUser';
+import AdminMenu from '@/components/admin/AdminMenu';
 
 export const AdminLayout = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -81,6 +82,9 @@ export const AdminLayout = () => {
   // Only render the admin layout if user is authenticated and is an admin
   return (
     <SidebarProvider>
+      <div className="fixed top-0 right-0 z-50 m-4">
+        <AdminMenu />
+      </div>
       <div className="bg-muted/40 min-h-screen flex w-full">
         <Sidebar>
           <SidebarHeader className="border-b border-border p-4">
