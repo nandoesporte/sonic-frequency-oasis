@@ -1,8 +1,10 @@
+
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { toast } from '@/components/ui/sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePremium } from '@/hooks/use-premium';
 import { FrequencyData } from '@/lib/data';
+import { PremiumContentDialog } from '@/components/subscription/PremiumContentDialog';
 
 type AudioContextType = {
   isPlaying: boolean;
@@ -36,6 +38,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [favorites, setFavorites] = useState<FrequencyData[]>([]);
   const [history, setHistory] = useState<FrequencyData[]>([]);
   const [remainingTime, setRemainingTime] = useState<number | null>(null);
+  const [showPremiumDialog, setShowPremiumDialog] = useState(false);
+  const [premiumFrequency, setPremiumFrequency] = useState<FrequencyData | null>(null);
   const { user } = useAuth();
   const { isPremium } = usePremium();
   
@@ -133,14 +137,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const play = async (frequency: FrequencyData) => {
     try {
       if (frequency.premium && !isPremium) {
-        toast.error("Esta frequência é exclusiva para usuários premium");
-        toast("Adquira um plano premium", {
-          description: "Acesse a página Premium para conhecer nossos planos",
-          action: {
-            label: "Planos",
-            onClick: () => window.location.href = "/premium"
-          }
-        });
+        setPremiumFrequency(frequency);
+        setShowPremiumDialog(true);
         return;
       }
 
@@ -323,6 +321,11 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }}
     >
       {children}
+      <PremiumContentDialog 
+        open={showPremiumDialog} 
+        onOpenChange={setShowPremiumDialog}
+        frequencyName={premiumFrequency?.name}
+      />
     </AudioContext.Provider>
   );
 };

@@ -6,15 +6,9 @@ import { AudioProvider } from "@/lib/audio-context";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { usePremium } from "@/hooks/use-premium";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
-import { Crown, User, Calendar, LogOut, Mail, Clock } from "lucide-react";
-import { Link, Navigate } from "react-router-dom";
 import { UserProfile } from "@/components/profile/UserProfile";
+import { Navigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 interface UserData {
   username?: string;
@@ -26,7 +20,6 @@ interface UserData {
 interface SubscriptionData {
   subscribed: boolean;
   subscription_end?: string;
-  plan_id?: string;
   plan_name?: string;
   plan_description?: string;
   subscription_tier?: string;
@@ -65,11 +58,7 @@ const Profile = () => {
         // Fetch subscription data
         const { data: subData, error: subError } = await supabase
           .from('subscribers')
-          .select(`*, 
-            subscription_plans:plan_id (
-              name, 
-              description
-            )`)
+          .select('*')
           .eq('user_id', user.id)
           .maybeSingle();
         
@@ -79,13 +68,29 @@ const Profile = () => {
         
         setUserData(profileData || { full_name: user.user_metadata?.full_name });
         
+        // Get subscription plan info separately if needed
+        let planName = "";
+        let planDescription = "";
+        
+        if (subData && subData.plan_id) {
+          const { data: planData } = await supabase
+            .from('subscription_plans')
+            .select('name, description')
+            .eq('id', subData.plan_id)
+            .single();
+            
+          if (planData) {
+            planName = planData.name;
+            planDescription = planData.description;
+          }
+        }
+        
         if (subData) {
           setSubscriptionData({
             subscribed: subData.subscribed,
             subscription_end: subData.subscription_end,
-            plan_id: subData.plan_id,
-            plan_name: subData.subscription_plans?.name,
-            plan_description: subData.subscription_plans?.description,
+            plan_name: planName,
+            plan_description: planDescription,
             subscription_tier: subData.subscription_tier,
             last_payment_date: subData.last_payment_date
           });
