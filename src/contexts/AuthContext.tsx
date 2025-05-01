@@ -3,46 +3,27 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/components/ui/sonner';
-import { AuthContextType } from './auth-types';
+import { AuthContextType, AuthState } from './auth-types';
+import { 
+  checkAdminStatus, 
+  signInWithEmail, 
+  signUpWithEmail, 
+  signOutUser 
+} from './auth-operations';
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [authState, setAuthState] = useState<AuthState>({
+    user: null,
+    session: null,
+    loading: true,
+    isAdmin: false
+  });
   const [isCheckingAdmin, setIsCheckingAdmin] = useState(false);
   const navigate = useNavigate();
 
   console.log('AuthProvider initialized');
-  
-  // Check if user is an admin
-  const checkAdminStatus = async (userId: string) => {
-    if (!userId) return false;
-    
-    try {
-      setIsCheckingAdmin(true);
-      const { data, error } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
-      
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error checking admin status:', error);
-        return false;
-      }
-      
-      return !!data;
-    } catch (error) {
-      console.error('Error checking admin status:', error);
-      return false;
-    } finally {
-      setIsCheckingAdmin(false);
-    }
-  };
   
   useEffect(() => {
     let mounted = true;
@@ -55,23 +36,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!mounted) return;
         
         if (event === 'SIGNED_OUT') {
-          setSession(null);
-          setUser(null);
-          setIsAdmin(false);
+          setAuthState(prev => ({
+            ...prev,
+            session: null,
+            user: null,
+            isAdmin: false
+          }));
         } else if (currentSession) {
-          setSession(currentSession);
-          setUser(currentSession.user ?? null);
+          setAuthState(prev => ({
+            ...prev,
+            session: currentSession,
+            user: currentSession.user ?? null,
+          }));
           
           // Check admin status if user is authenticated
           if (currentSession.user) {
+            setIsCheckingAdmin(true);
             const adminStatus = await checkAdminStatus(currentSession.user.id);
-            setIsAdmin(adminStatus);
-            console.log('Admin status set to:', adminStatus);
+            if (mounted) {
+              setAuthState(prev => ({
+                ...prev,
+                isAdmin: adminStatus
+              }));
+              console.log('Admin status set to:', adminStatus);
+              setIsCheckingAdmin(false);
+            }
           }
         }
         
         // Set loading to false after handling the auth state change
-        if (mounted) setLoading(false);
+        if (mounted) {
+          setAuthState(prev => ({ ...prev, loading: false }));
+        }
       }
     );
 
@@ -82,21 +78,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('Initial session check:', currentSession ? 'Session found' : 'No session');
       
       if (currentSession) {
-        setSession(currentSession);
-        setUser(currentSession.user);
+        setAuthState(prev => ({
+          ...prev,
+          session: currentSession,
+          user: currentSession.user
+        }));
         
         // Check admin status if user is authenticated
         if (currentSession.user) {
+          setIsCheckingAdmin(true);
           const adminStatus = await checkAdminStatus(currentSession.user.id);
           if (mounted) {
-            setIsAdmin(adminStatus);
+            setAuthState(prev => ({
+              ...prev,
+              isAdmin: adminStatus
+            }));
             console.log('Initial admin status set to:', adminStatus);
+            setIsCheckingAdmin(false);
           }
         }
       }
       
       // Set loading to false after initial check
-      if (mounted) setLoading(false);
+      if (mounted) {
+        setAuthState(prev => ({ ...prev, loading: false }));
+      }
     });
 
     return () => {
@@ -107,137 +113,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Refetch admin status when user changes
   useEffect(() => {
-    if (user && !isCheckingAdmin) {
-      checkAdminStatus(user.id).then(status => {
-        setIsAdmin(status);
+    if (authState.user && !isCheckingAdmin) {
+      setIsCheckingAdmin(true);
+      checkAdminStatus(authState.user.id).then(status => {
+        setAuthState(prev => ({
+          ...prev,
+          isAdmin: status
+        }));
         console.log('Admin status refreshed to:', status);
+        setIsCheckingAdmin(false);
       });
     }
-  }, [user]);
+  }, [authState.user]);
 
   const signIn = async (email: string, password: string) => {
-    try {
-      console.log('Attempting login with email:', email);
-      setLoading(true); // Set loading to true while signing in
-      const { data, error } = await supabase.auth.signInWithPassword({ 
-        email, 
-        password 
-      });
-
-      if (error) {
-        console.error('Login error:', error.message);
-        toast.error('Erro ao fazer login', {
-          description: error.message === 'Invalid login credentials'
-            ? 'Email ou senha incorretos.'
-            : 'Erro ao tentar fazer login. Tente novamente.'
-        });
-        return { user: null, session: null, error: error.message };
-      }
-
-      console.log('Login successful:', data.user?.email);
-      
-      // Check admin status after successful login
-      if (data.user) {
-        const adminStatus = await checkAdminStatus(data.user.id);
-        setIsAdmin(adminStatus);
-        console.log('Admin status after login:', adminStatus);
-      }
-      
-      toast.success('Login realizado com sucesso', {
-        description: 'Bem-vindo de volta!'
-      });
-      
-      return { user: data.user, session: data.session };
-    } catch (error: any) {
-      console.error('Unexpected login error:', error);
-      toast.error('Erro ao fazer login', {
-        description: 'Ocorreu um erro inesperado. Tente novamente.'
-      });
-      return { user: null, session: null, error: error?.message };
-    } finally {
-      setLoading(false); // Set loading back to false when login attempt is complete
-    }
+    setAuthState(prev => ({ ...prev, loading: true }));
+    const result = await signInWithEmail(email, password);
+    setAuthState(prev => ({ ...prev, loading: false }));
+    return result;
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    try {
-      console.log('Attempting signup for:', email);
-      setLoading(true);
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-          },
-        },
-      });
-
-      if (error) {
-        console.error('Signup error:', error.message);
-        toast.error('Erro ao criar conta', {
-          description: 'Não foi possível criar sua conta. Tente novamente.'
-        });
-        return { user: null, session: null, error: error.message };
-      }
-
-      console.log('Signup successful:', data.user?.email);
-      toast.success('Conta criada com sucesso', {
-        description: 'Verifique seu email para confirmar sua conta.'
-      });
-
-      return { user: data.user, session: data.session };
-    } catch (error: any) {
-      console.error('Unexpected signup error:', error);
-      toast.error('Erro ao criar conta', {
-        description: 'Ocorreu um erro inesperado. Tente novamente.'
-      });
-      return { user: null, session: null, error: error?.message };
-    } finally {
-      setLoading(false);
-    }
+    setAuthState(prev => ({ ...prev, loading: true }));
+    const result = await signUpWithEmail(email, password, fullName);
+    setAuthState(prev => ({ ...prev, loading: false }));
+    return result;
   };
 
   const signOut = async () => {
-    try {
-      console.log('Signing out user');
-      setLoading(true);
-      
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        console.error('Signout error:', error);
-        toast.error('Erro ao sair', {
-          description: 'Não foi possível fazer logout. Tente novamente.'
-        });
-        throw error;
-      }
-      
-      // Clear local state AFTER successful signout
-      setUser(null);
-      setSession(null);
-      setIsAdmin(false);
-      
-      console.log('User signed out successfully');
-      
-      toast.success('Logout realizado', {
-        description: 'Você foi desconectado com sucesso.'
-      });
-      
-      // Navigate after signout is complete
-      navigate('/auth');
-    } catch (error) {
-      console.error('Signout error:', error);
-      toast.error('Erro ao sair', {
-        description: 'Não foi possível fazer logout. Tente novamente.'
-      });
-    } finally {
-      setLoading(false);
-    }
+    setAuthState(prev => ({ ...prev, loading: true }));
+    await signOutUser();
+    // Clear local state AFTER successful signout
+    setAuthState({
+      user: null,
+      session: null,
+      loading: false,
+      isAdmin: false
+    });
+    // Navigate after signout is complete
+    navigate('/auth');
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, signIn, signUp, signOut, loading, isAdmin }}>
+    <AuthContext.Provider value={{ 
+      user: authState.user, 
+      session: authState.session, 
+      signIn, 
+      signUp, 
+      signOut, 
+      loading: authState.loading, 
+      isAdmin: authState.isAdmin 
+    }}>
       {children}
     </AuthContext.Provider>
   );

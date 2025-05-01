@@ -18,3 +18,10 @@ export interface AuthContextType {
   }>;
   signOut: () => Promise<void>;
 }
+
+export interface AuthState {
+  user: User | null;
+  session: Session | null;
+  loading: boolean;
+  isAdmin: boolean;
+}
