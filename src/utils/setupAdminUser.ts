@@ -56,14 +56,11 @@ export const setupAdminUser = async () => {
         console.error(`User not found with email ${adminEmail} or username ${username}`);
         
         // As a final fallback, try to get the user ID from auth.session
-        // Use explicit typing and avoid deep nesting completely
-        type SessionData = { data: { session: null | { user: { id: string, email: string } } } };
+        // Avoid deep type inference by using any for the session data
+        const { data } = await supabase.auth.getSession();
+        const session = data.session as any;
         
-        // Use an explicit cast to our simplified type
-        const sessionResponse = await supabase.auth.getSession() as unknown as SessionData;
-        const session = sessionResponse.data.session;
-        
-        if (session && session.user.id && session.user.email === adminEmail) {
+        if (session && session.user && session.user.id && session.user.email === adminEmail) {
           console.log(`Found user from current session with ID: ${session.user.id}`);
           await ensureAdminAccess(session.user.id, adminEmail);
         } else {
