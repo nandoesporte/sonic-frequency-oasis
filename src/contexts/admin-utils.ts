@@ -1,5 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { User } from '@supabase/supabase-js';
 
 export const checkAdminStatus = async (userId: string): Promise<boolean> => {
   if (!userId) return false;
@@ -195,8 +196,8 @@ export const addAdminUser = async (email: string): Promise<{ success: boolean; e
         return { success: false, error: 'User not found in auth database' };
       }
       
-      // Find the user with matching email
-      const user = authData.users.find(user => user.email === email);
+      // Find the user with matching email - Fix the typing issue here
+      const user = authData.users.find((user: User) => user.email === email);
       
       if (!user) {
         console.error('User not found with email:', email);
