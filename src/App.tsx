@@ -19,6 +19,7 @@ import Scientific from "./pages/Scientific";
 import Admin from "./pages/Admin";
 import { setupAdminUser } from "./utils/setupAdminUser";
 import AdminMenu from "./components/admin/AdminMenu";
+import AdminAccessButton from "./components/admin/AdminAccessButton";
 
 const queryClient = new QueryClient();
 
@@ -36,7 +37,7 @@ function App() {
     // Set up admin access for the specified user - adding console logs for debugging
     console.log("Setting up admin user on app initialization");
     setupAdminUser()
-      .then(() => console.log("Admin user setup completed"))
+      .then(result => console.log("Admin user setup completed with result:", result))
       .catch(err => console.error("Error setting up admin user:", err));
   }, []);
 
@@ -49,6 +50,9 @@ function App() {
             <Sonner />
             <div className="fixed top-0 right-0 z-50 m-4">
               <AdminMenu />
+            </div>
+            <div className="fixed bottom-0 right-0 z-50 m-4">
+              <AdminAccessButton />
             </div>
             <Routes>
               <Route path="/" element={<Index />} />
@@ -63,9 +67,6 @@ function App() {
               
               {/* Admin routes with proper nesting */}
               <Route path="/admin/*" element={<Admin />} />
-              
-              {/* Redirect /settings to admin/settings for backward compatibility */}
-              <Route path="/settings" element={<Admin />} />
               
               {/* Catch all route for 404 */}
               <Route path="*" element={<NotFound />} />

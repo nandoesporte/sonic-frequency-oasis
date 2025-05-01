@@ -14,34 +14,43 @@ export const AdminLayout = () => {
   const { user, isAdmin, loading } = useAuth();
   const location = useLocation();
   const [authChecked, setAuthChecked] = useState(false);
-  const [isCheckingAdmin, setIsCheckingAdmin] = useState(false);
+  const [isCheckingAdmin, setIsCheckingAdmin] = useState(true);
+  const [setupAttempted, setSetupAttempted] = useState(false);
   
   useEffect(() => {
-    // Set auth check as complete when loading is done
-    if (!loading && !isCheckingAdmin) {
-      setAuthChecked(true);
-      console.log('Auth check completed in AdminLayout');
-      console.log('User:', user?.email);
-      console.log('isAdmin:', isAdmin);
+    let mounted = true;
+    
+    // Only perform admin check if user is loaded and we haven't checked yet
+    if (!loading && user && !setupAttempted) {
+      setIsCheckingAdmin(true);
       
-      // If the user is logged in but not an admin, make sure to check admin status
-      if (user && !isAdmin && user.email === 'nandomartin21@msn.com' && !isCheckingAdmin) {
-        console.log('User is the admin email but not marked as admin, attempting to fix');
-        setIsCheckingAdmin(true);
-        
-        setupAdminUser()
-          .then(() => {
-            console.log('Admin setup attempt completed');
-          })
-          .catch(err => {
-            console.error('Error in setupAdminUser:', err);
-          })
-          .finally(() => {
+      console.log('Attempting admin setup for:', user.email);
+      setupAdminUser()
+        .then(result => {
+          if (mounted) {
+            console.log('Admin setup result:', result);
+            setSetupAttempted(true);
+          }
+        })
+        .catch(err => {
+          console.error('Error in setupAdminUser:', err);
+        })
+        .finally(() => {
+          if (mounted) {
             setIsCheckingAdmin(false);
-          });
-      }
+            setAuthChecked(true);
+          }
+        });
+    } else if (!loading) {
+      // If no user or we've already attempted setup, just mark checks as complete
+      setIsCheckingAdmin(false);
+      setAuthChecked(true);
     }
-  }, [loading, user, isAdmin, isCheckingAdmin]);
+    
+    return () => {
+      mounted = false;
+    };
+  }, [user, loading, setupAttempted]);
   
   // Show loading state while initial auth check is happening
   if (loading || isCheckingAdmin) {

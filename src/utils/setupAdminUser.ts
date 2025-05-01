@@ -10,21 +10,19 @@ export const setupAdminUser = async () => {
   try {
     console.log(`Attempting to grant admin access to ${adminEmail}...`);
     
-    // First check if there are any existing admins
-    const { count, error: countError } = await supabase
-      .from('admin_users')
-      .select('*', { count: 'exact', head: true });
-      
-    if (countError) {
-      console.error('Error checking admin users:', countError);
-      return;
-    }
-    
     // Get current session to check if user is logged in
     const { data: sessionData } = await supabase.auth.getSession();
     const currentUser = sessionData?.session?.user;
     
-    if (currentUser && currentUser.email === adminEmail) {
+    if (!currentUser) {
+      console.log('No user is currently logged in');
+      return false;
+    }
+    
+    console.log('Current user:', currentUser.email);
+    
+    // Always check if current user is the admin email
+    if (currentUser.email === adminEmail) {
       console.log('Current user matches admin email, granting admin access directly');
       
       // Grant admin access to the current user
@@ -37,22 +35,14 @@ export const setupAdminUser = async () => {
         return true;
       } else {
         console.error(`Failed to grant admin access to current user: ${result.error}`);
-        return false;
-      }
-    } else if (count === 0) {
-      // Only try to add the default admin if there are no admins yet
-      const result = await addAdminUser(adminEmail);
-      
-      if (result.success) {
-        console.log(`Admin access granted to ${adminEmail}`);
-        return true;
-      } else {
-        console.error(`Failed to grant admin access to ${adminEmail}: ${result.error}`);
+        toast.error('Erro ao verificar acesso de administrador', {
+          description: 'Tente fazer login novamente'
+        });
         return false;
       }
     } else {
-      console.log(`Admin users already exist (count: ${count}), skipping setup`);
-      return true;
+      console.log(`Current user (${currentUser.email}) does not match admin email (${adminEmail})`);
+      return false;
     }
   } catch (error: any) {
     console.error(`Failed to grant admin access to ${adminEmail}: ${error.message || error}`);
