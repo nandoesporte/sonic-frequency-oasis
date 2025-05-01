@@ -4,37 +4,51 @@ import { useNavigate } from "react-router-dom";
 import { AdminSidebar } from "./AdminSidebar";
 import { Header } from "../header";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAdmin } from "@/hooks/use-admin";
+import { toast } from "@/components/ui/sonner";
 
 interface AdminLayoutProps {
   children: ReactNode;
 }
 
 export function AdminLayout({ children }: AdminLayoutProps) {
-  const { user, loading, isAdmin } = useAuth();
+  const { user, loading } = useAuth();
+  const { isAdmin, isChecking } = useAdmin();
   const navigate = useNavigate();
 
   // Protect admin routes - redirect if not authenticated or not an admin
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
-      console.log('Unauthorized access attempt to admin area, redirecting');
-      navigate('/auth', { replace: true });
+    if (!loading && !isChecking) {
+      if (!user) {
+        console.log('Unauthorized access attempt to admin area (not logged in), redirecting');
+        toast.error('Acesso restrito', {
+          description: 'Você precisa estar logado para acessar a área de administração.'
+        });
+        navigate('/auth', { replace: true });
+      } else if (isAdmin === false) {
+        console.log('Unauthorized access attempt to admin area (not admin), redirecting');
+        toast.error('Acesso restrito', {
+          description: 'Você não tem permissões de administrador.'
+        });
+        navigate('/', { replace: true });
+      }
     }
-  }, [user, isAdmin, loading, navigate]);
+  }, [user, isAdmin, loading, isChecking, navigate]);
 
   // Show loading state
-  if (loading) {
+  if (loading || isChecking) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
-          <p className="mt-4">Carregando...</p>
+          <p className="mt-4">Verificando permissões...</p>
         </div>
       </div>
     );
   }
 
   // If not admin, this component will not render due to the redirect in useEffect
-  if (!isAdmin && !loading) {
+  if (!isAdmin && !loading && !isChecking) {
     return null;
   }
 
