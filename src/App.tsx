@@ -17,7 +17,6 @@ import Trending from "./pages/Trending";
 import Guide from "./pages/Guide";
 import Scientific from "./pages/Scientific";
 import Admin from "./pages/Admin";
-import { setupAdminUser } from "./utils/setupAdminUser";
 import AdminMenu from "./components/admin/AdminMenu";
 import AdminAccessButton from "./components/admin/AdminAccessButton";
 
@@ -33,12 +32,6 @@ function App() {
     } else {
       document.documentElement.classList.remove("dark");
     }
-    
-    // Set up admin access for the specified user - adding console logs for debugging
-    console.log("Setting up admin user on app initialization");
-    setupAdminUser()
-      .then(result => console.log("Admin user setup completed with result:", result))
-      .catch(err => console.error("Error setting up admin user:", err));
   }, []);
 
   return (
@@ -47,7 +40,7 @@ function App() {
         <Router>
           <AuthProvider>
             <Toaster />
-            <Sonner />
+            <Sonner position="top-center" />
             <div className="fixed top-0 right-0 z-50 m-4">
               <AdminMenu />
             </div>

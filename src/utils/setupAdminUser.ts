@@ -11,7 +11,13 @@ export const setupAdminUser = async () => {
     console.log(`Attempting to grant admin access to ${adminEmail}...`);
     
     // Get current session to check if user is logged in
-    const { data: sessionData } = await supabase.auth.getSession();
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      console.error('Error getting session:', sessionError.message);
+      return false;
+    }
+    
     const currentUser = sessionData?.session?.user;
     
     if (!currentUser) {
@@ -25,18 +31,26 @@ export const setupAdminUser = async () => {
     if (currentUser.email === adminEmail) {
       console.log('Current user matches admin email, granting admin access directly');
       
-      // Grant admin access to the current user
-      const result = await addAdminUser(adminEmail);
-      if (result.success) {
-        console.log(`Admin access granted to current user (${adminEmail})`);
-        toast.success('Acesso de administrador verificado', {
-          description: 'Você tem acesso ao painel administrativo'
-        });
-        return true;
-      } else {
-        console.error(`Failed to grant admin access to current user: ${result.error}`);
+      try {
+        // Grant admin access to the current user
+        const result = await addAdminUser(adminEmail);
+        if (result.success) {
+          console.log(`Admin access granted to current user (${adminEmail})`);
+          toast.success('Acesso de administrador verificado', {
+            description: 'Você tem acesso ao painel administrativo'
+          });
+          return true;
+        } else {
+          console.error(`Failed to grant admin access to current user: ${result.error}`);
+          toast.error('Erro ao verificar acesso de administrador', {
+            description: result.error || 'Tente fazer login novamente'
+          });
+          return false;
+        }
+      } catch (innerError: any) {
+        console.error('Error during addAdminUser:', innerError);
         toast.error('Erro ao verificar acesso de administrador', {
-          description: 'Tente fazer login novamente'
+          description: innerError?.message || 'Ocorreu um erro interno'
         });
         return false;
       }
@@ -45,7 +59,10 @@ export const setupAdminUser = async () => {
       return false;
     }
   } catch (error: any) {
-    console.error(`Failed to grant admin access to ${adminEmail}: ${error.message || error}`);
+    console.error(`Failed to grant admin access to ${adminEmail}:`, error);
+    toast.error('Erro ao verificar acesso de administrador', {
+      description: error?.message || 'Ocorreu um erro interno'
+    });
     return false;
   }
 };
