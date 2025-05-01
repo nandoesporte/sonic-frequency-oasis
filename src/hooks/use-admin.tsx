@@ -29,8 +29,9 @@ export function useAdmin() {
         return false;
       }
       
-      setIsAdmin(!!data);
-      return !!data;
+      const hasAdminRights = !!data;
+      setIsAdmin(hasAdminRights);
+      return hasAdminRights;
     } catch (error) {
       console.error('Error checking admin status:', error);
       setIsAdmin(false);
@@ -40,13 +41,28 @@ export function useAdmin() {
     }
   }, []);
   
-  // Check admin status whenever user changes
+  // Check admin status only once when user changes
   useEffect(() => {
-    if (user) {
-      checkAdminStatus(user.id);
-    } else {
-      setIsAdmin(false);
-    }
+    let isMounted = true;
+    
+    const checkAdmin = async () => {
+      if (user) {
+        const result = await checkAdminStatus(user.id);
+        if (isMounted) {
+          setIsAdmin(result);
+        }
+      } else {
+        if (isMounted) {
+          setIsAdmin(false);
+        }
+      }
+    };
+    
+    checkAdmin();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [user, checkAdminStatus]);
   
   return {

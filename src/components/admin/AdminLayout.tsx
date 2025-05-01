@@ -18,15 +18,19 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   // Protect admin routes - redirect if not authenticated or not an admin
   useEffect(() => {
-    if (!loading && !isChecking) {
+    let redirectAttempted = false;
+
+    if (!loading && !isChecking && !redirectAttempted) {
       if (!user) {
         console.log('Unauthorized access attempt to admin area (not logged in), redirecting');
+        redirectAttempted = true;
         toast.error('Acesso restrito', {
           description: 'Você precisa estar logado para acessar a área de administração.'
         });
         navigate('/auth', { replace: true });
       } else if (isAdmin === false) {
         console.log('Unauthorized access attempt to admin area (not admin), redirecting');
+        redirectAttempted = true;
         toast.error('Acesso restrito', {
           description: 'Você não tem permissões de administrador.'
         });
