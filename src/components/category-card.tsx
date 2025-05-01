@@ -1,38 +1,96 @@
 
-import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ArrowRight, Lock } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { getCategoryCount } from "@/lib/data";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/components/ui/sonner";
 
 interface CategoryCardProps {
   id: string;
   name: string;
   description: string;
-  icon: ReactNode;
+  icon: React.ReactNode;
   requiresAuth?: boolean;
 }
 
-export function CategoryCard({ id, name, description, icon, requiresAuth }: CategoryCardProps) {
+export function CategoryCard({ id, name, description, icon, requiresAuth = false }: CategoryCardProps) {
+  const [count, setCount] = useState<number | null>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    const loadCount = async () => {
+      try {
+        if (user) {
+          console.log(`Loading count for category: ${id}`);
+          const frequencyCount = await getCategoryCount(id);
+          setCount(frequencyCount);
+          console.log(`Category ${id} has ${frequencyCount} frequencies`);
+        }
+      } catch (error) {
+        console.error("Error fetching category count:", error);
+      }
+    };
+    
+    if (user) {
+      loadCount();
+    }
+  }, [id, user]);
+  
+  const handleClick = () => {
+    if (requiresAuth && !user) {
+      console.log("Auth required, redirecting to login");
+      toast.info("Faça login para acessar", {
+        description: "É necessário estar logado para acessar esta categoria"
+      });
+      navigate("/auth");
+      return;
+    }
+    
+    // Normal navigation
+    console.log(`Navigating to category: ${id}`);
+    navigate(`/categories/${id}`);
+  };
+  
   return (
-    <div className="bg-card border rounded-xl p-5 hover:shadow-md transition-shadow hover-scale">
-      <div className="flex items-center mb-3">
-        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-          {icon}
+    <Card 
+      className={cn(
+        "overflow-hidden hover-scale cursor-pointer", 
+        requiresAuth && !user && "opacity-80 hover:opacity-100"
+      )}
+      onClick={handleClick}
+    >
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <div className="flex items-center">
+            {icon}
+            <CardTitle className="ml-2">{name}</CardTitle>
+          </div>
+          {requiresAuth && !user && <Lock className="h-4 w-4 text-muted-foreground" />}
         </div>
-        <h3 className="ml-3 font-semibold text-lg">{name}</h3>
-      </div>
+      </CardHeader>
       
-      <p className="text-sm text-muted-foreground mb-4">{description}</p>
-      
-      <Button 
-        asChild 
-        variant="outline" 
-        className="w-full"
-      >
-        <Link to={requiresAuth ? "/auth" : `/categories/${id}`} className="gap-2">
-          {requiresAuth ? "Entre para acessar" : "Explorar categoria"}
-        </Link>
-      </Button>
-    </div>
+      <CardContent>
+        <CardDescription className="mb-3">{description}</CardDescription>
+        
+        <div className="flex items-center justify-between">
+          {user && count !== null && (
+            <span className="text-xs text-muted-foreground">
+              {count} frequências
+            </span>
+          )}
+          
+          <Button variant="ghost" size="sm" className="ml-auto">
+            <span className="flex items-center">
+              Explorar <ArrowRight className="ml-1 h-3 w-3" />
+            </span>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

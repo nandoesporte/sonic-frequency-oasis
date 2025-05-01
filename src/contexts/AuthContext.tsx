@@ -3,26 +3,42 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { AuthContextType, AuthState } from './auth-types';
-import { 
-  checkAdminStatus, 
-  signInWithEmail, 
-  signUpWithEmail, 
-  signOutUser 
-} from './auth-operations';
+import { toast } from '@/components/ui/sonner';
+import { AuthContextType } from './auth-types';
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    session: null,
-    loading: true,
-    isAdmin: false
-  });
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
   console.log('AuthProvider initialized');
+  
+  // Check if user is an admin
+  const checkAdminStatus = async (userId: string) => {
+    if (!userId) return false;
+    
+    try {
+      const { data, error } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+      
+      if (error) {
+        console.error('Error checking admin status:', error);
+        return false;
+      }
+      
+      return !!data;
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      return false;
+    }
+  };
   
   useEffect(() => {
     let mounted = true;
@@ -35,37 +51,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!mounted) return;
         
         if (event === 'SIGNED_OUT') {
-          setAuthState(prev => ({
-            ...prev,
-            session: null,
-            user: null,
-            isAdmin: false,
-            loading: false
-          }));
+          setSession(null);
+          setUser(null);
+          setIsAdmin(false);
         } else if (currentSession) {
-          setAuthState(prev => ({
-            ...prev,
-            session: currentSession,
-            user: currentSession.user ?? null,
-          }));
+          setSession(currentSession);
+          setUser(currentSession.user ?? null);
           
           // Check admin status if user is authenticated
           if (currentSession.user) {
             const adminStatus = await checkAdminStatus(currentSession.user.id);
-            if (mounted) {
-              setAuthState(prev => ({
-                ...prev,
-                isAdmin: adminStatus,
-                loading: false
-              }));
-              console.log('Admin status set to:', adminStatus);
-            }
-          } else {
-            setAuthState(prev => ({ ...prev, loading: false }));
+            setIsAdmin(adminStatus);
           }
-        } else {
-          setAuthState(prev => ({ ...prev, loading: false }));
         }
+        
+        // Set loading to false after handling the auth state change
+        if (mounted) setLoading(false);
       }
     );
 
@@ -76,29 +77,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('Initial session check:', currentSession ? 'Session found' : 'No session');
       
       if (currentSession) {
-        setAuthState(prev => ({
-          ...prev,
-          session: currentSession,
-          user: currentSession.user
-        }));
+        setSession(currentSession);
+        setUser(currentSession.user);
         
         // Check admin status if user is authenticated
         if (currentSession.user) {
           const adminStatus = await checkAdminStatus(currentSession.user.id);
-          if (mounted) {
-            setAuthState(prev => ({
-              ...prev,
-              isAdmin: adminStatus,
-              loading: false
-            }));
-            console.log('Initial admin status set to:', adminStatus);
-          }
-        } else {
-          setAuthState(prev => ({ ...prev, loading: false }));
+          setIsAdmin(adminStatus);
         }
-      } else {
-        setAuthState(prev => ({ ...prev, loading: false }));
       }
+      
+      // Set loading to false after initial check
+      if (mounted) setLoading(false);
     });
 
     return () => {
@@ -108,40 +98,120 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    setAuthState(prev => ({ ...prev, loading: true }));
-    const result = await signInWithEmail(email, password);
-    
-    // No need to update isAdmin here as the onAuthStateChange will handle it
-    if (!result.error) {
-      console.log("Login successful, checking admin status...");
+    try {
+      console.log('Attempting login with email:', email);
+      setLoading(true); // Set loading to true while signing in
+      const { data, error } = await supabase.auth.signInWithPassword({ 
+        email, 
+        password 
+      });
+
+      if (error) {
+        console.error('Login error:', error.message);
+        toast.error('Erro ao fazer login', {
+          description: error.message === 'Invalid login credentials'
+            ? 'Email ou senha incorretos.'
+            : 'Erro ao tentar fazer login. Tente novamente.'
+        });
+        return { user: null, session: null, error: error.message };
+      }
+
+      console.log('Login successful:', data.user?.email);
+      
+      toast.success('Login realizado com sucesso', {
+        description: 'Bem-vindo de volta!'
+      });
+      
+      return { user: data.user, session: data.session };
+    } catch (error: any) {
+      console.error('Unexpected login error:', error);
+      toast.error('Erro ao fazer login', {
+        description: 'Ocorreu um erro inesperado. Tente novamente.'
+      });
+      return { user: null, session: null, error: error?.message };
+    } finally {
+      setLoading(false); // Set loading back to false when login attempt is complete
     }
-    
-    return result;
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    setAuthState(prev => ({ ...prev, loading: true }));
-    const result = await signUpWithEmail(email, password, fullName);
-    return result;
+    try {
+      console.log('Attempting signup for:', email);
+      setLoading(true);
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+        },
+      });
+
+      if (error) {
+        console.error('Signup error:', error.message);
+        toast.error('Erro ao criar conta', {
+          description: 'Não foi possível criar sua conta. Tente novamente.'
+        });
+        return { user: null, session: null, error: error.message };
+      }
+
+      console.log('Signup successful:', data.user?.email);
+      toast.success('Conta criada com sucesso', {
+        description: 'Verifique seu email para confirmar sua conta.'
+      });
+
+      return { user: data.user, session: data.session };
+    } catch (error: any) {
+      console.error('Unexpected signup error:', error);
+      toast.error('Erro ao criar conta', {
+        description: 'Ocorreu um erro inesperado. Tente novamente.'
+      });
+      return { user: null, session: null, error: error?.message };
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signOut = async () => {
-    setAuthState(prev => ({ ...prev, loading: true }));
-    await signOutUser();
-    // Navigate after signout is complete
-    navigate('/auth');
+    try {
+      console.log('Signing out user');
+      setLoading(true);
+      
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('Signout error:', error);
+        toast.error('Erro ao sair', {
+          description: 'Não foi possível fazer logout. Tente novamente.'
+        });
+        throw error;
+      }
+      
+      // Clear local state AFTER successful signout
+      setUser(null);
+      setSession(null);
+      
+      console.log('User signed out successfully');
+      
+      toast.success('Logout realizado', {
+        description: 'Você foi desconectado com sucesso.'
+      });
+      
+      // Navigate after signout is complete
+      navigate('/auth');
+    } catch (error) {
+      console.error('Signout error:', error);
+      toast.error('Erro ao sair', {
+        description: 'Não foi possível fazer logout. Tente novamente.'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user: authState.user, 
-      session: authState.session, 
-      signIn, 
-      signUp, 
-      signOut, 
-      loading: authState.loading, 
-      isAdmin: authState.isAdmin 
-    }}>
+    <AuthContext.Provider value={{ user, session, signIn, signUp, signOut, loading, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

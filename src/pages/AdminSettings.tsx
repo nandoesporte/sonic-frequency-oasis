@@ -2,27 +2,20 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useAdmin } from "@/hooks/use-admin";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminKiwifySettings } from "@/components/admin/AdminKiwifySettings";
 
 export default function AdminSettings() {
-  const { user, loading } = useAuth();
-  const { isAdmin, isChecking } = useAdmin();
+  const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Verificação única para redirecionamento
-    const shouldRedirect = !loading && !isChecking && (!user || isAdmin === false);
-    
-    if (shouldRedirect) {
-      console.log('Redirecting from AdminSettings - Not authorized');
+    if (!loading && (!user || !isAdmin)) {
       navigate('/auth', { replace: true });
     }
-  }, [user, loading, isAdmin, isChecking, navigate]);
+  }, [user, loading, isAdmin, navigate]);
 
-  // Mostrar estado de carregamento
-  if (loading || isChecking) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
@@ -33,7 +26,6 @@ export default function AdminSettings() {
     );
   }
 
-  // Se não for admin, não renderiza
   if (!isAdmin) return null;
 
   return (

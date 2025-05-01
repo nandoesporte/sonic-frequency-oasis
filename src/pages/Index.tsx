@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { AudioPlayer } from "@/components/audio-player";
 import { CategoryCard } from "@/components/category-card";
@@ -14,7 +13,6 @@ import { PricingSection } from "@/components/subscription/PricingSection";
 import { FrequencyRanges } from "@/components/home/FrequencyRanges";
 import { ScientificEvidence } from "@/components/home/ScientificEvidence";
 import { toast } from "@/components/ui/sonner";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const Index = () => {
   const [trendingFrequencies, setTrendingFrequencies] = useState<FrequencyData[]>([]);
@@ -49,52 +47,6 @@ const Index = () => {
     
     fetchTrendingFrequencies();
   }, [user]);
-
-  // Display trending frequencies section for authenticated users
-  const renderTrendingFrequencies = () => {
-    if (!user) return null;
-
-    return (
-      <section className="py-12 px-4">
-        <div className="container mx-auto">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold">Frequências em Alta</h2>
-            <Button variant="outline" asChild>
-              <Link to="/trending" className="flex items-center gap-1">
-                Ver Mais <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-          
-          {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="space-y-2">
-                  <Skeleton className="h-28 w-full rounded-lg" />
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-3 w-1/2" />
-                </div>
-              ))}
-            </div>
-          ) : trendingFrequencies.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {trendingFrequencies.map((frequency) => (
-                <FrequencyCard 
-                  key={frequency.id} 
-                  frequency={frequency} 
-                  variant="trending"
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="text-muted-foreground text-center py-8">
-              Nenhuma frequência em alta encontrada.
-            </p>
-          )}
-        </div>
-      </section>
-    );
-  };
 
   return (
     <AudioProvider>
@@ -144,9 +96,6 @@ const Index = () => {
           </section>
         )}
         
-        {/* Display trending frequencies for logged in users */}
-        {renderTrendingFrequencies()}
-        
         {/* Frequency Ranges Section - Only show for non-logged in users */}
         {!user && <FrequencyRanges />}
         
@@ -157,7 +106,7 @@ const Index = () => {
         {!user && <PricingSection />}
         
         {/* Categories Section */}
-        <section className="py-12 px-4">
+        <section className={`py-12 px-4 ${user ? '' : ''}`}>
           <div className="container mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold mb-6">Categorias</h2>
             
