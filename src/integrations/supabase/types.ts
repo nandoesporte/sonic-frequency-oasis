@@ -636,6 +636,7 @@ export type Database = {
           last_payment_date: string | null
           mercado_pago_customer_id: string | null
           mercado_pago_subscription_id: string | null
+          plan_id: string | null
           stripe_customer_id: string | null
           subscribed: boolean
           subscription_end: string | null
@@ -650,6 +651,7 @@ export type Database = {
           last_payment_date?: string | null
           mercado_pago_customer_id?: string | null
           mercado_pago_subscription_id?: string | null
+          plan_id?: string | null
           stripe_customer_id?: string | null
           subscribed?: boolean
           subscription_end?: string | null
@@ -664,6 +666,7 @@ export type Database = {
           last_payment_date?: string | null
           mercado_pago_customer_id?: string | null
           mercado_pago_subscription_id?: string | null
+          plan_id?: string | null
           stripe_customer_id?: string | null
           subscribed?: boolean
           subscription_end?: string | null
@@ -672,6 +675,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "subscribers_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "subscribers_user_id_fkey"
             columns: ["user_id"]

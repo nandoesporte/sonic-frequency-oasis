@@ -20,6 +20,7 @@ interface UserData {
 interface SubscriptionData {
   subscribed: boolean;
   subscription_end?: string;
+  plan_id?: string;
   plan_name?: string;
   plan_description?: string;
   subscription_tier?: string;
@@ -89,6 +90,7 @@ const Profile = () => {
           setSubscriptionData({
             subscribed: subData.subscribed,
             subscription_end: subData.subscription_end,
+            plan_id: subData.plan_id,
             plan_name: planName,
             plan_description: planDescription,
             subscription_tier: subData.subscription_tier,
