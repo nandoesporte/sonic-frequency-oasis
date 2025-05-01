@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,11 +12,60 @@ import { useNavigate } from 'react-router-dom';
 import { Loader2, UserPlus } from 'lucide-react';
 
 export default function Admin() {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, checkAdminStatus } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [initializing, setInitializing] = useState(true);
   const { setAdminStatus } = useAuth();
+  
+  // Effect to check admin status on mount
+  useEffect(() => {
+    const verifyAdminStatus = async () => {
+      // Force a recheck of admin status
+      if (user) {
+        const adminStatus = await checkAdminStatus();
+        console.log('Admin status check result:', adminStatus);
+        
+        // If not an admin, try to make the current user an admin if it matches our target email
+        if (!adminStatus && user.email === 'nandomartin21@msn.com') {
+          console.log('Attempting to grant admin access to:', user.email);
+          try {
+            // Add current user as admin
+            const { error } = await supabase
+              .from('admin_users')
+              .insert([{ user_id: user.id }]);
+            
+            if (error) {
+              console.error('Error adding admin:', error);
+            } else {
+              console.log('Successfully added admin, rechecking status');
+              // Recheck admin status after adding
+              await checkAdminStatus();
+              toast.success('Permissão concedida', {
+                description: 'Você agora tem acesso de administrador.'
+              });
+            }
+          } catch (error) {
+            console.error('Error in admin setup:', error);
+          }
+        }
+      }
+      setInitializing(false);
+    };
+
+    verifyAdminStatus();
+  }, [user, checkAdminStatus]);
+  
+  // If still initializing, show loading indicator
+  if (initializing) {
+    return (
+      <div className="container mx-auto py-10 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <p className="ml-2">Verificando permissões...</p>
+      </div>
+    );
+  }
   
   // Redirect if not admin
   if (!isAdmin) {
@@ -63,6 +112,9 @@ export default function Admin() {
       
       if (success) {
         setEmail('');
+        toast.success('Administrador adicionado', {
+          description: `${userData.email} agora é um administrador.`
+        });
       }
     } catch (error) {
       console.error('Error adding admin:', error);
