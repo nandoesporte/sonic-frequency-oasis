@@ -22,6 +22,9 @@ export const setupAdminUser = async () => {
     
     if (!currentUser) {
       console.log('No user is currently logged in');
+      toast.error('Usuário não autenticado', {
+        description: 'Você precisa fazer login para acessar a área de administrador'
+      });
       return false;
     }
     
@@ -56,6 +59,9 @@ export const setupAdminUser = async () => {
       }
     } else {
       console.log(`Current user (${currentUser.email}) does not match admin email (${adminEmail})`);
+      toast.error('Acesso negado', {
+        description: 'Este email não tem permissão de administrador'
+      });
       return false;
     }
   } catch (error: any) {

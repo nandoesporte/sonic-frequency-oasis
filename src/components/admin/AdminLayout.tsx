@@ -15,25 +15,24 @@ export const AdminLayout = () => {
   const location = useLocation();
   const [authChecked, setAuthChecked] = useState(false);
   const [isCheckingAdmin, setIsCheckingAdmin] = useState(true);
-  const [setupAttempted, setSetupAttempted] = useState(false);
   
   useEffect(() => {
     let mounted = true;
     
-    // Only perform admin check if user is loaded and we haven't checked yet
-    if (!loading && user && !setupAttempted) {
+    // Only perform admin check if user is loaded
+    if (!loading && user) {
       setIsCheckingAdmin(true);
       
-      console.log('Attempting admin setup for:', user.email);
+      console.log('Checking admin access for:', user.email);
       setupAdminUser()
         .then(result => {
           if (mounted) {
-            console.log('Admin setup result:', result);
-            setSetupAttempted(true);
+            console.log('Admin setup check result:', result);
+            // We don't need to set anything here as isAdmin comes from AuthContext
           }
         })
         .catch(err => {
-          console.error('Error in setupAdminUser:', err);
+          console.error('Error checking admin status:', err);
         })
         .finally(() => {
           if (mounted) {
@@ -42,7 +41,7 @@ export const AdminLayout = () => {
           }
         });
     } else if (!loading) {
-      // If no user or we've already attempted setup, just mark checks as complete
+      // If no user, just mark checks as complete
       setIsCheckingAdmin(false);
       setAuthChecked(true);
     }
@@ -50,7 +49,7 @@ export const AdminLayout = () => {
     return () => {
       mounted = false;
     };
-  }, [user, loading, setupAttempted]);
+  }, [user, loading]);
   
   // Show loading state while initial auth check is happening
   if (loading || isCheckingAdmin) {

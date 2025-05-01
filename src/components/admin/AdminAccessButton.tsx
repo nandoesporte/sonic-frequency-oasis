@@ -20,16 +20,20 @@ const AdminAccessButton = () => {
   const handleAdminAccess = async () => {
     setIsVerifying(true);
     try {
+      console.log('Initiating admin access verification');
       const result = await setupAdminUser();
+      
       if (result) {
+        console.log('Admin access verified, navigating to admin dashboard');
         navigate('/admin');
       } else {
+        console.log('Admin access verification failed');
         toast.error('Acesso negado', {
           description: 'Não foi possível verificar seu acesso de administrador'
         });
       }
     } catch (error: any) {
-      console.error('Error accessing admin:', error);
+      console.error('Unexpected error accessing admin:', error);
       toast.error('Erro ao acessar área administrativa', {
         description: error?.message || 'Ocorreu um erro interno'
       });

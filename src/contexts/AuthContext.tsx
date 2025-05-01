@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
@@ -6,7 +5,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/sonner';
 import { AuthContextType } from './auth-types';
 import { checkAdminStatus } from './admin-utils';
-import { setupAdminUser } from '@/utils/setupAdminUser';
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -39,36 +37,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           // Check admin status when user changes
           if (currentSession.user) {
-            try {
-              checkAdminStatus(currentSession.user.id).then(adminStatus => {
-                console.log('Admin status check result:', adminStatus);
-                if (mounted) setIsAdmin(adminStatus);
-                
-                // Log the current user's email for debugging
-                console.log('Current user email:', currentSession.user.email);
-                
-                // Special handling for admin email
-                if (currentSession.user.email === 'nandomartin21@msn.com') {
-                  console.log('Admin email detected, ensuring admin access');
-                  // This will ensure the admin has access
-                  setupAdminUser().catch(err => {
-                    console.error('Error setting up admin user:', err);
-                  });
-                  
-                  // Re-check admin status after setup
-                  setTimeout(() => {
-                    if (!mounted) return;
-                    checkAdminStatus(currentSession.user.id).then(updatedStatus => {
-                      if (mounted) setIsAdmin(updatedStatus);
-                    });
-                  }, 1000);
-                }
-              }).catch(error => {
-                console.error('Error checking admin status:', error);
-              });
-            } catch (error) {
-              console.error('Error in admin status check:', error);
-            }
+            checkAdminStatus(currentSession.user.id).then(adminStatus => {
+              console.log('Admin status check result:', adminStatus);
+              if (mounted) setIsAdmin(adminStatus);
+            }).catch(error => {
+              console.error('Error checking admin status:', error);
+            });
           }
         }
         
@@ -92,19 +66,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const adminStatus = await checkAdminStatus(currentSession.user.id);
           console.log('Initial admin status check result:', adminStatus);
           if (mounted) setIsAdmin(adminStatus);
-          
-          // Special handling for admin email on initial load
-          if (currentSession.user.email === 'nandomartin21@msn.com') {
-            console.log('Admin email detected on initial load, ensuring admin access');
-            // Ensure admin access
-            await setupAdminUser();
-            
-            // Re-check admin status after setup
-            if (mounted) {
-              const updatedStatus = await checkAdminStatus(currentSession.user.id);
-              setIsAdmin(updatedStatus);
-            }
-          }
         } catch (error) {
           console.error('Error checking initial admin status:', error);
         }
