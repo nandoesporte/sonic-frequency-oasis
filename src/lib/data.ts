@@ -523,7 +523,19 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
 
 export async function seedDemoFrequencies() {
   console.log("Creating demo frequencies for all categories...");
-  const demoFrequencies = [
+  
+  // Define demo frequencies with proper typing
+  type DemoFrequency = {
+    hz: number;
+    name: string;
+    purpose: string;
+    description: string;
+    category: ValidDatabaseCategory;
+    premium: boolean;
+    is_demo: boolean;
+  };
+  
+  const demoFrequencies: DemoFrequency[] = [
     {
       hz: 432,
       name: "Demo - Harmonia Universal",
@@ -618,10 +630,10 @@ export async function seedDemoFrequencies() {
         continue;
       }
       
-      // Insert the demo frequency
+      // Insert the demo frequency - using proper types
       const { error } = await supabase
         .from('frequencies')
-        .insert([{ 
+        .insert({
           hz: demo.hz,
           name: demo.name,
           purpose: demo.purpose,
@@ -629,7 +641,7 @@ export async function seedDemoFrequencies() {
           category: demo.category,
           is_premium: demo.premium,
           is_demo: true
-        }]);
+        });
       
       if (error) {
         console.error(`Error creating demo frequency for ${demo.category}:`, error);
