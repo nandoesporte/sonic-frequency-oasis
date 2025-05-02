@@ -3,6 +3,7 @@ import React from "react";
 import { MapPin, Mail, MessageSquare } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { Separator } from "@/components/ui/separator";
+import { Link } from "react-router-dom";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -68,24 +69,29 @@ export function Footer() {
             <h4 className="text-lg font-semibold text-foreground">Links Rápidos</h4>
             <ul className="space-y-2">
               <li>
-                <a href="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Início
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/scientific" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/scientific" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Base Científica
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/guide" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/guide" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Guia de Uso
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/premium" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/premium" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Assinatura Premium
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Termos e Privacidade
+                </Link>
               </li>
             </ul>
           </div>
@@ -94,10 +100,13 @@ export function Footer() {
         <Separator className="my-6" />
         
         {/* Copyright Section */}
-        <div className="flex justify-center">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-2">
           <p className="text-sm text-muted-foreground">
             &copy; {currentYear} Todos os direitos reservados
           </p>
+          <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            Termos de Uso e Política de Privacidade
+          </Link>
         </div>
       </div>
     </footer>

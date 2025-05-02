@@ -19,6 +19,7 @@ import Scientific from "./pages/Scientific";
 import Admin from "./pages/Admin";
 import WebhookConfig from "./pages/WebhookConfig";
 import Profile from "./pages/Profile";
+import Terms from "./pages/Terms";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +67,7 @@ function App() {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/webhook-config" element={<WebhookConfig />} />
+                <Route path="/terms" element={<Terms />} />
                 
                 {/* Catch all route for 404 */}
                 <Route path="*" element={<NotFound />} />
