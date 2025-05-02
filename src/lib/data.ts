@@ -113,6 +113,7 @@ export async function getFrequenciesByCategory(categoryId: string): Promise<Freq
     
     console.log(`Fetching frequencies for database category: ${dbCategory}`);
     
+    // Enable .select('*') for anonymous access - no RLS restrictions should apply for reading frequencies
     const { data, error } = await supabase
       .from('frequencies')
       .select('*')
@@ -171,6 +172,7 @@ export async function getFrequenciesByCategory(categoryId: string): Promise<Freq
 
 export async function getTrendingFrequencies(): Promise<FrequencyData[]> {
   try {
+    // Use explicit select for anonymous access
     const { data, error } = await supabase
       .from('frequencies')
       .select('*')

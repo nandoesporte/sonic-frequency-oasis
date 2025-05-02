@@ -23,6 +23,11 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   
+  // Safety check in case the frequency data is null or undefined
+  if (!frequency) {
+    return null;
+  }
+  
   const isCurrentlyPlaying = isPlaying && currentFrequency?.id === frequency.id;
   const isFavorite = favorites.some(f => f.id === frequency.id);
   

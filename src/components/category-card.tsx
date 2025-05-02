@@ -23,21 +23,18 @@ export function CategoryCard({ id, name, description, icon }: CategoryCardProps)
   useEffect(() => {
     const loadCount = async () => {
       try {
-        if (user) {
-          console.log(`Loading count for category: ${id}`);
-          const frequencyCount = await getCategoryCount(id);
-          setCount(frequencyCount);
-          console.log(`Category ${id} has ${frequencyCount} frequencies`);
-        }
+        console.log(`Loading count for category: ${id}`);
+        const frequencyCount = await getCategoryCount(id);
+        setCount(frequencyCount);
+        console.log(`Category ${id} has ${frequencyCount} frequencies`);
       } catch (error) {
         console.error("Error fetching category count:", error);
       }
     };
     
-    if (user) {
-      loadCount();
-    }
-  }, [id, user]);
+    // Load counts regardless of auth status - frequencies should be visible to all
+    loadCount();
+  }, [id]);
   
   const handleClick = () => {
     // Navigate to the category page regardless of authentication status
@@ -64,7 +61,7 @@ export function CategoryCard({ id, name, description, icon }: CategoryCardProps)
         <CardDescription className="mb-3">{description}</CardDescription>
         
         <div className="flex items-center justify-between">
-          {user && count !== null && (
+          {count !== null && (
             <span className="text-xs text-muted-foreground">
               {count} frequências
             </span>
