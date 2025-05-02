@@ -1,12 +1,15 @@
+
 import { useState } from "react";
 import { Header } from "@/components/header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, Heart, Clock, Headphones, Check, Star } from "lucide-react";
+import { Brain, Heart, Clock, Headphones, Check, Star, ChevronRight, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHeader, TableHead, TableRow } from "@/components/ui/table";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const benefits = [
   {
@@ -98,27 +101,33 @@ const benefits = [
 
 export default function Scientific() {
   const [activeTab, setActiveTab] = useState("anxiety");
+  const isMobile = useIsMobile();
+  const [openStudy, setOpenStudy] = useState<string | null>(null);
+  
+  const toggleStudy = (id: string) => {
+    setOpenStudy(openStudy === id ? null : id);
+  };
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50/50 to-background dark:from-purple-900/10">
       <Header />
       
       <main className="container mx-auto px-4 pt-24 pb-16">
-        <div className="text-center mb-12 max-w-3xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
+        <div className="text-center mb-8 max-w-3xl mx-auto">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4">
             Frequências Sonoras Terapêuticas
             <span className="block text-primary mt-2">Comprovação Científica</span>
           </h1>
-          <p className="text-lg sm:text-xl text-muted-foreground">
+          <p className="text-base sm:text-xl text-muted-foreground">
             Descubra como as frequências sonoras podem transformar sua saúde e bem-estar,
             com base em estudos científicos rigorosos.
           </p>
         </div>
 
-        <div className="mb-8">
+        <div className="mb-6">
           <Card className="bg-primary/5 border-primary/20">
             <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl">
+              <CardTitle className="flex items-center gap-2 text-xl">
                 <Star className="h-5 w-5 text-primary" />
                 Benefícios Comprovados
               </CardTitle>
@@ -130,8 +139,23 @@ export default function Scientific() {
         </div>
 
         <div className="mb-10">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <div className="max-w-full overflow-hidden">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            {isMobile ? (
+              <ScrollArea className="w-full">
+                <TabsList className="inline-flex w-auto px-2 py-1 overflow-x-auto no-scrollbar">
+                  {benefits.map((benefit) => (
+                    <TabsTrigger
+                      key={benefit.id}
+                      value={benefit.id}
+                      className="px-3 py-1.5 min-w-fit data-[state=active]:bg-primary/90 data-[state=active]:text-primary-foreground whitespace-nowrap transition-colors text-sm"
+                    >
+                      <benefit.icon className="h-3 w-3 mr-1.5" />
+                      {benefit.title}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </ScrollArea>
+            ) : (
               <TabsList className="inline-flex w-auto px-4 py-2 overflow-x-auto no-scrollbar">
                 {benefits.map((benefit) => (
                   <TabsTrigger
@@ -144,23 +168,23 @@ export default function Scientific() {
                   </TabsTrigger>
                 ))}
               </TabsList>
-            </div>
+            )}
 
             {benefits.map((benefit) => (
-              <TabsContent key={benefit.id} value={benefit.id}>
+              <TabsContent key={benefit.id} value={benefit.id} className="focus-visible:outline-none">
                 <Card className="border-primary/20">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl">
-                      <benefit.icon className="h-6 w-6 text-primary" />
+                    <CardTitle className="flex items-center gap-2 text-lg sm:text-2xl">
+                      <benefit.icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                       {benefit.title}
                     </CardTitle>
                     <div className="mt-2">
-                      <h4 className="text-sm font-medium text-muted-foreground">Frequências utilizadas:</h4>
-                      <div className="flex flex-wrap gap-2 mt-1">
+                      <h4 className="text-xs sm:text-sm font-medium text-muted-foreground">Frequências utilizadas:</h4>
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-1">
                         {benefit.frequencies.map((freq, idx) => (
                           <span 
                             key={idx} 
-                            className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium"
+                            className="bg-primary/10 text-primary px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium"
                           >
                             {freq}
                           </span>
@@ -168,30 +192,50 @@ export default function Scientific() {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-6">
+                  <CardContent className="space-y-5">
                     <div>
-                      <h3 className="font-medium mb-3">Estudos Científicos</h3>
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="w-[250px]">Pesquisa</TableHead>
-                            <TableHead>Resultados</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
+                      <h3 className="font-medium mb-3 text-sm sm:text-base">Estudos Científicos</h3>
+                      
+                      {isMobile ? (
+                        <div className="space-y-3">
                           {benefit.studies.map((study, index) => (
-                            <TableRow key={index}>
-                              <TableCell className="font-medium">{study.title}</TableCell>
-                              <TableCell>{study.description}</TableCell>
-                            </TableRow>
+                            <Collapsible key={index} open={openStudy === `${benefit.id}-${index}`}>
+                              <CollapsibleTrigger 
+                                onClick={() => toggleStudy(`${benefit.id}-${index}`)}
+                                className="flex items-center justify-between w-full p-3 bg-background border rounded-lg text-sm font-medium"
+                              >
+                                <span>{study.title}</span>
+                                <ChevronDown className={`w-4 h-4 transition-transform ${openStudy === `${benefit.id}-${index}` ? 'transform rotate-180' : ''}`} />
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="p-3 border-x border-b rounded-b-lg mt-px">
+                                <p className="text-sm text-muted-foreground">{study.description}</p>
+                              </CollapsibleContent>
+                            </Collapsible>
                           ))}
-                        </TableBody>
-                      </Table>
+                        </div>
+                      ) : (
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="w-[250px]">Pesquisa</TableHead>
+                              <TableHead>Resultados</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {benefit.studies.map((study, index) => (
+                              <TableRow key={index}>
+                                <TableCell className="font-medium">{study.title}</TableCell>
+                                <TableCell>{study.description}</TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      )}
                     </div>
                     
-                    <div className="bg-primary/5 p-4 rounded-lg">
-                      <p className="font-medium">Resumo dos Benefícios:</p>
-                      <p className="text-muted-foreground mt-1">{benefit.summary}</p>
+                    <div className="bg-primary/5 p-3 sm:p-4 rounded-lg">
+                      <p className="font-medium text-sm sm:text-base">Resumo dos Benefícios:</p>
+                      <p className="text-muted-foreground mt-1 text-sm">{benefit.summary}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -200,10 +244,10 @@ export default function Scientific() {
           </Tabs>
         </div>
 
-        <div className="text-center mt-12">
-          <Button asChild size="lg" className="rounded-full">
+        <div className="text-center mt-10">
+          <Button asChild size={isMobile ? "default" : "lg"} className="rounded-full">
             <Link to="/premium">
-              Comece Agora sua Jornada de Transformação
+              {isMobile ? "Comece Agora" : "Comece Agora sua Jornada de Transformação"}
               <Star className="ml-2 h-4 w-4" />
             </Link>
           </Button>
