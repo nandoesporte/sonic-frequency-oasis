@@ -26,6 +26,7 @@ export function PremiumContentDialog({
 
   const handleSubscribe = () => {
     onOpenChange(false);
+    // Navigate to premium page with the #planos hash that will scroll to the plans section
     navigate("/premium#planos");
   };
 
