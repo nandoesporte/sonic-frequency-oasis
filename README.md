@@ -1,73 +1,54 @@
-# Welcome to your Lovable project
 
-## Project info
+# Frequency Therapy App
 
-**URL**: https://lovable.dev/projects/fd15ed9d-b283-4894-9de2-5d9a8c0d8a8e
+## Local Development
 
-## How can I edit this code?
+```bash
+# Install dependencies
+npm install
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/fd15ed9d-b283-4894-9de2-5d9a8c0d8a8e) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
+
+# Build for production
+npm run build
 ```
 
-**Edit a file directly in GitHub**
+## Deployment Options
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Option 1: GitHub Pages
 
-**Use GitHub Codespaces**
+1. Go to your repository settings
+2. Navigate to Pages
+3. Select the branch to deploy (main/master)
+4. Set the directory to `/dist`
+5. Save the settings
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Option 2: Shared Hosting
 
-## What technologies are used for this project?
+#### Manual Deployment
+1. Build the project: `npm run build`
+2. Upload the contents of the `dist` folder to your web server's public directory
+3. Ensure the `.htaccess` file is correctly uploaded (found in the `public` folder)
 
-This project is built with:
+#### Automated Deployment via GitHub
+1. Fork or clone this repository to your GitHub account
+2. Set up GitHub Actions by pushing to the main branch
+3. Download the generated artifact from the Actions tab
+4. Upload the contents to your shared hosting
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Option 3: Deploy Script
+If your shared hosting supports PHP, you can use the included `deploy.php` script:
 
-## How can I deploy this project?
+1. Upload the `deploy.php` file to your server
+2. Set up the environment variables on your server:
+   - `DEPLOY_SECRET`: A secret key to secure your deployments
+   - `REPO_URL`: The URL to your GitHub repository
+3. Trigger deployments by making a POST request to the script with the header:
+   - `X-Deploy-Secret`: Your defined secret key
 
-Simply open [Lovable](https://lovable.dev/projects/fd15ed9d-b283-4894-9de2-5d9a8c0d8a8e) and click on Share -> Publish.
+## Important Notes for Shared Hosting
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- Ensure mod_rewrite is enabled on your server for SPA routing
+- The `.htaccess` file is crucial for proper routing - make sure it's uploaded
+- For audio functionality to work properly, HTTPS is required on most browsers
