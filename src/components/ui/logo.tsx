@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { Waveform } from "lucide-react";
+import { AudioWaveform } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
@@ -31,7 +31,7 @@ export function Logo({
         <div className="absolute w-full h-full bg-gradient-to-r from-primary/80 to-primary rounded-full animate-pulse-soft" />
         
         {/* Inner waveform icon */}
-        <Waveform 
+        <AudioWaveform 
           className="relative z-10 text-primary-foreground" 
           size={iconSize} 
           strokeWidth={2.5}
