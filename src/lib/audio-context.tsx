@@ -51,6 +51,37 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const MAX_PLAY_TIME = 30 * 60; // 30 minutes in seconds
   const fadeTime = 0.25; // 250ms fade time for smoother transitions
 
+  // Lock screen orientation when audio is playing
+  useEffect(() => {
+    // Only attempt to lock orientation if playing and the API is supported
+    if (isPlaying && screen && screen.orientation) {
+      try {
+        // Lock to portrait orientation
+        screen.orientation.lock('portrait')
+          .then(() => {
+            console.log('Screen orientation locked to portrait');
+          })
+          .catch(error => {
+            console.error('Failed to lock screen orientation:', error);
+          });
+      } catch (error) {
+        console.error('Error accessing screen orientation API:', error);
+      }
+      
+      // Unlock when component unmounts or playback stops
+      return () => {
+        if (screen && screen.orientation) {
+          try {
+            screen.orientation.unlock();
+            console.log('Screen orientation unlocked');
+          } catch (error) {
+            console.error('Error unlocking screen orientation:', error);
+          }
+        }
+      };
+    }
+  }, [isPlaying]);
+
   // Cleanup function for audio resources
   const cleanupAudioResources = () => {
     if (oscillatorRef.current && gainNodeRef.current && audioContextRef.current) {
