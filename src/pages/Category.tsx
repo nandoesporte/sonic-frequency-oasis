@@ -93,9 +93,10 @@ const Category = () => {
     );
   }
 
-  // Função para redirecionar para login se usuário não estiver logado
+  // Function to redirect to login if user is not logged in
   const handleFrequencyClick = () => {
     if (!user) {
+      console.log("User not logged in, redirecting to auth page from category page");
       toast.info("Faça login para continuar", {
         description: "É necessário estar logado para acessar as frequências"
       });

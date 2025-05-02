@@ -27,8 +27,9 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
   const isFavorite = favorites.some(f => f.id === frequency.id);
   
   const handlePlay = () => {
-    // Se houver um callback onBeforePlay e ele retornar true, interrompa o processo
+    // If there's an onBeforePlay callback and it returns true, stop processing
     if (onBeforePlay && onBeforePlay()) {
+      console.log("Play prevented by onBeforePlay callback");
       return;
     }
     
