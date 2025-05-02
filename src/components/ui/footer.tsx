@@ -1,14 +1,26 @@
 
 import React from "react";
-import { MapPin, Mail } from "lucide-react";
+import { MapPin, Mail, MessageSquare } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer className="bg-background border-t border-border/40 mt-auto">
+    <footer className="bg-background border-t border-border/40 mt-auto relative">
+      {/* WhatsApp Floating Button */}
+      <a 
+        href="https://wa.me/5544997270698" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-3 shadow-lg transition-transform hover:scale-110"
+        aria-label="Contato WhatsApp"
+      >
+        <MessageSquare className="h-6 w-6" />
+      </a>
+      
       <div className="container px-4 py-8 md:py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Company Logo and Description */}
@@ -36,6 +48,17 @@ export function Footer() {
                 <Mail className="h-5 w-5 text-primary mr-2" />
                 <a href="mailto:contato@kefersolucoes.com.br" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   contato@kefersolucoes.com.br
+                </a>
+              </li>
+              <li className="flex items-center mt-2">
+                <MessageSquare className="h-5 w-5 text-primary mr-2" />
+                <a 
+                  href="https://wa.me/5544997270698" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  WhatsApp: (44) 99727-0698
                 </a>
               </li>
             </ul>
