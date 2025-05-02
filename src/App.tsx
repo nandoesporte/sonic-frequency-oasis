@@ -1,7 +1,6 @@
 
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -21,6 +20,7 @@ import WebhookConfig from "./pages/WebhookConfig";
 import Profile from "./pages/Profile";
 import Terms from "./pages/Terms";
 import { TermsAcceptanceDialog } from "./components/TermsAcceptanceDialog";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const queryClient = new QueryClient();
 
@@ -35,7 +35,8 @@ function ScrollToTop() {
   return null;
 }
 
-function App() {
+// The main application component
+function AppContent() {
   useEffect(() => {
     const theme = localStorage.getItem("theme") || 
       (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
@@ -48,37 +49,43 @@ function App() {
   }, []);
 
   return (
+    <div className="flex flex-col min-h-screen">
+      <ScrollToTop />
+      <Toaster />
+      <TermsAcceptanceDialog />
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/scientific" element={<Scientific />} />
+        <Route path="/categories/:category" element={<Category />} />
+        <Route path="/trending" element={<Trending />} />
+        <Route path="/favorites" element={<Favorites />} />
+        <Route path="/guide" element={<Guide />} />
+        <Route path="/history" element={<History />} />
+        <Route path="/premium" element={<Premium />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/webhook-config" element={<WebhookConfig />} />
+        <Route path="/terms" element={<Terms />} />
+        
+        {/* Catch all route for 404 */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <Footer />
+    </div>
+  );
+}
+
+function App() {
+  return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Router>
-          <AuthProvider>
-            <div className="flex flex-col min-h-screen">
-              <ScrollToTop />
-              <Toaster />
-              <TermsAcceptanceDialog />
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/scientific" element={<Scientific />} />
-                <Route path="/categories/:category" element={<Category />} />
-                <Route path="/trending" element={<Trending />} />
-                <Route path="/favorites" element={<Favorites />} />
-                <Route path="/guide" element={<Guide />} />
-                <Route path="/history" element={<History />} />
-                <Route path="/premium" element={<Premium />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/webhook-config" element={<WebhookConfig />} />
-                <Route path="/terms" element={<Terms />} />
-                
-                {/* Catch all route for 404 */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-              <Footer />
-            </div>
-          </AuthProvider>
-        </Router>
-      </TooltipProvider>
+      <Router>
+        <AuthProvider>
+          <TooltipProvider>
+            <AppContent />
+          </TooltipProvider>
+        </AuthProvider>
+      </Router>
     </QueryClientProvider>
   );
 }
