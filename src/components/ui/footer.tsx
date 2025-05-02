@@ -1,6 +1,6 @@
 
 import React from "react";
-import { MapPin, Mail, Phone } from "lucide-react";
+import { MapPin, Mail } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { Separator } from "@/components/ui/separator";
 
@@ -36,12 +36,6 @@ export function Footer() {
                 <Mail className="h-5 w-5 text-primary mr-2" />
                 <a href="mailto:contato@kefersolucoes.com.br" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   contato@kefersolucoes.com.br
-                </a>
-              </li>
-              <li className="flex items-center">
-                <Phone className="h-5 w-5 text-primary mr-2" />
-                <a href="tel:+554430284242" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  (44) 3028-4242
                 </a>
               </li>
             </ul>
