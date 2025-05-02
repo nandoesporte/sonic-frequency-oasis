@@ -6,9 +6,20 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Check, X, UserSearch } from 'lucide-react';
+import { Loader2, Check, X, UserSearch, Calendar, PlusCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { addMonths } from 'date-fns';
 
 interface Subscriber {
   id: string;
@@ -24,6 +35,11 @@ export function SubscriberManager() {
   const [loading, setLoading] = useState(true);
   const [searchEmail, setSearchEmail] = useState('');
   const [filteredSubscribers, setFilteredSubscribers] = useState<Subscriber[]>([]);
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [tier, setTier] = useState('Premium');
+  const [months, setMonths] = useState('1');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [addingSubscription, setAddingSubscription] = useState(false);
   const isMobile = useIsMobile();
   
   useEffect(() => {
@@ -102,6 +118,68 @@ export function SubscriberManager() {
       });
     }
   };
+
+  const addManualSubscription = async () => {
+    if (!newUserEmail || !newUserEmail.includes('@')) {
+      toast.error('Email inválido', {
+        description: 'Por favor, forneça um email válido.'
+      });
+      return;
+    }
+
+    setAddingSubscription(true);
+    try {
+      // Check if user exists in auth
+      const { data: userData, error: userError } = await supabase
+        .from('users_view')
+        .select('id, email')
+        .eq('email', newUserEmail)
+        .maybeSingle();
+
+      // Calculate subscription end date
+      const endDate = addMonths(new Date(), parseInt(months));
+      
+      // If user exists in auth, use their ID, otherwise just use email
+      const subscriptionData = {
+        email: newUserEmail,
+        user_id: userData?.id || null,
+        subscribed: true,
+        subscription_tier: tier,
+        subscription_end: endDate.toISOString(),
+      };
+
+      // Upsert to subscribers table (will update if email exists or insert if not)
+      const { error } = await supabase
+        .from('subscribers')
+        .upsert(subscriptionData, { 
+          onConflict: 'email' // Update if email already exists
+        });
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast.success('Assinatura adicionada', {
+        description: `Assinatura '${tier}' adicionada para ${newUserEmail} com sucesso.`
+      });
+      
+      // Reset form and close dialog
+      setNewUserEmail('');
+      setTier('Premium');
+      setMonths('1');
+      setDialogOpen(false);
+      
+      // Refresh subscribers list
+      fetchSubscribers();
+    } catch (error) {
+      console.error('Error adding subscription:', error);
+      toast.error('Erro ao adicionar assinatura', {
+        description: 'Não foi possível adicionar a assinatura. Verifique se o email é válido.'
+      });
+    } finally {
+      setAddingSubscription(false);
+    }
+  };
   
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
@@ -132,6 +210,89 @@ export function SubscriberManager() {
               className="pl-9"
             />
           </div>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="default" className="w-full sm:w-auto">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Adicionar Assinatura
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Adicionar Assinatura Manual</DialogTitle>
+                <DialogDescription>
+                  Adicione uma assinatura para um usuário manualmente.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email do usuário</Label>
+                  <Input 
+                    id="email" 
+                    type="email"
+                    placeholder="usuario@email.com"
+                    value={newUserEmail}
+                    onChange={(e) => setNewUserEmail(e.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Se o usuário já existe, a assinatura será vinculada à sua conta
+                  </p>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="tier">Plano de assinatura</Label>
+                  <select 
+                    id="tier"
+                    value={tier}
+                    onChange={(e) => setTier(e.target.value)}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <option value="Premium">Premium</option>
+                    <option value="Basic">Básico</option>
+                    <option value="Pro">Profissional</option>
+                  </select>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="months">Duração (meses)</Label>
+                  <select 
+                    id="months"
+                    value={months}
+                    onChange={(e) => setMonths(e.target.value)}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <option value="1">1 mês</option>
+                    <option value="3">3 meses</option>
+                    <option value="6">6 meses</option>
+                    <option value="12">12 meses</option>
+                  </select>
+                  <p className="text-xs text-muted-foreground">
+                    Expira em: {formatDate(addMonths(new Date(), parseInt(months)).toISOString())}
+                  </p>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setDialogOpen(false)}
+                  disabled={addingSubscription}
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={addManualSubscription} 
+                  disabled={addingSubscription || !newUserEmail}
+                >
+                  {addingSubscription ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processando...
+                    </>
+                  ) : (
+                    'Adicionar Assinatura'
+                  )}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           <Button variant="outline" onClick={fetchSubscribers} disabled={loading} className="w-full sm:w-auto">
             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Atualizar
