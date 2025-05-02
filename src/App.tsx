@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { Footer } from "./components/ui/footer";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Category from "./pages/Category";
@@ -38,24 +39,27 @@ function App() {
       <TooltipProvider>
         <Router>
           <AuthProvider>
-            <Toaster />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/scientific" element={<Scientific />} />
-              <Route path="/categories/:category" element={<Category />} />
-              <Route path="/trending" element={<Trending />} />
-              <Route path="/favorites" element={<Favorites />} />
-              <Route path="/guide" element={<Guide />} />
-              <Route path="/history" element={<History />} />
-              <Route path="/premium" element={<Premium />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/webhook-config" element={<WebhookConfig />} />
-              
-              {/* Catch all route for 404 */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <div className="flex flex-col min-h-screen">
+              <Toaster />
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/scientific" element={<Scientific />} />
+                <Route path="/categories/:category" element={<Category />} />
+                <Route path="/trending" element={<Trending />} />
+                <Route path="/favorites" element={<Favorites />} />
+                <Route path="/guide" element={<Guide />} />
+                <Route path="/history" element={<History />} />
+                <Route path="/premium" element={<Premium />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/webhook-config" element={<WebhookConfig />} />
+                
+                {/* Catch all route for 404 */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <Footer />
+            </div>
           </AuthProvider>
         </Router>
       </TooltipProvider>
