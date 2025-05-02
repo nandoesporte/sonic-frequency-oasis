@@ -1,13 +1,8 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Lock } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getCategoryCount } from "@/lib/data";
-import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "@/components/ui/sonner";
 
 interface CategoryCardProps {
   id: string;
@@ -18,80 +13,55 @@ interface CategoryCardProps {
 }
 
 export function CategoryCard({ id, name, description, icon, requiresAuth = false }: CategoryCardProps) {
-  const [count, setCount] = useState<number | null>(null);
-  const { user } = useAuth();
   const navigate = useNavigate();
   
-  useEffect(() => {
-    const loadCount = async () => {
-      try {
-        if (user) {
-          console.log(`Loading count for category: ${id}`);
-          const frequencyCount = await getCategoryCount(id);
-          setCount(frequencyCount);
-          console.log(`Category ${id} has ${frequencyCount} frequencies`);
-        }
-      } catch (error) {
-        console.error("Error fetching category count:", error);
-      }
-    };
-    
-    if (user) {
-      loadCount();
-    }
-  }, [id, user]);
-  
   const handleClick = () => {
-    if (requiresAuth && !user) {
-      console.log("Auth required, redirecting to login");
-      toast.info("Faça login para acessar", {
-        description: "É necessário estar logado para acessar esta categoria"
-      });
-      navigate("/auth");
-      return;
-    }
-    
-    // Normal navigation with scroll to top
-    console.log(`Navigating to category: ${id}`);
-    window.scrollTo(0, 0);
     navigate(`/categories/${id}`);
   };
-  
+
   return (
-    <Card 
-      className={cn(
-        "overflow-hidden hover-scale cursor-pointer", 
-        requiresAuth && !user && "opacity-80 hover:opacity-100"
-      )}
-      onClick={handleClick}
-    >
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center">
-            {icon}
-            <CardTitle className="ml-2">{name}</CardTitle>
-          </div>
-          {requiresAuth && !user && <Lock className="h-4 w-4 text-muted-foreground" />}
-        </div>
-      </CardHeader>
-      
-      <CardContent>
-        <CardDescription className="mb-3">{description}</CardDescription>
-        
-        <div className="flex items-center justify-between">
-          {user && count !== null && (
-            <span className="text-xs text-muted-foreground">
-              {count} frequências
-            </span>
+    <Link to={`/categories/${id}`}>
+      <Card
+        className={cn(
+          "cursor-pointer overflow-hidden relative hover-scale group",
+        )}
+      >
+        <div
+          className={cn(
+            "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-5 transition-opacity",
+            id.includes("sleep") && "from-blue-400 to-purple-400",
+            id.includes("healing") && "from-purple-400 to-pink-400",
+            id.includes("cognitive") && "from-amber-400 to-orange-400",
+            id.includes("solfeggio") && "from-orange-400 to-rose-400",
+            id.includes("emotional") && "from-green-400 to-cyan-400",
+            id.includes("spiritual") && "from-indigo-400 to-sky-400",
+            id.includes("pain") && "from-red-400 to-orange-400",
+            id.includes("physical") && "from-lime-400 to-emerald-400"
           )}
-          
-          <Button variant="ghost" size="sm" className="ml-auto">
-            <span className="flex items-center">
-              Explorar <ArrowRight className="ml-1 h-3 w-3" />
-            </span>
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        />
+        <CardContent className="flex items-center p-6">
+          <div
+            className={cn(
+              "mr-4 p-2 rounded-full",
+              id.includes("sleep") && "bg-blue-100 dark:bg-blue-900/30",
+              id.includes("healing") && "bg-purple-100 dark:bg-purple-900/30",
+              id.includes("cognitive") && "bg-amber-100 dark:bg-amber-900/30",
+              id.includes("solfeggio") && "bg-orange-100 dark:bg-orange-900/30",
+              id.includes("emotional") && "bg-green-100 dark:bg-green-900/30",
+              id.includes("spiritual") && "bg-indigo-100 dark:bg-indigo-900/30",
+              id.includes("pain") && "bg-red-100 dark:bg-red-900/30",
+              id.includes("physical") && "bg-lime-100 dark:bg-lime-900/30"
+            )}
+          >
+            {icon}
+          </div>
+          <div className="flex-1">
+            <h3 className="font-semibold">{name}</h3>
+            <p className="text-sm text-muted-foreground mt-1">{description}</p>
+          </div>
+          <ChevronRight className="opacity-60 ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+        </CardContent>
+      </Card>
+    </Link>
   );
 }

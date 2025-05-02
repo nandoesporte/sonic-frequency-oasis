@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { toast } from "@/components/ui/sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { PremiumContentDialog } from "@/components/subscription/PremiumContentDialog";
 
 const Category = () => {
   const { category } = useParams<{ category: string }>();
@@ -17,10 +18,12 @@ const Category = () => {
   const [frequencies, setFrequencies] = useState<FrequencyData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const [premiumDialogOpen, setPremiumDialogOpen] = useState(false);
+  const [selectedFrequency, setSelectedFrequency] = useState<FrequencyData | null>(null);
 
-  console.log("Category page - Auth state:", { user: !!user, authLoading, category });
+  console.log("Category page - Auth state:", { user: !!user, category });
 
   // Scroll to top when component mounts or category changes
   useEffect(() => {
@@ -44,21 +47,8 @@ const Category = () => {
   }, [category, navigate]);
   
   useEffect(() => {
-    // Redirect to auth if not logged in and auth check is complete
-    if (!authLoading && !user) {
-      console.log("User not authenticated, redirecting to login");
-      toast.error("Acesso negado", {
-        description: "Você precisa fazer login para acessar as frequências"
-      });
-      navigate("/auth");
-      return;
-    }
-  }, [user, authLoading, navigate]);
-  
-  useEffect(() => {
-    // Only fetch frequencies if we have both user and category data
-    // and authentication check is complete (not loading)
-    if (category && user && categoryData && !authLoading) {
+    // Fetch frequencies for the category (now allowed for all users)
+    if (category && categoryData) {
       console.log("Fetching frequencies for category:", category);
       setLoading(true);
       setError(null);
@@ -88,27 +78,15 @@ const Category = () => {
         .finally(() => {
           setLoading(false);
         });
-    } else if (!authLoading) {
-      // If auth check is complete but there's no category data
+    } else {
       setLoading(false);
     }
-  }, [category, user, categoryData, authLoading]);
-  
-  // Show a better loading state with immediate feedback
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
-        <p className="text-xl font-medium">Verificando autenticação...</p>
-        <p className="text-muted-foreground mt-2">Aguarde um momento</p>
-      </div>
-    );
-  }
+  }, [category, categoryData]);
 
-  // Don't render main content if not authenticated
-  if (!user && !authLoading) {
-    return null; // Return null as useEffect will handle redirection
-  }
+  const handlePremiumContent = (frequency: FrequencyData) => {
+    setSelectedFrequency(frequency);
+    setPremiumDialogOpen(true);
+  };
   
   if (!categoryData && !loading) {
     return (
@@ -169,7 +147,11 @@ const Category = () => {
           ) : frequencies.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {frequencies.map((frequency) => (
-                <FrequencyCard key={frequency.id} frequency={frequency} />
+                <FrequencyCard 
+                  key={frequency.id} 
+                  frequency={frequency} 
+                  onPremiumContent={handlePremiumContent}
+                />
               ))}
             </div>
           ) : (
@@ -180,6 +162,11 @@ const Category = () => {
         </div>
         
         <AudioPlayer />
+        <PremiumContentDialog 
+          open={premiumDialogOpen}
+          onOpenChange={setPremiumDialogOpen}
+          frequencyName={selectedFrequency?.name}
+        />
       </div>
     </AudioProvider>
   );
