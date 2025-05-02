@@ -81,7 +81,7 @@ export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardP
           </Button>
           
           <div className="flex-grow min-w-0">
-            <h3 className="font-semibold truncate">
+            <h3 className="font-semibold truncate text-base">
               {frequency.name}
               {frequency.premium && (
                 <Crown className="inline-block w-4 h-4 ml-1 text-purple-500" />
@@ -120,7 +120,7 @@ export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardP
     )}>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
-          <CardTitle>{frequency.name}</CardTitle>
+          <CardTitle className="text-xl">{frequency.name}</CardTitle>
           {frequency.premium && (
             <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-200">
               <Crown className="w-3 h-3 mr-1" />

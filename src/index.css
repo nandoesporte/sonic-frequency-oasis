@@ -74,6 +74,18 @@
   body {
     @apply bg-background text-foreground;
   }
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight;
+  }
+  h1 {
+    @apply text-4xl font-bold md:text-5xl lg:text-6xl;
+  }
+  h2 {
+    @apply text-2xl md:text-3xl font-bold;
+  }
+  h3 {
+    @apply text-xl md:text-2xl font-semibold;
+  }
 }
 
 /* Custom animations */
@@ -96,3 +108,11 @@
   animation: pulse-soft 2s ease-in-out infinite;
 }
 
+/* Section consistency */
+.section-title {
+  @apply text-2xl md:text-3xl font-bold;
+}
+
+.section-description {
+  @apply text-base md:text-lg text-muted-foreground;
+}
