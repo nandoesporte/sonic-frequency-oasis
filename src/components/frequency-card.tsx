@@ -14,9 +14,10 @@ import { toast } from "@/components/ui/sonner";
 interface FrequencyCardProps {
   frequency: FrequencyData;
   variant?: "default" | "trending" | "compact";
+  onBeforePlay?: () => boolean; // Return true to prevent default play behavior
 }
 
-export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardProps) {
+export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: FrequencyCardProps) {
   const { play, isPlaying, currentFrequency, addToFavorites, favorites } = useAudio();
   const { isPremium } = usePremium();
   const { user } = useAuth();
@@ -26,6 +27,11 @@ export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardP
   const isFavorite = favorites.some(f => f.id === frequency.id);
   
   const handlePlay = () => {
+    // Se houver um callback onBeforePlay e ele retornar true, interrompa o processo
+    if (onBeforePlay && onBeforePlay()) {
+      return;
+    }
+    
     if (!user) {
       console.log("User not logged in, redirecting to auth page");
       toast.info("Faça login para ouvir", {

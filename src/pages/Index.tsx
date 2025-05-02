@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { AudioPlayer } from "@/components/audio-player";
 import { CategoryCard } from "@/components/category-card";
@@ -7,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { AudioProvider } from "@/lib/audio-context";
 import { categories, getTrendingFrequencies, FrequencyData, getFrequenciesByCategory } from "@/lib/data";
 import { ArrowRight, BookOpen, Crown } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { PricingSection } from "@/components/subscription/PricingSection";
 import { FrequencyRanges } from "@/components/home/FrequencyRanges";
@@ -20,6 +21,7 @@ const Index = () => {
   const [categoryFrequencies, setCategoryFrequencies] = useState<Record<string, FrequencyData[]>>({});
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   useEffect(() => {
     const fetchTrendingFrequencies = async () => {
@@ -67,6 +69,18 @@ const Index = () => {
     fetchTrendingFrequencies();
     fetchCategoryFrequencies();
   }, [user]);
+
+  // Função para redirecionar para login se usuário não estiver logado
+  const handleFrequencyClick = () => {
+    if (!user) {
+      toast.info("Faça login para continuar", {
+        description: "É necessário estar logado para acessar as frequências"
+      });
+      navigate("/auth");
+      return true;
+    }
+    return false;
+  };
 
   return (
     <AudioProvider>
@@ -133,7 +147,8 @@ const Index = () => {
                   <FrequencyCard 
                     key={frequency.id} 
                     frequency={frequency} 
-                    variant="trending" 
+                    variant="trending"
+                    onBeforePlay={handleFrequencyClick}
                   />
                 ))}
               </div>
@@ -195,7 +210,8 @@ const Index = () => {
                           <FrequencyCard 
                             key={frequency.id} 
                             frequency={frequency}
-                            variant="compact" 
+                            variant="compact"
+                            onBeforePlay={handleFrequencyClick}
                           />
                         ))}
                       </div>

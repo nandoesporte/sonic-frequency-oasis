@@ -93,6 +93,18 @@ const Category = () => {
     );
   }
 
+  // Função para redirecionar para login se usuário não estiver logado
+  const handleFrequencyClick = () => {
+    if (!user) {
+      toast.info("Faça login para continuar", {
+        description: "É necessário estar logado para acessar as frequências"
+      });
+      navigate("/auth");
+      return true;
+    }
+    return false;
+  };
+
   const CategoryIcon = categoryData?.icon;
 
   return (
@@ -135,7 +147,11 @@ const Category = () => {
           ) : frequencies.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {frequencies.map((frequency) => (
-                <FrequencyCard key={frequency.id} frequency={frequency} />
+                <FrequencyCard 
+                  key={frequency.id} 
+                  frequency={frequency}
+                  onBeforePlay={handleFrequencyClick}
+                />
               ))}
             </div>
           ) : (
