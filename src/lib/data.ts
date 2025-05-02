@@ -1,4 +1,3 @@
-
 import { Brain, Heart, Coffee, Zap, MoonStar, Music, Focus, Shield, Bell, Circle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
@@ -509,7 +508,10 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
     const { error } = await supabase
       .from('frequencies')
       .insert([{ 
-        ...freq,
+        name: freq.name,
+        hz: freq.hz,
+        purpose: freq.purpose,
+        description: freq.description,
         category: category,
         is_premium: freq.premium
       }]);
@@ -555,4 +557,3 @@ export async function getAllFrequencies(): Promise<FrequencyData[]> {
     premium: freq.is_premium
   }));
 }
-
