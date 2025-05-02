@@ -20,6 +20,7 @@ import Admin from "./pages/Admin";
 import WebhookConfig from "./pages/WebhookConfig";
 import Profile from "./pages/Profile";
 import Terms from "./pages/Terms";
+import { TermsAcceptanceDialog } from "./components/TermsAcceptanceDialog";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ function App() {
             <div className="flex flex-col min-h-screen">
               <ScrollToTop />
               <Toaster />
+              <TermsAcceptanceDialog />
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/scientific" element={<Scientific />} />
