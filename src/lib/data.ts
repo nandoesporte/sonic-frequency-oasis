@@ -1,3 +1,4 @@
+
 import { Brain, Heart, Coffee, Zap, MoonStar, Music, Focus, Shield, Bell, Circle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
@@ -75,7 +76,7 @@ export const categories: Category[] = [
   }
 ];
 
-// Map our UI categories to database categories
+// Map our UI categories to database categories - FIXED to match database exactly
 const categoryMapping: Record<string, ValidDatabaseCategory> = {
   "sleep_meditation": "sleep",
   "healing": "healing",
@@ -87,7 +88,7 @@ const categoryMapping: Record<string, ValidDatabaseCategory> = {
   "physical": "physical"
 };
 
-// Map database categories back to UI categories
+// Map database categories back to UI categories - FIXED to match database exactly
 const reverseCategoryMapping: Record<ValidDatabaseCategory, string> = {
   "sleep": "sleep_meditation",
   "healing": "healing",
@@ -97,7 +98,7 @@ const reverseCategoryMapping: Record<ValidDatabaseCategory, string> = {
   "solfeggio": "solfeggio",
   "spiritual": "spiritual",
   "physical": "physical",
-  "meditation": "sleep_meditation"
+  "meditation": "sleep_meditation"  // Map meditation to sleep_meditation as fallback
 };
 
 export async function getFrequenciesByCategory(categoryId: string): Promise<FrequencyData[]> {
@@ -513,7 +514,7 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
         purpose: freq.purpose,
         description: freq.description,
         category: category,
-        is_premium: freq.premium
+        is_premium: freq.premium  // Make sure we use is_premium to match the database schema
       }]);
     
     if (error && error.code !== '23505') { // Ignore duplicate key errors
