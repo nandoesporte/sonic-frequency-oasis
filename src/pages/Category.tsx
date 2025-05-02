@@ -4,7 +4,7 @@ import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
 import { FrequencyCard } from "@/components/frequency-card";
 import { AudioProvider } from "@/lib/audio-context";
-import { getCategoryById, getFrequenciesByCategory, FrequencyData, seedInitialFrequencies } from "@/lib/data";
+import { getCategoryById, getFrequenciesByCategory, FrequencyData } from "@/lib/data";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -17,10 +17,10 @@ const Category = () => {
   const [frequencies, setFrequencies] = useState<FrequencyData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
-  console.log("Category page - category:", category);
+  console.log("Category page - Auth state:", { user: !!user, authLoading, category });
 
   // Scroll to top when component mounts or category changes
   useEffect(() => {
@@ -44,8 +44,21 @@ const Category = () => {
   }, [category, navigate]);
   
   useEffect(() => {
-    // Load frequencies for all visitors (no auth check)
-    if (category && categoryData) {
+    // Redirect to auth if not logged in and auth check is complete
+    if (!authLoading && !user) {
+      console.log("User not authenticated, redirecting to login");
+      toast.error("Acesso negado", {
+        description: "Você precisa fazer login para acessar as frequências"
+      });
+      navigate("/auth");
+      return;
+    }
+  }, [user, authLoading, navigate]);
+  
+  useEffect(() => {
+    // Only fetch frequencies if we have both user and category data
+    // and authentication check is complete (not loading)
+    if (category && user && categoryData && !authLoading) {
       console.log("Fetching frequencies for category:", category);
       setLoading(true);
       setError(null);
@@ -75,10 +88,27 @@ const Category = () => {
         .finally(() => {
           setLoading(false);
         });
-    } else {
+    } else if (!authLoading) {
+      // If auth check is complete but there's no category data
       setLoading(false);
     }
-  }, [category, categoryData]);
+  }, [category, user, categoryData, authLoading]);
+  
+  // Show a better loading state with immediate feedback
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+        <p className="text-xl font-medium">Verificando autenticação...</p>
+        <p className="text-muted-foreground mt-2">Aguarde um momento</p>
+      </div>
+    );
+  }
+
+  // Don't render main content if not authenticated
+  if (!user && !authLoading) {
+    return null; // Return null as useEffect will handle redirection
+  }
   
   if (!categoryData && !loading) {
     return (
@@ -145,11 +175,6 @@ const Category = () => {
           ) : (
             <div className="text-center py-12">
               <p className="text-muted-foreground">Nenhuma frequência encontrada nesta categoria.</p>
-              {user && (
-                <Button onClick={() => seedInitialFrequencies().then(() => window.location.reload())} className="mt-4">
-                  Carregar frequências padrão
-                </Button>
-              )}
             </div>
           )}
         </div>

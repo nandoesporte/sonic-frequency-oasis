@@ -88,19 +88,6 @@ const categoryMapping: Record<string, ValidDatabaseCategory> = {
   "physical": "physical"
 };
 
-// Map database categories back to UI categories
-const reverseCategoryMapping: Record<ValidDatabaseCategory, string> = {
-  "sleep": "sleep_meditation",
-  "healing": "healing",
-  "emotional": "emotional",
-  "pain_relief": "pain_relief",
-  "cognitive": "cognitive",
-  "solfeggio": "solfeggio",
-  "spiritual": "spiritual",
-  "physical": "physical",
-  "meditation": "sleep_meditation"
-};
-
 export async function getFrequenciesByCategory(categoryId: string): Promise<FrequencyData[]> {
   try {
     // Map UI category to database category
@@ -126,30 +113,7 @@ export async function getFrequenciesByCategory(categoryId: string): Promise<Freq
 
     if (!data || data.length === 0) {
       console.log(`No frequencies found for category: ${dbCategory}`);
-      // If no frequencies found, seed some for this category
-      await seedFrequenciesForCategory(dbCategory);
-      
-      // Try fetching again after seeding
-      const { data: newData, error: newError } = await supabase
-        .from('frequencies')
-        .select('*')
-        .eq('category', dbCategory)
-        .order('hz');
-      
-      if (newError || !newData) {
-        console.error('Error fetching frequencies after seeding:', newError);
-        return [];
-      }
-      
-      return newData.map(freq => ({
-        id: freq.id,
-        name: freq.name,
-        hz: freq.hz,
-        purpose: freq.purpose,
-        description: freq.description || freq.purpose,
-        category: reverseCategoryMapping[freq.category as ValidDatabaseCategory] || freq.category,
-        premium: freq.is_premium
-      }));
+      return [];
     }
 
     console.log(`Found ${data.length} frequencies for category ${dbCategory}`);
@@ -159,8 +123,8 @@ export async function getFrequenciesByCategory(categoryId: string): Promise<Freq
       name: freq.name,
       hz: freq.hz,
       purpose: freq.purpose,
-      description: freq.description || freq.purpose,
-      category: reverseCategoryMapping[freq.category as ValidDatabaseCategory] || freq.category,
+      description: freq.description || freq.purpose, // Ensure description is never undefined
+      category: freq.category as string,
       premium: freq.is_premium
     }));
   } catch (error) {
@@ -170,59 +134,27 @@ export async function getFrequenciesByCategory(categoryId: string): Promise<Freq
 }
 
 export async function getTrendingFrequencies(): Promise<FrequencyData[]> {
-  try {
-    const { data, error } = await supabase
-      .from('frequencies')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(4);
+  const { data, error } = await supabase
+    .from('frequencies')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(4);
 
-    if (error) {
-      console.error('Error fetching trending frequencies:', error);
-      return [];
-    }
-
-    if (!data || data.length === 0) {
-      // If no trending frequencies, seed some default frequencies
-      await seedInitialFrequencies();
-      
-      // Try fetching again
-      const { data: newData, error: newError } = await supabase
-        .from('frequencies')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(4);
-      
-      if (newError || !newData) {
-        return [];
-      }
-      
-      return newData.map(freq => ({
-        id: freq.id,
-        name: freq.name,
-        hz: freq.hz,
-        purpose: freq.purpose,
-        description: freq.description || freq.purpose,
-        category: reverseCategoryMapping[freq.category as ValidDatabaseCategory] || freq.category,
-        premium: freq.is_premium,
-        trending: true
-      }));
-    }
-
-    return data.map(freq => ({
-      id: freq.id,
-      name: freq.name,
-      hz: freq.hz,
-      purpose: freq.purpose,
-      description: freq.description || freq.purpose,
-      category: reverseCategoryMapping[freq.category as ValidDatabaseCategory] || freq.category,
-      premium: freq.is_premium,
-      trending: true
-    }));
-  } catch (error) {
+  if (error) {
     console.error('Error fetching trending frequencies:', error);
     return [];
   }
+
+  return data.map(freq => ({
+    id: freq.id,
+    name: freq.name,
+    hz: freq.hz,
+    purpose: freq.purpose,
+    description: freq.description || freq.purpose, // Ensure description is never undefined
+    category: freq.category,
+    premium: freq.is_premium,
+    trending: true
+  }));
 }
 
 export async function getFrequencyById(id: string): Promise<FrequencyData | null> {
@@ -242,8 +174,8 @@ export async function getFrequencyById(id: string): Promise<FrequencyData | null
     name: data.name,
     hz: data.hz,
     purpose: data.purpose,
-    description: data.description || data.purpose,
-    category: reverseCategoryMapping[data.category as ValidDatabaseCategory] || data.category,
+    description: data.description || data.purpose, // Ensure description is never undefined
+    category: data.category,
     premium: data.is_premium
   };
 }
@@ -266,293 +198,80 @@ export async function getCategoryCount(categoryId: string): Promise<number> {
     return 0;
   }
   
-  if (count === 0) {
-    // Seed frequencies for this category if count is 0
-    await seedFrequenciesForCategory(dbCategory);
-    
-    // Get updated count
-    const { count: newCount, error: newError } = await supabase
-      .from('frequencies')
-      .select('*', { count: 'exact', head: true })
-      .eq('category', dbCategory);
-    
-    if (newError) {
-      console.error('Error getting category count after seeding:', newError);
-      return 0;
-    }
-    
-    return newCount || 0;
-  }
-  
   return count || 0;
 }
 
-async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
-  const frequenciesByCategory: Record<ValidDatabaseCategory, Array<Omit<FrequencyData, 'id' | 'category'>>> = {
-    "sleep": [
-      {
-        hz: 1.5,
-        name: "Delta Profundo",
-        purpose: "Sono profundo e regeneração celular",
-        description: "Estímulo de ondas delta para sono profundo e cicatrização",
-        premium: false
-      },
-      {
-        hz: 2.5,
-        name: "Delta Superior",
-        purpose: "Relaxamento profundo e sono reparador",
-        description: "Facilita o sono REM e a recuperação mental",
-        premium: false
-      },
-      {
-        hz: 4.0,
-        name: "Delta-Theta",
-        purpose: "Meditação profunda e sono leve",
-        description: "Transição entre sono profundo e sonho",
-        premium: true
-      }
-    ],
-    "healing": [
-      {
-        hz: 7.83,
-        name: "Ressonância Schumann",
-        purpose: "Harmonização com a frequência da Terra",
-        description: "Promove conexão mente-corpo e bem-estar geral",
-        premium: false
-      },
-      {
-        hz: 8.0,
-        name: "Alpha Inferior",
-        purpose: "Cura e regeneração celular",
-        description: "Estimula a produção de endorfinas e regeneração tecidual",
-        premium: false
-      },
-      {
-        hz: 10.5,
-        name: "Alpha Superior",
-        purpose: "Aceleração da cura e circulação",
-        description: "Melhora o fluxo sanguíneo e acelera processos de cicatrização",
-        premium: true
-      }
-    ],
-    "emotional": [
-      {
-        hz: 5.5,
-        name: "Theta Emocional",
-        purpose: "Liberação de traumas emocionais",
-        description: "Acesso ao subconsciente para processamento emocional",
-        premium: false
-      },
-      {
-        hz: 7.0,
-        name: "Theta-Alpha",
-        purpose: "Equilíbrio emocional e relaxamento",
-        description: "Redução da ansiedade e harmonia emocional",
-        premium: false
-      },
-      {
-        hz: 9.0,
-        name: "Alpha Emocional",
-        purpose: "Estabilidade e positividade emocional",
-        description: "Promove pensamentos positivos e reduz estresse",
-        premium: true
-      }
-    ],
-    "pain_relief": [
-      {
-        hz: 3.5,
-        name: "Delta para Dor",
-        purpose: "Alívio de dor crônica",
-        description: "Redução da sensibilidade à dor e relaxamento profundo",
-        premium: false
-      },
-      {
-        hz: 6.0,
-        name: "Theta para Dor",
-        purpose: "Redução da percepção da dor",
-        description: "Liberação de endorfinas naturais para analgesia",
-        premium: false
-      },
-      {
-        hz: 9.4,
-        name: "Alpha para Dor",
-        purpose: "Alívio da dor e inflamação",
-        description: "Frequência específica para redução de processos inflamatórios",
-        premium: true
-      }
-    ],
-    "cognitive": [
-      {
-        hz: 12.5,
-        name: "Beta Inferior",
-        purpose: "Foco mental e concentração",
-        description: "Estado de alerta relaxado ideal para estudo",
-        premium: false
-      },
-      {
-        hz: 15.0,
-        name: "Beta Médio",
-        purpose: "Pensamento crítico e resolução de problemas",
-        description: "Estimula conexões neurais e raciocínio lógico",
-        premium: false
-      },
-      {
-        hz: 18.0,
-        name: "Beta Superior",
-        purpose: "Desempenho mental elevado",
-        description: "Estado ideal para tarefas intelectuais complexas",
-        premium: true
-      }
-    ],
-    "solfeggio": [
-      {
-        hz: 396,
-        name: "UT - Liberação",
-        purpose: "Libertação do medo e culpa",
-        description: "Primeira frequência Solfeggio para liberação de bloqueios emocionais",
-        premium: false
-      },
-      {
-        hz: 528,
-        name: "MI - Transformação",
-        purpose: "Reparo de DNA e milagres",
-        description: "A frequência do amor para transformação e reparação celular",
-        premium: false
-      },
-      {
-        hz: 852,
-        name: "LA - Intuição",
-        purpose: "Despertar espiritual e intuição",
-        description: "Ativa o terceiro olho e expande a consciência espiritual",
-        premium: true
-      }
-    ],
-    "spiritual": [
-      {
-        hz: 33,
-        name: "Frequência Cristo",
-        purpose: "Amor incondicional e compaixão",
-        description: "Associada à expansão da consciência espiritual",
-        premium: false
-      },
-      {
-        hz: 432,
-        name: "Harmonia Universal",
-        purpose: "Sintonização com o universo",
-        description: "Frequência natural para equilíbrio com as leis cósmicas",
-        premium: false
-      },
-      {
-        hz: 963,
-        name: "Pineal Superior",
-        purpose: "Despertar espiritual completo",
-        description: "Frequência mais alta do Solfeggio para iluminação",
-        premium: true
-      }
-    ],
-    "physical": [
-      {
-        hz: 285,
-        name: "Regeneração Tecidual",
-        purpose: "Reparo de tecidos e órgãos",
-        description: "Estimula a regeneração celular e cura física",
-        premium: false
-      },
-      {
-        hz: 5.8,
-        name: "Theta Física",
-        purpose: "Equilíbrio hormonal e sistema imunológico",
-        description: "Harmonização das funções corporais e fortalecimento imunológico",
-        premium: false
-      },
-      {
-        hz: 136.1,
-        name: "Recuperação Muscular",
-        purpose: "Alívio de tensão e dor muscular",
-        description: "Frequência específica para relaxamento e recuperação muscular",
-        premium: true
-      }
-    ],
-    "meditation": [
-      {
-        hz: 4.5,
-        name: "Theta Meditativo",
-        purpose: "Meditação profunda",
-        description: "Estado ideal para meditação e visualização criativa",
-        premium: false
-      },
-      {
-        hz: 7.5,
-        name: "Alpha Meditativo",
-        purpose: "Relaxamento consciente",
-        description: "Equilíbrio entre relaxamento e atenção plena",
-        premium: false
-      },
-      {
-        hz: 40.0,
-        name: "Gamma Meditativo",
-        purpose: "Percepção elevada e consciência expandida",
-        description: "Estado mental observado em meditadores experientes",
-        premium: true
-      }
-    ]
-  };
+export async function seedInitialFrequencies() {
+  const frequencies = [
+    {
+      hz: 1.5,
+      name: "Delta Profundo",
+      purpose: "Sono profundo e regeneração celular",
+      description: "Estímulo de ondas delta para sono profundo e regeneração celular",
+      category: "sleep" as ValidDatabaseCategory
+    },
+    {
+      hz: 3.5,
+      name: "Alívio da Dor Crônica",
+      purpose: "Redução da dor e alteração da consciência",
+      description: "Alívio de dor crônica e estados de consciência alterada",
+      category: "pain_relief" as ValidDatabaseCategory
+    },
+    {
+      hz: 7.83,
+      name: "Ressonância Schumann",
+      purpose: "Equilíbrio mental e redução da ansiedade",
+      description: "Frequência natural da Terra para equilíbrio e harmonia",
+      category: "meditation" as ValidDatabaseCategory
+    },
+    {
+      hz: 40,
+      name: "Integração Gamma",
+      purpose: "Melhoria cognitiva e consciência",
+      description: "Integração sensorial e estímulo da consciência",
+      category: "cognitive" as ValidDatabaseCategory
+    },
+    {
+      hz: 174,
+      name: "Solfeggio Fundamental",
+      purpose: "Alívio da dor e relaxamento",
+      description: "Primeira frequência Solfeggio para cura física",
+      category: "solfeggio" as ValidDatabaseCategory
+    },
+    {
+      hz: 432,
+      name: "Frequência Natural",
+      purpose: "Harmonização musical e emocional",
+      description: "Frequência harmônica natural para equilíbrio",
+      category: "spiritual" as ValidDatabaseCategory
+    },
+    {
+      hz: 528,
+      name: "Frequência do Amor",
+      purpose: "Regeneração celular e harmonia",
+      description: "Conhecida como frequência milagrosa do amor",
+      category: "solfeggio" as ValidDatabaseCategory
+    },
+    {
+      hz: 963,
+      name: "Despertar Pineal",
+      purpose: "Ativação espiritual",
+      description: "Frequência mais alta de Solfeggio para consciência cósmica",
+      category: "spiritual" as ValidDatabaseCategory
+    },
+    // Add more frequencies following the same pattern...
+  ];
 
-  const frequencies = frequenciesByCategory[category] || [];
-  
-  if (frequencies.length === 0) {
-    console.log(`No predefined frequencies for category: ${category}`);
-    return;
-  }
-  
   for (const freq of frequencies) {
     const { error } = await supabase
       .from('frequencies')
       .insert([{ 
         ...freq,
-        category: category,
-        is_premium: freq.premium
+        is_premium: freq.hz >= 528 // Make higher frequencies premium
       }]);
     
     if (error && error.code !== '23505') { // Ignore duplicate key errors
       console.error('Error seeding frequency:', error);
-    } else {
-      console.log(`Seeded frequency: ${freq.name} (${freq.hz} Hz)`);
     }
   }
 }
-
-export async function seedInitialFrequencies() {
-  console.log("Starting initial frequency seeding...");
-  
-  // Seed at least one frequency for each category
-  for (const category of Object.values(categoryMapping)) {
-    await seedFrequenciesForCategory(category);
-  }
-  
-  console.log("Finished seeding frequencies");
-}
-
-// Export additional helper functions
-export async function getAllFrequencies(): Promise<FrequencyData[]> {
-  const { data, error } = await supabase
-    .from('frequencies')
-    .select('*')
-    .order('hz');
-
-  if (error) {
-    console.error('Error fetching all frequencies:', error);
-    return [];
-  }
-
-  return data.map(freq => ({
-    id: freq.id,
-    name: freq.name,
-    hz: freq.hz,
-    purpose: freq.purpose,
-    description: freq.description || freq.purpose,
-    category: reverseCategoryMapping[freq.category as ValidDatabaseCategory] || freq.category,
-    premium: freq.is_premium
-  }));
-}
-
