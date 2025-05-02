@@ -44,7 +44,7 @@ const Category = () => {
   }, [category, navigate]);
   
   useEffect(() => {
-    // Load frequencies for the selected category
+    // Load frequencies for all visitors (no auth check)
     if (category && categoryData) {
       console.log("Fetching frequencies for category:", category);
       setLoading(true);
@@ -58,6 +58,10 @@ const Category = () => {
           if (data.length === 0) {
             toast.info('Sem frequências', {
               description: 'Nenhuma frequência encontrada nesta categoria.'
+            });
+          } else {
+            toast.success('Frequências carregadas', {
+              description: `${data.length} frequências encontradas`
             });
           }
         })
@@ -141,9 +145,11 @@ const Category = () => {
           ) : (
             <div className="text-center py-12">
               <p className="text-muted-foreground">Nenhuma frequência encontrada nesta categoria.</p>
-              <Button onClick={() => seedInitialFrequencies().then(() => window.location.reload())} className="mt-4">
-                Carregar frequências padrão
-              </Button>
+              {user && (
+                <Button onClick={() => seedInitialFrequencies().then(() => window.location.reload())} className="mt-4">
+                  Carregar frequências padrão
+                </Button>
+              )}
             </div>
           )}
         </div>
