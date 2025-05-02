@@ -524,13 +524,13 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
 export async function seedDemoFrequencies() {
   console.log("Creating demo frequencies for all categories...");
   
-  // Define demo frequencies with proper typing
+  // Define demo frequencies with explicit types to avoid deep recursion
   type DemoFrequency = {
     hz: number;
     name: string;
     purpose: string;
     description: string;
-    category: ValidDatabaseCategory;
+    category: "sleep" | "healing" | "meditation" | "pain_relief" | "emotional" | "cognitive" | "solfeggio" | "spiritual" | "physical";
     premium: boolean;
     is_demo: boolean;
   };
@@ -630,7 +630,7 @@ export async function seedDemoFrequencies() {
         continue;
       }
       
-      // Insert the demo frequency - using proper types
+      // Insert the demo frequency with proper typing
       const { error } = await supabase
         .from('frequencies')
         .insert({
