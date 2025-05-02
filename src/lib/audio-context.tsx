@@ -1,10 +1,19 @@
-
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { toast } from '@/components/ui/sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePremium } from '@/hooks/use-premium';
 import { FrequencyData } from '@/lib/data';
 import { PremiumContentDialog } from '@/components/subscription/PremiumContentDialog';
+
+// Define the Screen Orientation API types that are missing in TypeScript
+interface ScreenOrientationExtended extends ScreenOrientation {
+  lock(orientation: 'portrait' | 'landscape' | 'portrait-primary' | 'portrait-secondary' | 'landscape-primary' | 'landscape-secondary'): Promise<void>;
+  unlock(): void;
+}
+
+interface ScreenExtended extends Screen {
+  orientation: ScreenOrientationExtended;
+}
 
 type AudioContextType = {
   isPlaying: boolean;
@@ -54,10 +63,13 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Lock screen orientation when audio is playing
   useEffect(() => {
     // Only attempt to lock orientation if playing and the API is supported
-    if (isPlaying && screen && screen.orientation) {
+    if (isPlaying && window.screen && 'orientation' in window.screen) {
       try {
+        // Cast screen to our extended type that includes the lock method
+        const screenExtended = window.screen as unknown as ScreenExtended;
+        
         // Lock to portrait orientation
-        screen.orientation.lock('portrait')
+        screenExtended.orientation.lock('portrait')
           .then(() => {
             console.log('Screen orientation locked to portrait');
           })
@@ -70,9 +82,10 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       
       // Unlock when component unmounts or playback stops
       return () => {
-        if (screen && screen.orientation) {
+        if (window.screen && 'orientation' in window.screen) {
           try {
-            screen.orientation.unlock();
+            const screenExtended = window.screen as unknown as ScreenExtended;
+            screenExtended.orientation.unlock();
             console.log('Screen orientation unlocked');
           } catch (error) {
             console.error('Error unlocking screen orientation:', error);
