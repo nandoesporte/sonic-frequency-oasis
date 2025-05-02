@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -35,6 +36,11 @@ export function Header() {
   // Determine if we're on the premium page to avoid adding the hash when already there
   const isPremiumPage = location.pathname === "/premium";
   const premiumPath = isPremiumPage ? "/premium#planos" : "/premium";
+  
+  const handleSignOut = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent default link behavior
+    signOut();
+  };
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -70,7 +76,12 @@ export function Header() {
           
           {user ? (
             <>
-              <Button variant="ghost" size="icon" onClick={() => signOut()} className="hidden sm:flex">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={handleSignOut} 
+                className="hidden sm:flex"
+              >
                 <LogOut className="h-5 w-5" />
               </Button>
               
@@ -123,7 +134,11 @@ export function Header() {
                 
                 {user ? (
                   <>
-                    <Button variant="ghost" onClick={() => signOut()} className="justify-start">
+                    <Button 
+                      variant="ghost" 
+                      onClick={handleSignOut} 
+                      className="justify-start"
+                    >
                       <LogOut className="mr-2 h-4 w-4" />
                       Sair
                     </Button>

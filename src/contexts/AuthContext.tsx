@@ -247,6 +247,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('Signing out user');
       setLoading(true);
       
+      // Clear local state BEFORE signout to prevent potential session errors
+      const userEmail = user?.email; // Store for the success message
+      
+      setUser(null);
+      setSession(null);
+      setIsAdmin(false);
+      
       const { error } = await supabase.auth.signOut();
       
       if (error) {
@@ -254,13 +261,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast.error('Erro ao sair', {
           description: 'Não foi possível fazer logout. Tente novamente.'
         });
-        throw error;
+        return;
       }
-      
-      // Clear local state AFTER successful signout
-      setUser(null);
-      setSession(null);
-      setIsAdmin(false);
       
       console.log('User signed out successfully');
       
