@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Header } from "@/components/header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -112,79 +111,64 @@ export default function Scientific() {
     <div className="min-h-screen bg-gradient-to-b from-purple-50/50 to-background dark:from-purple-900/10">
       <Header />
       
-      <main className="container mx-auto px-4 pt-24 pb-16">
-        <div className="text-center mb-8 max-w-3xl mx-auto">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4">
+      <main className="container mx-auto px-2 sm:px-4 pt-20 pb-12">
+        <div className="text-center mb-6 sm:mb-8 max-w-3xl mx-auto">
+          <h1 className="text-xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4">
             Frequências Sonoras Terapêuticas
-            <span className="block text-primary mt-2">Comprovação Científica</span>
+            <span className="block text-primary mt-1 sm:mt-2">Comprovação Científica</span>
           </h1>
-          <p className="text-base sm:text-xl text-muted-foreground">
+          <p className="text-sm sm:text-xl text-muted-foreground px-1">
             Descubra como as frequências sonoras podem transformar sua saúde e bem-estar,
             com base em estudos científicos rigorosos.
           </p>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-5 sm:mb-6">
           <Card className="bg-primary/5 border-primary/20">
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <Star className="h-5 w-5 text-primary" />
+            <CardHeader className="py-3 sm:pb-2 px-3 sm:px-6">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
+                <Star className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                 Benefícios Comprovados
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
                 Mais de 100 estudos científicos comprovam a eficácia das frequências sonoras terapêuticas
               </CardDescription>
             </CardHeader>
           </Card>
         </div>
 
-        <div className="mb-10">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            {isMobile ? (
-              <ScrollArea className="w-full">
-                <TabsList className="inline-flex w-auto px-2 py-1 overflow-x-auto no-scrollbar">
-                  {benefits.map((benefit) => (
-                    <TabsTrigger
-                      key={benefit.id}
-                      value={benefit.id}
-                      className="px-3 py-1.5 min-w-fit data-[state=active]:bg-primary/90 data-[state=active]:text-primary-foreground whitespace-nowrap transition-colors text-sm"
-                    >
-                      <benefit.icon className="h-3 w-3 mr-1.5" />
-                      {benefit.title}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </ScrollArea>
-            ) : (
-              <TabsList className="inline-flex w-auto px-4 py-2 overflow-x-auto no-scrollbar">
+        <div className="mb-8 sm:mb-10">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
+            <ScrollArea className="w-full pb-2">
+              <TabsList className="inline-flex w-auto px-1 sm:px-2 py-1 overflow-x-auto no-scrollbar">
                 {benefits.map((benefit) => (
                   <TabsTrigger
                     key={benefit.id}
                     value={benefit.id}
-                    className="min-w-fit data-[state=active]:bg-primary/90 data-[state=active]:text-primary-foreground whitespace-nowrap transition-colors"
+                    className="px-2 py-1 sm:px-3 sm:py-1.5 min-w-fit data-[state=active]:bg-primary/90 data-[state=active]:text-primary-foreground whitespace-nowrap transition-colors text-xs sm:text-sm"
                   >
-                    <benefit.icon className="h-4 w-4 mr-2" />
+                    <benefit.icon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     {benefit.title}
                   </TabsTrigger>
                 ))}
               </TabsList>
-            )}
+            </ScrollArea>
 
             {benefits.map((benefit) => (
-              <TabsContent key={benefit.id} value={benefit.id} className="focus-visible:outline-none">
-                <Card className="border-primary/20">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg sm:text-2xl">
-                      <benefit.icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+              <TabsContent key={benefit.id} value={benefit.id} className="focus-visible:outline-none mt-3 sm:mt-4">
+                <Card className="border-primary/20 overflow-hidden">
+                  <CardHeader className="py-3 px-3 sm:py-4 sm:px-6">
+                    <CardTitle className="flex items-center gap-1.5 sm:gap-2 text-lg sm:text-2xl">
+                      <benefit.icon className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
                       {benefit.title}
                     </CardTitle>
                     <div className="mt-2">
-                      <h4 className="text-xs sm:text-sm font-medium text-muted-foreground">Frequências utilizadas:</h4>
-                      <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-1">
+                      <h4 className="text-xs font-medium text-muted-foreground">Frequências utilizadas:</h4>
+                      <div className="flex flex-wrap gap-1 sm:gap-2 mt-1">
                         {benefit.frequencies.map((freq, idx) => (
                           <span 
                             key={idx} 
-                            className="bg-primary/10 text-primary px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium"
+                            className="bg-primary/10 text-primary px-2 sm:px-3 py-0.5 rounded-full text-xs font-medium"
                           >
                             {freq}
                           </span>
@@ -192,23 +176,23 @@ export default function Scientific() {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-5">
+                  <CardContent className="space-y-4 sm:space-y-5 py-2 px-3 sm:py-4 sm:px-6">
                     <div>
-                      <h3 className="font-medium mb-3 text-sm sm:text-base">Estudos Científicos</h3>
+                      <h3 className="font-medium mb-2 sm:mb-3 text-sm">Estudos Científicos</h3>
                       
                       {isMobile ? (
-                        <div className="space-y-3">
+                        <div className="space-y-2">
                           {benefit.studies.map((study, index) => (
                             <Collapsible key={index} open={openStudy === `${benefit.id}-${index}`}>
                               <CollapsibleTrigger 
                                 onClick={() => toggleStudy(`${benefit.id}-${index}`)}
-                                className="flex items-center justify-between w-full p-3 bg-background border rounded-lg text-sm font-medium"
+                                className="flex items-center justify-between w-full p-2 sm:p-3 bg-background border rounded-lg text-xs sm:text-sm font-medium"
                               >
-                                <span>{study.title}</span>
-                                <ChevronDown className={`w-4 h-4 transition-transform ${openStudy === `${benefit.id}-${index}` ? 'transform rotate-180' : ''}`} />
+                                <span className="text-left pr-2">{study.title}</span>
+                                <ChevronDown className={`w-4 h-4 flex-shrink-0 transition-transform ${openStudy === `${benefit.id}-${index}` ? 'transform rotate-180' : ''}`} />
                               </CollapsibleTrigger>
-                              <CollapsibleContent className="p-3 border-x border-b rounded-b-lg mt-px">
-                                <p className="text-sm text-muted-foreground">{study.description}</p>
+                              <CollapsibleContent className="p-2 sm:p-3 border-x border-b rounded-b-lg mt-px">
+                                <p className="text-xs sm:text-sm text-muted-foreground">{study.description}</p>
                               </CollapsibleContent>
                             </Collapsible>
                           ))}
@@ -233,9 +217,9 @@ export default function Scientific() {
                       )}
                     </div>
                     
-                    <div className="bg-primary/5 p-3 sm:p-4 rounded-lg">
-                      <p className="font-medium text-sm sm:text-base">Resumo dos Benefícios:</p>
-                      <p className="text-muted-foreground mt-1 text-sm">{benefit.summary}</p>
+                    <div className="bg-primary/5 p-2 sm:p-4 rounded-lg">
+                      <p className="font-medium text-xs sm:text-base mb-1">Resumo dos Benefícios:</p>
+                      <p className="text-muted-foreground text-xs sm:text-sm">{benefit.summary}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -244,10 +228,10 @@ export default function Scientific() {
           </Tabs>
         </div>
 
-        <div className="text-center mt-10">
-          <Button asChild size={isMobile ? "default" : "lg"} className="rounded-full">
+        <div className="text-center mt-8 sm:mt-10 pb-4">
+          <Button asChild size="default" className="w-full sm:w-auto rounded-full">
             <Link to="/premium">
-              {isMobile ? "Comece Agora" : "Comece Agora sua Jornada de Transformação"}
+              Comece Agora sua Jornada de Transformação
               <Star className="ml-2 h-4 w-4" />
             </Link>
           </Button>

@@ -32,35 +32,35 @@ export function ScientificEvidence() {
   ];
 
   return (
-    <section className="py-12 sm:py-16 bg-gradient-to-b from-purple-50/50 to-background dark:from-purple-900/10">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-8 sm:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+    <section className="py-10 sm:py-16 bg-gradient-to-b from-purple-50/50 to-background dark:from-purple-900/10">
+      <div className="container mx-auto px-3 sm:px-4">
+        <div className="text-center mb-6 sm:mb-12">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-4">
             Base <span className="text-primary">Científica</span>
           </h2>
-          <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xs sm:text-base text-muted-foreground max-w-2xl mx-auto">
             Nossa plataforma é fundamentada em pesquisas científicas e estudos comprovados
           </p>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 mb-6 sm:mb-8">
           {studies.map((study) => (
             <Card key={study.id} className="hover:bg-accent/5 transition-colors">
-              <CardHeader className={isMobile ? "py-3 px-4" : ""}>
-                <CardTitle className={`flex items-center gap-2 ${isMobile ? "text-base" : ""}`}>
-                  <Check className={`${isMobile ? "h-4 w-4" : "h-5 w-5"} text-primary`} />
+              <CardHeader className="py-3 px-4">
+                <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+                  <Check className="h-4 w-4 text-primary" />
                   {study.title}
                 </CardTitle>
               </CardHeader>
-              <CardContent className={isMobile ? "py-2 px-4 pb-4" : ""}>
-                <p className={`text-muted-foreground ${isMobile ? "text-sm" : ""}`}>{study.description}</p>
+              <CardContent className="py-2 px-4 pb-4">
+                <p className="text-xs sm:text-sm text-muted-foreground">{study.description}</p>
               </CardContent>
             </Card>
           ))}
         </div>
 
         <div className="text-center">
-          <Button asChild className="group" variant="outline" size={isMobile ? "default" : "lg"}>
+          <Button asChild className="group" variant="outline" size="default">
             <Link to="/scientific">
               Veja Mais Evidências Científicas
               <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
