@@ -28,7 +28,7 @@ export function Logo({
     >
       <div className="relative flex items-center justify-center">
         {/* Main circle */}
-        <div className="absolute w-full h-full bg-gradient-to-r from-primary/80 to-primary rounded-full animate-pulse-soft" />
+        <div className="absolute w-full h-full bg-gradient-to-r from-purple-400 to-purple-500 rounded-full animate-pulse-soft" />
         
         {/* Inner waveform icon */}
         <AudioWaveform 
@@ -40,7 +40,7 @@ export function Logo({
       
       {showText && (
         <div className="flex items-center font-bold">
-          <span className="text-primary">Frequency</span>
+          <span className="text-purple-500">Frequency</span>
           {variant !== "mobile" && <span className="ml-1">App</span>}
         </div>
       )}

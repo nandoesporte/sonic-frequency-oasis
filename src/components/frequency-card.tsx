@@ -31,7 +31,7 @@ export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardP
         "overflow-hidden hover-scale transition-all",
         variant === "trending" && "border-purple-light bg-purple-light/10",
         isCurrentlyPlaying && "border-primary",
-        frequency.premium && !isPremium && "border-amber-200"
+        frequency.premium && !isPremium && "border-purple-300"
       )}>
         <div className="flex items-center p-4">
           <Button
@@ -40,7 +40,7 @@ export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardP
             size="icon"
             className={cn(
               "w-10 h-10 rounded-full mr-3 flex-shrink-0",
-              isCurrentlyPlaying ? "bg-primary text-white" : "bg-secondary"
+              isCurrentlyPlaying ? "bg-purple-500 text-white" : "bg-secondary"
             )}
           >
             <Play className="h-5 w-5 ml-0.5" />
@@ -50,7 +50,7 @@ export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardP
             <h3 className="font-semibold truncate">
               {frequency.name}
               {frequency.premium && (
-                <Crown className="inline-block w-4 h-4 ml-1 text-amber-500" />
+                <Crown className="inline-block w-4 h-4 ml-1 text-purple-500" />
               )}
             </h3>
             <p className="text-sm text-muted-foreground">
@@ -82,13 +82,13 @@ export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardP
     <Card className={cn(
       "overflow-hidden hover-scale transition-all",
       isCurrentlyPlaying && "border-primary",
-      frequency.premium && !isPremium && "border-amber-200"
+      frequency.premium && !isPremium && "border-purple-300"
     )}>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle>{frequency.name}</CardTitle>
           {frequency.premium && (
-            <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-200">
+            <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-200">
               <Crown className="w-3 h-3 mr-1" />
               Premium
             </Badge>
@@ -110,7 +110,7 @@ export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardP
           variant={isCurrentlyPlaying ? "default" : "secondary"}
           className={cn(
             "w-full mr-2", 
-            isCurrentlyPlaying && "bg-primary hover:bg-primary/90"
+            isCurrentlyPlaying && "bg-purple-500 hover:bg-purple-600"
           )}
         >
           <Play className="mr-2 h-4 w-4" />

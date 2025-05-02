@@ -33,8 +33,8 @@ export function PremiumContentDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="mx-auto mb-4 bg-amber-100 dark:bg-amber-900/40 p-3 rounded-full">
-            <Crown className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+          <div className="mx-auto mb-4 bg-purple-100 dark:bg-purple-900/40 p-3 rounded-full">
+            <Crown className="h-8 w-8 text-purple-500 dark:text-purple-300" />
           </div>
           <DialogTitle className="text-center text-xl">
             Conteúdo Premium
@@ -48,15 +48,15 @@ export function PremiumContentDialog({
             <h4 className="font-medium mb-2">Benefícios do Premium:</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-center">
-                <span className="bg-green-500 rounded-full h-1.5 w-1.5 mr-2"></span>
+                <span className="bg-purple-500 rounded-full h-1.5 w-1.5 mr-2"></span>
                 Acesso ilimitado a todas as frequências
               </li>
               <li className="flex items-center">
-                <span className="bg-green-500 rounded-full h-1.5 w-1.5 mr-2"></span>
+                <span className="bg-purple-500 rounded-full h-1.5 w-1.5 mr-2"></span>
                 Conteúdo exclusivo atualizado mensalmente
               </li>
               <li className="flex items-center">
-                <span className="bg-green-500 rounded-full h-1.5 w-1.5 mr-2"></span>
+                <span className="bg-purple-500 rounded-full h-1.5 w-1.5 mr-2"></span>
                 Sem anúncios ou interrupções
               </li>
             </ul>
@@ -68,7 +68,7 @@ export function PremiumContentDialog({
           </Button>
           <Button 
             onClick={handleSubscribe} 
-            className="sm:w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
+            className="sm:w-full bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700"
           >
             Ver planos de assinatura
           </Button>

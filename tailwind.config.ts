@@ -63,11 +63,11 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Frequency app custom colors
+				// Frequency app custom colors based on the image
 				purple: {
-					light: '#D6BCFA',
-					DEFAULT: '#9b87f5',
-					dark: '#7E69AB'
+					light: '#E5DEFF', // Lighter shade for backgrounds
+					DEFAULT: '#A78BFA', // Main purple from the image
+					dark: '#7E69AB' // Darker shade for hover states
 				},
 				blue: {
 					light: '#D3E4FD'
@@ -75,6 +75,11 @@ export default {
 				neutral: {
 					DEFAULT: '#8E9196',
 					dark: '#1A1F2C'
+				},
+				premium: {
+					DEFAULT: '#B56BFF', // Premium button color
+					light: '#E0CCFF',
+					dark: '#9452CC'
 				}
 			},
 			borderRadius: {
