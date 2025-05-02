@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getCategoryCount } from "@/lib/data";
 import { useAuth } from "@/contexts/AuthContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CategoryCardProps {
   id: string;
@@ -19,6 +20,7 @@ export function CategoryCard({ id, name, description, icon }: CategoryCardProps)
   const [count, setCount] = useState<number | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     // Use a more efficient approach to fetch counts - only when the card is mounted
@@ -48,28 +50,36 @@ export function CategoryCard({ id, name, description, icon }: CategoryCardProps)
       className="overflow-hidden hover-scale cursor-pointer"
       onClick={handleClick}
     >
-      <CardHeader className="pb-2">
+      <CardHeader className={cn("pb-2", isMobile && "p-3")}>
         <div className="flex justify-between items-start">
           <div className="flex items-center">
-            {icon}
-            <CardTitle className="ml-2 text-xl">{name}</CardTitle>
+            <div className={cn(isMobile ? "mr-2" : "mr-3")}>{icon}</div>
+            <CardTitle className={cn("ml-2 text-xl", isMobile && "text-base mobile-card-title")}>
+              {name}
+            </CardTitle>
           </div>
         </div>
       </CardHeader>
       
-      <CardContent>
-        <CardDescription className="mb-3">{description}</CardDescription>
+      <CardContent className={cn(isMobile && "p-3 pt-0")}>
+        <CardDescription className={cn("mb-3", isMobile && "text-sm leading-snug")}>
+          {description}
+        </CardDescription>
         
         <div className="flex items-center justify-between">
           {count !== null && (
-            <span className="text-xs text-muted-foreground">
+            <span className={cn("text-xs text-muted-foreground", isMobile && "text-xs")}>
               {count} frequências
             </span>
           )}
           
-          <Button variant="ghost" size="sm" className="ml-auto">
+          <Button 
+            variant="ghost" 
+            size={isMobile ? "sm" : "sm"} 
+            className="ml-auto"
+          >
             <span className="flex items-center">
-              Explorar <ArrowRight className="ml-1 h-3 w-3" />
+              Explorar <ArrowRight className={cn("ml-1 h-3 w-3", isMobile && "h-3 w-3")} />
             </span>
           </Button>
         </div>
