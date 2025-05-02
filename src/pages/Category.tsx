@@ -59,10 +59,6 @@ const Category = () => {
             toast.info('Sem frequências', {
               description: 'Nenhuma frequência encontrada nesta categoria.'
             });
-          } else {
-            toast.success('Frequências carregadas', {
-              description: `${data.length} frequências encontradas`
-            });
           }
         })
         .catch(err => {
