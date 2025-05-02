@@ -524,24 +524,14 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
 export async function seedDemoFrequencies() {
   console.log("Creating demo frequencies for all categories...");
   
-  // Define demo frequencies with explicit types to avoid deep recursion
-  type DemoFrequency = {
-    hz: number;
-    name: string;
-    purpose: string;
-    description: string;
-    category: "sleep" | "healing" | "meditation" | "pain_relief" | "emotional" | "cognitive" | "solfeggio" | "spiritual" | "physical";
-    premium: boolean;
-    is_demo: boolean;
-  };
-  
-  const demoFrequencies: DemoFrequency[] = [
+  // Define demo frequencies using a simple structure to avoid type recursion
+  const demoFrequencies = [
     {
       hz: 432,
       name: "Demo - Harmonia Universal",
       purpose: "Demonstração - Experimente agora!",
       description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "spiritual",
+      category: "spiritual" as ValidDatabaseCategory,
       premium: false,
       is_demo: true
     },
@@ -550,7 +540,7 @@ export async function seedDemoFrequencies() {
       name: "Demo - Frequência de Cura",
       purpose: "Demonstração - Experimente agora!",
       description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "healing",
+      category: "healing" as ValidDatabaseCategory,
       premium: false,
       is_demo: true
     },
@@ -559,7 +549,7 @@ export async function seedDemoFrequencies() {
       name: "Demo - Liberação Emocional",
       purpose: "Demonstração - Experimente agora!",
       description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "emotional",
+      category: "emotional" as ValidDatabaseCategory,
       premium: false,
       is_demo: true
     },
@@ -568,7 +558,7 @@ export async function seedDemoFrequencies() {
       name: "Demo - Alívio da Dor",
       purpose: "Demonstração - Experimente agora!",
       description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "pain_relief",
+      category: "pain_relief" as ValidDatabaseCategory,
       premium: false,
       is_demo: true
     },
@@ -577,7 +567,7 @@ export async function seedDemoFrequencies() {
       name: "Demo - Foco Mental",
       purpose: "Demonstração - Experimente agora!",
       description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "cognitive",
+      category: "cognitive" as ValidDatabaseCategory,
       premium: false,
       is_demo: true
     },
@@ -586,7 +576,7 @@ export async function seedDemoFrequencies() {
       name: "Demo - Solfeggio",
       purpose: "Demonstração - Experimente agora!",
       description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "solfeggio",
+      category: "solfeggio" as ValidDatabaseCategory,
       premium: false,
       is_demo: true
     },
@@ -595,7 +585,7 @@ export async function seedDemoFrequencies() {
       name: "Demo - Sono Profundo",
       purpose: "Demonstração - Experimente agora!",
       description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "sleep",
+      category: "sleep" as ValidDatabaseCategory,
       premium: false,
       is_demo: true
     },
@@ -604,7 +594,7 @@ export async function seedDemoFrequencies() {
       name: "Demo - Saúde Física",
       purpose: "Demonstração - Experimente agora!",
       description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "physical",
+      category: "physical" as ValidDatabaseCategory,
       premium: false,
       is_demo: true
     }
