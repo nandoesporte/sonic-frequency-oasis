@@ -43,11 +43,22 @@ const Category = () => {
     }
   }, [category, navigate]);
   
-  // Remove the authentication check effect that was redirecting visitors to login
+  useEffect(() => {
+    // Redirect to auth if not logged in and auth check is complete
+    if (!authLoading && !user) {
+      console.log("User not authenticated, redirecting to login");
+      toast.error("Acesso negado", {
+        description: "Você precisa fazer login para acessar as frequências"
+      });
+      navigate("/auth");
+      return;
+    }
+  }, [user, authLoading, navigate]);
   
   useEffect(() => {
-    // Fetch frequencies for the category (for both logged-in users and visitors)
-    if (category && categoryData && !loading) {
+    // Only fetch frequencies if we have both user and category data
+    // and authentication check is complete (not loading)
+    if (category && user && categoryData && !authLoading) {
       console.log("Fetching frequencies for category:", category);
       setLoading(true);
       setError(null);
@@ -77,21 +88,26 @@ const Category = () => {
         .finally(() => {
           setLoading(false);
         });
-    } else if (!loading) {
-      // If there's no category data
+    } else if (!authLoading) {
+      // If auth check is complete but there's no category data
       setLoading(false);
     }
-  }, [category, categoryData, loading]);
+  }, [category, user, categoryData, authLoading]);
   
-  // Show a loading state only during initial load
-  if (loading && frequencies.length === 0) {
+  // Show a better loading state with immediate feedback
+  if (authLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
-        <p className="text-xl font-medium">Carregando frequências...</p>
+        <p className="text-xl font-medium">Verificando autenticação...</p>
         <p className="text-muted-foreground mt-2">Aguarde um momento</p>
       </div>
     );
+  }
+
+  // Don't render main content if not authenticated
+  if (!user && !authLoading) {
+    return null; // Return null as useEffect will handle redirection
   }
   
   if (!categoryData && !loading) {
