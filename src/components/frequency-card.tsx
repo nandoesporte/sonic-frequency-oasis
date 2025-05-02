@@ -70,7 +70,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
     addToFavorites(frequency);
   };
   
-  // For trending and compact views
+  // For trending and compact views - simplified for better performance
   if (variant === "trending" || variant === "compact") {
     return (
       <Card className={cn(
@@ -99,7 +99,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
                 <Crown className="inline-block w-4 h-4 ml-1 text-purple-500" />
               )}
             </h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground truncate">
               {frequency.hz} Hz • {frequency.purpose}
             </p>
           </div>

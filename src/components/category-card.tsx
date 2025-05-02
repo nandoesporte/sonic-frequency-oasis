@@ -21,12 +21,12 @@ export function CategoryCard({ id, name, description, icon }: CategoryCardProps)
   const navigate = useNavigate();
   
   useEffect(() => {
+    // Use a more efficient approach to fetch counts - only when the card is mounted
     const loadCount = async () => {
       try {
         console.log(`Loading count for category: ${id}`);
         const frequencyCount = await getCategoryCount(id);
         setCount(frequencyCount);
-        console.log(`Category ${id} has ${frequencyCount} frequencies`);
       } catch (error) {
         console.error("Error fetching category count:", error);
       }

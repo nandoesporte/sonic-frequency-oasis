@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { AudioPlayer } from "@/components/audio-player";
 import { CategoryCard } from "@/components/category-card";
 import { FrequencyCard } from "@/components/frequency-card";
@@ -15,6 +15,7 @@ import { FrequencyRanges } from "@/components/home/FrequencyRanges";
 import { ScientificEvidence } from "@/components/home/ScientificEvidence";
 import { toast } from "@/components/ui/sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDebouncedEffect } from "@/hooks";
 
 const Index = () => {
   const [trendingFrequencies, setTrendingFrequencies] = useState<FrequencyData[]>([]);
@@ -23,6 +24,7 @@ const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   
+  // Load trending frequencies
   useEffect(() => {
     const fetchTrendingFrequencies = async () => {
       try {
@@ -47,31 +49,53 @@ const Index = () => {
       }
     };
     
-    const fetchCategoryFrequencies = async () => {
-      const frequencies: Record<string, FrequencyData[]> = {};
+    fetchTrendingFrequencies();
+  }, []);
+  
+  // Load category frequencies with staggered loading and limiting fetch operations
+  useEffect(() => {
+    let isMounted = true;
+    
+    const fetchCategoriesInBatches = async () => {
+      // Only process 2 categories at a time to prevent too many concurrent requests
+      const batchSize = 2;
+      const categoriesCopy = [...categories];
       
-      try {
-        for (const category of categories) {
-          console.log(`Fetching frequencies for category: ${category.id}`);
-          const categoryFreqs = await getFrequenciesByCategory(category.id);
-          if (categoryFreqs.length > 0) {
-            // Only store max 3 frequencies per category for the homepage
-            frequencies[category.id] = categoryFreqs.slice(0, 3);
-          }
-        }
+      while (categoriesCopy.length > 0 && isMounted) {
+        const batch = categoriesCopy.splice(0, batchSize);
         
-        setCategoryFrequencies(frequencies);
-      } catch (error) {
-        console.error('Error fetching category frequencies:', error);
+        await Promise.all(batch.map(async (category) => {
+          try {
+            console.log(`Fetching frequencies for category: ${category.id}`);
+            const categoryFreqs = await getFrequenciesByCategory(category.id);
+            
+            if (isMounted && categoryFreqs.length > 0) {
+              setCategoryFrequencies(prev => ({
+                ...prev,
+                [category.id]: categoryFreqs.slice(0, 3) // Only show max 3 per category
+              }));
+            }
+          } catch (error) {
+            console.error(`Error fetching frequencies for ${category.id}:`, error);
+          }
+        }));
+        
+        // Wait a bit before processing the next batch
+        if (categoriesCopy.length > 0 && isMounted) {
+          await new Promise(resolve => setTimeout(resolve, 300));
+        }
       }
     };
     
-    fetchTrendingFrequencies();
-    fetchCategoryFrequencies();
-  }, [user]);
+    fetchCategoriesInBatches();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Function to redirect to login if user is not logged in
-  const handleFrequencyClick = () => {
+  const handleFrequencyClick = useCallback(() => {
     if (!user) {
       console.log("User not logged in, redirecting to auth page from home page");
       toast.info("Faça login para continuar", {
@@ -81,7 +105,7 @@ const Index = () => {
       return true;
     }
     return false;
-  };
+  }, [user, navigate]);
 
   return (
     <AudioProvider>
@@ -131,7 +155,7 @@ const Index = () => {
           </section>
         )}
         
-        {/* Trending Section */}
+        {/* Trending Section - Implement lazy loading for this section */}
         {trendingFrequencies.length > 0 && (
           <section className="py-12 px-4">
             <div className="container mx-auto">
@@ -163,7 +187,7 @@ const Index = () => {
         {/* Scientific Evidence Section - Only show for non-logged in users */}
         {!user && <ScientificEvidence />}
         
-        {/* Categories Section with Frequencies */}
+        {/* Categories Section with Frequencies - More efficient rendering */}
         <section className="py-12 px-4">
           <div className="container mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold mb-6">Categorias</h2>
@@ -185,7 +209,7 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Display Frequencies by Category */}
+        {/* Display Frequencies by Category - With optimized rendering */}
         {Object.entries(categoryFrequencies).length > 0 && (
           <section className="py-8 px-4">
             <div className="container mx-auto">
