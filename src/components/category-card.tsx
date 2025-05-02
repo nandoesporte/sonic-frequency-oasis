@@ -51,8 +51,9 @@ export function CategoryCard({ id, name, description, icon, requiresAuth = false
       return;
     }
     
-    // Normal navigation
+    // Normal navigation with scroll to top
     console.log(`Navigating to category: ${id}`);
+    window.scrollTo(0, 0);
     navigate(`/categories/${id}`);
   };
   

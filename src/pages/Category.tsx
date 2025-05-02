@@ -22,6 +22,11 @@ const Category = () => {
 
   console.log("Category page - Auth state:", { user: !!user, authLoading, category });
 
+  // Scroll to top when component mounts or category changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [category]);
+  
   useEffect(() => {
     // Update category data when param changes
     if (category) {
