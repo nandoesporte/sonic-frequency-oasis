@@ -68,7 +68,7 @@ const Index = () => {
     
     fetchTrendingFrequencies();
     fetchCategoryFrequencies();
-  }, [user]);
+  }, []);
 
   // Function to redirect to login if user is not logged in
   const handleFrequencyClick = () => {
