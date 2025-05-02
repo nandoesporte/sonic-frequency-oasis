@@ -55,7 +55,7 @@ export function CategoryCard({ id, name, description, icon }: CategoryCardProps)
         <div className="flex justify-between items-start">
           <div className="flex items-center">
             {icon}
-            <CardTitle className="ml-2">{name}</CardTitle>
+            <CardTitle className="ml-2 text-xl">{name}</CardTitle>
           </div>
         </div>
       </CardHeader>

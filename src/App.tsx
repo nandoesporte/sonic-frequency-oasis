@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -36,16 +35,17 @@ function ScrollToTop() {
   return null;
 }
 
-// Footer component that conditionally renders based on auth state
+// Footer component that conditionally renders based on auth state and current path
 function ConditionalFooter() {
   const { user } = useAuth();
+  const location = useLocation();
   
-  // Only render footer if user is not logged in
-  if (!user) {
-    return <Footer />;
+  // Don't render footer if user is not logged in or on auth page
+  if (!user || location.pathname === '/auth') {
+    return null;
   }
   
-  return null;
+  return <Footer />;
 }
 
 // The main application component

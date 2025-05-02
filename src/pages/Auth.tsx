@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
+import { Logo } from '@/components/ui/logo';
 
 // Define proper schema for login and registration
 const loginSchema = z.object({
@@ -155,7 +155,12 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4">
+      {/* Logo section added here */}
+      <div className="mb-8">
+        <Logo variant="default" className="scale-125" />
+      </div>
+
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>{isLogin ? 'Entrar' : 'Criar Conta'}</CardTitle>
