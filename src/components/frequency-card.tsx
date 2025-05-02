@@ -4,43 +4,24 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { useAudio } from "@/lib/audio-context";
 import { FrequencyData } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
-import { Play, Heart, Crown, Lock } from "lucide-react";
+import { Play, Heart, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePremium } from "@/hooks/use-premium";
-import { useAuth } from "@/hooks";
 
 interface FrequencyCardProps {
   frequency: FrequencyData;
   variant?: "default" | "trending" | "compact";
-  onPremiumContent?: (frequency: FrequencyData) => void;
 }
 
-export function FrequencyCard({ frequency, variant = "default", onPremiumContent }: FrequencyCardProps) {
+export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardProps) {
   const { play, isPlaying, currentFrequency, addToFavorites, favorites } = useAudio();
   const { isPremium } = usePremium();
-  const { user } = useAuth();
   
   const isCurrentlyPlaying = isPlaying && currentFrequency?.id === frequency.id;
   const isFavorite = favorites.some(f => f.id === frequency.id);
   
   const handlePlay = () => {
-    if (frequency.premium && (!user || !isPremium)) {
-      if (onPremiumContent) {
-        onPremiumContent(frequency);
-      }
-      return;
-    }
     play(frequency);
-  };
-  
-  const handleFavorite = () => {
-    if (!user) {
-      if (onPremiumContent) {
-        onPremiumContent(frequency);
-      }
-      return;
-    }
-    addToFavorites(frequency);
   };
   
   // For trending and compact views
@@ -62,11 +43,7 @@ export function FrequencyCard({ frequency, variant = "default", onPremiumContent
               isCurrentlyPlaying ? "bg-purple-500 text-white" : "bg-secondary"
             )}
           >
-            {frequency.premium && (!user || !isPremium) ? (
-              <Lock className="h-4 w-4" />
-            ) : (
-              <Play className="h-5 w-5 ml-0.5" />
-            )}
+            <Play className="h-5 w-5 ml-0.5" />
           </Button>
           
           <div className="flex-grow min-w-0">
@@ -84,7 +61,7 @@ export function FrequencyCard({ frequency, variant = "default", onPremiumContent
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={handleFavorite}
+            onClick={() => addToFavorites(frequency)}
             className={cn(
               "flex-shrink-0",
               isFavorite && "text-red-500"
@@ -133,27 +110,17 @@ export function FrequencyCard({ frequency, variant = "default", onPremiumContent
           variant={isCurrentlyPlaying ? "default" : "secondary"}
           className={cn(
             "w-full mr-2", 
-            isCurrentlyPlaying && "bg-purple-500 hover:bg-purple-600",
-            frequency.premium && (!user || !isPremium) && "bg-purple-200 hover:bg-purple-300 dark:bg-purple-900/30 dark:hover:bg-purple-800/50"
+            isCurrentlyPlaying && "bg-purple-500 hover:bg-purple-600"
           )}
         >
-          {frequency.premium && (!user || !isPremium) ? (
-            <>
-              <Lock className="mr-2 h-4 w-4" />
-              Conteúdo Premium
-            </>
-          ) : (
-            <>
-              <Play className="mr-2 h-4 w-4" />
-              {isCurrentlyPlaying ? "Tocando" : "Tocar Agora"}
-            </>
-          )}
+          <Play className="mr-2 h-4 w-4" />
+          {isCurrentlyPlaying ? "Tocando" : "Tocar Agora"}
         </Button>
         
         <Button 
           variant="outline" 
           size="icon" 
-          onClick={handleFavorite}
+          onClick={() => addToFavorites(frequency)}
           className={cn(
             isFavorite && "text-red-500 border-red-200"
           )}

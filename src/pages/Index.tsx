@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { AudioPlayer } from "@/components/audio-player";
 import { CategoryCard } from "@/components/category-card";
@@ -14,17 +13,16 @@ import { PricingSection } from "@/components/subscription/PricingSection";
 import { FrequencyRanges } from "@/components/home/FrequencyRanges";
 import { ScientificEvidence } from "@/components/home/ScientificEvidence";
 import { toast } from "@/components/ui/sonner";
-import { PremiumContentDialog } from "@/components/subscription/PremiumContentDialog";
 
 const Index = () => {
   const [trendingFrequencies, setTrendingFrequencies] = useState<FrequencyData[]>([]);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
-  const [premiumDialogOpen, setPremiumDialogOpen] = useState(false);
-  const [selectedFrequency, setSelectedFrequency] = useState<FrequencyData | null>(null);
   
   useEffect(() => {
     const fetchTrendingFrequencies = async () => {
+      if (!user) return;
+      
       try {
         setLoading(true);
         console.log("Fetching trending frequencies for homepage...");
@@ -48,12 +46,7 @@ const Index = () => {
     };
     
     fetchTrendingFrequencies();
-  }, []);
-
-  const handlePremiumContent = (frequency: FrequencyData) => {
-    setSelectedFrequency(frequency);
-    setPremiumDialogOpen(true);
-  };
+  }, [user]);
 
   return (
     <AudioProvider>
@@ -103,48 +96,17 @@ const Index = () => {
           </section>
         )}
         
-        {/* Frequency Ranges Section - Show for all users now */}
-        <FrequencyRanges />
+        {/* Frequency Ranges Section - Only show for non-logged in users */}
+        {!user && <FrequencyRanges />}
         
-        {/* Scientific Evidence Section - Show for all users now */}
-        <ScientificEvidence />
-        
-        {/* Trending Frequencies Section - Show for all users now */}
-        {trendingFrequencies.length > 0 && (
-          <section className="py-12 px-4">
-            <div className="container mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6">Frequências em Alta</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {trendingFrequencies.map((frequency) => (
-                  <FrequencyCard 
-                    key={frequency.id} 
-                    frequency={frequency} 
-                    variant="trending"
-                    onPremiumContent={handlePremiumContent}
-                  />
-                ))}
-              </div>
-              
-              {!user && (
-                <div className="text-center mt-8">
-                  <Button asChild variant="outline">
-                    <Link to="/auth">
-                      Entrar para acessar mais frequências
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
+        {/* Scientific Evidence Section - Only show for non-logged in users */}
+        {!user && <ScientificEvidence />}
         
         {/* Pricing Section - Only show for non-logged in users */}
         {!user && <PricingSection />}
         
-        {/* Categories Section - Show for all users */}
-        <section className="py-12 px-4">
+        {/* Categories Section */}
+        <section className={`py-12 px-4 ${user ? '' : ''}`}>
           <div className="container mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold mb-6">Categorias</h2>
             
@@ -158,7 +120,7 @@ const Index = () => {
                     name={category.name}
                     description={category.description}
                     icon={<CategoryIcon className="h-6 w-6" />}
-                    requiresAuth={false} // Now allow all users to access categories
+                    requiresAuth={!user}
                   />
                 );
               })}
@@ -167,11 +129,6 @@ const Index = () => {
         </section>
         
         <AudioPlayer />
-        <PremiumContentDialog 
-          open={premiumDialogOpen}
-          onOpenChange={setPremiumDialogOpen}
-          frequencyName={selectedFrequency?.name}
-        />
       </div>
     </AudioProvider>
   );
