@@ -38,8 +38,9 @@ function ScrollToTop() {
 // The main application component
 function AppContent() {
   useEffect(() => {
+    // Alterado para preferir o tema escuro por padrão
     const theme = localStorage.getItem("theme") || 
-      (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "dark");
     
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -91,3 +92,4 @@ function App() {
 }
 
 export default App;
+

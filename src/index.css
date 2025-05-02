@@ -37,33 +37,33 @@
   }
  
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 210 40% 98%;
+    --background: 220 10% 10%; /* Cinza escuro quase preto para o fundo */
+    --foreground: 210 40% 95%; /* Texto mais claro para melhor contraste */
  
-    --card: 240 10% 3.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 10% 12%; /* Cinza escuro para cards */
+    --card-foreground: 210 40% 95%; /* Texto claro para cards */
  
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 220 10% 10%; /* Cinza escuro para popovers */
+    --popover-foreground: 210 40% 95%; /* Texto claro para popovers */
  
-    --primary: 260 70% 70%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 260 70% 70%; /* Mantém a cor primária da marca */
+    --primary-foreground: 210 40% 98%; /* Texto claro para elementos primários */
  
-    --secondary: 260 50% 20%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 220 8% 18%; /* Cinza escuro para elementos secundários */
+    --secondary-foreground: 210 40% 95%; /* Texto claro para elementos secundários */
  
-    --muted: 260 30% 20%;
-    --muted-foreground: 260 30% 70%;
+    --muted: 220 8% 16%; /* Cinza escuro para elementos atenuados */
+    --muted-foreground: 220 10% 60%; /* Texto mais apagado mas ainda legível */
  
-    --accent: 260 40% 20%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 220 8% 15%; /* Cinza escuro para acentos */
+    --accent-foreground: 210 40% 95%; /* Texto claro para acentos */
  
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
  
-    --border: 260 30% 25%;
-    --input: 260 30% 25%;
-    --ring: 260 70% 70%;
+    --border: 220 8% 20%; /* Bordas em cinza escuro */
+    --input: 220 8% 18%; /* Inputs em cinza escuro */
+    --ring: 260 60% 60%; /* Mantém o ring visível */
   }
 }
  
@@ -95,3 +95,4 @@
 .animate-pulse-soft {
   animation: pulse-soft 2s ease-in-out infinite;
 }
+
