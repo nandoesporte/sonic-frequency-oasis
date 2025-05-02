@@ -4,7 +4,7 @@ import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
 import { FrequencyCard } from "@/components/frequency-card";
 import { AudioProvider } from "@/lib/audio-context";
-import { getCategoryById, getFrequenciesByCategory, FrequencyData } from "@/lib/data";
+import { getCategoryById, getFrequenciesByCategory, FrequencyData, seedInitialFrequencies } from "@/lib/data";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -145,6 +145,11 @@ const Category = () => {
           ) : (
             <div className="text-center py-12">
               <p className="text-muted-foreground">Nenhuma frequência encontrada nesta categoria.</p>
+              {user && (
+                <Button onClick={() => seedInitialFrequencies().then(() => window.location.reload())} className="mt-4">
+                  Carregar frequências padrão
+                </Button>
+              )}
             </div>
           )}
         </div>
