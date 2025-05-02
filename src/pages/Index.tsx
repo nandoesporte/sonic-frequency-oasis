@@ -19,7 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const Index = () => {
   const [trendingFrequencies, setTrendingFrequencies] = useState<FrequencyData[]>([]);
   const [categoryFrequencies, setCategoryFrequencies] = useState<Record<string, FrequencyData[]>>({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
   
@@ -68,7 +68,7 @@ const Index = () => {
     
     fetchTrendingFrequencies();
     fetchCategoryFrequencies();
-  }, []);
+  }, [user]);
 
   // Function to redirect to login if user is not logged in
   const handleFrequencyClick = () => {
@@ -163,7 +163,7 @@ const Index = () => {
         {/* Scientific Evidence Section - Only show for non-logged in users */}
         {!user && <ScientificEvidence />}
         
-        {/* Categories Preview Section - For all users */}
+        {/* Categories Section with Frequencies */}
         <section className="py-12 px-4">
           <div className="container mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold mb-6">Categorias</h2>
@@ -185,13 +185,13 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Display Frequencies by Category - For all users */}
-        <section className="py-8 px-4">
-          <div className="container mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Explore Frequências por Categoria</h2>
-            
-            {Object.entries(categoryFrequencies).length > 0 ? (
-              Object.entries(categoryFrequencies).map(([categoryId, frequencies]) => {
+        {/* Display Frequencies by Category */}
+        {Object.entries(categoryFrequencies).length > 0 && (
+          <section className="py-8 px-4">
+            <div className="container mx-auto">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6">Explore Frequências por Categoria</h2>
+              
+              {Object.entries(categoryFrequencies).map(([categoryId, frequencies]) => {
                 const category = categories.find(cat => cat.id === categoryId);
                 if (!category || frequencies.length === 0) return null;
                 
@@ -226,19 +226,10 @@ const Index = () => {
                     </CardContent>
                   </Card>
                 );
-              })
-            ) : loading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                <p className="text-muted-foreground mt-4">Carregando frequências...</p>
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">Nenhuma frequência encontrada.</p>
-              </div>
-            )}
-          </div>
-        </section>
+              })}
+            </div>
+          </section>
+        )}
         
         {/* Pricing Section - Only show for non-logged in users */}
         {!user && <PricingSection />}

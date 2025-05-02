@@ -69,18 +69,14 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
   if (variant === "trending" || variant === "compact") {
     return (
       <Card className={cn(
-        "overflow-hidden hover-scale transition-all cursor-pointer",
+        "overflow-hidden hover-scale transition-all",
         variant === "trending" && "border-purple-light bg-purple-light/10",
         isCurrentlyPlaying && "border-primary",
         frequency.premium && !isPremium && "border-purple-300"
-      )}
-      onClick={handlePlay}>
+      )}>
         <div className="flex items-center p-4">
           <Button
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent card click event
-              handlePlay();
-            }}
+            onClick={handlePlay}
             variant="secondary"
             size="icon"
             className={cn(
@@ -106,10 +102,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent card click event
-              handleAddToFavorites();
-            }}
+            onClick={handleAddToFavorites}
             className={cn(
               "flex-shrink-0",
               isFavorite && "text-red-500"
@@ -128,11 +121,10 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
   // Default full card
   return (
     <Card className={cn(
-      "overflow-hidden hover-scale transition-all cursor-pointer",
+      "overflow-hidden hover-scale transition-all",
       isCurrentlyPlaying && "border-primary",
       frequency.premium && !isPremium && "border-purple-300"
-    )}
-    onClick={handlePlay}>
+    )}>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-xl">{frequency.name}</CardTitle>
@@ -155,10 +147,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
       
       <CardFooter className="flex justify-between">
         <Button
-          onClick={(e) => {
-            e.stopPropagation(); // Prevent card click event
-            handlePlay();
-          }}
+          onClick={handlePlay}
           variant={isCurrentlyPlaying ? "default" : "secondary"}
           className={cn(
             "w-full mr-2", 
@@ -181,10 +170,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
         <Button 
           variant="outline" 
           size="icon" 
-          onClick={(e) => {
-            e.stopPropagation(); // Prevent card click event
-            handleAddToFavorites();
-          }}
+          onClick={handleAddToFavorites}
           className={cn(
             isFavorite && "text-red-500 border-red-200"
           )}
