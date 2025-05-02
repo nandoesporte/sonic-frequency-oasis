@@ -4,9 +4,12 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { useAudio } from "@/lib/audio-context";
 import { FrequencyData } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
-import { Play, Heart, Crown } from "lucide-react";
+import { Play, Heart, Crown, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePremium } from "@/hooks/use-premium";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/components/ui/sonner";
 
 interface FrequencyCardProps {
   frequency: FrequencyData;
@@ -16,12 +19,43 @@ interface FrequencyCardProps {
 export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardProps) {
   const { play, isPlaying, currentFrequency, addToFavorites, favorites } = useAudio();
   const { isPremium } = usePremium();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   
   const isCurrentlyPlaying = isPlaying && currentFrequency?.id === frequency.id;
   const isFavorite = favorites.some(f => f.id === frequency.id);
   
   const handlePlay = () => {
+    if (!user) {
+      console.log("User not logged in, redirecting to auth page");
+      toast.info("Faça login para ouvir", {
+        description: "É necessário estar logado para ouvir as frequências"
+      });
+      navigate("/auth");
+      return;
+    }
+    
+    if (frequency.premium && !isPremium) {
+      toast.info("Conteúdo Premium", {
+        description: "Assine o plano premium para acessar esta frequência"
+      });
+      navigate("/premium");
+      return;
+    }
+    
     play(frequency);
+  };
+  
+  const handleAddToFavorites = () => {
+    if (!user) {
+      toast.info("Faça login para favoritar", {
+        description: "É necessário estar logado para adicionar aos favoritos"
+      });
+      navigate("/auth");
+      return;
+    }
+    
+    addToFavorites(frequency);
   };
   
   // For trending and compact views
@@ -43,7 +77,7 @@ export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardP
               isCurrentlyPlaying ? "bg-purple-500 text-white" : "bg-secondary"
             )}
           >
-            <Play className="h-5 w-5 ml-0.5" />
+            {frequency.premium && !isPremium ? <Lock className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
           </Button>
           
           <div className="flex-grow min-w-0">
@@ -61,7 +95,7 @@ export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardP
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={() => addToFavorites(frequency)}
+            onClick={handleAddToFavorites}
             className={cn(
               "flex-shrink-0",
               isFavorite && "text-red-500"
@@ -113,14 +147,23 @@ export function FrequencyCard({ frequency, variant = "default" }: FrequencyCardP
             isCurrentlyPlaying && "bg-purple-500 hover:bg-purple-600"
           )}
         >
-          <Play className="mr-2 h-4 w-4" />
-          {isCurrentlyPlaying ? "Tocando" : "Tocar Agora"}
+          {frequency.premium && !isPremium ? (
+            <>
+              <Lock className="mr-2 h-4 w-4" />
+              Conteúdo Premium
+            </>
+          ) : (
+            <>
+              <Play className="mr-2 h-4 w-4" />
+              {isCurrentlyPlaying ? "Tocando" : "Tocar Agora"}
+            </>
+          )}
         </Button>
         
         <Button 
           variant="outline" 
           size="icon" 
-          onClick={() => addToFavorites(frequency)}
+          onClick={handleAddToFavorites}
           className={cn(
             isFavorite && "text-red-500 border-red-200"
           )}

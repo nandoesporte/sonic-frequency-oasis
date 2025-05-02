@@ -1,23 +1,21 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Lock } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getCategoryCount } from "@/lib/data";
 import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "@/components/ui/sonner";
 
 interface CategoryCardProps {
   id: string;
   name: string;
   description: string;
   icon: React.ReactNode;
-  requiresAuth?: boolean;
 }
 
-export function CategoryCard({ id, name, description, icon, requiresAuth = false }: CategoryCardProps) {
+export function CategoryCard({ id, name, description, icon }: CategoryCardProps) {
   const [count, setCount] = useState<number | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -42,16 +40,7 @@ export function CategoryCard({ id, name, description, icon, requiresAuth = false
   }, [id, user]);
   
   const handleClick = () => {
-    if (requiresAuth && !user) {
-      console.log("Auth required, redirecting to login");
-      toast.info("Faça login para acessar", {
-        description: "É necessário estar logado para acessar esta categoria"
-      });
-      navigate("/auth");
-      return;
-    }
-    
-    // Normal navigation with scroll to top
+    // Always navigate to the category page, no restrictions
     console.log(`Navigating to category: ${id}`);
     window.scrollTo(0, 0);
     navigate(`/categories/${id}`);
@@ -59,10 +48,7 @@ export function CategoryCard({ id, name, description, icon, requiresAuth = false
   
   return (
     <Card 
-      className={cn(
-        "overflow-hidden hover-scale cursor-pointer", 
-        requiresAuth && !user && "opacity-80 hover:opacity-100"
-      )}
+      className="overflow-hidden hover-scale cursor-pointer"
       onClick={handleClick}
     >
       <CardHeader className="pb-2">
@@ -71,7 +57,6 @@ export function CategoryCard({ id, name, description, icon, requiresAuth = false
             {icon}
             <CardTitle className="ml-2">{name}</CardTitle>
           </div>
-          {requiresAuth && !user && <Lock className="h-4 w-4 text-muted-foreground" />}
         </div>
       </CardHeader>
       

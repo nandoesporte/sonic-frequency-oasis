@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { AudioPlayer } from "@/components/audio-player";
 import { CategoryCard } from "@/components/category-card";
@@ -5,7 +6,7 @@ import { FrequencyCard } from "@/components/frequency-card";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { AudioProvider } from "@/lib/audio-context";
-import { categories, getTrendingFrequencies, FrequencyData } from "@/lib/data";
+import { categories, getTrendingFrequencies, FrequencyData, getFrequenciesByCategory } from "@/lib/data";
 import { ArrowRight, BookOpen, Crown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,16 +14,16 @@ import { PricingSection } from "@/components/subscription/PricingSection";
 import { FrequencyRanges } from "@/components/home/FrequencyRanges";
 import { ScientificEvidence } from "@/components/home/ScientificEvidence";
 import { toast } from "@/components/ui/sonner";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Index = () => {
   const [trendingFrequencies, setTrendingFrequencies] = useState<FrequencyData[]>([]);
+  const [categoryFrequencies, setCategoryFrequencies] = useState<Record<string, FrequencyData[]>>({});
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   
   useEffect(() => {
     const fetchTrendingFrequencies = async () => {
-      if (!user) return;
-      
       try {
         setLoading(true);
         console.log("Fetching trending frequencies for homepage...");
@@ -45,7 +46,27 @@ const Index = () => {
       }
     };
     
+    const fetchCategoryFrequencies = async () => {
+      const frequencies: Record<string, FrequencyData[]> = {};
+      
+      try {
+        for (const category of categories) {
+          console.log(`Fetching frequencies for category: ${category.id}`);
+          const categoryFreqs = await getFrequenciesByCategory(category.id);
+          if (categoryFreqs.length > 0) {
+            // Only store max 3 frequencies per category for the homepage
+            frequencies[category.id] = categoryFreqs.slice(0, 3);
+          }
+        }
+        
+        setCategoryFrequencies(frequencies);
+      } catch (error) {
+        console.error('Error fetching category frequencies:', error);
+      }
+    };
+    
     fetchTrendingFrequencies();
+    fetchCategoryFrequencies();
   }, [user]);
 
   return (
@@ -96,17 +117,39 @@ const Index = () => {
           </section>
         )}
         
+        {/* Trending Section */}
+        {trendingFrequencies.length > 0 && (
+          <section className="py-12 px-4">
+            <div className="container mx-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold">Em Alta</h2>
+                <Button asChild variant="ghost" size="sm">
+                  <Link to="/trending" className="flex items-center">
+                    Ver Mais <ArrowRight className="ml-1 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {trendingFrequencies.slice(0, 4).map((frequency) => (
+                  <FrequencyCard 
+                    key={frequency.id} 
+                    frequency={frequency} 
+                    variant="trending" 
+                  />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+        
         {/* Frequency Ranges Section - Only show for non-logged in users */}
         {!user && <FrequencyRanges />}
         
         {/* Scientific Evidence Section - Only show for non-logged in users */}
         {!user && <ScientificEvidence />}
         
-        {/* Pricing Section - Only show for non-logged in users */}
-        {!user && <PricingSection />}
-        
-        {/* Categories Section */}
-        <section className={`py-12 px-4 ${user ? '' : ''}`}>
+        {/* Categories Section with Frequencies */}
+        <section className="py-12 px-4">
           <div className="container mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold mb-6">Categorias</h2>
             
@@ -120,13 +163,60 @@ const Index = () => {
                     name={category.name}
                     description={category.description}
                     icon={<CategoryIcon className="h-6 w-6" />}
-                    requiresAuth={!user}
                   />
                 );
               })}
             </div>
           </div>
         </section>
+        
+        {/* Display Frequencies by Category */}
+        {Object.entries(categoryFrequencies).length > 0 && (
+          <section className="py-8 px-4">
+            <div className="container mx-auto">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6">Explore Frequências por Categoria</h2>
+              
+              {Object.entries(categoryFrequencies).map(([categoryId, frequencies]) => {
+                const category = categories.find(cat => cat.id === categoryId);
+                if (!category || frequencies.length === 0) return null;
+                
+                const CategoryIcon = category.icon;
+                
+                return (
+                  <Card key={categoryId} className="mb-8">
+                    <CardHeader className="pb-0">
+                      <div className="flex items-center">
+                        <CategoryIcon className="h-6 w-6 mr-2" />
+                        <CardTitle>{category.name}</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                        {frequencies.map(frequency => (
+                          <FrequencyCard 
+                            key={frequency.id} 
+                            frequency={frequency}
+                            variant="compact" 
+                          />
+                        ))}
+                      </div>
+                      
+                      <Button asChild variant="outline" className="mt-4">
+                        <Link to={`/categories/${categoryId}`}>
+                          Ver mais desta categoria
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </section>
+        )}
+        
+        {/* Pricing Section - Only show for non-logged in users */}
+        {!user && <PricingSection />}
         
         <AudioPlayer />
       </div>
