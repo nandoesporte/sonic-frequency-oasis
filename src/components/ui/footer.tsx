@@ -17,6 +17,9 @@ export function Footer() {
             <p className="text-sm text-muted-foreground">
               Soluções tecnológicas que transformam frequências em bem-estar e qualidade de vida.
             </p>
+            <p className="text-sm text-muted-foreground font-medium">
+              CNPJ: 14.164.334/0001-05
+            </p>
           </div>
           
           {/* Company Information */}
