@@ -1,3 +1,4 @@
+
 import { Brain, Heart, Coffee, Zap, MoonStar, Music, Focus, Shield, Bell, Circle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
@@ -521,132 +522,6 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
   }
 }
 
-export async function seedDemoFrequencies() {
-  console.log("Creating demo frequencies for all categories...");
-  
-  // Define demo frequencies using a simple structure to avoid type recursion
-  const demoFrequencies = [
-    {
-      hz: 432,
-      name: "Demo - Harmonia Universal",
-      purpose: "Demonstração - Experimente agora!",
-      description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "spiritual" as ValidDatabaseCategory,
-      premium: false,
-      is_demo: true
-    },
-    {
-      hz: 528,
-      name: "Demo - Frequência de Cura",
-      purpose: "Demonstração - Experimente agora!",
-      description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "healing" as ValidDatabaseCategory,
-      premium: false,
-      is_demo: true
-    },
-    {
-      hz: 396,
-      name: "Demo - Liberação Emocional",
-      purpose: "Demonstração - Experimente agora!",
-      description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "emotional" as ValidDatabaseCategory,
-      premium: false,
-      is_demo: true
-    },
-    {
-      hz: 285,
-      name: "Demo - Alívio da Dor",
-      purpose: "Demonstração - Experimente agora!",
-      description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "pain_relief" as ValidDatabaseCategory,
-      premium: false,
-      is_demo: true
-    },
-    {
-      hz: 40,
-      name: "Demo - Foco Mental",
-      purpose: "Demonstração - Experimente agora!",
-      description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "cognitive" as ValidDatabaseCategory,
-      premium: false,
-      is_demo: true
-    },
-    {
-      hz: 852,
-      name: "Demo - Solfeggio",
-      purpose: "Demonstração - Experimente agora!",
-      description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "solfeggio" as ValidDatabaseCategory,
-      premium: false,
-      is_demo: true
-    },
-    {
-      hz: 7.83,
-      name: "Demo - Sono Profundo",
-      purpose: "Demonstração - Experimente agora!",
-      description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "sleep" as ValidDatabaseCategory,
-      premium: false,
-      is_demo: true
-    },
-    {
-      hz: 136.1,
-      name: "Demo - Saúde Física",
-      purpose: "Demonstração - Experimente agora!",
-      description: "Frequência de demonstração gratuita para todos os visitantes",
-      category: "physical" as ValidDatabaseCategory,
-      premium: false,
-      is_demo: true
-    }
-  ];
-
-  try {
-    for (const demo of demoFrequencies) {
-      // Check if demo frequency already exists
-      const { data: existing, error: checkError } = await supabase
-        .from('frequencies')
-        .select('id')
-        .eq('category', demo.category)
-        .eq('is_demo', true)
-        .limit(1);
-      
-      if (checkError) {
-        console.error(`Error checking for demo frequency in ${demo.category}:`, checkError);
-        continue;
-      }
-      
-      if (existing && existing.length > 0) {
-        console.log(`Demo frequency already exists for category ${demo.category}`);
-        continue;
-      }
-      
-      // Insert the demo frequency with proper typing
-      const { error } = await supabase
-        .from('frequencies')
-        .insert({
-          hz: demo.hz,
-          name: demo.name,
-          purpose: demo.purpose,
-          description: demo.description,
-          category: demo.category,
-          is_premium: demo.premium,
-          is_demo: true
-        });
-      
-      if (error) {
-        console.error(`Error creating demo frequency for ${demo.category}:`, error);
-      } else {
-        console.log(`Created demo frequency for ${demo.category}`);
-      }
-    }
-    
-    return true;
-  } catch (error) {
-    console.error('Error seeding demo frequencies:', error);
-    return false;
-  }
-}
-
 export async function seedInitialFrequencies() {
   console.log("Starting initial frequency seeding...");
   
@@ -680,3 +555,4 @@ export async function getAllFrequencies(): Promise<FrequencyData[]> {
     premium: freq.is_premium
   }));
 }
+
