@@ -40,7 +40,7 @@ export function CategoryCard({ id, name, description, icon }: CategoryCardProps)
   }, [id, user]);
   
   const handleClick = () => {
-    // Navigate to the category page regardless of authentication
+    // Navigate to the category page regardless of authentication status
     console.log(`Navigating to category: ${id}`);
     window.scrollTo(0, 0);
     navigate(`/categories/${id}`);
