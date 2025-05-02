@@ -4,7 +4,7 @@ import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
 import { FrequencyCard } from "@/components/frequency-card";
 import { AudioProvider } from "@/lib/audio-context";
-import { getCategoryById, getFrequenciesByCategory, FrequencyData, seedInitialFrequencies } from "@/lib/data";
+import { getCategoryById, getFrequenciesByCategory, FrequencyData, seedInitialFrequencies, seedDemoFrequencies } from "@/lib/data";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -56,8 +56,19 @@ const Category = () => {
           setFrequencies(data);
           
           if (data.length === 0) {
-            toast.info('Sem frequências', {
-              description: 'Nenhuma frequência encontrada nesta categoria.'
+            // If no frequencies, seed demo frequencies automatically
+            seedDemoFrequencies().then(() => {
+              // Try fetching frequencies again
+              return getFrequenciesByCategory(category);
+            })
+            .then(demoData => {
+              if (demoData.length === 0) {
+                toast.info('Sem frequências', {
+                  description: 'Nenhuma frequência encontrada nesta categoria.'
+                });
+              } else {
+                setFrequencies(demoData);
+              }
             });
           }
         })
@@ -144,6 +155,11 @@ const Category = () => {
               {user && (
                 <Button onClick={() => seedInitialFrequencies().then(() => window.location.reload())} className="mt-4">
                   Carregar frequências padrão
+                </Button>
+              )}
+              {!user && (
+                <Button onClick={() => seedDemoFrequencies().then(() => window.location.reload())} className="mt-4">
+                  Carregar frequências de demonstração
                 </Button>
               )}
             </div>
