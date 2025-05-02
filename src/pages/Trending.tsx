@@ -56,10 +56,6 @@ const TrendingContent = () => {
           premium: freq.is_premium,
           trending: true
         })));
-        
-        toast.success('Frequências carregadas', {
-          description: `${data.length} frequências em alta encontradas`
-        });
       } catch (err) {
         console.error('Unexpected error:', err);
         toast.error('Erro ao carregar frequências', {

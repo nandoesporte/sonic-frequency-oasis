@@ -250,10 +250,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Clear local state BEFORE signout to prevent potential session errors
       const userEmail = user?.email; // Store for the success message
       
-      setUser(null);
-      setSession(null);
-      setIsAdmin(false);
-      
       const { error } = await supabase.auth.signOut();
       
       if (error) {
@@ -263,6 +259,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         return;
       }
+      
+      // Set state after successful signout
+      setUser(null);
+      setSession(null);
+      setIsAdmin(false);
       
       console.log('User signed out successfully');
       

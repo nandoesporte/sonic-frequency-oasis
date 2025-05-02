@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -82,7 +83,7 @@ export default function Auth() {
   }, [user, loading, navigate, redirecting]);
 
   // Show loading state
-  if (loading) {
+  if (loading && !user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -153,6 +154,16 @@ export default function Auth() {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  // If the user is already logged in and we're not redirecting, show a loading screen
+  if (user && !redirecting) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin mb-4" />
+        <p>Redirecionando para a página inicial...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4">

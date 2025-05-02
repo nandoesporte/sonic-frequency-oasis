@@ -20,7 +20,7 @@ interface FrequencyCardProps {
 export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: FrequencyCardProps) {
   const { play, isPlaying, currentFrequency, addToFavorites, favorites } = useAudio();
   const { isPremium } = usePremium();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   
   const isCurrentlyPlaying = isPlaying && currentFrequency?.id === frequency.id;
@@ -33,7 +33,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
       return;
     }
     
-    if (!user) {
+    if (!user && !loading) {
       console.log("User not logged in, redirecting to auth page");
       toast.info("Faça login para ouvir", {
         description: "É necessário estar logado para ouvir as frequências"
@@ -54,7 +54,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
   };
   
   const handleAddToFavorites = () => {
-    if (!user) {
+    if (!user && !loading) {
       toast.info("Faça login para favoritar", {
         description: "É necessário estar logado para adicionar aos favoritos"
       });
