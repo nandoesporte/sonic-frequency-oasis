@@ -3,7 +3,6 @@ import React from "react";
 import { MapPin, Mail, MessageSquare } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -95,12 +94,8 @@ export function Footer() {
         <Separator className="my-6" />
         
         {/* Copyright Section */}
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="text-sm text-muted-foreground">
-            <p>KEFER SOLUCOES EM TECNOLOGIA LTDA</p>
-            <p>CNPJ: 14.164.334/0001-05</p>
-          </div>
-          <p className="text-sm text-muted-foreground mt-2 md:mt-0">
+        <div className="flex justify-center">
+          <p className="text-sm text-muted-foreground">
             &copy; {currentYear} Todos os direitos reservados
           </p>
         </div>
