@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { Footer } from "./components/ui/footer";
+import { useAuth } from "@/hooks";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Category from "./pages/Category";
@@ -31,6 +32,18 @@ function ScrollToTop() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
+  
+  return null;
+}
+
+// Footer component that conditionally renders based on auth state
+function ConditionalFooter() {
+  const { user } = useAuth();
+  
+  // Only render footer if user is not logged in
+  if (!user) {
+    return <Footer />;
+  }
   
   return null;
 }
@@ -72,7 +85,7 @@ function AppContent() {
         {/* Catch all route for 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <Footer />
+      <ConditionalFooter />
     </div>
   );
 }
@@ -92,4 +105,3 @@ function App() {
 }
 
 export default App;
-
