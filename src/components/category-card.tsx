@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getCategoryCount } from "@/lib/data";
 import { useAuth } from "@/contexts/AuthContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CategoryCardProps {
   id: string;
@@ -19,6 +20,7 @@ export function CategoryCard({ id, name, description, icon }: CategoryCardProps)
   const [count, setCount] = useState<number | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     // Use a more efficient approach to fetch counts - only when the card is mounted
@@ -52,17 +54,17 @@ export function CategoryCard({ id, name, description, icon }: CategoryCardProps)
         <div className="flex justify-between items-start">
           <div className="flex items-center">
             {icon}
-            <CardTitle className="ml-2 text-xl">{name}</CardTitle>
+            <CardTitle className={cn("ml-2 text-xl", isMobile && "text-2xl")}>{name}</CardTitle>
           </div>
         </div>
       </CardHeader>
       
       <CardContent>
-        <CardDescription className="mb-3">{description}</CardDescription>
+        <CardDescription className={cn("mb-3", isMobile && "text-base")}>{description}</CardDescription>
         
         <div className="flex items-center justify-between">
           {count !== null && (
-            <span className="text-xs text-muted-foreground">
+            <span className={cn("text-xs text-muted-foreground", isMobile && "text-sm")}>
               {count} frequências
             </span>
           )}
