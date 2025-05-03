@@ -22,6 +22,7 @@ export function AudioPlayer() {
   } = useAudio();
   const [waves, setWaves] = useState<number[]>([]);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const [isInteracting, setIsInteracting] = useState(false);
   
   const isFavorite = currentFrequency ? favorites.some(f => f.id === currentFrequency.id) : false;
 
@@ -45,18 +46,49 @@ export function AudioPlayer() {
     }
   }, [isPlaying]);
 
+  // Prevent rapid clicks and debounce interactions
+  const handleControlInteraction = (action: () => void) => {
+    if (isInteracting) return;
+    
+    setIsInteracting(true);
+    action();
+    
+    // Reset interaction state after a short delay
+    setTimeout(() => {
+      setIsInteracting(false);
+    }, 300);
+  };
+
   // Smoother toggle with fade in/out
   const handleTogglePlayPause = () => {
-    if (isPlaying) {
-      // If currently playing, trigger a fade out before stopping
-      fadeOut().then(() => togglePlayPause());
-    } else if (currentFrequency) {
-      // If not playing but frequency is selected, start playing with fade in
-      togglePlayPause();
-      fadeIn();
-    } else {
-      togglePlayPause(); // Just toggle if no frequency is selected
-    }
+    handleControlInteraction(() => {
+      if (isPlaying) {
+        // If currently playing, trigger a fade out before stopping
+        fadeOut().then(() => togglePlayPause());
+      } else if (currentFrequency) {
+        // If not playing but frequency is selected, start playing with fade in
+        togglePlayPause();
+        fadeIn();
+      } else {
+        togglePlayPause(); // Just toggle if no frequency is selected
+      }
+    });
+  };
+
+  // Handle volume change with debounce
+  const handleVolumeChange = (values: number[]) => {
+    handleControlInteraction(() => {
+      setVolume(values[0] / 100);
+    });
+  };
+
+  // Handle favorite button with debounce
+  const handleFavoriteToggle = () => {
+    if (!currentFrequency) return;
+    
+    handleControlInteraction(() => {
+      addToFavorites(currentFrequency);
+    });
   };
 
   if (!currentFrequency) {
@@ -77,7 +109,11 @@ export function AudioPlayer() {
             onClick={handleTogglePlayPause} 
             variant="secondary" 
             size="icon" 
-            className="w-12 h-12 rounded-full text-primary bg-primary/10 hover:bg-primary/20"
+            className={cn(
+              "w-12 h-12 rounded-full text-primary bg-primary/10 hover:bg-primary/20",
+              isInteracting && "pointer-events-none opacity-80"
+            )}
+            disabled={isInteracting}
           >
             {isPlaying ? (
               <Pause className="h-6 w-6" />
@@ -120,7 +156,9 @@ export function AudioPlayer() {
             <Button 
               variant="ghost" 
               size="icon"
-              onClick={() => setShowVolumeSlider(prev => !prev)}
+              onClick={() => !isInteracting && setShowVolumeSlider(prev => !prev)}
+              disabled={isInteracting}
+              className={isInteracting ? "pointer-events-none opacity-80" : ""}
             >
               <Volume2 className="h-5 w-5" />
             </Button>
@@ -132,7 +170,8 @@ export function AudioPlayer() {
                   min={0}
                   max={100}
                   step={1}
-                  onValueChange={(values) => setVolume(values[0] / 100)}
+                  onValueChange={handleVolumeChange}
+                  disabled={isInteracting}
                 />
               </div>
             )}
@@ -141,9 +180,11 @@ export function AudioPlayer() {
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={() => addToFavorites(currentFrequency)}
+            onClick={handleFavoriteToggle}
+            disabled={isInteracting}
             className={cn(
-              isFavorite && "text-red-500"
+              isFavorite && "text-red-500",
+              isInteracting && "pointer-events-none opacity-80"
             )}
           >
             <Heart className={cn(
@@ -156,3 +197,4 @@ export function AudioPlayer() {
     </Card>
   );
 }
+

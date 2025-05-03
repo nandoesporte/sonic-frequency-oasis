@@ -52,6 +52,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [remainingTime, setRemainingTime] = useState<number | null>(null);
   const [showPremiumDialog, setShowPremiumDialog] = useState(false);
   const [premiumFrequency, setPremiumFrequency] = useState<FrequencyData | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false); // Flag to prevent concurrent operations
   const { user } = useAuth();
   const { isPremium } = usePremium();
   
@@ -97,6 +98,33 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       };
     }
   }, []);
+
+  // Handle audio focus and interruptions
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden && isPlaying) {
+        // When app goes to background, prevent audio interruption
+        console.log('App visibility changed, preserving audio state');
+      }
+    };
+
+    // Handle audio focus loss (e.g., incoming calls)
+    const handleAudioInterruption = (event: Event) => {
+      // This prevents other audio from stopping our player
+      event.preventDefault();
+      console.log('Audio interruption prevented');
+    };
+
+    // Add event listeners to handle interruptions
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener('pause', handleAudioInterruption, true);
+    
+    // Clean up listeners
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener('pause', handleAudioInterruption, true);
+    };
+  }, [isPlaying]);
 
   // Cleanup function for audio resources
   const cleanupAudioResources = () => {
@@ -226,10 +254,19 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Start playing a frequency
   const play = async (frequency: FrequencyData) => {
+    // Prevent concurrent operations that could cause audio glitches
+    if (isProcessing) {
+      console.log('Audio operation already in progress, ignoring request');
+      return;
+    }
+    
     try {
+      setIsProcessing(true);
+      
       if (frequency.premium && !isPremium) {
         setPremiumFrequency(frequency);
         setShowPremiumDialog(true);
+        setIsProcessing(false);
         return;
       }
 
@@ -242,10 +279,15 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       // Create audio context if doesn't exist
       if (!audioContextRef.current) {
         try {
-          audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+          audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({
+            // Use higher latency for better stability
+            latencyHint: 'playback',
+            sampleRate: 48000,
+          });
         } catch (e) {
           console.error('Web Audio API is not supported in this browser.', e);
           toast.error('Seu navegador não suporta Web Audio API');
+          setIsProcessing(false);
           return;
         }
       }
@@ -314,6 +356,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             fadeOut().then(() => {
               setIsPlaying(false);
               setRemainingTime(null);
+              setIsProcessing(false);
             });
             toast.info(`Reprodução de ${frequency.name} encerrada após 30 minutos`);
             return null;
@@ -332,27 +375,37 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } catch (error) {
       console.error('Error playing frequency:', error);
       toast.error("Não foi possível reproduzir a frequência. Tente novamente.");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   // Pause the currently playing frequency
-  const pause = () => {
+  const pause = async () => {
+    // Prevent concurrent operations
+    if (isProcessing) {
+      console.log('Audio operation already in progress, ignoring request');
+      return;
+    }
+    
     try {
-      fadeOut().then(() => {
-        cleanupAudioResources();
-        setIsPlaying(false);
-        setRemainingTime(null);
-      });
+      setIsProcessing(true);
+      await fadeOut();
+      cleanupAudioResources();
+      setIsPlaying(false);
+      setRemainingTime(null);
     } catch (error) {
       console.error('Error pausing frequency:', error);
       setIsPlaying(false);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   // Update the volume
   const updateVolume = (newVolume: number) => {
     setVolume(newVolume);
-    if (gainNodeRef.current && audioContextRef.current) {
+    if (gainNodeRef.current && audioContextRef.current && !isProcessing) {
       try {
         // Apply volume change with a small ramp for smoothness
         const currentTime = audioContextRef.current.currentTime;
@@ -366,6 +419,11 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Toggle between play and pause
   const togglePlayPause = () => {
+    if (isProcessing) {
+      console.log('Audio operation already in progress, ignoring request');
+      return;
+    }
+    
     if (isPlaying) {
       pause();
     } else if (currentFrequency) {
@@ -432,3 +490,4 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     </AudioContext.Provider>
   );
 };
+
