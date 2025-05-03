@@ -70,3 +70,21 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.5;
   }
 }
+
+/* Force portrait mode */
+@media screen and (orientation: landscape) {
+  html, body {
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  #root {
+    max-height: 100vh;
+    overflow-y: auto;
+    transform-origin: top left;
+    /* Optional: transform for devices that ignore orientation lock */
+    transform: rotate(-90deg) translateX(-100%);
+    width: 100vh;
+    height: 100vw;
+  }
+}

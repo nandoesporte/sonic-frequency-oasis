@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { toast } from '@/components/ui/sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -64,8 +65,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Lock screen orientation when audio is playing
   useEffect(() => {
-    // Only attempt to lock orientation if playing and the API is supported
-    if (isPlaying && window.screen && 'orientation' in window.screen) {
+    // Only attempt to lock orientation if the API is supported
+    if (window.screen && 'orientation' in window.screen) {
       try {
         // Cast screen to our extended type that includes the lock method
         const screenExtended = window.screen as unknown as ScreenExtended;
@@ -95,7 +96,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
       };
     }
-  }, [isPlaying]);
+  }, []);
 
   // Cleanup function for audio resources
   const cleanupAudioResources = () => {
