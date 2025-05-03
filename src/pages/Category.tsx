@@ -5,7 +5,7 @@ import { AudioPlayer } from "@/components/audio-player";
 import { FrequencyCard } from "@/components/frequency-card";
 import { AudioProvider } from "@/lib/audio-context";
 import { getCategoryById, getFrequenciesByCategory, FrequencyData, seedInitialFrequencies } from "@/lib/data";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Volume } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { toast } from "@/components/ui/sonner";
@@ -94,14 +94,13 @@ const Category = () => {
   }
 
   // Function to redirect to login if user is not logged in
+  // Updated to check if the frequency is free - free frequencies don't require login
   const handleFrequencyClick = () => {
+    // The check for free frequencies is now in the FrequencyCard component
     if (!user) {
+      // This will only be called for non-free frequencies due to the check in FrequencyCard
       console.log("User not logged in, redirecting to auth page from category page");
-      toast.info("Faça login para continuar", {
-        description: "É necessário estar logado para acessar as frequências"
-      });
-      navigate("/auth");
-      return true;
+      return false; // Allow the component to handle the redirection
     }
     return false;
   };
@@ -132,6 +131,21 @@ const Category = () => {
               </div>
             </div>
           )}
+          
+          {/* Free Frequency Badge */}
+          <div className="mb-6 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+            <div className="flex items-center gap-3">
+              <div className="bg-green-100 dark:bg-green-800/40 p-2 rounded-full">
+                <Volume className="h-5 w-5 text-green-700 dark:text-green-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-medium text-green-800 dark:text-green-400">Frequências Gratuitas</h3>
+                <p className="text-sm text-green-700 dark:text-green-500">
+                  Experimente uma frequência gratuita de cada categoria como amostra
+                </p>
+              </div>
+            </div>
+          </div>
           
           {loading ? (
             <div className="text-center py-12">

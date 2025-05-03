@@ -1,10 +1,9 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAudio } from "@/lib/audio-context";
 import { FrequencyData } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
-import { Play, Heart, Crown, Lock } from "lucide-react";
+import { Play, Heart, Crown, Lock, Volume } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePremium } from "@/hooks/use-premium";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +29,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
   
   const isCurrentlyPlaying = isPlaying && currentFrequency?.id === frequency.id;
   const isFavorite = favorites.some(f => f.id === frequency.id);
+  const isFreeFrequency = frequency.free === true;
   
   const handlePlay = () => {
     // If there's an onBeforePlay callback and it returns true, stop processing
@@ -38,6 +38,14 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
       return;
     }
     
+    // If it's a free frequency, allow playback without login
+    if (isFreeFrequency) {
+      console.log("Playing free frequency");
+      play(frequency);
+      return;
+    }
+    
+    // Otherwise check login status
     if (!user && !loading) {
       console.log("User not logged in, redirecting to auth page");
       toast.info("Faça login para ouvir", {
@@ -47,6 +55,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
       return;
     }
     
+    // Check premium status for non-free frequencies
     if (frequency.premium && !isPremium) {
       toast.info("Conteúdo Premium", {
         description: "Assine o plano premium para acessar esta frequência"
@@ -77,7 +86,8 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
         "overflow-hidden hover-scale transition-all",
         variant === "trending" && "border-purple-light bg-purple-light/10",
         isCurrentlyPlaying && "border-primary",
-        frequency.premium && !isPremium && "border-purple-300"
+        frequency.premium && !isPremium && !isFreeFrequency && "border-purple-300",
+        isFreeFrequency && "border-green-300 bg-green-50/10"
       )}>
         <div className="flex items-center p-4">
           <Button
@@ -86,19 +96,27 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
             size="icon"
             className={cn(
               "w-10 h-10 rounded-full mr-3 flex-shrink-0",
-              isCurrentlyPlaying ? "bg-purple-500 text-white" : "bg-secondary"
+              isCurrentlyPlaying ? "bg-purple-500 text-white" : isFreeFrequency ? "bg-green-500 text-white" : "bg-secondary"
             )}
           >
-            {frequency.premium && !isPremium ? <Lock className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
+            {frequency.premium && !isPremium && !isFreeFrequency ? <Lock className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
           </Button>
           
           <div className="flex-grow min-w-0">
-            <h3 className="font-semibold truncate text-base">
-              {frequency.name}
-              {frequency.premium && (
-                <Crown className="inline-block w-4 h-4 ml-1 text-purple-500" />
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold truncate text-base">
+                {frequency.name}
+                {frequency.premium && !isFreeFrequency && (
+                  <Crown className="inline-block w-4 h-4 ml-1 text-purple-500" />
+                )}
+              </h3>
+              {isFreeFrequency && (
+                <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-200">
+                  <Volume className="w-3 h-3 mr-1" />
+                  Grátis
+                </Badge>
               )}
-            </h3>
+            </div>
             <p className="text-sm text-muted-foreground truncate">
               {frequency.hz} Hz • {frequency.purpose}
             </p>
@@ -128,17 +146,26 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
     <Card className={cn(
       "overflow-hidden hover-scale transition-all",
       isCurrentlyPlaying && "border-primary",
-      frequency.premium && !isPremium && "border-purple-300"
+      frequency.premium && !isPremium && !isFreeFrequency && "border-purple-300",
+      isFreeFrequency && "border-green-300 bg-green-50/10"
     )}>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-xl">{frequency.name}</CardTitle>
-          {frequency.premium && (
-            <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-200">
-              <Crown className="w-3 h-3 mr-1" />
-              Premium
-            </Badge>
-          )}
+          <div className="flex gap-2">
+            {isFreeFrequency && (
+              <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-200">
+                <Volume className="w-3 h-3 mr-1" />
+                Grátis
+              </Badge>
+            )}
+            {frequency.premium && !isFreeFrequency && (
+              <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-200">
+                <Crown className="w-3 h-3 mr-1" />
+                Premium
+              </Badge>
+            )}
+          </div>
         </div>
       </CardHeader>
       
@@ -153,13 +180,14 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
       <CardFooter className="flex justify-between">
         <Button
           onClick={handlePlay}
-          variant={isCurrentlyPlaying ? "default" : "secondary"}
+          variant={isCurrentlyPlaying ? "default" : isFreeFrequency ? "default" : "secondary"}
           className={cn(
             "w-full mr-2", 
-            isCurrentlyPlaying && "bg-purple-500 hover:bg-purple-600"
+            isCurrentlyPlaying && "bg-purple-500 hover:bg-purple-600",
+            isFreeFrequency && !isCurrentlyPlaying && "bg-green-500 hover:bg-green-600"
           )}
         >
-          {frequency.premium && !isPremium ? (
+          {frequency.premium && !isPremium && !isFreeFrequency ? (
             <>
               <Lock className="mr-2 h-4 w-4" />
               Conteúdo Premium
@@ -167,7 +195,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
           ) : (
             <>
               <Play className="mr-2 h-4 w-4" />
-              {isCurrentlyPlaying ? "Tocando" : "Tocar Agora"}
+              {isCurrentlyPlaying ? "Tocando" : isFreeFrequency ? "Ouvir Grátis" : "Tocar Agora"}
             </>
           )}
         </Button>

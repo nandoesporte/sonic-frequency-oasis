@@ -22,6 +22,7 @@ export type FrequencyData = {
   description: string;
   category: string;
   premium: boolean;
+  free?: boolean; // New property to mark free frequencies
   trending?: boolean;
 };
 
@@ -142,32 +143,63 @@ export async function getFrequenciesByCategory(categoryId: string): Promise<Freq
         return [];
       }
       
-      return newData.map(freq => ({
+      // We'll mark the first frequency in each category as free
+      const processedData = markFirstFrequency(newData);
+      
+      return processedData.map(freq => ({
         id: freq.id,
         name: freq.name,
         hz: freq.hz,
         purpose: freq.purpose,
         description: freq.description || freq.purpose,
         category: reverseCategoryMapping[freq.category as ValidDatabaseCategory] || freq.category,
-        premium: freq.is_premium
+        premium: freq.is_premium,
+        free: freq.is_free_sample
       }));
     }
 
     console.log(`Found ${data.length} frequencies for category ${dbCategory}`);
     
-    return data.map(freq => ({
+    // We'll mark the first frequency in each category as free
+    const processedData = markFirstFrequency(data);
+    
+    return processedData.map(freq => ({
       id: freq.id,
       name: freq.name,
       hz: freq.hz,
       purpose: freq.purpose,
       description: freq.description || freq.purpose,
       category: reverseCategoryMapping[freq.category as ValidDatabaseCategory] || freq.category,
-      premium: freq.is_premium
+      premium: freq.is_premium,
+      free: freq.is_free_sample
     }));
   } catch (error) {
     console.error('Error in getFrequenciesByCategory:', error);
     throw error;
   }
+}
+
+// Function to mark the first frequency in each category as free
+function markFirstFrequency(frequencies: any[]) {
+  if (!frequencies || frequencies.length === 0) {
+    return [];
+  }
+  
+  // Make a copy to avoid mutating the original
+  const result = [...frequencies];
+  
+  // Find the first non-premium frequency, or just the first one if all are premium
+  const freeIndex = result.findIndex(freq => !freq.is_premium);
+  const indexToMark = freeIndex >= 0 ? freeIndex : 0;
+  
+  if (result[indexToMark]) {
+    result[indexToMark] = {
+      ...result[indexToMark],
+      is_free_sample: true
+    };
+  }
+  
+  return result;
 }
 
 export async function getTrendingFrequencies(): Promise<FrequencyData[]> {
@@ -199,7 +231,10 @@ export async function getTrendingFrequencies(): Promise<FrequencyData[]> {
         return [];
       }
       
-      return newData.map(freq => ({
+      // Mark one trending frequency as free
+      const processedData = markFirstFrequency(newData);
+      
+      return processedData.map(freq => ({
         id: freq.id,
         name: freq.name,
         hz: freq.hz,
@@ -207,11 +242,15 @@ export async function getTrendingFrequencies(): Promise<FrequencyData[]> {
         description: freq.description || freq.purpose,
         category: reverseCategoryMapping[freq.category as ValidDatabaseCategory] || freq.category,
         premium: freq.is_premium,
+        free: freq.is_free_sample,
         trending: true
       }));
     }
 
-    return data.map(freq => ({
+    // Mark one trending frequency as free
+    const processedData = markFirstFrequency(data);
+    
+    return processedData.map(freq => ({
       id: freq.id,
       name: freq.name,
       hz: freq.hz,
@@ -219,6 +258,7 @@ export async function getTrendingFrequencies(): Promise<FrequencyData[]> {
       description: freq.description || freq.purpose,
       category: reverseCategoryMapping[freq.category as ValidDatabaseCategory] || freq.category,
       premium: freq.is_premium,
+      free: freq.is_free_sample,
       trending: true
     }));
   } catch (error) {

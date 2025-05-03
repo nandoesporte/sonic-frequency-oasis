@@ -1,66 +1,58 @@
 
-// PWA installation handler
+export function initPwaInstall() {
+  let deferredPrompt: any;
 
-export interface BeforeInstallPromptEvent extends Event {
-  readonly platforms: string[];
-  readonly userChoice: Promise<{
-    outcome: 'accepted' | 'dismissed';
-    platform: string;
-  }>;
-  prompt(): Promise<void>;
-}
-
-// Store the install prompt event
-let deferredPrompt: BeforeInstallPromptEvent | null = null;
-
-// Setup event listeners for PWA installation
-export const initPwaInstall = () => {
-  // Capture the install prompt
   window.addEventListener('beforeinstallprompt', (e) => {
     // Prevent the mini-infobar from appearing on mobile
     e.preventDefault();
-    // Store the event for later use
-    deferredPrompt = e as BeforeInstallPromptEvent;
     
-    // Optionally, show your own install button
-    // You could dispatch an event here to show your install UI
-    document.dispatchEvent(new CustomEvent('pwaInstallReady'));
+    // Stash the event so it can be triggered later
+    deferredPrompt = e;
     
-    console.log('App can be installed, stored event');
+    // Show a custom install button if desired
+    showInstallPromotion();
   });
-  
-  // Track successful installations
+
+  // Function to show installation promotion UI if needed
+  function showInstallPromotion() {
+    // You could show a custom UI element to promote installation
+    console.log("App can be installed. Install button could be shown.");
+    
+    // Optional: add a button to the UI
+    const installButton = document.getElementById('pwa-install-button');
+    
+    if (installButton) {
+      installButton.style.display = 'block';
+      installButton.addEventListener('click', async () => {
+        // Hide the app provided install promotion
+        installButton.style.display = 'none';
+        
+        // Show the install prompt
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          
+          // Wait for the user to respond to the prompt
+          const { outcome } = await deferredPrompt.userChoice;
+          console.log(`User installation choice: ${outcome}`);
+          
+          // We've used the prompt, and can't use it again, discard it
+          deferredPrompt = null;
+        }
+      });
+    }
+  }
+
+  // Listen for app installed event
   window.addEventListener('appinstalled', () => {
+    // Hide the app-provided install promotion
+    const installButton = document.getElementById('pwa-install-button');
+    if (installButton) {
+      installButton.style.display = 'none';
+    }
+    
     // Clear the deferredPrompt
     deferredPrompt = null;
     
-    // Log or track the installation
     console.log('PWA was installed');
   });
-};
-
-// Function to trigger installation prompt
-export const promptInstall = async (): Promise<boolean> => {
-  if (!deferredPrompt) {
-    console.log('Installation prompt not available');
-    return false;
-  }
-  
-  // Show the install prompt
-  deferredPrompt.prompt();
-  
-  // Wait for the user's choice
-  const choiceResult = await deferredPrompt.userChoice;
-  
-  // Reset the deferred prompt variable
-  deferredPrompt = null;
-  
-  // Return true if the app was installed
-  return choiceResult.outcome === 'accepted';
-};
-
-// Check if the app is running in standalone mode (installed)
-export const isAppInstalled = (): boolean => {
-  return window.matchMedia('(display-mode: standalone)').matches || 
-         (window.navigator as any).standalone === true;
-};
+}

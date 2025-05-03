@@ -6,7 +6,7 @@ import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { AudioProvider } from "@/lib/audio-context";
 import { categories, getTrendingFrequencies, FrequencyData, getFrequenciesByCategory } from "@/lib/data";
-import { ArrowRight, BookOpen, Crown, Sparkles, Headphones, Waves, ShieldCheck } from "lucide-react";
+import { ArrowRight, BookOpen, Crown, Sparkles, Headphones, Waves, ShieldCheck, Volume } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { PricingSection } from "@/components/subscription/PricingSection";
@@ -94,14 +94,13 @@ const Index = () => {
   }, []);
 
   // Function to redirect to login if user is not logged in
+  // Updated to check if the frequency is free - free frequencies don't require login
   const handleFrequencyClick = useCallback(() => {
+    // Check is now handled inside the FrequencyCard component
     if (!user) {
+      // This will only be called for non-free frequencies due to the check in FrequencyCard
       console.log("User not logged in, redirecting to auth page from home page");
-      toast.info("Faça login para continuar", {
-        description: "É necessário estar logado para acessar as frequências"
-      });
-      navigate("/auth");
-      return true;
+      return false;
     }
     return false;
   }, [user, navigate]);
@@ -177,6 +176,21 @@ const Index = () => {
                   </Button>
                 </div>
                 
+                {/* New Free Frequencies Banner */}
+                <div className="mb-8 p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl border border-green-200 dark:border-green-800 max-w-3xl mx-auto">
+                  <div className="flex items-center gap-3 justify-center">
+                    <div className="bg-green-100 dark:bg-green-800/40 p-2 rounded-full">
+                      <Volume className="h-5 w-5 text-green-700 dark:text-green-400" />
+                    </div>
+                    <div className="text-left">
+                      <h3 className="text-lg font-medium text-green-800 dark:text-green-400">Experimente Grátis</h3>
+                      <p className="text-sm text-green-700 dark:text-green-500">
+                        Experimente uma frequência gratuita de cada categoria sem precisar se cadastrar
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
                   <div className="flex flex-col items-center bg-white/50 dark:bg-white/5 p-4 rounded-xl backdrop-blur-sm shadow-sm">
                     <Headphones className="h-6 w-6 text-primary mb-2" />
@@ -199,7 +213,7 @@ const Index = () => {
           </section>
         )}
         
-        {/* Trending Section - Keep existing implementation logic, but improve styling */}
+        {/* Trending Section */}
         {trendingFrequencies.length > 0 && (
           <section className="py-12 px-4">
             <div className="container mx-auto">
