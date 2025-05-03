@@ -28,6 +28,8 @@ type AudioContextType = {
   favorites: FrequencyData[];
   history: FrequencyData[];
   remainingTime: number | null;
+  fadeIn: () => Promise<void>;
+  fadeOut: () => Promise<void>;
 };
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -58,7 +60,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const MAX_PLAY_TIME = 30 * 60; // 30 minutes in seconds
-  const fadeTime = 0.25; // 250ms fade time for smoother transitions
+  const fadeTime = 0.5; // 500ms fade time for smoother transitions
 
   // Lock screen orientation when audio is playing
   useEffect(() => {
@@ -99,10 +101,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const cleanupAudioResources = () => {
     if (oscillatorRef.current && gainNodeRef.current && audioContextRef.current) {
       try {
-        const currentTime = audioContextRef.current.currentTime;
-        gainNodeRef.current.gain.setValueAtTime(gainNodeRef.current.gain.value, currentTime);
-        gainNodeRef.current.gain.linearRampToValueAtTime(0, currentTime + fadeTime);
-        
+        // We now handle fade out in the fadeOut() function
+        // so just disconnect the nodes here
         setTimeout(() => {
           try {
             oscillatorRef.current?.stop();
@@ -177,6 +177,52 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [history]);
 
+  // Explicit fade in function for smooth start
+  const fadeIn = async (): Promise<void> => {
+    return new Promise<void>((resolve) => {
+      if (gainNodeRef.current && audioContextRef.current) {
+        try {
+          const currentTime = audioContextRef.current.currentTime;
+          // Start from 0 volume
+          gainNodeRef.current.gain.setValueAtTime(0, currentTime);
+          // Gradually increase to set volume
+          gainNodeRef.current.gain.linearRampToValueAtTime(volume, currentTime + fadeTime);
+          
+          // Resolve after the fade is complete
+          setTimeout(() => resolve(), fadeTime * 1000);
+        } catch (e) {
+          console.error('Error during fade in:', e);
+          resolve(); // Resolve even on error to continue execution
+        }
+      } else {
+        resolve(); // Resolve immediately if no gain node
+      }
+    });
+  };
+
+  // Explicit fade out function for smooth stop
+  const fadeOut = async (): Promise<void> => {
+    return new Promise<void>((resolve) => {
+      if (gainNodeRef.current && audioContextRef.current) {
+        try {
+          const currentTime = audioContextRef.current.currentTime;
+          // Get current gain value
+          gainNodeRef.current.gain.setValueAtTime(gainNodeRef.current.gain.value, currentTime);
+          // Gradually decrease to zero
+          gainNodeRef.current.gain.linearRampToValueAtTime(0, currentTime + fadeTime);
+          
+          // Resolve after the fade is complete
+          setTimeout(() => resolve(), fadeTime * 1000);
+        } catch (e) {
+          console.error('Error during fade out:', e);
+          resolve(); // Resolve even on error to continue execution
+        }
+      } else {
+        resolve(); // Resolve immediately if no gain node
+      }
+    });
+  };
+
   // Start playing a frequency
   const play = async (frequency: FrequencyData) => {
     try {
@@ -207,21 +253,21 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       
       // Clean up existing oscillator with smooth fade out
       if (oscillatorRef.current) {
+        // Use our fadeOut function for consistent behavior
+        await fadeOut();
+        
+        const oldOscillator = oscillatorRef.current;
         const oldGain = gainNodeRef.current;
-        if (oldGain) {
-          oldGain.gain.setValueAtTime(oldGain.gain.value, ctx.currentTime);
-          oldGain.gain.linearRampToValueAtTime(0, ctx.currentTime + fadeTime);
-          
-          setTimeout(() => {
-            try {
-              oscillatorRef.current?.stop();
-              oscillatorRef.current?.disconnect();
-              oldGain.disconnect();
-            } catch (e) {
-              console.error('Error cleaning up old oscillator:', e);
-            }
-          }, fadeTime * 1000);
-        }
+        
+        setTimeout(() => {
+          try {
+            oldOscillator?.stop();
+            oldOscillator?.disconnect();
+            oldGain?.disconnect();
+          } catch (e) {
+            console.error('Error cleaning up old oscillator:', e);
+          }
+        }, fadeTime * 1000);
       }
       
       // Resume audio context if it's suspended
@@ -236,9 +282,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       oscillator.type = 'sine';
       oscillator.frequency.setValueAtTime(frequency.hz, ctx.currentTime);
       
-      // Start with zero gain and fade in for smooth start
+      // Start with zero gain for smooth fade in
       gainNode.gain.setValueAtTime(0, ctx.currentTime);
-      gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + fadeTime);
       
       oscillator.connect(gainNode);
       gainNode.connect(ctx.destination);
@@ -252,6 +297,9 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setIsPlaying(true);
       setCurrentFrequency(frequency);
       
+      // Perform the fade in
+      await fadeIn();
+      
       // Set initial remaining time to 30 minutes
       setRemainingTime(MAX_PLAY_TIME);
       
@@ -259,10 +307,13 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       timerRef.current = setInterval(() => {
         setRemainingTime((prev) => {
           if (prev === null || prev <= 1) {
-            // Time's up, pause the playback
+            // Time's up, pause the playback with fade out
             clearInterval(timerRef.current!);
             timerRef.current = null;
-            pause();
+            fadeOut().then(() => {
+              setIsPlaying(false);
+              setRemainingTime(null);
+            });
             toast.info(`Reprodução de ${frequency.name} encerrada após 30 minutos`);
             return null;
           }
@@ -286,9 +337,11 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Pause the currently playing frequency
   const pause = () => {
     try {
-      cleanupAudioResources();
-      setIsPlaying(false);
-      setRemainingTime(null);
+      fadeOut().then(() => {
+        cleanupAudioResources();
+        setIsPlaying(false);
+        setRemainingTime(null);
+      });
     } catch (error) {
       console.error('Error pausing frequency:', error);
       setIsPlaying(false);
@@ -298,9 +351,12 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Update the volume
   const updateVolume = (newVolume: number) => {
     setVolume(newVolume);
-    if (gainNodeRef.current) {
+    if (gainNodeRef.current && audioContextRef.current) {
       try {
-        gainNodeRef.current.gain.value = newVolume;
+        // Apply volume change with a small ramp for smoothness
+        const currentTime = audioContextRef.current.currentTime;
+        gainNodeRef.current.gain.setValueAtTime(gainNodeRef.current.gain.value, currentTime);
+        gainNodeRef.current.gain.linearRampToValueAtTime(newVolume, currentTime + 0.05);
       } catch (e) {
         console.error('Error updating volume:', e);
       }
@@ -361,7 +417,9 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         removeFromFavorites,
         favorites,
         history,
-        remainingTime
+        remainingTime,
+        fadeIn,
+        fadeOut
       }}
     >
       {children}

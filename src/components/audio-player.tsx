@@ -16,7 +16,9 @@ export function AudioPlayer() {
     setVolume, 
     addToFavorites, 
     favorites, 
-    remainingTime 
+    remainingTime,
+    fadeIn,
+    fadeOut
   } = useAudio();
   const [waves, setWaves] = useState<number[]>([]);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
@@ -43,6 +45,20 @@ export function AudioPlayer() {
     }
   }, [isPlaying]);
 
+  // Smoother toggle with fade in/out
+  const handleTogglePlayPause = () => {
+    if (isPlaying) {
+      // If currently playing, trigger a fade out before stopping
+      fadeOut().then(() => togglePlayPause());
+    } else if (currentFrequency) {
+      // If not playing but frequency is selected, start playing with fade in
+      togglePlayPause();
+      fadeIn();
+    } else {
+      togglePlayPause(); // Just toggle if no frequency is selected
+    }
+  };
+
   if (!currentFrequency) {
     return (
       <Card className="fixed bottom-0 left-0 right-0 p-4 mx-4 mb-4 rounded-xl glass-card animate-slide-up">
@@ -58,7 +74,7 @@ export function AudioPlayer() {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Button 
-            onClick={togglePlayPause} 
+            onClick={handleTogglePlayPause} 
             variant="secondary" 
             size="icon" 
             className="w-12 h-12 rounded-full text-primary bg-primary/10 hover:bg-primary/20"
