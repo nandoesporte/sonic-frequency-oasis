@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -38,6 +37,8 @@ export default function Auth() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
+  const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState<string>('');
   const navigate = useNavigate();
 
   console.log('Auth page rendered, user:', user, 'loading:', loading);
@@ -57,6 +58,7 @@ export default function Auth() {
   // Reset form and error when switching between login and register
   useEffect(() => {
     setAuthError(null);
+    setShowEmailConfirmation(false);
     form.reset({
       email: '',
       password: '',
@@ -125,11 +127,14 @@ export default function Auth() {
         const result = await signUp(values.email, values.password, registerValues.fullName);
         
         if (result && result.user) {
-          console.log('Signup successful, switching to login');
+          console.log('Signup successful');
+          setRegisteredEmail(values.email);
+          setShowEmailConfirmation(true);
           toast.success('Conta criada com sucesso!', {
-            description: 'Por favor, faça login.'
+            description: 'Por favor, verifique seu email para confirmar sua conta.'
           });
-          setIsLogin(true);
+          
+          // Don't automatically switch to login mode to keep the confirmation message visible
           form.reset({
             email: values.email,
             password: '',
@@ -194,6 +199,16 @@ export default function Auth() {
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{authError}</AlertDescription>
+                </Alert>
+              )}
+              
+              {showEmailConfirmation && !isLogin && (
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    Um email de confirmação foi enviado para <strong>{registeredEmail}</strong>. 
+                    Por favor verifique sua caixa de entrada e clique no link para ativar sua conta.
+                  </AlertDescription>
                 </Alert>
               )}
 

@@ -214,6 +214,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           data: {
             full_name: fullName,
           },
+          emailRedirectTo: window.location.origin + '/auth', // Redirect to auth page after email confirmation
         },
       });
 
@@ -236,9 +237,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       console.log('Signup successful:', data.user?.email);
-      toast.success('Conta criada com sucesso', {
-        description: 'Verifique seu email para confirmar sua conta.'
-      });
+      
+      // Check if email confirmation is required
+      if (data.user && !data.session) {
+        console.log('Email confirmation required');
+        // Toast is now handled in the component to avoid duplication
+      } else {
+        toast.success('Conta criada com sucesso', {
+          description: 'Sua conta foi criada e você já está logado.'
+        });
+      }
 
       return { user: data.user, session: data.session };
     } catch (error: any) {
