@@ -18,7 +18,8 @@ import {
   ChevronRight, 
   Smartphone, 
   MessageSquare,
-  CircleChevronRight
+  CircleChevronRight,
+  CircleChevronLeft
 } from "lucide-react";
 import { useIsMobile } from "@/hooks";
 
@@ -195,7 +196,7 @@ export function FrequenciesGuideDialog({ manualOpen, onManualClose }: Frequencie
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto mx-4 bg-card/95 backdrop-blur-sm border-primary/20 shadow-lg rounded-xl">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto mx-4 bg-card/95 backdrop-blur-sm border-primary/20 shadow-lg rounded-xl font-sans">
         <div className="absolute -top-12 left-0 right-0 flex justify-center pointer-events-none">
           <div className="bg-primary/20 backdrop-blur-md p-3 rounded-full shadow-xl">
             <Headphones className="h-6 w-6 text-primary" />
@@ -203,7 +204,7 @@ export function FrequenciesGuideDialog({ manualOpen, onManualClose }: Frequencie
         </div>
         
         <DialogHeader className="pt-4">
-          <DialogTitle className="text-xl sm:text-2xl flex items-center justify-center text-center">
+          <DialogTitle className="text-xl sm:text-2xl flex items-center justify-center text-center font-heading">
             {currentStepData.title}
           </DialogTitle>
           <DialogDescription className="text-sm sm:text-base pt-1 text-center">
@@ -233,7 +234,7 @@ export function FrequenciesGuideDialog({ manualOpen, onManualClose }: Frequencie
             <Button 
               variant="outline" 
               onClick={() => setCurrentStep(prev => prev - 1)} 
-              className="text-sm w-full sm:w-auto flex items-center"
+              className="text-sm w-full sm:w-auto flex items-center justify-center"
             >
               <CircleChevronLeft className="h-4 w-4 mr-2" />
               Anterior
@@ -243,7 +244,7 @@ export function FrequenciesGuideDialog({ manualOpen, onManualClose }: Frequencie
           {currentStep < steps.length - 1 ? (
             <Button 
               onClick={() => setCurrentStep(prev => prev + 1)} 
-              className="gap-2 text-sm w-full sm:w-auto bg-primary hover:bg-primary/90"
+              className="gap-2 text-sm w-full sm:w-auto bg-primary hover:bg-primary/90 font-medium"
             >
               Próximo
               <CircleChevronRight className="h-4 w-4" />
@@ -251,7 +252,7 @@ export function FrequenciesGuideDialog({ manualOpen, onManualClose }: Frequencie
           ) : (
             <Button 
               onClick={closeGuide} 
-              className="gap-2 text-sm w-full sm:w-auto bg-primary hover:bg-primary/90"
+              className="gap-2 text-sm w-full sm:w-auto bg-primary hover:bg-primary/90 font-medium"
             >
               Começar a explorar
               <ChevronRight className="h-4 w-4" />
@@ -262,5 +263,3 @@ export function FrequenciesGuideDialog({ manualOpen, onManualClose }: Frequencie
     </Dialog>
   );
 }
-
-import { CircleChevronLeft } from "lucide-react";
