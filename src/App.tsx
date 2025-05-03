@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -21,6 +22,7 @@ import Profile from "./pages/Profile";
 import Terms from "./pages/Terms";
 import { TermsAcceptanceDialog } from "./components/TermsAcceptanceDialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { FrequenciesGuideDialog } from "./components/FrequenciesGuideDialog";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +52,8 @@ function ConditionalFooter() {
 
 // The main application component
 function AppContent() {
+  const { user } = useAuth();
+  
   useEffect(() => {
     // Alterado para preferir o tema escuro por padrão
     const theme = localStorage.getItem("theme") || 
@@ -67,6 +71,7 @@ function AppContent() {
       <ScrollToTop />
       <Toaster />
       <TermsAcceptanceDialog />
+      {user && <FrequenciesGuideDialog />}
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/scientific" element={<Scientific />} />
