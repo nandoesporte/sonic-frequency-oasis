@@ -72,8 +72,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground text-base;
-    font-size: 17px; /* Increased base font size */
+    @apply bg-background text-foreground;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply tracking-tight;
@@ -86,72 +85,6 @@
   }
   h3 {
     @apply text-xl md:text-2xl font-semibold;
-  }
-  
-  /* Increased text sizes for better readability */
-  p, span, div, button, a {
-    font-size: inherit;
-  }
-  
-  .text-xs {
-    font-size: 0.8rem; /* 12.8px */
-  }
-  
-  .text-sm {
-    font-size: 0.925rem; /* 14.8px */
-  }
-  
-  .text-base {
-    font-size: 1.0625rem; /* 17px */
-  }
-  
-  .text-lg {
-    font-size: 1.1875rem; /* 19px */
-  }
-  
-  .text-xl {
-    font-size: 1.33rem; /* 21.28px */
-  }
-  
-  /* Mobile optimizations for text */
-  @media (max-width: 768px) {
-    body {
-      font-size: 16px;
-    }
-    
-    h1 {
-      @apply text-3xl;
-    }
-    
-    h2 {
-      @apply text-2xl;
-    }
-    
-    h3 {
-      @apply text-xl;
-    }
-    
-    .text-xs {
-      font-size: 0.85rem; /* 13.6px on mobile */
-    }
-    
-    .section-title {
-      @apply text-2xl;
-    }
-    
-    .section-description {
-      @apply text-base;
-    }
-    
-    /* Ensure buttons have readable text */
-    button, .button {
-      @apply text-base py-2.5;
-    }
-    
-    /* Make card content more readable */
-    .card-content {
-      @apply text-base;
-    }
   }
 }
 
