@@ -134,6 +134,12 @@ export default function Auth() {
             email: values.email,
             password: '',
           });
+        } else if (result && result.error && result.error.includes('signup_disabled')) {
+          console.error('Signup not allowed:', result.error);
+          setAuthError('O cadastro de novas contas está desativado neste momento. Por favor, contate o administrador.');
+          toast.error('Cadastro desativado', {
+            description: 'Não é possível criar novas contas no momento.'
+          });
         } else {
           console.error('Signup failed:', result?.error || 'Unknown error');
           setAuthError(result?.error || 'Não foi possível criar sua conta. Tente novamente.');

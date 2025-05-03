@@ -219,6 +219,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         console.error('Signup error:', error.message);
+        
+        // Check for the specific signup disabled error
+        if (error.message.includes('Signups not allowed') || error.message.includes('signup_disabled')) {
+          return { 
+            user: null, 
+            session: null, 
+            error: 'signup_disabled' 
+          };
+        }
+        
         toast.error('Erro ao criar conta', {
           description: 'Não foi possível criar sua conta. Tente novamente.'
         });
