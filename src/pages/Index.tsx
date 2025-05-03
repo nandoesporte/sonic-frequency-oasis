@@ -152,7 +152,7 @@ const Index = () => {
                   </div>
                 </div>
                 
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 animate-fade-in leading-tight">
+                <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-4 md:mb-6 animate-fade-in leading-tight">
                   <span className="text-primary dark:text-primary">O Som </span> 
                   <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-blue-400">Terapêutico</span>
                 </h1>
