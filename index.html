@@ -7,7 +7,17 @@
     <title>Frequency App - Audio Therapy Through Sound Frequencies</title>
     <meta name="description" content="Experience therapeutic sound frequencies for healing, relaxation, focus and well-being. Explore our library of healing frequencies." />
     <meta name="author" content="Frequency App" />
+    <meta name="theme-color" content="#a78bfa" />
 
+    <!-- PWA manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Apple specific PWA meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="FrequencyApp" />
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+    
     <meta property="og:title" content="Frequency App - Sound Healing" />
     <meta property="og:description" content="Experience therapeutic sound frequencies for healing, relaxation, focus and well-being." />
     <meta property="og:type" content="website" />
@@ -23,5 +33,20 @@
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- PWA service worker registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+              console.log('ServiceWorker registration successful:', registration.scope);
+            })
+            .catch(error => {
+              console.error('ServiceWorker registration failed:', error);
+            });
+        });
+      }
+    </script>
   </body>
 </html>
