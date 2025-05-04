@@ -5,12 +5,13 @@ import { useAudio } from "@/lib/audio-context";
 import { AudioWarningDialog } from "./audio-warning-dialog";
 
 export function AudioNavigationWarning({ children }: { children: React.ReactNode }) {
-  const { isPlaying } = useAudio();
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  // State for handling navigation
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
   const [showWarning, setShowWarning] = useState(false);
   const [destinationName, setDestinationName] = useState<string>("");
-  const navigate = useNavigate();
-  const location = useLocation();
   
   // Map routes to readable names
   const routeNames: Record<string, string> = {
@@ -28,11 +29,24 @@ export function AudioNavigationWarning({ children }: { children: React.ReactNode
     "/webhook-config": "configuração de webhook",
   };
 
-  // Capture clicks on links
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (!isPlaying) return;
+  // We need to check if we're within an AudioProvider context
+  let isPlaying = false;
+  let audioContextAvailable = true;
 
+  try {
+    // Try to use the audio context, but catch the error if it's not available
+    const audioContext = useAudio();
+    isPlaying = audioContext.isPlaying;
+  } catch (e) {
+    // If useAudio throws an error, we're not within an AudioProvider
+    audioContextAvailable = false;
+  }
+
+  // Only set up event listeners if audio context is available and audio is playing
+  useEffect(() => {
+    if (!audioContextAvailable || !isPlaying) return;
+
+    const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const closestAnchor = target.closest('a');
       
@@ -56,7 +70,7 @@ export function AudioNavigationWarning({ children }: { children: React.ReactNode
 
     document.addEventListener('click', handleClick, true);
     return () => document.removeEventListener('click', handleClick, true);
-  }, [isPlaying, routeNames]);
+  }, [isPlaying, routeNames, audioContextAvailable]);
 
   const handleContinue = () => {
     if (pendingNavigation) {
@@ -69,12 +83,14 @@ export function AudioNavigationWarning({ children }: { children: React.ReactNode
   return (
     <>
       {children}
-      <AudioWarningDialog 
-        open={showWarning}
-        onOpenChange={setShowWarning}
-        onContinue={handleContinue}
-        destinationName={destinationName}
-      />
+      {audioContextAvailable && (
+        <AudioWarningDialog 
+          open={showWarning}
+          onOpenChange={setShowWarning}
+          onContinue={handleContinue}
+          destinationName={destinationName}
+        />
+      )}
     </>
   );
 }

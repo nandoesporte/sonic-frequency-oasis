@@ -1,8 +1,8 @@
+
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
 import { FrequencyCard } from "@/components/frequency-card";
-import { AudioProvider } from "@/lib/audio-context";
 import { FrequencyData } from "@/lib/data";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -165,13 +165,11 @@ const PremiumContent = () => {
 
 const Premium = () => {
   return (
-    <AudioProvider>
-      <div className="min-h-screen pb-24">
-        <Header />
-        <PremiumContent />
-        <AudioPlayer />
-      </div>
-    </AudioProvider>
+    <div className="min-h-screen pb-24">
+      <Header />
+      <PremiumContent />
+      <AudioPlayer />
+    </div>
   );
 };
 

@@ -7,6 +7,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { Footer } from "./components/ui/footer";
 import { useAuth } from "@/hooks";
 import { AudioNavigationWarning } from "./components/audio-navigation-warning";
+import { AudioProvider } from "@/lib/audio-context";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Category from "./pages/Category";
@@ -51,7 +52,7 @@ function ConditionalFooter() {
   return <Footer />;
 }
 
-// The main application component
+// The main application content
 function AppContent() {
   const { user } = useAuth();
   
@@ -67,26 +68,28 @@ function AppContent() {
       <Toaster />
       <TermsAcceptanceDialog />
       {user && <FrequenciesGuideDialog />}
-      <AudioNavigationWarning>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/scientific" element={<Scientific />} />
-          <Route path="/categories/:category" element={<Category />} />
-          <Route path="/trending" element={<Trending />} />
-          <Route path="/favorites" element={<Favorites />} />
-          <Route path="/guide" element={<Guide />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/premium" element={<Premium />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/webhook-config" element={<WebhookConfig />} />
-          <Route path="/terms" element={<Terms />} />
-          
-          {/* Catch all route for 404 */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </AudioNavigationWarning>
+      <AudioProvider>
+        <AudioNavigationWarning>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/scientific" element={<Scientific />} />
+            <Route path="/categories/:category" element={<Category />} />
+            <Route path="/trending" element={<Trending />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/guide" element={<Guide />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/premium" element={<Premium />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/webhook-config" element={<WebhookConfig />} />
+            <Route path="/terms" element={<Terms />} />
+            
+            {/* Catch all route for 404 */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AudioNavigationWarning>
+      </AudioProvider>
       <ConditionalFooter />
     </div>
   );

@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
-import { AudioProvider } from "@/lib/audio-context";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { usePremium } from "@/hooks/use-premium";
@@ -118,21 +117,19 @@ const Profile = () => {
   }
 
   return (
-    <AudioProvider>
-      <div className="min-h-screen pb-24">
-        <Header />
-        <div className="container pt-32 pb-12 px-4">
-          <UserProfile 
-            user={user}
-            userData={userData}
-            subscriptionData={subscriptionData}
-            isPremium={isPremium}
-            loading={loading || premiumLoading}
-          />
-        </div>
-        <AudioPlayer />
+    <div className="min-h-screen pb-24">
+      <Header />
+      <div className="container pt-32 pb-12 px-4">
+        <UserProfile 
+          user={user}
+          userData={userData}
+          subscriptionData={subscriptionData}
+          isPremium={isPremium}
+          loading={loading || premiumLoading}
+        />
       </div>
-    </AudioProvider>
+      <AudioPlayer />
+    </div>
   );
 };
 
