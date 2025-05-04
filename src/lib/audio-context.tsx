@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { toast } from '@/components/ui/sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -60,44 +59,68 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const orientationLockedRef = useRef<boolean>(false);
 
   const MAX_PLAY_TIME = 30 * 60; // 30 minutes in seconds
   const fadeTime = 0.5; // 500ms fade time for smoother transitions
 
-  // Lock screen orientation when audio is playing
-  useEffect(() => {
-    // Only attempt to lock orientation if the API is supported
+  // Improved screen orientation locking function
+  const lockScreenOrientation = () => {
+    // Only try to lock if we're playing audio and haven't already locked
+    if (!isPlaying || orientationLockedRef.current) return;
+    
+    // Check if the orientation API is available
     if (window.screen && 'orientation' in window.screen) {
       try {
-        // Cast screen to our extended type that includes the lock method
         const screenExtended = window.screen as unknown as ScreenExtended;
         
-        // Lock to portrait orientation
+        // Try to lock orientation to portrait
         screenExtended.orientation.lock('portrait')
           .then(() => {
             console.log('Screen orientation locked to portrait');
+            orientationLockedRef.current = true;
           })
           .catch(error => {
-            console.error('Failed to lock screen orientation:', error);
+            // Handle rejection gracefully - some browsers may reject permission
+            console.log('Screen orientation lock not available or not permitted:', error.message);
           });
       } catch (error) {
-        console.error('Error accessing screen orientation API:', error);
+        // Silent fail - API might exist but not be functional
+        console.log('Screen orientation API not fully supported');
       }
-      
-      // Unlock when component unmounts or playback stops
-      return () => {
-        if (window.screen && 'orientation' in window.screen) {
-          try {
-            const screenExtended = window.screen as unknown as ScreenExtended;
-            screenExtended.orientation.unlock();
-            console.log('Screen orientation unlocked');
-          } catch (error) {
-            console.error('Error unlocking screen orientation:', error);
-          }
-        }
-      };
     }
-  }, []);
+  };
+  
+  // Unlock screen orientation function
+  const unlockScreenOrientation = () => {
+    if (!orientationLockedRef.current) return;
+    
+    if (window.screen && 'orientation' in window.screen) {
+      try {
+        const screenExtended = window.screen as unknown as ScreenExtended;
+        screenExtended.orientation.unlock();
+        console.log('Screen orientation unlocked');
+        orientationLockedRef.current = false;
+      } catch (error) {
+        // Silent fail
+        console.log('Error unlocking screen orientation, but continuing');
+      }
+    }
+  };
+
+  // Lock screen orientation when audio is playing
+  useEffect(() => {
+    if (isPlaying) {
+      lockScreenOrientation();
+    } else {
+      unlockScreenOrientation();
+    }
+    
+    return () => {
+      // Always unlock when component unmounts
+      unlockScreenOrientation();
+    };
+  }, [isPlaying]);
 
   // Handle audio focus and interruptions
   useEffect(() => {
@@ -154,6 +177,9 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
+    
+    // Make sure to unlock screen orientation when cleaning up audio
+    unlockScreenOrientation();
   };
 
   // Cleanup on component unmount
@@ -343,6 +369,9 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       // Perform the fade in
       await fadeIn();
       
+      // Lock the screen orientation once we're playing
+      lockScreenOrientation();
+      
       // Set initial remaining time to 30 minutes
       setRemainingTime(MAX_PLAY_TIME);
       
@@ -391,7 +420,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       setIsProcessing(true);
       await fadeOut();
-      cleanupAudioResources();
+      cleanupAudioResources(); // This will also unlock the screen orientation
       setIsPlaying(false);
       setRemainingTime(null);
     } catch (error) {
@@ -490,4 +519,3 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     </AudioContext.Provider>
   );
 };
-

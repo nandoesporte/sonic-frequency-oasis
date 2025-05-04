@@ -3,7 +3,7 @@ import { useAudio } from "@/lib/audio-context";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { Clock, Heart, Pause, Play, Volume2 } from "lucide-react";
+import { Clock, Heart, Pause, Play, ScreenRotation, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 
@@ -138,18 +138,21 @@ export function AudioPlayer() {
         
         <div className="flex items-center gap-2">
           {isPlaying && (
-            <div className="flex items-end h-8 px-2">
-              {waves.map((height, i) => (
-                <div 
-                  key={i}
-                  className="freq-wave"
-                  style={{ 
-                    height: `${height * 24}px`,
-                    animationDelay: `${i * 0.1}s`
-                  }}
-                />
-              ))}
-            </div>
+            <>
+              <div className="hidden xs:flex items-end h-8 px-2">
+                {waves.map((height, i) => (
+                  <div 
+                    key={i}
+                    className="freq-wave"
+                    style={{ 
+                      height: `${height * 24}px`,
+                      animationDelay: `${i * 0.1}s`
+                    }}
+                  />
+                ))}
+              </div>
+              <ScreenRotation className="h-4 w-4 text-primary/70" />
+            </>
           )}
           
           <div className="relative">
@@ -197,4 +200,3 @@ export function AudioPlayer() {
     </Card>
   );
 }
-
