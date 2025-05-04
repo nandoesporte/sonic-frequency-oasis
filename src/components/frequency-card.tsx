@@ -58,13 +58,15 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
       return;
     }
     
-    // Check premium status for non-free frequencies
-    if (frequency.premium && !isPremium) {
+    // Check premium status for non-free premium frequencies
+    // If it's premium content and user is not premium, show dialog
+    if (frequency.premium && !isPremium && !isFreeFrequency) {
       console.log("Opening premium content dialog");
       setPremiumDialogOpen(true);
       return;
     }
     
+    // Allow playback for logged in users (both free and premium content)
     play(frequency);
   };
   
