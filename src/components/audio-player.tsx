@@ -1,9 +1,8 @@
-
 import { useAudio } from "@/lib/audio-context";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { Clock, Heart, Pause, Play, ScreenRotation, Volume2 } from "lucide-react";
+import { Clock, Heart, Pause, Play, RotateCw, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 
@@ -151,7 +150,7 @@ export function AudioPlayer() {
                   />
                 ))}
               </div>
-              <ScreenRotation className="h-4 w-4 text-primary/70" />
+              <RotateCw className="h-4 w-4 text-primary/70" />
             </>
           )}
           
