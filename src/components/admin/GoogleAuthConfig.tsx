@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,35 +7,105 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/components/ui/sonner';
 import { Loader2, ExternalLink } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 export function GoogleAuthConfig() {
   const [isLoading, setIsLoading] = useState(false);
   const [clientId, setClientId] = useState('');
   const [clientSecret, setClientSecret] = useState('');
   const [isEnabled, setIsEnabled] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
+
+  // Fetch current Google auth settings when component mounts
+  useEffect(() => {
+    async function fetchGoogleAuthSettings() {
+      try {
+        setIsFetching(true);
+        const { data, error } = await supabase
+          .from('system_settings')
+          .select('*')
+          .eq('setting_key', 'google_auth_config')
+          .maybeSingle();
+
+        if (error) {
+          console.error('Error fetching Google auth settings:', error);
+          return;
+        }
+
+        // If we have settings, use them
+        if (data) {
+          const settings = data.setting_value;
+          setClientId(settings.client_id || '');
+          setClientSecret(settings.client_secret || '');
+          setIsEnabled(settings.is_enabled || false);
+        }
+      } catch (error) {
+        console.error('Error in fetchGoogleAuthSettings:', error);
+      } finally {
+        setIsFetching(false);
+      }
+    }
+
+    fetchGoogleAuthSettings();
+  }, []);
 
   const handleSaveConfig = async () => {
     setIsLoading(true);
 
     try {
-      // This is just a UI prototype since we can't directly modify Supabase auth settings from client side
-      // In a real implementation, this would call a Supabase Edge Function to update the settings
-      
       if (!clientId || !clientSecret) {
         toast.error('Campos obrigatórios', {
           description: 'Cliente ID e Client Secret são obrigatórios.'
         });
+        setIsLoading(false);
         return;
       }
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Prepare data to save
+      const settingValue = {
+        client_id: clientId,
+        client_secret: clientSecret,
+        is_enabled: isEnabled,
+        updated_at: new Date().toISOString()
+      };
+
+      // Check if setting already exists
+      const { data: existingData } = await supabase
+        .from('system_settings')
+        .select('id')
+        .eq('setting_key', 'google_auth_config')
+        .maybeSingle();
+
+      let error;
+      
+      if (existingData) {
+        // Update existing record
+        const { error: updateError } = await supabase
+          .from('system_settings')
+          .update({ setting_value: settingValue })
+          .eq('setting_key', 'google_auth_config');
+          
+        error = updateError;
+      } else {
+        // Insert new record
+        const { error: insertError } = await supabase
+          .from('system_settings')
+          .insert([{ 
+            setting_key: 'google_auth_config', 
+            setting_value: settingValue,
+            setting_type: 'auth'
+          }]);
+          
+        error = insertError;
+      }
+
+      if (error) {
+        throw error;
+      }
       
       toast.success('Configurações salvas', {
         description: 'As configurações de autenticação do Google foram salvas.'
       });
-
-      // In a real implementation, this is where we would refresh the status from the server
     } catch (error) {
       console.error('Error saving Google auth settings:', error);
       toast.error('Erro ao salvar', {
@@ -45,6 +115,23 @@ export function GoogleAuthConfig() {
       setIsLoading(false);
     }
   };
+
+  // Show loading state while fetching
+  if (isFetching) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Configurações do Google Sign-In</CardTitle>
+            <CardDescription>Carregando configurações...</CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center py-6">
+            <Loader2 className="h-6 w-6 animate-spin" />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
