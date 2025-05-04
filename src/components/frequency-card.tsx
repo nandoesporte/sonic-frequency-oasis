@@ -47,7 +47,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
       return;
     }
     
-    // Allow playing free frequencies without premium subscription
+    // Redirect directly to premium plans section if premium content and user doesn't have premium
     if (frequency.premium && !isPremium) {
       toast.info("Conteúdo Premium", {
         description: "Assine o plano premium para acessar esta frequência"
@@ -59,7 +59,18 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
     play(frequency);
   };
   
-  const handleAddToFavorites = () => {
+  const handleCardClick = () => {
+    // If premium content and user doesn't have premium, redirect to premium plans
+    if (frequency.premium && !isPremium) {
+      navigate("/premium#planos");
+      return;
+    }
+  };
+  
+  const handleAddToFavorites = (e: React.MouseEvent) => {
+    // Prevent the click event from bubbling up to the card
+    e.stopPropagation();
+    
     if (!user && !loading) {
       toast.info("Faça login para favoritar", {
         description: "É necessário estar logado para adicionar aos favoritos"
@@ -74,15 +85,21 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
   // For trending and compact views - simplified for better performance
   if (variant === "trending" || variant === "compact") {
     return (
-      <Card className={cn(
-        "overflow-hidden hover-scale transition-all",
-        variant === "trending" && "border-purple-light bg-purple-light/10",
-        isCurrentlyPlaying && "border-primary",
-        frequency.premium && !isPremium && "border-purple-300"
-      )}>
+      <Card 
+        className={cn(
+          "overflow-hidden hover-scale transition-all cursor-pointer",
+          variant === "trending" && "border-purple-light bg-purple-light/10",
+          isCurrentlyPlaying && "border-primary",
+          frequency.premium && !isPremium && "border-purple-300"
+        )}
+        onClick={handleCardClick}
+      >
         <div className="flex items-center p-4">
           <Button
-            onClick={handlePlay}
+            onClick={(e) => {
+              e.stopPropagation();
+              handlePlay();
+            }}
             variant="secondary"
             size="icon"
             className={cn(
@@ -131,11 +148,14 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
   
   // Default full card
   return (
-    <Card className={cn(
-      "overflow-hidden hover-scale transition-all",
-      isCurrentlyPlaying && "border-primary",
-      frequency.premium && !isPremium && "border-purple-300"
-    )}>
+    <Card 
+      className={cn(
+        "overflow-hidden hover-scale transition-all cursor-pointer",
+        isCurrentlyPlaying && "border-primary",
+        frequency.premium && !isPremium && "border-purple-300"
+      )}
+      onClick={handleCardClick}
+    >
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-xl">{frequency.name}</CardTitle>
@@ -163,7 +183,10 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
       
       <CardFooter className="flex justify-between">
         <Button
-          onClick={handlePlay}
+          onClick={(e) => {
+            e.stopPropagation();
+            handlePlay();
+          }}
           variant={isCurrentlyPlaying ? "default" : "secondary"}
           className={cn(
             "w-full mr-2", 
