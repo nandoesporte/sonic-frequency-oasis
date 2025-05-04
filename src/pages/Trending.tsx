@@ -46,7 +46,10 @@ const TrendingContent = () => {
           return;
         }
         
-        setFrequencies(data.map(freq => ({
+        // Process the data to mark the first one as free
+        const processedData = markFirstFrequency(data);
+        
+        setFrequencies(processedData.map(freq => ({
           id: freq.id,
           name: freq.name,
           hz: freq.hz,
@@ -54,6 +57,7 @@ const TrendingContent = () => {
           description: freq.description || freq.purpose, // Ensure description is never undefined
           category: freq.category,
           premium: freq.is_premium,
+          free: freq.is_free_sample,
           trending: true
         })));
       } catch (err) {
@@ -69,17 +73,32 @@ const TrendingContent = () => {
     fetchTrendingFrequencies();
   }, []);
 
-  // Handler to redirect non-logged users to auth page
-  const handleFrequencyClick = () => {
-    if (!user) {
-      console.log("User not logged in, redirecting to auth page from trending page");
-      toast.info("Faça login para continuar", {
-        description: "É necessário estar logado para acessar as frequências"
-      });
-      navigate("/auth");
-      return true;
+  // Helper function to mark first frequency as free
+  function markFirstFrequency(frequencies: any[]) {
+    if (!frequencies || frequencies.length === 0) {
+      return [];
     }
-    return false;
+    
+    // Make a copy to avoid mutating the original
+    const result = [...frequencies];
+    
+    // Find the first non-premium frequency, or just the first one if all are premium
+    const freeIndex = result.findIndex(freq => !freq.is_premium);
+    const indexToMark = freeIndex >= 0 ? freeIndex : 0;
+    
+    if (result[indexToMark]) {
+      result[indexToMark] = {
+        ...result[indexToMark],
+        is_free_sample: true
+      };
+    }
+    
+    return result;
+  }
+
+  // We don't need to handle login redirects here anymore as FrequencyCard handles that
+  const handleFrequencyClick = () => {
+    return false; // Always allow FrequencyCard to handle the logic
   };
 
   return (

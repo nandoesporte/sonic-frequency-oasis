@@ -44,32 +44,38 @@ export function PremiumContentDialog({
             {frequencyName ? `"${frequencyName}" é` : "Este conteúdo é"} exclusivo para assinantes premium
           </DialogDescription>
         </DialogHeader>
+        
         <div className="space-y-4 py-4">
-          <div className="rounded-lg bg-muted p-4">
+          <div className="rounded-lg bg-purple-50 dark:bg-purple-900/20 p-4">
             <h4 className="font-medium mb-2">Benefícios do Premium:</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <ul className="space-y-2.5">
               <li className="flex items-center">
-                <span className="bg-purple-500 rounded-full h-1.5 w-1.5 mr-2"></span>
-                Acesso ilimitado a todas as frequências
+                <span className="bg-purple-500 rounded-full h-2 w-2 mr-2"></span>
+                <span className="text-sm text-muted-foreground">Acesso ilimitado a todas as frequências</span>
               </li>
               <li className="flex items-center">
-                <span className="bg-purple-500 rounded-full h-1.5 w-1.5 mr-2"></span>
-                Conteúdo exclusivo atualizado mensalmente
+                <span className="bg-purple-500 rounded-full h-2 w-2 mr-2"></span>
+                <span className="text-sm text-muted-foreground">Conteúdo exclusivo atualizado mensalmente</span>
               </li>
               <li className="flex items-center">
-                <span className="bg-purple-500 rounded-full h-1.5 w-1.5 mr-2"></span>
-                Sem anúncios ou interrupções
+                <span className="bg-purple-500 rounded-full h-2 w-2 mr-2"></span>
+                <span className="text-sm text-muted-foreground">Sem anúncios ou interrupções</span>
               </li>
             </ul>
           </div>
         </div>
-        <DialogFooter className="flex flex-col sm:flex-row gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="sm:w-full">
+        
+        <DialogFooter className="flex flex-col gap-3">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="w-full"
+          >
             Talvez depois
           </Button>
-          <Button 
-            onClick={handleSubscribe} 
-            className="sm:w-full bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700"
+          <Button
+            onClick={handleSubscribe}
+            className="w-full bg-purple-500 hover:bg-purple-600"
           >
             Ver planos de assinatura
           </Button>

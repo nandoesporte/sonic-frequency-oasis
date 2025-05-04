@@ -93,16 +93,10 @@ const Category = () => {
     );
   }
 
-  // Function to redirect to login if user is not logged in
-  // Updated to check if the frequency is free - free frequencies don't require login
+  // We don't need to check for login status here anymore as the FrequencyCard component
+  // will handle all the logic for free/premium frequencies
   const handleFrequencyClick = () => {
-    // The check for free frequencies is now in the FrequencyCard component
-    if (!user) {
-      // This will only be called for non-free frequencies due to the check in FrequencyCard
-      console.log("User not logged in, redirecting to auth page from category page");
-      return false; // Allow the component to handle the redirection
-    }
-    return false;
+    return false; // Always allow the FrequencyCard to handle the logic
   };
 
   const CategoryIcon = categoryData?.icon;

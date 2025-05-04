@@ -93,17 +93,10 @@ const Index = () => {
     };
   }, []);
 
-  // Function to redirect to login if user is not logged in
-  // Updated to check if the frequency is free - free frequencies don't require login
+  // Function to handle frequency clicks - now passes through to FrequencyCard component
   const handleFrequencyClick = useCallback(() => {
-    // Check is now handled inside the FrequencyCard component
-    if (!user) {
-      // This will only be called for non-free frequencies due to the check in FrequencyCard
-      console.log("User not logged in, redirecting to auth page from home page");
-      return false;
-    }
-    return false;
-  }, [user, navigate]);
+    return false; // Always allow the FrequencyCard to handle the logic
+  }, []);
 
   return (
     <AudioProvider>
