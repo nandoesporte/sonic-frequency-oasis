@@ -4,7 +4,13 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState("dark"); // Always initialize as dark
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      // Prefere tema escuro como padrão
+      return localStorage.getItem("theme") || "dark";
+    }
+    return "dark";
+  });
 
   useEffect(() => {
     const root = window.document.documentElement;
