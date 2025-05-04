@@ -62,8 +62,14 @@ export function PremiumContentDialog({
               </li>
             </ul>
           </div>
-          <div className="text-center text-sm text-muted-foreground">
-            <p>Cada categoria possui frequências gratuitas disponíveis para você experimentar.</p>
+          <div className="bg-green-500/10 p-4 rounded-lg border border-green-500/20">
+            <h4 className="font-medium text-green-600 dark:text-green-400 flex items-center mb-2">
+              <span className="bg-green-500 rounded-full h-2 w-2 mr-2"></span>
+              Experimente Grátis
+            </h4>
+            <p className="text-sm text-muted-foreground">
+              Cada categoria possui frequências gratuitas disponíveis para você experimentar.
+            </p>
           </div>
         </div>
         <DialogFooter className="flex flex-col sm:flex-row gap-2">

@@ -15,6 +15,7 @@ import { ScientificEvidence } from "@/components/home/ScientificEvidence";
 import { toast } from "@/components/ui/sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useDebouncedEffect } from "@/hooks";
+import { Badge } from "@/components/ui/badge";
 
 const Index = () => {
   const [trendingFrequencies, setTrendingFrequencies] = useState<FrequencyData[]>([]);
@@ -146,10 +147,10 @@ const Index = () => {
             <div className="container mx-auto relative z-10">
               <div className="max-w-4xl mx-auto text-center">
                 <div className="flex justify-center mb-5">
-                  <div className="inline-flex items-center justify-center p-2 bg-gradient-to-r from-purple-100/70 to-blue-100/70 dark:from-purple-900/20 dark:to-blue-900/20 rounded-full shadow-sm">
-                    <Sparkles className="h-5 w-5 mr-2 text-primary" />
-                    <span className="text-sm font-medium">Experimente o Som Terapêutico</span>
-                  </div>
+                  <Badge variant="success" className="px-3 py-1 text-sm">
+                    <Sparkles className="h-4 w-4 mr-1" />
+                    Experimente Grátis
+                  </Badge>
                 </div>
                 
                 <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-4 md:mb-6 animate-fade-in leading-tight">
@@ -193,6 +194,18 @@ const Index = () => {
                     <h3 className="font-medium">Base Científica</h3>
                     <p className="text-sm text-muted-foreground">Pesquisas comprovadas</p>
                   </div>
+                </div>
+                
+                {/* Try for Free Action Call */}
+                <div className="mt-12 p-6 bg-gradient-to-r from-green-500/10 to-green-600/10 rounded-xl backdrop-blur-sm border border-green-500/20">
+                  <h3 className="text-xl font-medium mb-2">Experimente gratuitamente!</h3>
+                  <p className="mb-4 text-muted-foreground">Temos frequências gratuitas disponíveis em todas as categorias. Não é necessário cartão de crédito.</p>
+                  <Button asChild className="bg-green-500 hover:bg-green-600">
+                    <Link to="/auth">
+                      Começar Agora
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
                 </div>
               </div>
             </div>

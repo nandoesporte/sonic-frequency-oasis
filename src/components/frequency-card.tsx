@@ -94,12 +94,17 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
           </Button>
           
           <div className="flex-grow min-w-0">
-            <h3 className="font-semibold truncate text-base">
-              {frequency.name}
-              {frequency.premium && (
-                <Crown className="inline-block w-4 h-4 ml-1 text-purple-500" />
+            <div className="flex items-center">
+              <h3 className="font-semibold truncate text-base">
+                {frequency.name}
+                {frequency.premium && (
+                  <Crown className="inline-block w-4 h-4 ml-1 text-purple-500" />
+                )}
+              </h3>
+              {!frequency.premium && (
+                <Badge variant="success" className="ml-2 text-xs">Grátis</Badge>
               )}
-            </h3>
+            </div>
             <p className="text-sm text-muted-foreground truncate">
               {frequency.hz} Hz • {frequency.purpose}
             </p>
@@ -134,12 +139,17 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-xl">{frequency.name}</CardTitle>
-          {frequency.premium && (
-            <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-200">
-              <Crown className="w-3 h-3 mr-1" />
-              Premium
-            </Badge>
-          )}
+          <div className="flex space-x-2">
+            {!frequency.premium && (
+              <Badge variant="success">Grátis</Badge>
+            )}
+            {frequency.premium && (
+              <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-200">
+                <Crown className="w-3 h-3 mr-1" />
+                Premium
+              </Badge>
+            )}
+          </div>
         </div>
       </CardHeader>
       
