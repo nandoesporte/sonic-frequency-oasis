@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -55,15 +54,9 @@ function AppContent() {
   const { user } = useAuth();
   
   useEffect(() => {
-    // Alterado para preferir o tema escuro por padrão
-    const theme = localStorage.getItem("theme") || 
-      (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "dark");
-    
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    // Always use dark theme
+    document.documentElement.classList.add("dark");
+    localStorage.setItem("theme", "dark");
   }, []);
 
   return (
