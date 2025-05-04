@@ -16,6 +16,7 @@ export interface AuthContextType {
     session: Session | null;
     error?: string;
   }>;
+  signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   checkAdminStatus: () => Promise<boolean>;
   setAdminStatus: (userId: string, isAdmin: boolean) => Promise<boolean>;

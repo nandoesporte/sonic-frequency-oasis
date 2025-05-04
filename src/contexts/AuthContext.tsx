@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
@@ -260,6 +259,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const signInWithGoogle = async () => {
+    try {
+      console.log('Initiating Google sign-in flow');
+      setLoading(true);
+      
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + '/auth'
+        }
+      });
+      
+      if (error) {
+        console.error('Google sign-in error:', error);
+        toast.error('Erro ao fazer login com Google', {
+          description: 'Não foi possível fazer login com Google. Tente novamente.'
+        });
+        return;
+      }
+      
+      // No need to do anything else here - the redirect will happen automatically
+      // and the onAuthStateChange listener will handle the session
+      
+    } catch (error: any) {
+      console.error('Unexpected Google sign-in error:', error);
+      toast.error('Erro ao fazer login com Google', {
+        description: 'Ocorreu um erro inesperado. Tente novamente.'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const signOut = async () => {
     try {
       console.log('Signing out user');
@@ -306,7 +338,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user, 
       session, 
       signIn, 
-      signUp, 
+      signUp,
+      signInWithGoogle,
       signOut, 
       loading, 
       isAdmin,
