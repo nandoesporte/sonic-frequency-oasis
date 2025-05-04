@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
 import { FrequencyCard } from "@/components/frequency-card";
@@ -12,6 +12,7 @@ import { usePremium } from "@/hooks/use-premium";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link, useLocation } from "react-router-dom";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const PremiumContent = () => {
   const [frequencies, setFrequencies] = useState<FrequencyData[]>([]);
@@ -20,17 +21,38 @@ const PremiumContent = () => {
   const { isPremium } = usePremium();
   const plansRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  const isMobile = useIsMobile();
+
+  // Improved scroll function with better behavior on mobile
+  const scrollToPlans = useCallback(() => {
+    if (plansRef.current) {
+      const yOffset = isMobile ? -100 : -120; // Adjust offset based on device
+      const y = plansRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      
+      window.scrollTo({
+        top: y,
+        behavior: 'smooth'
+      });
+    }
+  }, [isMobile]);
 
   useEffect(() => {
     const fetchFrequencies = async () => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+      
       const { data, error } = await supabase
         .from('frequencies')
         .select('*')
         .eq('is_premium', true)  // Only fetch premium frequencies
-        .order('hz');
+        .order('hz')
+        .limit(6); // Limit to improve loading time
 
       if (error) {
         console.error('Error fetching frequencies:', error);
+        setLoading(false);
         return;
       }
       
@@ -46,24 +68,16 @@ const PremiumContent = () => {
       setLoading(false);
     };
 
-    if (user) {
-      fetchFrequencies();
-    }
+    fetchFrequencies();
   }, [user]);
 
-  // Scroll to plans section if hash is present or when location changes
+  // Improved hash detection for better scrolling
   useEffect(() => {
-    // Check if there's a hash in the URL or if the hash is specifically #planos
-    if (location.hash === '#planos' && plansRef.current) {
-      setTimeout(() => {
-        plansRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+    if (location.hash === '#planos') {
+      // Small delay to ensure DOM is ready
+      setTimeout(scrollToPlans, 100);
     }
-  }, [location.hash]);
-
-  const scrollToPlans = () => {
-    plansRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, [location.hash, scrollToPlans]);
 
   if (!user) {
     return (
@@ -106,8 +120,22 @@ const PremiumContent = () => {
       )}
 
       {loading ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Carregando frequências...</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="border rounded-lg p-4 animate-pulse">
+              <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-3"></div>
+              <div className="flex justify-between mb-2">
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+              </div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-2"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6 mb-4"></div>
+              <div className="flex justify-between mt-6">
+                <div className="h-9 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                <div className="h-9 bg-gray-200 dark:bg-gray-700 rounded-full w-9"></div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : frequencies.length > 0 ? (
         <>
@@ -124,7 +152,7 @@ const PremiumContent = () => {
         </div>
       )}
       
-      <div id="planos" className="pt-8 mt-8 border-t" ref={plansRef}>
+      <div id="planos" className="pt-8 mt-8 border-t border-border/40" ref={plansRef}>
         <h2 className="text-2xl font-bold mb-8 text-center">Planos de Assinatura</h2>
         <SubscriptionPlans />
       </div>

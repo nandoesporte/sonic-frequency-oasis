@@ -65,11 +65,11 @@ export function PricingSection() {
         description: "Você precisa estar logado para assinar um plano.",
         variant: "destructive",
       });
-      navigate('/auth');
+      navigate('/auth', { state: { returnTo: '/premium#planos' } });
       return;
     }
 
-    // Navigate to premium page with a hash that will scroll to the plans section
+    // Navigate directly to premium page with a hash that will scroll to the plans section
     navigate('/premium#planos');
   };
 
