@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SubscriptionPlanManager } from '@/components/admin/SubscriptionPlanManager';
 import { SubscriberManager } from '@/components/admin/SubscriberManager';
 import { AdminDashboard } from '@/components/admin/AdminDashboard';
+import { GoogleAuthConfig } from '@/components/admin/GoogleAuthConfig';
 import { useForm } from 'react-hook-form';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -282,6 +282,10 @@ export default function Admin() {
         
         <TabsContent value="settings">
           <div className="grid gap-6 md:grid-cols-1">
+            {/* Google Auth Config */}
+            <GoogleAuthConfig />
+            
+            {/* Existing settings */}
             <Card>
               <CardHeader>
                 <CardTitle>Configurações</CardTitle>
