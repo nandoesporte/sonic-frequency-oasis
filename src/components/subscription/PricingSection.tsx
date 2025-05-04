@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -70,7 +69,11 @@ export function PricingSection() {
     }
 
     // Navigate directly to premium page with a hash that will scroll to the plans section
-    navigate('/premium#planos');
+    // Use replace to replace the current history entry to ensure proper behavior
+    navigate('/premium#planos', { replace: true });
+    
+    // Force a page reload to ensure we start from the top
+    window.location.href = '/premium#planos';
   };
 
   return (

@@ -26,8 +26,9 @@ export function PremiumContentDialog({
 
   const handleSubscribe = () => {
     onOpenChange(false);
-    // Navigate directly to premium page with the #planos hash that will scroll to the plans section
-    navigate("/premium#planos");
+    
+    // Use window.location to force a complete page reload and start from the top
+    window.location.href = "/premium#planos";
   };
 
   return (

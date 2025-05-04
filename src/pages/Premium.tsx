@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
@@ -71,11 +70,15 @@ const PremiumContent = () => {
     fetchFrequencies();
   }, [user]);
 
-  // Improved hash detection for better scrolling
+  // Reset scroll position on component mount and when location hash changes
   useEffect(() => {
+    // First, always scroll to the top of the page
+    window.scrollTo(0, 0);
+    
+    // Then, if there's a #planos hash, scroll to the plans section after a short delay
     if (location.hash === '#planos') {
-      // Small delay to ensure DOM is ready
-      setTimeout(scrollToPlans, 100);
+      // Small delay to ensure DOM is fully loaded
+      setTimeout(scrollToPlans, 300);
     }
   }, [location.hash, scrollToPlans]);
 
