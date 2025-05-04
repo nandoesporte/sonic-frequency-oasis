@@ -47,11 +47,12 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
       return;
     }
     
+    // Allow playing free frequencies without premium subscription
     if (frequency.premium && !isPremium) {
       toast.info("Conteúdo Premium", {
         description: "Assine o plano premium para acessar esta frequência"
       });
-      navigate("/premium");
+      navigate("/premium#planos");
       return;
     }
     

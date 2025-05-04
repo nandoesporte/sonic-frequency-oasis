@@ -1,4 +1,3 @@
-
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
@@ -54,6 +53,16 @@ const Category = () => {
         .then(data => {
           console.log("Frequencies fetched:", data);
           setFrequencies(data);
+          
+          // Check if at least one frequency is free
+          const hasFreeFrequency = data.some(freq => !freq.premium);
+          if (!hasFreeFrequency && data.length > 0) {
+            console.log("No free frequencies found, updating first frequency to be free");
+            // This is just for the display - the actual update happens in the database via seedFrequenciesForCategory
+            const updatedFrequencies = [...data];
+            updatedFrequencies[0] = { ...updatedFrequencies[0], premium: false };
+            setFrequencies(updatedFrequencies);
+          }
           
           if (data.length === 0) {
             toast.info('Sem frequências', {

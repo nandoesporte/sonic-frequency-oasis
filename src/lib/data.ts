@@ -507,6 +507,15 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
     return;
   }
   
+  // Ensure there's at least one free frequency in each category
+  let hasFreeFrequency = frequencies.some(freq => !freq.premium);
+  
+  if (!hasFreeFrequency && frequencies.length > 0) {
+    // Make the first frequency free if no free frequencies exist
+    frequencies[0].premium = false;
+    console.log(`Made ${frequencies[0].name} free for category ${category}`);
+  }
+  
   for (const freq of frequencies) {
     const { error } = await supabase
       .from('frequencies')

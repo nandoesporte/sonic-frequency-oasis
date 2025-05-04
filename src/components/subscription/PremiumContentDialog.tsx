@@ -62,10 +62,13 @@ export function PremiumContentDialog({
               </li>
             </ul>
           </div>
+          <div className="text-center text-sm text-muted-foreground">
+            <p>Cada categoria possui frequências gratuitas disponíveis para você experimentar.</p>
+          </div>
         </div>
         <DialogFooter className="flex flex-col sm:flex-row gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)} className="sm:w-full">
-            Talvez depois
+            Explorar Gratuitas
           </Button>
           <Button 
             onClick={handleSubscribe} 
