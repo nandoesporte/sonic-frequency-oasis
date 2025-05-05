@@ -6,7 +6,7 @@ import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { AudioProvider } from "@/lib/audio-context";
 import { categories, getTrendingFrequencies, FrequencyData, getFrequenciesByCategory } from "@/lib/data";
-import { ArrowRight, BookOpen, Crown, Sparkles, Headphones, Waves, ShieldCheck } from "lucide-react";
+import { ArrowRight, BookOpen, Crown, Sparkles, Headphones, Waves, ShieldCheck, Gift } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { PricingSection } from "@/components/subscription/PricingSection";
@@ -161,6 +161,25 @@ const Index = () => {
                 <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in">
                   Explore frequências curativas cientificamente comprovadas para relaxamento, foco e bem-estar
                 </p>
+                
+                {/* Novo Badge de Destaque para o período de teste */}
+                <div className="mb-8 bg-gradient-to-r from-amber-500/20 to-amber-600/20 p-4 rounded-lg border border-amber-500/30 shadow-lg dark:from-amber-600/30 dark:to-amber-700/30 dark:border-amber-600/40 animate-pulse">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Gift className="h-6 w-6 text-amber-500 dark:text-amber-400" />
+                    <h3 className="text-xl md:text-2xl font-bold text-amber-600 dark:text-amber-400">
+                      Teste por 7 dias Grátis
+                    </h3>
+                  </div>
+                  <p className="text-amber-700 dark:text-amber-300 mb-3">
+                    Acesso completo a todas as frequências premium e recursos exclusivos
+                  </p>
+                  <Button asChild size="lg" className="bg-amber-500 hover:bg-amber-600 text-white rounded-full shadow-md">
+                    <Link to="/auth">
+                      Comece Agora
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
                 
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-12">
                   <Button asChild size="lg" className="w-full sm:w-auto rounded-full animate-fade-in bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 shadow-md shadow-purple-500/20">
