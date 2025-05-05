@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Crown, User, Calendar, LogOut, Mail, Clock } from "lucide-react";
+import { Crown, User, Calendar, LogOut, Mail, Clock, Gift } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -26,6 +26,9 @@ interface SubscriptionData {
   plan_description?: string;
   subscription_tier?: string;
   last_payment_date?: string;
+  is_trial?: boolean;
+  trial_ends_at?: string;
+  trial_started_at?: string;
 }
 
 interface UserProfileProps {
@@ -33,6 +36,8 @@ interface UserProfileProps {
   userData: UserData | null;
   subscriptionData: SubscriptionData | null;
   isPremium: boolean;
+  isInTrialPeriod?: boolean;
+  trialDaysLeft?: number;
   loading: boolean;
 }
 
@@ -41,6 +46,8 @@ export function UserProfile({
   userData, 
   subscriptionData, 
   isPremium, 
+  isInTrialPeriod = false,
+  trialDaysLeft = 0,
   loading 
 }: UserProfileProps) {
   const [showConfirmLogout, setShowConfirmLogout] = useState(false);
@@ -116,6 +123,12 @@ export function UserProfile({
               <Badge variant="success" className="ml-2 flex items-center gap-1">
                 <Crown className="h-3.5 w-3.5" />
                 Premium
+              </Badge>
+            )}
+            {isInTrialPeriod && (
+              <Badge variant="outline" className="ml-2 flex items-center gap-1 bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800">
+                <Gift className="h-3.5 w-3.5" />
+                Período de Teste
               </Badge>
             )}
           </div>
@@ -222,6 +235,32 @@ export function UserProfile({
                   </Button>
                 </div>
               </>
+            ) : isInTrialPeriod ? (
+              <div className="space-y-4">
+                <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-md border border-amber-200 dark:border-amber-800">
+                  <div className="flex items-center gap-2 font-medium mb-1">
+                    <Gift className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                    <span>Período de Teste Ativo</span>
+                  </div>
+                  <p className="text-sm mb-2">
+                    Você tem acesso a todas as funcionalidades premium por {trialDaysLeft} {trialDaysLeft === 1 ? 'dia' : 'dias'}.
+                  </p>
+                  <div className="grid grid-cols-[120px_1fr] gap-1 text-sm">
+                    <span className="text-muted-foreground">Expira em:</span>
+                    <span className="font-medium">{formatDate(subscriptionData?.trial_ends_at)}</span>
+                  </div>
+                </div>
+                
+                <Button asChild className="w-full">
+                  <Link to="/premium#planos">
+                    <Crown className="mr-2 h-4 w-4" />
+                    Assinar Premium
+                  </Link>
+                </Button>
+                <p className="text-sm text-muted-foreground text-center">
+                  Assine para continuar tendo acesso após o período de teste
+                </p>
+              </div>
             ) : (
               <div className="space-y-4">
                 <p>Você ainda não possui um plano premium ativo.</p>

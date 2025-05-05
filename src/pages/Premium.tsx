@@ -6,7 +6,7 @@ import { FrequencyCard } from "@/components/frequency-card";
 import { FrequencyData } from "@/lib/data";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Crown } from "lucide-react";
+import { Gift, Crown } from "lucide-react";
 import { usePremium } from "@/hooks/use-premium";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link, useLocation } from "react-router-dom";
@@ -17,7 +17,7 @@ const PremiumContent = () => {
   const [frequencies, setFrequencies] = useState<FrequencyData[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
-  const { isPremium } = usePremium();
+  const { isPremium, isInTrialPeriod, trialDaysLeft, hasAccess } = usePremium();
   const plansRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const isMobile = useIsMobile();
@@ -105,7 +105,27 @@ const PremiumContent = () => {
         </div>
       </div>
 
-      {!isPremium && (
+      {!isPremium && isInTrialPeriod && (
+        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-6 mb-8">
+          <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
+            <Gift className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+            Período de Teste Ativo
+          </h2>
+          <p className="text-muted-foreground mb-4">
+            Você está no período de teste gratuito com acesso a todas as frequências premium.
+            Restam <span className="font-semibold">{trialDaysLeft} {trialDaysLeft === 1 ? 'dia' : 'dias'}</span> para o término.
+          </p>
+          <Button 
+            variant="default" 
+            className="bg-amber-500 hover:bg-amber-600"
+            onClick={scrollToPlans}
+          >
+            Ver Planos
+          </Button>
+        </div>
+      )}
+
+      {!hasAccess && !isInTrialPeriod && (
         <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-6 mb-8">
           <h2 className="text-xl font-semibold mb-2">Assine o plano Premium</h2>
           <p className="text-muted-foreground mb-4">

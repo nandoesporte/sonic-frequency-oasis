@@ -633,6 +633,7 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          is_trial: boolean | null
           last_payment_date: string | null
           mercado_pago_customer_id: string | null
           mercado_pago_subscription_id: string | null
@@ -641,6 +642,8 @@ export type Database = {
           subscribed: boolean
           subscription_end: string | null
           subscription_tier: string | null
+          trial_ends_at: string | null
+          trial_started_at: string | null
           updated_at: string
           user_id: string | null
         }
@@ -648,6 +651,7 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          is_trial?: boolean | null
           last_payment_date?: string | null
           mercado_pago_customer_id?: string | null
           mercado_pago_subscription_id?: string | null
@@ -656,6 +660,8 @@ export type Database = {
           subscribed?: boolean
           subscription_end?: string | null
           subscription_tier?: string | null
+          trial_ends_at?: string | null
+          trial_started_at?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -663,6 +669,7 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          is_trial?: boolean | null
           last_payment_date?: string | null
           mercado_pago_customer_id?: string | null
           mercado_pago_subscription_id?: string | null
@@ -671,6 +678,8 @@ export type Database = {
           subscribed?: boolean
           subscription_end?: string | null
           subscription_tier?: string | null
+          trial_ends_at?: string | null
+          trial_started_at?: string | null
           updated_at?: string
           user_id?: string | null
         }

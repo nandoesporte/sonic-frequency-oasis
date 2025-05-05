@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 export function usePremium() {
   const { user } = useAuth();
   const [isPremium, setIsPremium] = useState(false);
+  const [isInTrialPeriod, setIsInTrialPeriod] = useState(false);
+  const [trialDaysLeft, setTrialDaysLeft] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,6 +18,8 @@ export function usePremium() {
       // If user is not logged in, they're not premium
       if (!user) {
         setIsPremium(false);
+        setIsInTrialPeriod(false);
+        setTrialDaysLeft(0);
         setLoading(false);
         return;
       }
@@ -35,8 +39,30 @@ export function usePremium() {
         }
 
         // Set premium status based on subscription record
-        // A user is premium if they have a subscription record and it's active
-        setIsPremium(!!subscriber && subscriber.subscribed);
+        const isSubscribed = !!subscriber && subscriber.subscribed;
+        setIsPremium(isSubscribed);
+
+        // Check if user is in trial period
+        if (subscriber && subscriber.is_trial && subscriber.trial_ends_at) {
+          const trialEnd = new Date(subscriber.trial_ends_at);
+          const now = new Date();
+          
+          // Check if trial is still valid
+          if (trialEnd > now) {
+            setIsInTrialPeriod(true);
+            
+            // Calculate days left in trial
+            const msPerDay = 1000 * 60 * 60 * 24;
+            const daysLeft = Math.ceil((trialEnd.getTime() - now.getTime()) / msPerDay);
+            setTrialDaysLeft(daysLeft);
+          } else {
+            setIsInTrialPeriod(false);
+            setTrialDaysLeft(0);
+          }
+        } else {
+          setIsInTrialPeriod(false);
+          setTrialDaysLeft(0);
+        }
       } catch (err) {
         console.error("Exception checking premium status:", err);
         setError("Erro ao verificar status da assinatura");
@@ -53,6 +79,8 @@ export function usePremium() {
     
     if (!user) {
       setIsPremium(false);
+      setIsInTrialPeriod(false);
+      setTrialDaysLeft(0);
       setLoading(false);
       return;
     }
@@ -71,6 +99,28 @@ export function usePremium() {
       }
 
       setIsPremium(!!subscriber && subscriber.subscribed);
+      
+      // Check if user is in trial period
+      if (subscriber && subscriber.is_trial && subscriber.trial_ends_at) {
+        const trialEnd = new Date(subscriber.trial_ends_at);
+        const now = new Date();
+        
+        // Check if trial is still valid
+        if (trialEnd > now) {
+          setIsInTrialPeriod(true);
+          
+          // Calculate days left in trial
+          const msPerDay = 1000 * 60 * 60 * 24;
+          const daysLeft = Math.ceil((trialEnd.getTime() - now.getTime()) / msPerDay);
+          setTrialDaysLeft(daysLeft);
+        } else {
+          setIsInTrialPeriod(false);
+          setTrialDaysLeft(0);
+        }
+      } else {
+        setIsInTrialPeriod(false);
+        setTrialDaysLeft(0);
+      }
     } catch (err) {
       console.error("Exception refreshing premium status:", err);
       setError("Erro ao atualizar status da assinatura");
@@ -79,5 +129,17 @@ export function usePremium() {
     }
   };
 
-  return { isPremium, loading, error, refreshStatus };
+  // Verificar se o usuário tem acesso a conteúdo premium
+  // seja por assinatura ou por estar em período de teste
+  const hasAccess = isPremium || isInTrialPeriod;
+
+  return { 
+    isPremium, 
+    isInTrialPeriod, 
+    trialDaysLeft, 
+    hasAccess,
+    loading, 
+    error, 
+    refreshStatus 
+  };
 }
