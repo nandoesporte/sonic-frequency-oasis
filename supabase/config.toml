@@ -1,2 +1,26 @@
 
 project_id = "otzytxkynqcywtqgpgmn"
+
+[api]
+enabled = true
+
+[db]
+enabled = true
+
+[analytics]
+enabled = true
+
+[storage]
+enabled = true
+
+[functions]
+enabled = true
+
+[functions.start-trial-for-new-user]
+verify_jwt = true
+
+[edge_functions]
+enabled = true
+
+[realtime]
+enabled = true
