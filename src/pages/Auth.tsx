@@ -41,7 +41,7 @@ export default function Auth() {
   const [registeredEmail, setRegisteredEmail] = useState<string>('');
   const navigate = useNavigate();
 
-  console.log('Auth page rendered, user:', user ? 'logged in' : 'not logged in', 'loading:', loading);
+  console.log('Auth page rendered, user:', user, 'loading:', loading);
 
   // Use the appropriate schema based on the current mode
   const currentSchema = isLogin ? loginSchema : registerSchema;
@@ -69,24 +69,18 @@ export default function Auth() {
   // Handle authenticated user - with protection against redirecting multiple times
   useEffect(() => {
     if (user && !redirecting && !loading) {
-      console.log('User is authenticated, redirecting to categories - path:', '/categories/emocao');
+      console.log('User is authenticated, redirecting to home');
       setRedirecting(true);
       
       // Provide visual feedback before redirecting
       toast.success('Login bem-sucedido!', {
-        description: 'Redirecionando para as categorias...',
+        description: 'Redirecionando para a página inicial...',
       });
 
-      // Ensure navigation happens
-      try {
-        console.log('Executing navigation to /categories/emocao');
-        // Force refresh page to ensure clean state
-        window.location.href = '/categories/emocao';
-      } catch (err) {
-        console.error('Navigation error:', err);
-        // Fallback to router navigation
-        navigate('/categories/emocao', { replace: true });
-      }
+      // Use a small timeout to prevent potential race conditions
+      setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 500);
     }
   }, [user, loading, navigate, redirecting]);
 
@@ -182,7 +176,7 @@ export default function Auth() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin mb-4" />
-        <p>Redirecionando para as categorias...</p>
+        <p>Redirecionando para a página inicial...</p>
       </div>
     );
   }

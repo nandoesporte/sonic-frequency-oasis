@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { Footer } from "./components/ui/footer";
 import { useAuth } from "@/hooks";
@@ -28,32 +28,12 @@ import { FrequenciesGuideDialog } from "./components/FrequenciesGuideDialog";
 
 const queryClient = new QueryClient();
 
-// Protected Route component to handle auth redirects
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-  const location = useLocation();
-  
-  if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-    </div>;
-  }
-  
-  if (!user) {
-    console.log('User not authenticated, redirecting to auth page from:', location.pathname);
-    return <Navigate to="/auth" state={{ from: location }} replace />;
-  }
-  
-  return <>{children}</>;
-}
-
 // ScrollToTop component that uses the useLocation hook to scroll to top on route change
 function ScrollToTop() {
   const location = useLocation();
   
   useEffect(() => {
     window.scrollTo(0, 0);
-    console.log("Scrolled to top on navigation to:", location.pathname);
   }, [location.pathname]);
   
   return null;
@@ -75,16 +55,12 @@ function ConditionalFooter() {
 // The main application content
 function AppContent() {
   const { user } = useAuth();
-  const location = useLocation();
   
   useEffect(() => {
     // Always use dark theme
     document.documentElement.classList.add("dark");
     localStorage.setItem("theme", "dark");
-    
-    // Log current auth state and location for debugging
-    console.log("Auth state:", user ? "Logged in" : "Not logged in", "Path:", location.pathname);
-  }, [user, location.pathname]);
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -97,53 +73,17 @@ function AppContent() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/scientific" element={<Scientific />} />
+            <Route path="/categories/:category" element={<Category />} />
+            <Route path="/trending" element={<Trending />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/guide" element={<Guide />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/premium" element={<Premium />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/webhook-config" element={<WebhookConfig />} />
             <Route path="/terms" element={<Terms />} />
-            
-            {/* Protected routes - require authentication */}
-            <Route path="/categories/:category" element={
-              <Category />
-            } />
-            <Route path="/trending" element={
-              <ProtectedRoute>
-                <Trending />
-              </ProtectedRoute>
-            } />
-            <Route path="/favorites" element={
-              <ProtectedRoute>
-                <Favorites />
-              </ProtectedRoute>
-            } />
-            <Route path="/guide" element={
-              <ProtectedRoute>
-                <Guide />
-              </ProtectedRoute>
-            } />
-            <Route path="/history" element={
-              <ProtectedRoute>
-                <History />
-              </ProtectedRoute>
-            } />
-            <Route path="/premium" element={
-              <ProtectedRoute>
-                <Premium />
-              </ProtectedRoute>
-            } />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin" element={
-              <ProtectedRoute>
-                <Admin />
-              </ProtectedRoute>
-            } />
-            <Route path="/webhook-config" element={
-              <ProtectedRoute>
-                <WebhookConfig />
-              </ProtectedRoute>
-            } />
             
             {/* Catch all route for 404 */}
             <Route path="*" element={<NotFound />} />
@@ -156,8 +96,6 @@ function AppContent() {
 }
 
 function App() {
-  console.log("App component rendered");
-  
   return (
     <QueryClientProvider client={queryClient}>
       <Router>

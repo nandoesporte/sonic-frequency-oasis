@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,7 +26,7 @@ const plans: PricingPlan[] = [
     id: "basic",
     name: "Mensal",
     description: "Ideal para uso pessoal",
-    price: 49.90,
+    price: 19.90,
     interval: "month",
     features: [
       { id: "f1", title: "Acesso a todas frequências premium" },
