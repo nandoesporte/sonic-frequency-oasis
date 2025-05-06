@@ -101,6 +101,8 @@ function AppContent() {
 }
 
 function App() {
+  console.log("App component rendered");
+  
   return (
     <QueryClientProvider client={queryClient}>
       <Router>

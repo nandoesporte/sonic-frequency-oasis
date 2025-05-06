@@ -70,7 +70,7 @@ export default function Auth() {
   // Handle authenticated user - with protection against redirecting multiple times
   useEffect(() => {
     if (user && !redirecting && !loading) {
-      console.log('User is authenticated, redirecting to categories');
+      console.log('User is authenticated, redirecting to categories - path:', '/categories/emocao');
       setRedirecting(true);
       
       // Provide visual feedback before redirecting
@@ -80,7 +80,7 @@ export default function Auth() {
 
       // Use a small timeout to prevent potential race conditions
       setTimeout(() => {
-        // Change from '/' to '/categories/emocao' to go to categories after login
+        console.log('Executing navigation to /categories/emocao');
         navigate('/categories/emocao', { replace: true });
       }, 500);
     }

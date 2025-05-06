@@ -321,7 +321,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         description: 'Você foi desconectado com sucesso.'
       });
       
-      // Navigate after signout is complete
+      // Navigate to auth page after signout
       navigate('/auth');
     } catch (error) {
       console.error('Signout error:', error);
