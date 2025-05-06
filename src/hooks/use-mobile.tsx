@@ -14,13 +14,18 @@ export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
 
   React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${BREAKPOINTS.mobile - 1}px)`)
-    const onChange = () => {
+    const checkMobile = () => {
       setIsMobile(window.innerWidth < BREAKPOINTS.mobile)
     }
-    mql.addEventListener("change", onChange)
-    setIsMobile(window.innerWidth < BREAKPOINTS.mobile)
-    return () => mql.removeEventListener("change", onChange)
+    
+    // Initial check
+    checkMobile()
+    
+    // Add resize listener
+    window.addEventListener('resize', checkMobile)
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
   return !!isMobile
@@ -30,16 +35,18 @@ export function useBreakpoint(breakpoint: BreakpointKey = 'mobile') {
   const [isBelow, setIsBelow] = React.useState<boolean | undefined>(undefined)
 
   React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${BREAKPOINTS[breakpoint] - 1}px)`)
-    
-    const onChange = () => {
+    const checkBreakpoint = () => {
       setIsBelow(window.innerWidth < BREAKPOINTS[breakpoint])
     }
     
-    mql.addEventListener("change", onChange)
-    setIsBelow(window.innerWidth < BREAKPOINTS[breakpoint])
+    // Initial check
+    checkBreakpoint()
     
-    return () => mql.removeEventListener("change", onChange)
+    // Add resize listener
+    window.addEventListener('resize', checkBreakpoint)
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkBreakpoint)
   }, [breakpoint])
 
   return !!isBelow

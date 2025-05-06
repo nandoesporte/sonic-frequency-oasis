@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { AudioPlayer } from "@/components/audio-player";
 import { Header } from "@/components/header";
@@ -181,7 +180,7 @@ const Index = () => {
                 <p className="text-base md:text-lg text-amber-700 dark:text-amber-300 mb-3 md:mb-4">
                   Acesso completo a todas as frequências premium e recursos exclusivos para suas sessões
                 </p>
-                <Button asChild size={isMobile ? "lg" : "lg"} className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white rounded-full shadow-md text-base md:text-lg py-6">
+                <Button asChild size="lg" className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white rounded-full shadow-md text-base md:text-lg py-6 px-6">
                   <Link to="/auth">
                     Comece Agora
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -190,14 +189,14 @@ const Index = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-5 mb-8 md:mb-12">
-                <Button asChild size={isMobile ? "lg" : "lg"} className="w-full sm:w-auto rounded-full animate-fade-in bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 shadow-md shadow-purple-500/20 text-base py-6">
+                <Button asChild size="lg" className="w-full sm:w-auto rounded-full animate-fade-in bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 shadow-md shadow-purple-500/20 text-base py-6 px-6">
                   <Link to="/auth" className="gap-2 text-base md:text-lg">
                     Transforme Suas Sessões
                     <ArrowRight className="h-5 w-5" />
                   </Link>
                 </Button>
                 
-                <Button asChild variant="outline" size={isMobile ? "lg" : "lg"} className="w-full sm:w-auto rounded-full animate-fade-in border-purple-300 dark:border-purple-700 shadow-sm text-base py-6">
+                <Button asChild variant="outline" size="lg" className="w-full sm:w-auto rounded-full animate-fade-in border-purple-300 dark:border-purple-700 shadow-sm text-base py-6 px-6">
                   <Link to="/scientific" className="gap-2 text-base md:text-lg">
                     <ShieldCheck className="h-5 w-5" />
                     Base Científica
@@ -206,7 +205,7 @@ const Index = () => {
               </div>
               
               {/* Features */}
-              <div className={`grid grid-cols-1 ${isMobile ? 'gap-4 mt-6' : 'sm:grid-cols-3 gap-5 max-w-3xl mx-auto'}`}>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 max-w-3xl mx-auto">
                 <div className="flex flex-col items-center bg-white/50 dark:bg-white/5 p-4 md:p-5 rounded-xl backdrop-blur-sm shadow-sm">
                   <Headphones className="h-6 w-6 md:h-7 md:w-7 text-primary mb-2 md:mb-3" />
                   <h3 className="font-medium text-base md:text-lg mb-1">Áudio Imersivo</h3>
@@ -626,7 +625,7 @@ const Index = () => {
                 </div>
                 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-5">
-                  <Button asChild size={isMobile ? "lg" : "lg"} className="w-full sm:w-auto rounded-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 shadow-md shadow-purple-500/20 text-lg py-6">
+                  <Button asChild size="lg" className="w-full sm:w-auto rounded-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 shadow-md shadow-purple-500/20 text-lg py-6">
                     <Link to="/auth">
                       Testar 7 Dias Grátis
                       <ArrowRight className="ml-2 h-5 w-5" />
