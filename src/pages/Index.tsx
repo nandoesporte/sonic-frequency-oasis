@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { AudioPlayer } from "@/components/audio-player";
 import { Header } from "@/components/header";
@@ -506,4 +507,144 @@ const Index = () => {
                 Nossos áudios são fáceis de usar e adaptáveis a qualquer tipo de terapia
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 mb-8
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 mb-8 md:mb-12">
+                <div className="bg-white/70 dark:bg-white/5 p-5 md:p-6 rounded-xl shadow-sm">
+                  <div className="mb-4 md:mb-5 flex justify-center">
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Headphones className="h-8 w-8 md:h-10 md:w-10 text-primary" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl md:text-2xl font-medium mb-3 md:mb-4 text-center">Sessões Presenciais</h3>
+                  <p className="text-base md:text-lg text-muted-foreground text-center">
+                    Toque os áudios em um sistema de som ou ofereça fones de ouvido para uma experiência imersiva.
+                  </p>
+                </div>
+                
+                <div className="bg-white/70 dark:bg-white/5 p-5 md:p-6 rounded-xl shadow-sm">
+                  <div className="mb-4 md:mb-5 flex justify-center">
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Play className="h-8 w-8 md:h-10 md:w-10 text-primary" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl md:text-2xl font-medium mb-3 md:mb-4 text-center">Sessões Online</h3>
+                  <p className="text-base md:text-lg text-muted-foreground text-center">
+                    Integre os áudios em plataformas como Zoom ou grave meditações guiadas com as frequências.
+                  </p>
+                </div>
+                
+                <div className="bg-white/70 dark:bg-white/5 p-5 md:p-6 rounded-xl shadow-sm">
+                  <div className="mb-4 md:mb-5 flex justify-center">
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Package className="h-8 w-8 md:h-10 md:w-10 text-primary" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl md:text-2xl font-medium mb-3 md:mb-4 text-center">Material Complementar</h3>
+                  <p className="text-base md:text-lg text-muted-foreground text-center">
+                    Disponibilize os áudios para seus clientes praticarem em casa, reforçando os resultados.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-r from-purple-100/70 to-blue-100/70 dark:from-purple-900/20 dark:to-blue-900/20 p-5 md:p-8 rounded-2xl shadow-sm mb-8 md:mb-12">
+                <h3 className="text-2xl md:text-3xl font-medium mb-4 md:mb-6 text-center">Bônus Exclusivo para Terapeutas</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                  <div className="flex flex-col items-center text-center">
+                    <div className="mb-3 md:mb-4">
+                      <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/50 dark:bg-white/10 flex items-center justify-center">
+                        <HelpCircle className="h-7 w-7 md:h-8 md:w-8 text-primary" />
+                      </div>
+                    </div>
+                    <h4 className="font-medium text-lg md:text-xl mb-2 md:mb-3">Guia Prático</h4>
+                    <p className="text-base md:text-lg text-muted-foreground">
+                      Manual com dicas para usar as frequências em diferentes tipos de sessões.
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-col items-center text-center">
+                    <div className="mb-3 md:mb-4">
+                      <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/50 dark:bg-white/10 flex items-center justify-center">
+                        <Play className="h-7 w-7 md:h-8 md:w-8 text-primary" />
+                      </div>
+                    </div>
+                    <h4 className="font-medium text-lg md:text-xl mb-2 md:mb-3">Playlists Personalizadas</h4>
+                    <p className="text-base md:text-lg text-muted-foreground">
+                      Áudios organizados por objetivo (relaxamento, cura, foco, energia).
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-col items-center text-center">
+                    <div className="mb-3 md:mb-4">
+                      <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/50 dark:bg-white/10 flex items-center justify-center">
+                        <Users className="h-7 w-7 md:h-8 md:w-8 text-primary" />
+                      </div>
+                    </div>
+                    <h4 className="font-medium text-lg md:text-xl mb-2 md:mb-3">Comunidade Exclusiva</h4>
+                    <p className="text-base md:text-lg text-muted-foreground">
+                      Grupo no WhatsApp para trocar experiências com outros terapeutas.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* FAQ Section */}
+        <section className="py-12 md:py-16 px-4">
+          <div className="container mx-auto">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8 justify-center">
+                <HelpCircle className="h-7 w-7 md:h-8 md:w-8 text-primary" />
+                <h2 className="text-3xl md:text-4xl font-bold text-center">Tire Suas Dúvidas</h2>
+              </div>
+              
+              <div className="bg-white/70 dark:bg-white/5 rounded-xl p-5 md:p-8 shadow-sm mb-8 md:mb-12">
+                <Accordion type="single" collapsible className="w-full">
+                  {faqs.map((faq, index) => (
+                    <AccordionItem key={index} value={`item-${index}`}>
+                      <AccordionTrigger className="text-lg md:text-xl font-medium py-4 md:py-5">
+                        {faq.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-base md:text-lg text-muted-foreground pb-4 md:pb-5">
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+              
+              {/* CTA Banner */}
+              <div className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 dark:from-purple-500/20 dark:to-blue-500/20 rounded-3xl p-6 md:p-8 border border-purple-200 dark:border-purple-700/30 shadow-lg mb-12 md:mb-16">
+                <div className="text-center mb-5 md:mb-6">
+                  <h3 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">
+                    Eleve Suas Sessões Hoje Mesmo
+                  </h3>
+                  <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+                    Acesso imediato a todas as frequências de alta performance e bônus exclusivos
+                  </p>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-5">
+                  <Button asChild size={isMobile ? "lg" : "lg"} className="w-full sm:w-auto rounded-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 shadow-md shadow-purple-500/20 text-lg py-6">
+                    <Link to="/auth">
+                      Testar 7 Dias Grátis
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                  
+                  <div className="flex items-center">
+                    <ShieldCheck className="h-5 w-5 md:h-6 md:w-6 text-green-600 dark:text-green-500 mr-2" />
+                    <span className="text-base md:text-lg text-muted-foreground">Garantia de 7 dias</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </AudioProvider>
+  );
+};
+
+export default Index;
