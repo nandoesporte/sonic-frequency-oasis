@@ -6,16 +6,19 @@ import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { AudioProvider } from "@/lib/audio-context";
 import { categories, getTrendingFrequencies, FrequencyData, getFrequenciesByCategory } from "@/lib/data";
-import { ArrowRight, BookOpen, Crown, Sparkles, Headphones, Waves, ShieldCheck, Gift } from "lucide-react";
+import { ArrowRight, BookOpen, Crown, Sparkles, Headphones, Waves, ShieldCheck, Gift, CheckCircle, Users, ThumbsUp, Heart, Award, Volume2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { PricingSection } from "@/components/subscription/PricingSection";
 import { FrequencyRanges } from "@/components/home/FrequencyRanges";
 import { ScientificEvidence } from "@/components/home/ScientificEvidence";
+import { ProfessionalFeatures } from "@/components/home/ProfessionalFeatures";
+import { TestimonialSection } from "@/components/home/TestimonialSection";
+import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { toast } from "@/components/ui/sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useDebouncedEffect } from "@/hooks";
 import { Badge } from "@/components/ui/badge";
+import { useDebouncedEffect, useIsMobile } from "@/hooks";
 
 const Index = () => {
   const [trendingFrequencies, setTrendingFrequencies] = useState<FrequencyData[]>([]);
@@ -23,6 +26,7 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   // Load trending frequencies
   useEffect(() => {
@@ -135,11 +139,11 @@ const Index = () => {
           </section>
         )}
         
-        {/* Enhanced Hero Section - Only show for non-logged in users */}
+        {/* Professional Hero Section - Only show for non-logged in users */}
         {!user && (
-          <section className="pt-28 md:pt-32 pb-16 px-4 relative overflow-hidden bg-gradient-to-b from-purple-50/80 to-background dark:from-purple-900/20 dark:to-background">
+          <section className="pt-28 md:pt-32 pb-16 px-4 relative overflow-hidden bg-gradient-to-b from-purple-100/80 to-background dark:from-purple-900/20 dark:to-background">
             <div className="absolute inset-0 overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-purple-100/30 to-transparent dark:from-purple-900/10 dark:to-transparent"></div>
+              <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-purple-200/30 to-transparent dark:from-purple-900/10 dark:to-transparent"></div>
               <div className="absolute -top-10 -right-10 w-72 h-72 bg-purple-200/20 dark:bg-purple-700/10 rounded-full blur-3xl"></div>
               <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-blue-200/20 dark:bg-blue-700/10 rounded-full blur-3xl"></div>
             </div>
@@ -148,21 +152,21 @@ const Index = () => {
               <div className="max-w-4xl mx-auto text-center">
                 <div className="flex justify-center mb-5">
                   <Badge variant="success" className="px-3 py-1 text-sm">
-                    <Sparkles className="h-4 w-4 mr-1" />
-                    Experimente Grátis
+                    <Award className="h-4 w-4 mr-1" />
+                    Para Profissionais
                   </Badge>
                 </div>
                 
-                <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-4 md:mb-6 animate-fade-in leading-tight">
-                  <span className="text-primary dark:text-primary">O Som </span> 
-                  <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-blue-400">Terapêutico</span>
+                <h1 className="text-5xl md:text-7xl lg:text-7xl font-bold mb-4 md:mb-6 animate-fade-in leading-tight">
+                  <span className="text-primary dark:text-primary">Eleve suas </span> 
+                  <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-blue-400">Terapias Sonoras</span>
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in">
-                  Explore frequências curativas cientificamente comprovadas para relaxamento, foco e bem-estar
+                  A plataforma completa para terapeutas, coaches e facilitadores que utilizam frequências sonoras em suas sessões
                 </p>
                 
-                {/* Novo Badge de Destaque para o período de teste */}
+                {/* Destaque da Oferta */}
                 <div className="mb-8 bg-gradient-to-r from-amber-500/20 to-amber-600/20 p-4 rounded-lg border border-amber-500/30 shadow-lg dark:from-amber-600/30 dark:to-amber-700/30 dark:border-amber-600/40 animate-pulse">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Gift className="h-6 w-6 text-amber-500 dark:text-amber-400" />
@@ -171,11 +175,11 @@ const Index = () => {
                     </h3>
                   </div>
                   <p className="text-amber-700 dark:text-amber-300 mb-3">
-                    Acesso completo a todas as frequências premium e recursos exclusivos
+                    Acesso completo à biblioteca de frequências terapêuticas e recursos premium
                   </p>
                   <Button asChild size="lg" className="bg-amber-500 hover:bg-amber-600 text-white rounded-full shadow-md">
                     <Link to="/auth">
-                      Comece Agora
+                      Começar Período de Teste
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
@@ -184,7 +188,7 @@ const Index = () => {
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-12">
                   <Button asChild size="lg" className="w-full sm:w-auto rounded-full animate-fade-in bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 shadow-md shadow-purple-500/20">
                     <Link to="/auth" className="gap-2 text-base">
-                      Entre para Começar
+                      Teste Gratuitamente
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                   </Button>
@@ -199,37 +203,31 @@ const Index = () => {
                 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
                   <div className="flex flex-col items-center bg-white/50 dark:bg-white/5 p-4 rounded-xl backdrop-blur-sm shadow-sm">
-                    <Headphones className="h-6 w-6 text-primary mb-2" />
-                    <h3 className="font-medium">Áudio Imersivo</h3>
-                    <p className="text-sm text-muted-foreground">Experiência sonora completa</p>
+                    <Users className="h-6 w-6 text-primary mb-2" />
+                    <h3 className="font-medium">Para Profissionais</h3>
+                    <p className="text-sm text-muted-foreground">Eleve suas sessões</p>
                   </div>
                   <div className="flex flex-col items-center bg-white/50 dark:bg-white/5 p-4 rounded-xl backdrop-blur-sm shadow-sm">
-                    <Waves className="h-6 w-6 text-primary mb-2" />
-                    <h3 className="font-medium">Frequências Precisas</h3>
-                    <p className="text-sm text-muted-foreground">Calibradas cientificamente</p>
+                    <Volume2 className="h-6 w-6 text-primary mb-2" />
+                    <h3 className="font-medium">Biblioteca Completa</h3>
+                    <p className="text-sm text-muted-foreground">Mais de 200 frequências</p>
                   </div>
                   <div className="flex flex-col items-center bg-white/50 dark:bg-white/5 p-4 rounded-xl backdrop-blur-sm shadow-sm">
-                    <ShieldCheck className="h-6 w-6 text-primary mb-2" />
-                    <h3 className="font-medium">Base Científica</h3>
-                    <p className="text-sm text-muted-foreground">Pesquisas comprovadas</p>
+                    <ThumbsUp className="h-6 w-6 text-primary mb-2" />
+                    <h3 className="font-medium">Resultados Reais</h3>
+                    <p className="text-sm text-muted-foreground">Comprovação científica</p>
                   </div>
-                </div>
-                
-                {/* Try for Free Action Call */}
-                <div className="mt-12 p-6 bg-gradient-to-r from-green-500/10 to-green-600/10 rounded-xl backdrop-blur-sm border border-green-500/20">
-                  <h3 className="text-xl font-medium mb-2">Experimente gratuitamente!</h3>
-                  <p className="mb-4 text-muted-foreground">Temos frequências gratuitas disponíveis em todas as categorias. Não é necessário cartão de crédito.</p>
-                  <Button asChild className="bg-green-500 hover:bg-green-600">
-                    <Link to="/auth">
-                      Começar Agora
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
                 </div>
               </div>
             </div>
           </section>
         )}
+        
+        {/* Professional Features Section - Only show for non-logged in users */}
+        {!user && <ProfessionalFeatures />}
+        
+        {/* How It Works Section - Only show for non-logged in users */}
+        {!user && <HowItWorksSection />}
         
         {/* Trending Section - Keep existing implementation logic, but improve styling */}
         {trendingFrequencies.length > 0 && (
@@ -262,6 +260,9 @@ const Index = () => {
         
         {/* Frequency Ranges Section - Only show for non-logged in users */}
         {!user && <FrequencyRanges />}
+        
+        {/* Testimonial Section - Only show for non-logged in users */}
+        {!user && <TestimonialSection />}
         
         {/* Scientific Evidence Section - Only show for non-logged in users */}
         {!user && <ScientificEvidence />}
