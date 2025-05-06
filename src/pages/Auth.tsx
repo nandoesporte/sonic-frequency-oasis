@@ -69,17 +69,17 @@ export default function Auth() {
   // Handle authenticated user - with protection against redirecting multiple times
   useEffect(() => {
     if (user && !redirecting && !loading) {
-      console.log('User is authenticated, redirecting to categories');
+      console.log('User is authenticated, redirecting to home');
       setRedirecting(true);
       
       // Provide visual feedback before redirecting
       toast.success('Login bem-sucedido!', {
-        description: 'Redirecionando para as categorias...',
+        description: 'Redirecionando para a página inicial...',
       });
 
       // Use a small timeout to prevent potential race conditions
       setTimeout(() => {
-        navigate('/categories/emocao', { replace: true });
+        navigate('/', { replace: true });
       }, 500);
     }
   }, [user, loading, navigate, redirecting]);
@@ -176,7 +176,7 @@ export default function Auth() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin mb-4" />
-        <p>Redirecionando para as categorias...</p>
+        <p>Redirecionando para a página inicial...</p>
       </div>
     );
   }
