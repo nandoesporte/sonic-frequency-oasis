@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { Footer } from "./components/ui/footer";
 import { useAuth } from "@/hooks";
@@ -52,17 +52,6 @@ function ConditionalFooter() {
   return <Footer />;
 }
 
-// Redirect component for authenticated users
-function HomeRedirect() {
-  const { user, loading } = useAuth();
-  
-  // Wait until auth status is determined
-  if (loading) return null;
-  
-  // Redirect authenticated users to categories, allow anonymous users to see the index page
-  return user ? <Navigate to="/categories/emocao" replace /> : <Index />;
-}
-
 // The main application content
 function AppContent() {
   const { user } = useAuth();
@@ -82,7 +71,7 @@ function AppContent() {
       <AudioProvider>
         <AudioNavigationWarning>
           <Routes>
-            <Route path="/" element={<HomeRedirect />} />
+            <Route path="/" element={<Index />} />
             <Route path="/scientific" element={<Scientific />} />
             <Route path="/categories/:category" element={<Category />} />
             <Route path="/trending" element={<Trending />} />
