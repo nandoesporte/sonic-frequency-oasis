@@ -1,3 +1,4 @@
+
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
@@ -19,7 +20,7 @@ const Category = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  console.log("Category page - category:", category);
+  console.log("Category page - category param:", category);
 
   // Scroll to top when component mounts or category changes
   useEffect(() => {
@@ -29,7 +30,9 @@ const Category = () => {
   useEffect(() => {
     // Update category data when param changes
     if (category) {
+      console.log("Attempting to get category data for:", category);
       const data = getCategoryById(category);
+      console.log("Category data found:", data);
       setCategoryData(data);
       
       if (!data) {
@@ -37,10 +40,11 @@ const Category = () => {
         toast.error('Categoria não encontrada', {
           description: `A categoria "${category}" não foi encontrada.`
         });
-        navigate('/', { replace: true });
+        // Don't automatically navigate away - this was causing the redirect to home
+        // Instead, show the "not found" UI defined below
       }
     }
-  }, [category, navigate]);
+  }, [category]);
   
   useEffect(() => {
     // Load frequencies for all visitors (no auth check)

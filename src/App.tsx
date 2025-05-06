@@ -102,9 +102,7 @@ function AppContent() {
             
             {/* Protected routes - require authentication */}
             <Route path="/categories/:category" element={
-              <ProtectedRoute>
-                <Category />
-              </ProtectedRoute>
+              <Category />
             } />
             <Route path="/trending" element={
               <ProtectedRoute>
