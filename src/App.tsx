@@ -34,6 +34,7 @@ function ScrollToTop() {
   
   useEffect(() => {
     window.scrollTo(0, 0);
+    console.log("Scrolled to top on navigation to:", location.pathname);
   }, [location.pathname]);
   
   return null;
@@ -55,12 +56,16 @@ function ConditionalFooter() {
 // The main application content
 function AppContent() {
   const { user } = useAuth();
+  const location = useLocation();
   
   useEffect(() => {
     // Always use dark theme
     document.documentElement.classList.add("dark");
     localStorage.setItem("theme", "dark");
-  }, []);
+    
+    // Log current auth state and location for debugging
+    console.log("Auth state:", user ? "Logged in" : "Not logged in", "Path:", location.pathname);
+  }, [user, location.pathname]);
 
   return (
     <div className="flex flex-col min-h-screen">
