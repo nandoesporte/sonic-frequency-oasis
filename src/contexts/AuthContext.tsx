@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
@@ -108,14 +109,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
-        console.log('Auth state change event:', event);
+        console.log('Auth state change event:', event, 'Session:', currentSession ? 'Present' : 'None');
         if (!mounted) return;
         
         if (event === 'SIGNED_OUT') {
+          console.log('User signed out, clearing session and user state');
           setSession(null);
           setUser(null);
           setIsAdmin(false);
         } else if (currentSession) {
+          console.log('Session updated, user ID:', currentSession.user?.id);
           setSession(currentSession);
           setUser(currentSession.user ?? null);
           
@@ -128,7 +131,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         
         // Set loading to false after handling the auth state change
-        if (mounted) setLoading(false);
+        if (mounted) {
+          console.log('Setting loading to false after auth state change');
+          setLoading(false);
+        }
       }
     );
 
@@ -136,7 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
       if (!mounted) return;
       
-      console.log('Initial session check:', currentSession ? 'Session found' : 'No session');
+      console.log('Initial session check:', currentSession ? 'Session found for user: ' + currentSession.user.id : 'No session');
       
       if (currentSession) {
         setSession(currentSession);
@@ -149,7 +155,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       
       // Set loading to false after initial check
-      if (mounted) setLoading(false);
+      if (mounted) {
+        console.log('Setting loading to false after initial session check');
+        setLoading(false);
+      }
     });
 
     return () => {
@@ -180,7 +189,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('Login successful:', data.user?.email);
       
       toast.success('Login realizado com sucesso', {
-        description: 'Bem-vindo de volta!'
+        description: 'Redirecionando para as categorias...'
       });
       
       // Check admin status after successful login
