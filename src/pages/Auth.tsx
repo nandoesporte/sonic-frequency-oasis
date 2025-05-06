@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -69,17 +70,18 @@ export default function Auth() {
   // Handle authenticated user - with protection against redirecting multiple times
   useEffect(() => {
     if (user && !redirecting && !loading) {
-      console.log('User is authenticated, redirecting to home');
+      console.log('User is authenticated, redirecting to categories');
       setRedirecting(true);
       
       // Provide visual feedback before redirecting
       toast.success('Login bem-sucedido!', {
-        description: 'Redirecionando para a página inicial...',
+        description: 'Redirecionando para as categorias...',
       });
 
       // Use a small timeout to prevent potential race conditions
       setTimeout(() => {
-        navigate('/', { replace: true });
+        // Change from '/' to '/categories/emocao' to go to categories after login
+        navigate('/categories/emocao', { replace: true });
       }, 500);
     }
   }, [user, loading, navigate, redirecting]);

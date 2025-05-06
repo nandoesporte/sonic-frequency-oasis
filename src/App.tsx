@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { Footer } from "./components/ui/footer";
 import { useAuth } from "@/hooks";
