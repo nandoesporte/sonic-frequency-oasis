@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePremium } from "@/hooks/use-premium";
 import { Logo } from "@/components/ui/logo";
+import { ProfileMenu } from "@/components/profile-menu";
 
 export function Header() {
   const location = useLocation();
@@ -76,14 +77,8 @@ export function Header() {
           
           {user ? (
             <>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={handleSignOut} 
-                className="hidden sm:flex"
-              >
-                <LogOut className="h-5 w-5" />
-              </Button>
+              {/* Replace the old user buttons with Profile Menu component */}
+              <ProfileMenu user={user} onSignOut={handleSignOut} />
               
               <Button variant={isPremium ? "ghost" : "default"} size="sm" asChild className="hidden sm:flex">
                 <Link to={premiumPath}>
@@ -118,6 +113,15 @@ export function Header() {
             </SheetTrigger>
             <SheetContent>
               <div className="flex flex-col gap-4 mt-8">
+                {user && (
+                  <div className="flex items-center mb-4 p-2 bg-background/50 rounded-lg">
+                    <div className="ml-2">
+                      <p className="font-medium">{user.user_metadata?.full_name || user.email}</p>
+                      <p className="text-xs text-muted-foreground">{user.email}</p>
+                    </div>
+                  </div>
+                )}
+                
                 {navLinks.map((link) => (
                   <Button
                     key={link.path}
