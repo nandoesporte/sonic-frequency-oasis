@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -42,7 +41,7 @@ export default function Auth() {
   const [registeredEmail, setRegisteredEmail] = useState<string>('');
   const navigate = useNavigate();
 
-  console.log('Auth page rendered, user:', user, 'loading:', loading);
+  console.log('Auth page rendered, user:', user ? 'logged in' : 'not logged in', 'loading:', loading);
 
   // Use the appropriate schema based on the current mode
   const currentSchema = isLogin ? loginSchema : registerSchema;
@@ -78,11 +77,16 @@ export default function Auth() {
         description: 'Redirecionando para as categorias...',
       });
 
-      // Use a small timeout to prevent potential race conditions
-      setTimeout(() => {
+      // Ensure navigation happens
+      try {
         console.log('Executing navigation to /categories/emocao');
+        // Force refresh page to ensure clean state
+        window.location.href = '/categories/emocao';
+      } catch (err) {
+        console.error('Navigation error:', err);
+        // Fallback to router navigation
         navigate('/categories/emocao', { replace: true });
-      }, 500);
+      }
     }
   }, [user, loading, navigate, redirecting]);
 
@@ -178,7 +182,7 @@ export default function Auth() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin mb-4" />
-        <p>Redirecionando para a página inicial...</p>
+        <p>Redirecionando para as categorias...</p>
       </div>
     );
   }
