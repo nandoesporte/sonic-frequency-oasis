@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,86 +7,47 @@ import { Play, Clock, Heart } from "lucide-react";
 import { FeedbackDialog } from './FeedbackDialog';
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface RitualWalk {
   id: string;
+  walk_id: string;
   name: string;
-  duration: string;
-  ritual: string;
-  phrase: string;
-  audioUrl?: string;
+  duration_minutes: number;
+  ritual_preparation: string;
+  activation_phrase: string;
+  audio_url?: string;
+  script_content?: string;
 }
-
-const ritualWalks: RitualWalk[] = [
-  {
-    id: 'liberacao',
-    name: 'Caminhada da Liberação',
-    duration: '12 min',
-    ritual: 'Deixar os ombros caírem, soltar maxilares, imaginar-se deixando algo para trás.',
-    phrase: 'Deixo o que pesa para a terra levar.',
-  },
-  {
-    id: 'clareza',
-    name: 'Caminhada da Clareza',
-    duration: '10 min',
-    ritual: 'Caminhar reto, depois em zigue-zague, visualizando clareza.',
-    phrase: 'Me movo com clareza e direção, mesmo sem saber tudo.',
-  },
-  {
-    id: 'gratidao',
-    name: 'Caminhada da Gratidão',
-    duration: '11 min',
-    ritual: 'Agradecer a cada passo algo diferente.',
-    phrase: 'Cada passo é um altar para minha história.',
-  },
-  {
-    id: 'raiva',
-    name: 'Caminhada da Raiva',
-    duration: '13 min',
-    ritual: 'Bater suavemente os pés no chão, respirar forte.',
-    phrase: 'Dou voz ao que me atravessa, sem me perder.',
-  },
-  {
-    id: 'recomeco',
-    name: 'Caminhada do Recomeço',
-    duration: '10 min',
-    ritual: 'Observar como se fosse a primeira vez.',
-    phrase: 'Tudo começa agora, inclusive eu.',
-  },
-  {
-    id: 'perdao',
-    name: 'Caminhada do Perdão',
-    duration: '14 min',
-    ritual: 'Caminhar com a mão sobre o peito, repetir "Eu libero... eu me liberto."',
-    phrase: 'Eu mereço a leveza que só o perdão traz.',
-  },
-  {
-    id: 'encerramento',
-    name: 'Caminhada do Encerramento',
-    duration: '12 min',
-    ritual: 'Imaginar fechamento de ciclos.',
-    phrase: 'Fecho portas com honra, abro espaços com amor.',
-  },
-  {
-    id: 'foco',
-    name: 'Caminhada do Foco',
-    duration: '9 min',
-    ritual: 'Repetir intenção de foco, evitar distrações.',
-    phrase: 'Tudo o que preciso está à minha frente.',
-  },
-  {
-    id: 'abertura',
-    name: 'Caminhada da Abertura',
-    duration: '11 min',
-    ritual: 'Caminhar com braços abertos e respirar profundamente.',
-    phrase: 'Abro-me para o novo com confiança e curiosidade.',
-  },
-];
 
 export function SentipassoSection() {
   const { user } = useAuth();
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [selectedWalk, setSelectedWalk] = useState<RitualWalk | null>(null);
+  const [ritualWalks, setRitualWalks] = useState<RitualWalk[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchWalks();
+  }, []);
+
+  const fetchWalks = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('sentipasso_audios')
+        .select('*')
+        .order('duration_minutes');
+      
+      if (error) throw error;
+      
+      setRitualWalks(data || []);
+    } catch (error) {
+      console.error('Erro ao carregar caminhadas:', error);
+      toast.error("Erro ao carregar as caminhadas");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePlayWalk = (walk: RitualWalk) => {
     if (!user) {
@@ -97,10 +58,14 @@ export function SentipassoSection() {
     }
 
     setSelectedWalk(walk);
-    // Here you would integrate with your audio player
+    
+    // Simular início do áudio (aqui você integraria com um player real)
     toast.success(`Iniciando: ${walk.name}`, {
       description: "Prepare-se para sua caminhada ritual"
     });
+    
+    // Log para debug - aqui você pode ver o script completo
+    console.log('Script da caminhada:', walk.script_content);
   };
 
   const handleFeedback = () => {
@@ -112,6 +77,18 @@ export function SentipassoSection() {
     }
     setFeedbackOpen(true);
   };
+
+  if (loading) {
+    return (
+      <section className="py-16 px-4 bg-gradient-to-b from-purple-50/30 to-background dark:from-purple-900/10">
+        <div className="container mx-auto">
+          <div className="text-center">
+            <p>Carregando caminhadas...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16 px-4 bg-gradient-to-b from-purple-50/30 to-background dark:from-purple-900/10">
@@ -140,7 +117,7 @@ export function SentipassoSection() {
                   </CardTitle>
                   <Badge variant="secondary" className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    {walk.duration}
+                    {walk.duration_minutes} min
                   </Badge>
                 </div>
               </CardHeader>
@@ -151,7 +128,7 @@ export function SentipassoSection() {
                     Ritual de Preparação:
                   </h4>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    {walk.ritual}
+                    {walk.ritual_preparation}
                   </p>
                 </div>
 
@@ -160,7 +137,7 @@ export function SentipassoSection() {
                     Frase de Ativação:
                   </h4>
                   <p className="text-sm font-medium text-purple-800 dark:text-purple-200 italic">
-                    "{walk.phrase}"
+                    "{walk.activation_phrase}"
                   </p>
                 </div>
 

@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Heart, Send, Star } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface FeedbackDialogProps {
   open: boolean;
@@ -16,12 +18,18 @@ interface FeedbackDialogProps {
 }
 
 export function FeedbackDialog({ open, onOpenChange, selectedWalk }: FeedbackDialogProps) {
+  const { user } = useAuth();
   const [feedback, setFeedback] = useState('');
   const [keyword, setKeyword] = useState('');
   const [rating, setRating] = useState<number>(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
+    if (!user) {
+      toast.error("Você precisa estar logado para enviar feedback");
+      return;
+    }
+
     if (!feedback.trim()) {
       toast.error("Por favor, compartilhe como se sentiu");
       return;
@@ -35,14 +43,18 @@ export function FeedbackDialog({ open, onOpenChange, selectedWalk }: FeedbackDia
     setIsSubmitting(true);
 
     try {
-      // Here you would save the feedback to your database
-      console.log('Saving feedback:', {
-        feedback: feedback.trim(),
-        keyword: keyword.trim(),
-        rating,
-        walkName: selectedWalk,
-        timestamp: new Date().toISOString()
-      });
+      const { error } = await supabase
+        .from('sentipasso_feedback')
+        .insert({
+          user_id: user.id,
+          walk_id: selectedWalk || 'geral',
+          walk_name: selectedWalk,
+          feedback_text: feedback.trim(),
+          keyword: keyword.trim() || null,
+          rating: rating
+        });
+
+      if (error) throw error;
 
       toast.success("Obrigado pelo seu feedback!", {
         description: "Sua experiência foi registrada com carinho."
@@ -54,6 +66,7 @@ export function FeedbackDialog({ open, onOpenChange, selectedWalk }: FeedbackDia
       setRating(0);
       onOpenChange(false);
     } catch (error) {
+      console.error('Erro ao enviar feedback:', error);
       toast.error("Erro ao enviar feedback", {
         description: "Tente novamente em alguns instantes"
       });

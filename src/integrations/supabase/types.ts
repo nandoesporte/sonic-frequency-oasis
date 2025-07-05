@@ -628,6 +628,86 @@ export type Database = {
           },
         ]
       }
+      sentipasso_audios: {
+        Row: {
+          activation_phrase: string
+          audio_url: string | null
+          created_at: string
+          duration_minutes: number
+          id: string
+          name: string
+          ritual_preparation: string
+          script_content: string | null
+          updated_at: string
+          walk_id: string
+        }
+        Insert: {
+          activation_phrase: string
+          audio_url?: string | null
+          created_at?: string
+          duration_minutes: number
+          id?: string
+          name: string
+          ritual_preparation: string
+          script_content?: string | null
+          updated_at?: string
+          walk_id: string
+        }
+        Update: {
+          activation_phrase?: string
+          audio_url?: string | null
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          name?: string
+          ritual_preparation?: string
+          script_content?: string | null
+          updated_at?: string
+          walk_id?: string
+        }
+        Relationships: []
+      }
+      sentipasso_feedback: {
+        Row: {
+          created_at: string
+          feedback_text: string
+          id: string
+          keyword: string | null
+          rating: number
+          user_id: string
+          walk_id: string
+          walk_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          feedback_text: string
+          id?: string
+          keyword?: string | null
+          rating: number
+          user_id: string
+          walk_id: string
+          walk_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          feedback_text?: string
+          id?: string
+          keyword?: string | null
+          rating?: number
+          user_id?: string
+          walk_id?: string
+          walk_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sentipasso_feedback_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscribers: {
         Row: {
           created_at: string
