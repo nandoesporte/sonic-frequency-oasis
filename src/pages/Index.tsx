@@ -15,6 +15,7 @@ import { ScientificEvidence } from "@/components/home/ScientificEvidence";
 import { ProfessionalFeatures } from "@/components/home/ProfessionalFeatures";
 import { TestimonialSection } from "@/components/home/TestimonialSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
+import { SentipassoSection } from "@/components/sentipasso/SentipassoSection";
 import { toast } from "@/components/ui/sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -228,6 +229,9 @@ const Index = () => {
         
         {/* How It Works Section - Only show for non-logged in users */}
         {!user && <HowItWorksSection />}
+        
+        {/* Sentipasso Section - Show for all users */}
+        <SentipassoSection />
         
         {/* Trending Section - Keep existing implementation logic, but improve styling */}
         {trendingFrequencies.length > 0 && (
