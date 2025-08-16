@@ -19,7 +19,7 @@ interface FrequencyCardProps {
 
 export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: FrequencyCardProps) {
   const { play, isPlaying, currentFrequency, addToFavorites, favorites } = useAudio();
-  const { isPremium } = usePremium();
+  const { hasAccess, isInTrialPeriod, trialDaysLeft } = usePremium();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   
@@ -47,11 +47,17 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
       return;
     }
     
-    // Redirect directly to premium plans section if premium content and user doesn't have premium
-    if (frequency.premium && !isPremium) {
-      toast.info("Conteúdo Premium", {
-        description: "Assine o plano premium para acessar esta frequência"
-      });
+    // Check if user has access (premium or trial)
+    if (frequency.premium && !hasAccess) {
+      if (isInTrialPeriod) {
+        toast.info("Período de Teste", {
+          description: `Você tem ${trialDaysLeft} dias restantes no seu teste gratuito`
+        });
+      } else {
+        toast.info("Teste Expirado", {
+          description: "Seu período de teste expirou. Assine para continuar ouvindo"
+        });
+      }
       navigate("/premium#planos");
       return;
     }
@@ -60,8 +66,8 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
   };
   
   const handleCardClick = () => {
-    // If premium content and user doesn't have premium, redirect to premium plans
-    if (frequency.premium && !isPremium) {
+    // If premium content and user doesn't have access, redirect to premium plans
+    if (frequency.premium && !hasAccess) {
       navigate("/premium#planos");
       return;
     }
@@ -90,7 +96,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
           "overflow-hidden hover-scale transition-all cursor-pointer",
           variant === "trending" && "border-purple-light bg-purple-light/10",
           isCurrentlyPlaying && "border-primary",
-          frequency.premium && !isPremium && "border-purple-300"
+          frequency.premium && !hasAccess && "border-purple-300"
         )}
         onClick={handleCardClick}
       >
@@ -107,7 +113,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
               isCurrentlyPlaying ? "bg-purple-500 text-white" : "bg-secondary"
             )}
           >
-            {frequency.premium && !isPremium ? <Lock className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
+            {frequency.premium && !hasAccess ? <Lock className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
           </Button>
           
           <div className="flex-grow min-w-0">
@@ -152,7 +158,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
       className={cn(
         "overflow-hidden hover-scale transition-all cursor-pointer",
         isCurrentlyPlaying && "border-primary",
-        frequency.premium && !isPremium && "border-purple-300"
+        frequency.premium && !hasAccess && "border-purple-300"
       )}
       onClick={handleCardClick}
     >
@@ -193,7 +199,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
             isCurrentlyPlaying && "bg-purple-500 hover:bg-purple-600"
           )}
         >
-          {frequency.premium && !isPremium ? (
+          {frequency.premium && !hasAccess ? (
             <>
               <Lock className="mr-2 h-4 w-4" />
               Conteúdo Premium

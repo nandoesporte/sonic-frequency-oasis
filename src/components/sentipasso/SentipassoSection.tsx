@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Play, Clock, Heart } from "lucide-react";
 import { FeedbackDialog } from './FeedbackDialog';
 import { useAuth } from "@/contexts/AuthContext";
+import { usePremium } from "@/hooks/use-premium";
+import { TrialExpiredDialog } from "@/components/TrialExpiredDialog";
 import { toast } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -22,10 +24,12 @@ interface RitualWalk {
 
 export function SentipassoSection() {
   const { user } = useAuth();
+  const { hasAccess, isInTrialPeriod, trialDaysLeft } = usePremium();
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [selectedWalk, setSelectedWalk] = useState<RitualWalk | null>(null);
   const [ritualWalks, setRitualWalks] = useState<RitualWalk[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showTrialExpiredDialog, setShowTrialExpiredDialog] = useState(false);
 
   useEffect(() => {
     fetchWalks();
@@ -55,6 +59,17 @@ export function SentipassoSection() {
         description: "É necessário estar logado para acessar as caminhadas rituais"
       });
       return;
+    }
+
+    if (!hasAccess) {
+      if (isInTrialPeriod) {
+        toast.info("Período de Teste", {
+          description: `Você tem ${trialDaysLeft} dias restantes no seu teste gratuito`
+        });
+      } else {
+        setShowTrialExpiredDialog(true);
+        return;
+      }
     }
 
     setSelectedWalk(walk);
@@ -170,6 +185,11 @@ export function SentipassoSection() {
           open={feedbackOpen} 
           onOpenChange={setFeedbackOpen}
           selectedWalk={selectedWalk?.name}
+        />
+
+        <TrialExpiredDialog 
+          open={showTrialExpiredDialog}
+          onOpenChange={setShowTrialExpiredDialog}
         />
       </div>
     </section>
