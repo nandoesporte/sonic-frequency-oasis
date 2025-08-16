@@ -25,12 +25,17 @@ export function usePremium() {
       }
 
       try {
+        console.log("Checking premium status for user:", user.id);
+        
         // Check the subscription status in the database
         const { data: subscriber, error: subscriberError } = await supabase
           .from('subscribers')
           .select('*')
           .eq('user_id', user.id)
           .single();
+
+        console.log("Subscriber data:", subscriber);
+        console.log("Subscriber error:", subscriberError);
 
         if (subscriberError && subscriberError.code !== 'PGRST116') {
           // PGRST116 is "not found" which is expected for non-subscribers
@@ -40,6 +45,7 @@ export function usePremium() {
 
         // Set premium status based on subscription record
         const isSubscribed = !!subscriber && subscriber.subscribed;
+        console.log("Is subscribed:", isSubscribed);
         setIsPremium(isSubscribed);
 
         // Check if user is in trial period
