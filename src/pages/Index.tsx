@@ -285,6 +285,9 @@ const Index = () => {
           </div>
         </section>
         
+        {/* Sentipasso Section - Show for all users */}
+        <SentipassoSection />
+        
         {/* Trending Section - Keep existing implementation logic, but improve styling */}
         {trendingFrequencies.length > 0 && (
           <section className="py-12 px-4">
