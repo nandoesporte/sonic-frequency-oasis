@@ -140,7 +140,7 @@ const Index = () => {
           </section>
         )}
         
-        {/* Professional Hero Section - Only show for non-logged in users */}
+        {/* Hero Section - Only show for non-logged in users */}
         {!user && (
           <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 px-2 sm:px-4 relative overflow-hidden bg-gradient-to-b from-purple-100/80 to-background dark:from-purple-900/20 dark:to-background">
             <div className="absolute inset-0 overflow-hidden">
@@ -153,22 +153,41 @@ const Index = () => {
               <div className="max-w-4xl mx-auto text-center">
                 <div className="flex justify-center mb-3 sm:mb-5">
                   <Badge variant="success" className="px-2 py-1 text-xs sm:text-sm">
-                    <Award className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    Para Profissionais
+                    <Waves className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    Frequências Terapêuticas
                   </Badge>
                 </div>
                 
                 <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-3 sm:mb-4 md:mb-6 animate-fade-in leading-tight px-2">
-                  <span className="text-primary dark:text-primary block sm:inline">Eleve suas </span> 
-                  <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-blue-400 block sm:inline">Terapias Sonoras</span>
+                  <span className="text-primary dark:text-primary block sm:inline">Transforme sua </span> 
+                  <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-blue-400 block sm:inline">Jornada Interior</span>
                 </h1>
                 
                 <p className="text-base sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-6 sm:mb-8 animate-fade-in px-2">
-                  A plataforma completa para terapeutas, coaches e facilitadores que utilizam frequências sonoras em suas sessões
+                  Descubra o poder das frequências sonoras para relaxamento, foco, cura emocional e bem-estar através dos SentiPassos
                 </p>
                 
-                {/* Destaque da Oferta */}
-                <div className="mb-8 bg-gradient-to-r from-amber-500/20 to-amber-600/20 p-4 rounded-lg border border-amber-500/30 shadow-lg dark:from-amber-600/30 dark:to-amber-700/30 dark:border-amber-600/40 animate-pulse">
+                {/* Destaque do SentiPassos */}
+                <div className="mb-8 bg-gradient-to-r from-purple-500/20 to-pink-500/20 p-4 rounded-lg border border-purple-500/30 shadow-lg dark:from-purple-600/30 dark:to-pink-700/30 dark:border-purple-600/40">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Headphones className="h-6 w-6 text-purple-500 dark:text-purple-400" />
+                    <h3 className="text-xl md:text-2xl font-bold text-purple-600 dark:text-purple-400">
+                      🎧 SentiPassos - Novidade!
+                    </h3>
+                  </div>
+                  <p className="text-purple-700 dark:text-purple-300 mb-3">
+                    Caminhadas terapêuticas com frequências para trabalhar emoções como paz, raiva e tristeza
+                  </p>
+                  <Button asChild size="lg" className="bg-purple-500 hover:bg-purple-600 text-white rounded-full shadow-md">
+                    <Link to="/sentipasso">
+                      Experimente os SentiPassos
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+                
+                {/* Teste Grátis */}
+                <div className="mb-8 bg-gradient-to-r from-amber-500/20 to-amber-600/20 p-4 rounded-lg border border-amber-500/30 shadow-lg dark:from-amber-600/30 dark:to-amber-700/30 dark:border-amber-600/40">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Gift className="h-6 w-6 text-amber-500 dark:text-amber-400" />
                     <h3 className="text-xl md:text-2xl font-bold text-amber-600 dark:text-amber-400">
@@ -176,11 +195,11 @@ const Index = () => {
                     </h3>
                   </div>
                   <p className="text-amber-700 dark:text-amber-300 mb-3">
-                    Acesso completo à biblioteca de frequências terapêuticas e recursos premium
+                    Acesso completo à biblioteca de frequências terapêuticas e SentiPassos
                   </p>
                   <Button asChild size="lg" className="bg-amber-500 hover:bg-amber-600 text-white rounded-full shadow-md">
                     <Link to="/auth">
-                      Começar Período de Teste
+                      Começar Agora
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
@@ -189,7 +208,7 @@ const Index = () => {
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-12">
                   <Button asChild size="lg" className="w-full sm:w-auto rounded-full animate-fade-in bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 shadow-md shadow-purple-500/20">
                     <Link to="/auth" className="gap-2 text-base">
-                      Teste Gratuitamente
+                      Começar Jornada
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                   </Button>
@@ -204,9 +223,9 @@ const Index = () => {
                 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
                   <div className="flex flex-col items-center bg-white/50 dark:bg-white/5 p-4 rounded-xl backdrop-blur-sm shadow-sm">
-                    <Users className="h-6 w-6 text-primary mb-2" />
-                    <h3 className="font-medium">Para Profissionais</h3>
-                    <p className="text-sm text-muted-foreground">Eleve suas sessões</p>
+                    <Heart className="h-6 w-6 text-primary mb-2" />
+                    <h3 className="font-medium">Bem-Estar Emocional</h3>
+                    <p className="text-sm text-muted-foreground">Paz interior e equilíbrio</p>
                   </div>
                   <div className="flex flex-col items-center bg-white/50 dark:bg-white/5 p-4 rounded-xl backdrop-blur-sm shadow-sm">
                     <Volume2 className="h-6 w-6 text-primary mb-2" />
@@ -214,9 +233,9 @@ const Index = () => {
                     <p className="text-sm text-muted-foreground">Mais de 200 frequências</p>
                   </div>
                   <div className="flex flex-col items-center bg-white/50 dark:bg-white/5 p-4 rounded-xl backdrop-blur-sm shadow-sm">
-                    <ThumbsUp className="h-6 w-6 text-primary mb-2" />
-                    <h3 className="font-medium">Resultados Reais</h3>
-                    <p className="text-sm text-muted-foreground">Comprovação científica</p>
+                    <Headphones className="h-6 w-6 text-primary mb-2" />
+                    <h3 className="font-medium">SentiPassos</h3>
+                    <p className="text-sm text-muted-foreground">Caminhadas terapêuticas</p>
                   </div>
                 </div>
               </div>
@@ -230,54 +249,88 @@ const Index = () => {
         {/* How It Works Section - Only show for non-logged in users */}
         {!user && <HowItWorksSection />}
         
-        {/* Sentipasso Display - Show for all users */}
-        <section className="py-8 sm:py-12 px-2 sm:px-4 bg-gradient-to-b from-background to-purple-50/10">
+        {/* SentiPassos Destacado - Show for all users */}
+        <section className="py-12 sm:py-16 px-2 sm:px-4 bg-gradient-to-br from-purple-500/10 via-pink-500/5 to-blue-500/10">
           <div className="container mx-auto">
-            <div className="max-w-4xl mx-auto">
-              <Card className="hover-scale overflow-hidden bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-200/30">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-8 sm:mb-12">
+                <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 px-2">
+                  🎧 <span className="text-primary">SentiPassos</span>
+                </h2>
+                <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto px-2">
+                  Uma revolução em terapia sonora: caminhadas guiadas que combinam movimento e frequências específicas para transformar estados emocionais
+                </p>
+              </div>
+
+              <Card className="hover-scale overflow-hidden bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-200/30 mb-8">
                 <CardHeader className="pb-4">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 bg-purple-500/20 rounded-lg">
-                      <Waves className="h-8 w-8 text-purple-600" />
+                  <div className="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                    <div className="p-3 bg-purple-500/20 rounded-lg">
+                      <Waves className="h-10 w-10 text-purple-600" />
                     </div>
-                    <div>
-                      <CardTitle className="text-2xl md:text-3xl">SentiPassos</CardTitle>
-                      <p className="text-muted-foreground">Caminhadas Terapêuticas com Frequências Emocionais</p>
+                    <div className="text-center sm:text-left">
+                      <CardTitle className="text-2xl md:text-3xl">Caminhadas Terapêuticas</CardTitle>
+                      <p className="text-muted-foreground">Movimento + Frequências = Transformação Emocional</p>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent className="pb-6">
-                  <p className="text-lg mb-6">
-                    Combine movimento e terapia sonora com caminhadas guiadas que utilizam frequências específicas 
-                    para trabalhar estados emocionais como paz, raiva e tristeza.
-                  </p>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div className="text-center p-4 bg-white/50 dark:bg-white/5 rounded-lg">
-                      <Heart className="h-6 w-6 text-green-500 mx-auto mb-2" />
-                      <h4 className="font-semibold">Paz Interior</h4>
-                      <p className="text-sm text-muted-foreground">Frequências calmantes</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div className="text-center p-6 bg-white/50 dark:bg-white/5 rounded-lg">
+                      <Heart className="h-8 w-8 text-green-500 mx-auto mb-3" />
+                      <h4 className="font-semibold text-lg mb-2">Cultive a Paz</h4>
+                      <p className="text-sm text-muted-foreground">Frequências de 40Hz e 528Hz para acalmar a mente e encontrar tranquilidade interior durante a caminhada</p>
                     </div>
-                    <div className="text-center p-4 bg-white/50 dark:bg-white/5 rounded-lg">
-                      <Waves className="h-6 w-6 text-red-500 mx-auto mb-2" />
-                      <h4 className="font-semibold">Transformação da Raiva</h4>
-                      <p className="text-sm text-muted-foreground">Liberação emocional</p>
+                    <div className="text-center p-6 bg-white/50 dark:bg-white/5 rounded-lg">
+                      <Waves className="h-8 w-8 text-red-500 mx-auto mb-3" />
+                      <h4 className="font-semibold text-lg mb-2">Transforme a Raiva</h4>
+                      <p className="text-sm text-muted-foreground">Frequências de 396Hz para liberar tensões e transformar energia negativa em movimento positivo</p>
                     </div>
-                    <div className="text-center p-4 bg-white/50 dark:bg-white/5 rounded-lg">
-                      <Sparkles className="h-6 w-6 text-blue-500 mx-auto mb-2" />
-                      <h4 className="font-semibold">Superação da Tristeza</h4>
-                      <p className="text-sm text-muted-foreground">Elevação vibracional</p>
+                    <div className="text-center p-6 bg-white/50 dark:bg-white/5 rounded-lg">
+                      <Sparkles className="h-8 w-8 text-blue-500 mx-auto mb-3" />
+                      <h4 className="font-semibold text-lg mb-2">Supere a Tristeza</h4>
+                      <p className="text-sm text-muted-foreground">Frequências de 741Hz para elevação vibracional e renovação emocional através do movimento</p>
                     </div>
                   </div>
                   
-                  <div className="flex justify-center">
+                  <div className="bg-gradient-to-r from-purple-100/50 to-pink-100/50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 rounded-lg mb-6">
+                    <h4 className="font-semibold text-lg mb-3">🚶‍♀️ Como Funciona:</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                      <div className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                        <span>Escolha sua emoção alvo (paz, raiva ou tristeza)</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                        <span>Inicie a caminhada com frequência específica</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                        <span>Movimento + som trabalham juntos na transformação</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                        <span>Sinta a mudança acontecer naturalmente</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Button asChild size="lg" className="bg-purple-600 hover:bg-purple-700 text-white">
                       <Link to="/sentipasso">
                         <Headphones className="mr-2 h-5 w-5" />
-                        Explorar SentiPassos
+                        Experimentar SentiPassos
                         <ArrowRight className="ml-2 h-5 w-5" />
                       </Link>
                     </Button>
+                    {!user && (
+                      <Button asChild variant="outline" size="lg">
+                        <Link to="/auth">
+                          <Gift className="mr-2 h-5 w-5" />
+                          Começar Teste Grátis
+                        </Link>
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>

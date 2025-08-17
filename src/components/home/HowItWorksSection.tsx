@@ -7,18 +7,18 @@ export function HowItWorksSection() {
   const steps = [
     {
       number: "01",
-      title: "Escolha a Frequência",
-      description: "Selecione entre mais de 200 frequências organizadas por objetivo, condição ou efeito desejado."
+      title: "Escolha sua Intenção",
+      description: "Selecione entre relaxamento, foco, cura emocional, energia ou experimente os SentiPassos para caminhar e curar."
     },
     {
       number: "02",
-      title: "Integre na sua Sessão",
-      description: "Reproduza durante suas sessões de terapia, coaching, meditação ou qualquer outra prática."
+      title: "Encontre seu Momento",
+      description: "Use durante meditação, trabalho, exercícios, caminhadas ou simplesmente para relaxar em casa."
     },
     {
       number: "03",
-      title: "Observe os Resultados",
-      description: "Veja como seus clientes respondem positivamente, aumentando a eficácia de suas sessões."
+      title: "Sinta a Transformação",
+      description: "Permita que as frequências trabalhem naturalmente, trazendo equilíbrio e bem-estar para sua vida."
     }
   ];
 
@@ -27,10 +27,10 @@ export function HowItWorksSection() {
       <div className="container mx-auto">
         <div className="text-center mb-8 sm:mb-12">
           <h2 className="text-xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2">
-            Como Funciona
+            Como Começar
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto px-2">
-            Processo simples para transformar sua prática profissional
+            Três passos simples para transformar seu bem-estar com frequências sonoras
           </p>
         </div>
 
@@ -57,12 +57,12 @@ export function HowItWorksSection() {
         <div className="text-center mt-12">
           <Button asChild size="lg" className="rounded-full bg-primary hover:bg-primary/90">
             <Link to="/auth">
-              Experimente Gratuitamente por 7 Dias
+              Comece sua Jornada - 7 dias Grátis
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
           <p className="text-sm text-muted-foreground mt-3">
-            Sem necessidade de cartão de crédito. Cancele a qualquer momento.
+            Acesso completo por 7 dias. Sem cartão de crédito. Cancele quando quiser.
           </p>
         </div>
       </div>

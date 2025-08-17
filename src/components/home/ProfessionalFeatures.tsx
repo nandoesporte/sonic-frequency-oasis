@@ -6,39 +6,39 @@ export function ProfessionalFeatures() {
   const features = [
     {
       id: 1,
-      icon: Users,
-      title: "Atraia Mais Clientes",
-      description: "Diferencie seus serviços com frequências terapêuticas de alta qualidade. Seus clientes sentirão a diferença desde a primeira sessão."
+      icon: Heart,
+      title: "Bem-Estar Emocional",
+      description: "Encontre paz interior, equilibre suas emoções e cultive uma mentalidade positiva com frequências cuidadosamente selecionadas."
     },
     {
       id: 2,
-      icon: Heart,
-      title: "Melhore a Retenção",
-      description: "Resultados mais profundos e experiências mais imersivas mantêm seus clientes voltando e recomendando seus serviços."
+      icon: Users,
+      title: "Para Toda a Família",
+      description: "Frequências seguras e eficazes para adultos, idosos e até mesmo pets. Bem-estar para todos em casa."
     },
     {
       id: 3,
       icon: Volume2,
-      title: "Biblioteca Profissional",
-      description: "Acesso a mais de 200 frequências terapêuticas organizadas por objetivo, condição e efeito desejado."
+      title: "Biblioteca Completa",
+      description: "Mais de 200 frequências organizadas por objetivo: relaxamento, foco, cura emocional, energia e muito mais."
     },
     {
       id: 4,
       icon: CheckCircle,
-      title: "Resultados Comprovados",
-      description: "Frequências baseadas em pesquisas científicas e testadas por profissionais em milhares de sessões."
+      title: "Baseado na Ciência",
+      description: "Todas as frequências são fundamentadas em pesquisas científicas e estudos comprovados sobre terapia sonora."
     },
     {
       id: 5,
       icon: ThumbsUp,
-      title: "Facilidade de Uso",
-      description: "Reprodução simples e direta, pronta para usar em suas sessões sem complicações técnicas."
+      title: "Fácil de Usar",
+      description: "Interface simples e intuitiva. Basta escolher sua frequência e começar sua jornada de bem-estar imediatamente."
     },
     {
       id: 6,
       icon: Award,
-      title: "Certificação Profissional",
-      description: "Receba uma certificação digital mostrando que você utiliza frequências terapêuticas calibradas e de alta qualidade."
+      title: "Resultados Comprovados",
+      description: "Milhares de usuários já experimentaram mudanças positivas em estresse, ansiedade, sono e foco mental."
     }
   ];
 
@@ -47,10 +47,10 @@ export function ProfessionalFeatures() {
       <div className="container mx-auto">
         <div className="text-center mb-8 sm:mb-12">
           <h2 className="text-xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2">
-            Transforme suas <span className="text-primary">Sessões</span>
+            Benefícios das <span className="text-primary">Frequências</span>
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto px-2">
-            Ferramentas poderosas para profissionais que desejam oferecer uma experiência superior
+            Descubra como as frequências sonoras podem transformar sua vida diária e bem-estar emocional
           </p>
         </div>
 
