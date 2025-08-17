@@ -174,12 +174,12 @@ class PWAInstallManager {
     if (/iphone|ipad|ipod/.test(userAgent)) {
       return {
         platform: 'iOS',
-        instructions: 'Para instalar este app: 1) Toque no botão de compartilhar, 2) Selecione "Adicionar à Tela de Início"'
+        instructions: 'iOS: Usar Safari → Compartilhar → "Adicionar à Tela Inicial"'
       };
     } else if (/android/.test(userAgent)) {
       return {
         platform: 'Android',
-        instructions: 'Para instalar este app: Toque no menu (⋮) e selecione "Adicionar à tela inicial" ou "Instalar app"'
+        instructions: 'Android: Confirmar no prompt ou usar menu → "Instalar app"'
       };
     } else {
       return {
