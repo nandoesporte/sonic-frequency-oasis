@@ -518,46 +518,75 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setIsProcessing(true);
       console.log('Pausando áudio/frequência...');
       
+      setIsPlaying(false);
+      
+      // Clear timer first
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      
       // Check if we're playing a SentiPassos audio
       if (sentipassoAudioRef.current) {
         sentipassoAudioRef.current.pause();
+        sentipassoAudioRef.current.currentTime = 0;
+        sentipassoAudioRef.current = null;
         console.log('SentiPassos audio pausado');
       }
       
       // Check if we have background frequency playing
       if (backgroundOscillatorRef.current && backgroundGainRef.current && audioContextRef.current) {
         const currentTime = audioContextRef.current.currentTime;
-        backgroundGainRef.current.gain.setValueAtTime(backgroundGainRef.current.gain.value, currentTime);
-        backgroundGainRef.current.gain.linearRampToValueAtTime(0, currentTime + 0.5);
-        
-        setTimeout(() => {
+        try {
+          backgroundGainRef.current.gain.setValueAtTime(backgroundGainRef.current.gain.value, currentTime);
+          backgroundGainRef.current.gain.linearRampToValueAtTime(0, currentTime + 0.5);
+          
+          setTimeout(() => {
+            try {
+              backgroundOscillatorRef.current?.stop();
+              backgroundOscillatorRef.current?.disconnect();
+              backgroundOscillatorRef.current = null;
+              
+              backgroundGainRef.current?.disconnect();
+              backgroundGainRef.current = null;
+              console.log('Frequência de fundo pausada');
+            } catch (e) {
+              console.error('Error stopping background frequency:', e);
+            }
+          }, 500);
+        } catch (e) {
+          console.error('Error during background frequency fade:', e);
+          // Force cleanup if fade fails
           try {
             backgroundOscillatorRef.current?.stop();
             backgroundOscillatorRef.current?.disconnect();
             backgroundOscillatorRef.current = null;
-            
             backgroundGainRef.current?.disconnect();
             backgroundGainRef.current = null;
-            console.log('Frequência de fundo pausada');
-          } catch (e) {
-            console.error('Error stopping background frequency:', e);
+          } catch (cleanupError) {
+            console.error('Error in force cleanup:', cleanupError);
           }
-        }, 500);
+        }
       }
       
       // Handle regular frequency oscillators
       if (oscillatorRef.current) {
-        await fadeOut();
+        try {
+          await fadeOut();
+        } catch (fadeError) {
+          console.error('Error during fade out:', fadeError);
+        }
       }
       
+      // Always cleanup resources
       cleanupAudioResources();
-      setIsPlaying(false);
       setRemainingTime(null);
       
       console.log('Áudio pausado com sucesso');
     } catch (error) {
       console.error('Error pausing frequency:', error);
       setIsPlaying(false);
+      setRemainingTime(null);
     } finally {
       setIsProcessing(false);
     }

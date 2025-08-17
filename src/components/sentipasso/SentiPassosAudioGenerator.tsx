@@ -105,6 +105,55 @@ export function SentiPassosAudioGenerator() {
     }
   };
 
+  const regenerateSpecific = async (sentiments: string[]) => {
+    if (!user) {
+      toast.error("Faça login para continuar");
+      return;
+    }
+
+    setRegenerating(true);
+    setResults(null);
+
+    try {
+      toast.info(`Regenerando ${sentiments.join(', ')} com OpenAI...`, {
+        description: "Usando scripts aprimorados seguindo padrões do ElevenLabs"
+      });
+
+      const { data, error } = await supabase.functions.invoke('generate-all-sentimento-audios', {
+        body: { 
+          action: 'generate_specific',
+          targetSentiments: sentiments
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      setResults(data);
+      
+      if (data.summary?.success > 0) {
+        toast.success(`Regeneração específica concluída!`, {
+          description: `${data.summary.success} áudios de ${sentiments.join(', ')} criados`
+        });
+      }
+
+      if (data.summary?.errors > 0) {
+        toast.warning(`Alguns erros ocorreram`, {
+          description: `${data.summary.errors} áudios falharam`
+        });
+      }
+
+    } catch (error) {
+      console.error('Erro ao regenerar áudios específicos:', error);
+      toast.error("Erro ao regenerar áudios específicos", {
+        description: "Verifique os logs para mais detalhes"
+      });
+    } finally {
+      setRegenerating(false);
+    }
+  };
+
   return (
     <Card className="border-purple-200 dark:border-purple-800">
       <CardHeader>
@@ -153,6 +202,28 @@ export function SentiPassosAudioGenerator() {
               <>
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Regenerar com ElevenLabs
+              </>
+            )}
+          </Button>
+        </div>
+
+        <div className="space-y-2">
+          <Button 
+            onClick={() => regenerateSpecific(['paz', 'raiva', 'tristeza'])}
+            disabled={generating || regenerating}
+            className="w-full"
+            size="sm"
+            variant="outline"
+          >
+            {regenerating ? (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                Regenerando...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Regenerar: Paz, Raiva, Tristeza
               </>
             )}
           </Button>

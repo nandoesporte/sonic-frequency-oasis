@@ -249,7 +249,7 @@ serve(async (req) => {
   }
 
   try {
-    const { action = 'generate_all' } = await req.json();
+    const { action = 'generate_all', targetSentiments } = await req.json();
     
     const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
     const ELEVEN_LABS_API_KEY = Deno.env.get('ELEVEN_LABS_API_KEY');
@@ -263,11 +263,17 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Get all sentiments from database
-    const { data: sentimentos, error: fetchError } = await supabase
+    // Get sentiments from database (filter by targets if specified)
+    let query = supabase
       .from('sentimento_audios')
-      .select('*')
-      .order('sentimento');
+      .select('*');
+    
+    // If specific sentiments are requested, filter by them
+    if (targetSentiments && Array.isArray(targetSentiments) && targetSentiments.length > 0) {
+      query = query.in('sentimento', targetSentiments);
+    }
+    
+    const { data: sentimentos, error: fetchError } = await query.order('sentimento');
 
     if (fetchError) {
       throw fetchError;
@@ -288,37 +294,71 @@ serve(async (req) => {
         // Create enhanced Portuguese meditation script
         const meditationScript = generateMeditationScript(sentimento.sentimento, sentimento.frequencia_hz);
 
-        // Generate audio using ElevenLabs TTS with Brazilian Portuguese voice
-        const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9', {
-          method: 'POST',
-          headers: {
-            'xi-api-key': ELEVEN_LABS_API_KEY,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            text: meditationScript,
-            model_id: 'eleven_multilingual_v2',
-            voice_settings: {
-              stability: 0.6,
-              similarity_boost: 0.8,
-              style: 0.2, // More natural and calming
-              use_speaker_boost: true
-            }
-          }),
-        });
+        // Check if action is using ElevenLabs or OpenAI (default OpenAI for generate_specific)
+        const useElevenLabs = action === 'regenerate_elevenlabs';
+        let audioBuffer;
+        
+        if (useElevenLabs && ELEVEN_LABS_API_KEY) {
+          // Generate audio using ElevenLabs TTS with Brazilian Portuguese voice
+          const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9', {
+            method: 'POST',
+            headers: {
+              'xi-api-key': ELEVEN_LABS_API_KEY,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              text: meditationScript,
+              model_id: 'eleven_multilingual_v2',
+              voice_settings: {
+                stability: 0.6,
+                similarity_boost: 0.8,
+                style: 0.2, // More natural and calming
+                use_speaker_boost: true
+              }
+            }),
+          });
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error(`Erro ElevenLabs para ${sentimento.sentimento}:`, errorText);
-          throw new Error(`ElevenLabs API error: ${response.status} - ${errorText}`);
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`Erro ElevenLabs para ${sentimento.sentimento}:`, errorText);
+            throw new Error(`ElevenLabs API error: ${response.status} - ${errorText}`);
+          }
+
+          audioBuffer = await response.arrayBuffer();
+        } else if (OPENAI_API_KEY) {
+          // Generate audio using OpenAI TTS (using enhanced scripts)
+          const response = await fetch('https://api.openai.com/v1/audio/speech', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${OPENAI_API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: 'tts-1-hd',
+              input: meditationScript,
+              voice: 'nova', // Female voice in Portuguese
+              response_format: 'mp3',
+              speed: 0.9 // Slightly slower for meditation
+            }),
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`Erro OpenAI para ${sentimento.sentimento}:`, errorText);
+            throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+          }
+
+          audioBuffer = await response.arrayBuffer();
+        } else {
+          throw new Error('Nenhuma API key configurada (OpenAI ou ElevenLabs)');
         }
 
-        // Get audio buffer
-        const audioBuffer = await response.arrayBuffer();
+        // Audio buffer is now generated above based on the selected provider
         const audioBlob = new Uint8Array(audioBuffer);
 
         // Upload to Supabase Storage
-        const fileName = `${sentimento.sentimento}-elevenlabs-${Date.now()}.mp3`;
+        const provider = useElevenLabs ? 'elevenlabs' : 'openai';
+        const fileName = `${sentimento.sentimento}-${provider}-${Date.now()}.mp3`;
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('sentimento-audios')
           .upload(fileName, audioBlob, {
