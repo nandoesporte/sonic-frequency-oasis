@@ -55,7 +55,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [premiumFrequency, setPremiumFrequency] = useState<FrequencyData | null>(null);
   const [isProcessing, setIsProcessing] = useState(false); // Flag to prevent concurrent operations
   const { user } = useAuth();
-  const { isPremium } = usePremium();
+  const { isPremium, hasAccess } = usePremium();
   
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
@@ -330,7 +330,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       setIsProcessing(true);
       
-      if (frequency.premium && !isPremium) {
+      if (frequency.premium && !hasAccess) {
         setPremiumFrequency(frequency);
         setShowPremiumDialog(true);
         setIsProcessing(false);

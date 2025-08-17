@@ -41,6 +41,13 @@ export function usePremium() {
         // Set premium status based on subscription record
         const isSubscribed = !!subscriber && subscriber.subscribed;
         setIsPremium(isSubscribed);
+        
+        console.log('[usePremium] Subscriber data:', {
+          found: !!subscriber,
+          subscribed: isSubscribed,
+          is_trial: subscriber?.is_trial,
+          trial_ends_at: subscriber?.trial_ends_at
+        });
 
         // Check if user is in trial period
         if (subscriber && subscriber.is_trial && subscriber.trial_ends_at) {
@@ -59,6 +66,11 @@ export function usePremium() {
             setIsInTrialPeriod(false);
             setTrialDaysLeft(0);
           }
+          
+          console.log('[usePremium] Trial status:', {
+            isInTrialPeriod: trialEnd > now,
+            daysLeft: Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+          });
         } else {
           setIsInTrialPeriod(false);
           setTrialDaysLeft(0);
@@ -132,6 +144,13 @@ export function usePremium() {
   // Verificar se o usuário tem acesso a conteúdo premium
   // seja por assinatura ou por estar em período de teste
   const hasAccess = isPremium || isInTrialPeriod;
+  
+  console.log('[usePremium] Final access status:', {
+    isPremium,
+    isInTrialPeriod,
+    hasAccess,
+    trialDaysLeft
+  });
 
   return { 
     isPremium, 
