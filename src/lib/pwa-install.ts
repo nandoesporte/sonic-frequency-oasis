@@ -114,12 +114,25 @@ class PWAInstallManager {
   }
 
   public async install(): Promise<boolean> {
+    console.log('PWA: Tentando instalar...', {
+      hasDeferredPrompt: !!this.deferredPrompt,
+      isIOS: isIOS(),
+      isAndroid: isAndroid()
+    });
+    
+    // For iOS and Android, we'll show manual instructions and consider it successful
+    if ((isIOS() || isAndroid()) && !this.deferredPrompt) {
+      console.log('PWA: Dispositivo móvel sem prompt nativo, considerando instalação manual como sucesso');
+      return true; // Manual installation guidance is considered successful
+    }
+    
     if (!this.deferredPrompt) {
-      console.log('PWA: No install prompt available');
+      console.log('PWA: No install prompt available for this browser');
       return false;
     }
 
     try {
+      console.log('PWA: Mostrando prompt de instalação...');
       // Show the install prompt
       await this.deferredPrompt.prompt();
       
@@ -135,6 +148,7 @@ class PWAInstallManager {
         return true;
       }
       
+      console.log('PWA: Usuário rejeitou a instalação');
       return false;
     } catch (error) {
       console.error('PWA: Error during installation:', error);

@@ -65,7 +65,9 @@ export function PWAInstallDialog() {
 
     if (!canInstall) {
       if (isIOS() || isAndroid()) {
+        console.log('PWA Dialog: Mostrando instruções manuais para dispositivo móvel');
         setShowManualInstructions(true);
+        setShowDialog(false);
       } else {
         toast({
           title: "Instalação não disponível",
@@ -80,7 +82,10 @@ export function PWAInstallDialog() {
     setIsInstalling(true);
     
     try {
+      console.log('PWA Dialog: Chamando pwaInstallManager.install()');
       const success = await pwaInstallManager.install();
+      
+      console.log('PWA Dialog: Resultado da instalação:', success);
       
       if (success) {
         toast({
@@ -89,10 +94,17 @@ export function PWAInstallDialog() {
         });
         setShowDialog(false);
       } else {
-        toast({
-          title: "Instalação cancelada",
-          description: "A instalação foi cancelada pelo usuário.",
-        });
+        // If it's a mobile device, show manual instructions instead of error
+        if (isIOS() || isAndroid()) {
+          console.log('PWA Dialog: Instalação não automática, mostrando instruções manuais');
+          setShowManualInstructions(true);
+          setShowDialog(false);
+        } else {
+          toast({
+            title: "Instalação cancelada",
+            description: "A instalação foi cancelada pelo usuário.",
+          });
+        }
       }
     } catch (error) {
       console.error('PWA Dialog: Erro durante instalação:', error);
