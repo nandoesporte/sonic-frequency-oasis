@@ -10,6 +10,7 @@ import { usePremium } from "@/hooks/use-premium";
 import { TrialExpiredDialog } from "@/components/TrialExpiredDialog";
 import { toast } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useAudio } from "@/lib/audio-context";
 
 interface RitualWalk {
   id: string;
@@ -25,11 +26,13 @@ interface RitualWalk {
 export function SentipassoSection() {
   const { user } = useAuth();
   const { hasAccess, isInTrialPeriod, trialDaysLeft } = usePremium();
+  const { playSentipassoAudio } = useAudio();
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [selectedWalk, setSelectedWalk] = useState<RitualWalk | null>(null);
   const [ritualWalks, setRitualWalks] = useState<RitualWalk[]>([]);
   const [loading, setLoading] = useState(true);
   const [showTrialExpiredDialog, setShowTrialExpiredDialog] = useState(false);
+  const [generatingAudio, setGeneratingAudio] = useState<string | null>(null);
 
   useEffect(() => {
     fetchWalks();
@@ -53,7 +56,7 @@ export function SentipassoSection() {
     }
   };
 
-  const handlePlayWalk = (walk: RitualWalk) => {
+  const handlePlayWalk = async (walk: RitualWalk) => {
     if (!user) {
       toast.info("Faça login para continuar", {
         description: "É necessário estar logado para acessar as caminhadas rituais"
@@ -73,55 +76,60 @@ export function SentipassoSection() {
     }
 
     setSelectedWalk(walk);
+    setGeneratingAudio(walk.id);
     
-    // Use the browser's speech synthesis API to read the script
-    if (walk.script_content && 'speechSynthesis' in window) {
-      // Stop any ongoing speech
-      window.speechSynthesis.cancel();
-      
-      const utterance = new SpeechSynthesisUtterance(walk.script_content);
-      
-      // Configure speech synthesis
-      utterance.lang = 'pt-BR';
-      utterance.rate = 0.8; // Slightly slower for meditation
-      utterance.pitch = 0.9;
-      utterance.volume = 0.8;
-      
-      // Get available voices and try to use a Portuguese voice
-      const voices = window.speechSynthesis.getVoices();
-      const portugueseVoice = voices.find(voice => 
-        voice.lang.includes('pt') || voice.lang.includes('BR')
-      );
-      
-      if (portugueseVoice) {
-        utterance.voice = portugueseVoice;
+    try {
+      // Generate audio using ElevenLabs
+      const { data, error } = await supabase.functions.invoke('generate-sentipasso-audio', {
+        body: {
+          text: walk.script_content,
+          voice_id: 'cgSgspJ2msm6clMCkdW9' // Jessica voice for Portuguese
+        }
+      });
+
+      if (error) {
+        throw error;
       }
-      
-      utterance.onstart = () => {
+
+      if (data?.audioContent) {
+        // Convert base64 to blob URL
+        const audioBlob = new Blob(
+          [Uint8Array.from(atob(data.audioContent), c => c.charCodeAt(0))],
+          { type: 'audio/mpeg' }
+        );
+        const audioUrl = URL.createObjectURL(audioBlob);
+        
+        // Create a sentipasso frequency object compatible with the audio player
+        const sentipassoFrequency = {
+          id: walk.id,
+          name: walk.name,
+          hz: 0, // No frequency for sentipasso
+          purpose: "Caminhada Ritual",
+          description: walk.ritual_preparation,
+          category: "sentipasso" as any,
+          premium: true,
+          trending: false,
+          audioUrl: audioUrl,
+          duration: walk.duration_minutes * 60, // Convert to seconds
+          activationPhrase: walk.activation_phrase
+        };
+
+        // Use the audio context to play the sentipasso audio
+        await playSentipassoAudio(sentipassoFrequency);
+        
         toast.success(`Iniciando: ${walk.name}`, {
           description: "Escute com atenção e deixe-se guiar pela caminhada"
         });
-      };
-      
-      utterance.onend = () => {
-        toast.info("Caminhada concluída", {
-          description: "Como você se sente agora? Considere enviar seu feedback"
-        });
-      };
-      
-      utterance.onerror = (event) => {
-        console.error('Erro na síntese de voz:', event);
-        toast.error("Erro ao reproduzir o áudio", {
-          description: "Verifique se seu navegador suporta síntese de voz"
-        });
-      };
-      
-      // Start speaking
-      window.speechSynthesis.speak(utterance);
-    } else {
-      toast.error("Síntese de voz não suportada", {
-        description: "Seu navegador não suporta a funcionalidade de texto para fala"
+      } else {
+        throw new Error('Nenhum conteúdo de áudio retornado');
+      }
+    } catch (error) {
+      console.error('Erro ao gerar áudio:', error);
+      toast.error("Erro ao gerar áudio da caminhada", {
+        description: "Tente novamente em alguns instantes"
       });
+    } finally {
+      setGeneratingAudio(null);
     }
   };
 
@@ -202,9 +210,10 @@ export function SentipassoSection() {
                   onClick={() => handlePlayWalk(walk)}
                   className="w-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white"
                   size="lg"
+                  disabled={generatingAudio === walk.id}
                 >
                   <Play className="h-4 w-4 mr-2" />
-                  Ouvir e Caminhar
+                  {generatingAudio === walk.id ? "Gerando áudio..." : "Ouvir e Caminhar"}
                 </Button>
               </CardContent>
             </Card>

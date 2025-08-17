@@ -30,6 +30,7 @@ type AudioContextType = {
   remainingTime: number | null;
   fadeIn: () => Promise<void>;
   fadeOut: () => Promise<void>;
+  playSentipassoAudio: (sentipassoData: any) => Promise<void>;
 };
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -491,6 +492,80 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  // Play sentipasso audio using HTML5 audio element
+  const playSentipassoAudio = async (sentipassoData: any) => {
+    try {
+      setIsProcessing(true);
+      
+      // Stop any current audio first
+      if (isPlaying) {
+        await pause();
+      }
+      
+      // Create audio element for the generated audio
+      const audio = new Audio(sentipassoData.audioUrl);
+      audio.loop = false;
+      audio.volume = volume;
+      
+      // Set up the sentipasso frequency data
+      const sentipassoFrequency = {
+        id: sentipassoData.id,
+        name: sentipassoData.name,
+        hz: 0,
+        purpose: sentipassoData.purpose,
+        description: sentipassoData.description,
+        category: 'sentipasso' as any,
+        premium: true,
+        trending: false
+      };
+      
+      setCurrentFrequency(sentipassoFrequency);
+      setIsPlaying(true);
+      
+      // Set timer for the duration of the walk
+      const walkDurationSeconds = sentipassoData.duration || 600; // Default 10 minutes
+      setRemainingTime(walkDurationSeconds);
+      
+      // Start the timer countdown
+      timerRef.current = setInterval(() => {
+        setRemainingTime((prev) => {
+          if (prev === null || prev <= 1) {
+            clearInterval(timerRef.current!);
+            timerRef.current = null;
+            setIsPlaying(false);
+            setRemainingTime(null);
+            audio.pause();
+            URL.revokeObjectURL(sentipassoData.audioUrl); // Clean up blob URL
+            toast.info(`Caminhada ${sentipassoData.name} concluída`);
+            return null;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      
+      // Play the audio
+      await audio.play();
+      
+      // Handle audio end (in case it ends before the timer)
+      audio.onended = () => {
+        // Audio ended, but keep the timer running for the full walk duration
+        console.log('Audio narration ended, continuing walk timer');
+      };
+      
+      // Add to history
+      setHistory(prev => {
+        const filtered = prev.filter(item => item.id !== sentipassoFrequency.id);
+        return [sentipassoFrequency, ...filtered].slice(0, 20);
+      });
+      
+    } catch (error) {
+      console.error('Error playing sentipasso audio:', error);
+      toast.error("Não foi possível reproduzir a caminhada");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   return (
     <AudioContext.Provider
       value={{
@@ -507,7 +582,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         history,
         remainingTime,
         fadeIn,
-        fadeOut
+        fadeOut,
+        playSentipassoAudio
       }}
     >
       {children}
