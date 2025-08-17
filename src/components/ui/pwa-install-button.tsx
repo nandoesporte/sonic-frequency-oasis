@@ -46,6 +46,8 @@ export function PWAInstallButton({
   }, [variant]);
 
   const handleInstall = async () => {
+    console.log('PWA Install: Botão clicado');
+    
     if (isAppInstalled()) {
       toast({
         title: "App já instalado",
@@ -54,11 +56,15 @@ export function PWAInstallButton({
       return;
     }
 
+    console.log('PWA Install: Verificando disponibilidade', { canInstall });
+
     if (!canInstall) {
       // Show manual instructions for iOS or when auto-install isn't available
       if (isIOS() || isAndroid()) {
+        console.log('PWA Install: Mostrando instruções manuais');
         setShowManualInstructions(true);
       } else {
+        console.log('PWA Install: Instalação não disponível');
         toast({
           title: "Instalação não disponível",
           description: "A instalação automática não está disponível neste navegador.",
@@ -69,9 +75,11 @@ export function PWAInstallButton({
     }
 
     setIsInstalling(true);
+    console.log('PWA Install: Iniciando instalação');
     
     try {
       const success = await pwaInstallManager.install();
+      console.log('PWA Install: Resultado da instalação:', success);
       
       if (success) {
         toast({
@@ -86,7 +94,7 @@ export function PWAInstallButton({
         });
       }
     } catch (error) {
-      console.error('Error installing PWA:', error);
+      console.error('PWA Install: Erro durante instalação:', error);
       toast({
         title: "Erro na instalação",
         description: "Ocorreu um erro durante a instalação. Tente novamente.",

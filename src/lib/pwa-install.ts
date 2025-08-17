@@ -19,20 +19,23 @@ class PWAInstallManager {
   }
 
   private initializeInstallPrompt() {
+    console.log('PWA Manager: Inicializando...');
+    
     // Listen for the beforeinstallprompt event
     window.addEventListener('beforeinstallprompt', (e: Event) => {
-      console.log('PWA: beforeinstallprompt event fired');
+      console.log('PWA Manager: beforeinstallprompt event fired');
       // Prevent Chrome 67 and earlier from automatically showing the prompt
       e.preventDefault();
       // Stash the event so it can be triggered later
       this.deferredPrompt = e as BeforeInstallPromptEvent;
       this.isInstallable = true;
+      console.log('PWA Manager: App can be installed, stored event');
       this.notifyCallbacks(true);
     });
 
     // Listen for successful app installation
     window.addEventListener('appinstalled', () => {
-      console.log('PWA: App was installed successfully');
+      console.log('PWA Manager: App was installed successfully');
       this.deferredPrompt = null;
       this.isInstallable = false;
       this.notifyCallbacks(false);
@@ -40,6 +43,15 @@ class PWAInstallManager {
 
     // Check if app is already installed
     this.checkIfInstalled();
+    
+    // For testing, also check after a delay
+    setTimeout(() => {
+      console.log('PWA Manager: Estado atual:', {
+        isInstallable: this.isInstallable,
+        hasDeferredPrompt: !!this.deferredPrompt,
+        isInstalled: this.checkIfInstalled()
+      });
+    }, 1000);
   }
 
   private checkIfInstalled() {

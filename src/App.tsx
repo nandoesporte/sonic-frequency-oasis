@@ -26,6 +26,7 @@ import SentiPasso from "./pages/SentiPasso";
 import { TermsAcceptanceDialog } from "./components/TermsAcceptanceDialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { FrequenciesGuideDialog } from "./components/FrequenciesGuideDialog";
+import { PWAInstallDialog } from "@/components/ui/pwa-install-dialog";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ function AppContent() {
       <ScrollToTop />
       <Toaster />
       <TermsAcceptanceDialog />
+      <PWAInstallDialog />
       {user && <FrequenciesGuideDialog />}
       <AudioProvider>
         <AudioNavigationWarning>
