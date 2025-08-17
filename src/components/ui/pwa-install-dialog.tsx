@@ -88,23 +88,26 @@ export function PWAInstallDialog() {
       console.log('PWA Dialog: Resultado da instalação:', success);
       
       if (success) {
-        // Only show success message for actual installations (with prompt)
         toast({
           title: "App instalado com sucesso! 🎉",
           description: "O Sonic Frequency Oasis foi adicionado à sua tela inicial.",
         });
         setShowDialog(false);
       } else {
-        // Show manual instructions for mobile devices or when prompt not available
-        if (isIOS() || isAndroid()) {
-          console.log('PWA Dialog: Sem prompt nativo, mostrando instruções manuais');
+        // For iOS, always show manual instructions
+        if (isIOS()) {
+          console.log('PWA Dialog: iOS - mostrando instruções manuais');
+          setShowManualInstructions(true);
+          setShowDialog(false);
+        } else if (isAndroid()) {
+          // For Android, if installation failed, show instructions
+          console.log('PWA Dialog: Android - instalação falhou, mostrando instruções');
           setShowManualInstructions(true);
           setShowDialog(false);
         } else {
-          // Only show "cancelled" message if it was an actual user cancellation on desktop
           toast({
-            title: "Instalação não disponível",
-            description: "Use as instruções do seu navegador para instalar o app.",
+            title: "Instalação cancelada",
+            description: "Você pode instalar o app a qualquer momento através do menu do navegador.",
           });
           setShowDialog(false);
         }
@@ -129,9 +132,9 @@ export function PWAInstallDialog() {
 
   const getInstallInstructions = () => {
     if (isIOS()) {
-      return "Para instalar no iOS: 1) Toque no botão de compartilhar (⬆️), 2) Selecione 'Adicionar à Tela de Início'";
+      return "iOS: Usar Safari → Compartilhar → 'Adicionar à Tela Inicial'";
     } else if (isAndroid()) {
-      return "Para instalar no Android: Toque no menu (⋮) e selecione 'Adicionar à tela inicial' ou 'Instalar app'";
+      return "Android: Confirmar no prompt ou usar menu → 'Instalar app'";
     }
     return "Para instalar: Clique no ícone de instalação na barra de endereços";
   };

@@ -120,35 +120,58 @@ class PWAInstallManager {
       isAndroid: isAndroid()
     });
     
-    
-    if (!this.deferredPrompt) {
-      console.log('PWA: No install prompt available - será necessário instalação manual');
-      return false; // Return false to trigger manual instructions
-    }
-
-    try {
-      console.log('PWA: Mostrando prompt de instalação...');
-      // Show the install prompt
-      await this.deferredPrompt.prompt();
-      
-      // Wait for the user to respond to the prompt
-      const { outcome } = await this.deferredPrompt.userChoice;
-      
-      console.log(`PWA: User response: ${outcome}`);
-      
-      if (outcome === 'accepted') {
-        this.deferredPrompt = null;
-        this.isInstallable = false;
-        this.notifyCallbacks(false);
-        return true;
+    // For Android with native prompt, install automatically
+    if (this.deferredPrompt && isAndroid()) {
+      try {
+        console.log('PWA: Instalação automática no Android...');
+        await this.deferredPrompt.prompt();
+        
+        const { outcome } = await this.deferredPrompt.userChoice;
+        console.log(`PWA: Android install result: ${outcome}`);
+        
+        if (outcome === 'accepted') {
+          this.deferredPrompt = null;
+          this.isInstallable = false;
+          this.notifyCallbacks(false);
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.error('PWA: Erro na instalação automática Android:', error);
+        return false;
       }
-      
-      console.log('PWA: Usuário rejeitou a instalação');
-      return false;
-    } catch (error) {
-      console.error('PWA: Error during installation:', error);
+    }
+    
+    // For iOS, always return false to show manual instructions
+    if (isIOS()) {
+      console.log('PWA: iOS detected - returning false for manual instructions');
       return false;
     }
+    
+    // For desktop with prompt
+    if (this.deferredPrompt) {
+      try {
+        console.log('PWA: Mostrando prompt de instalação desktop...');
+        await this.deferredPrompt.prompt();
+        
+        const { outcome } = await this.deferredPrompt.userChoice;
+        console.log(`PWA: Desktop install result: ${outcome}`);
+        
+        if (outcome === 'accepted') {
+          this.deferredPrompt = null;
+          this.isInstallable = false;
+          this.notifyCallbacks(false);
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.error('PWA: Error during desktop installation:', error);
+        return false;
+      }
+    }
+    
+    console.log('PWA: No install prompt available');
+    return false;
   }
 
   public onInstallabilityChange(callback: (canInstall: boolean) => void) {
@@ -174,12 +197,12 @@ class PWAInstallManager {
     if (/iphone|ipad|ipod/.test(userAgent)) {
       return {
         platform: 'iOS',
-        instructions: 'Para instalar este app: 1) Toque no botão de compartilhar, 2) Selecione "Adicionar à Tela de Início"'
+        instructions: '1) Usar Safari → Compartilhar → "Adicionar à Tela Inicial"'
       };
     } else if (/android/.test(userAgent)) {
       return {
         platform: 'Android',
-        instructions: 'Para instalar este app: Toque no menu (⋮) e selecione "Adicionar à tela inicial" ou "Instalar app"'
+        instructions: 'Confirmar no prompt ou usar menu → "Instalar app"'
       };
     } else {
       return {
