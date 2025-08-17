@@ -16,6 +16,7 @@ import { ProfessionalFeatures } from "@/components/home/ProfessionalFeatures";
 import { TestimonialSection } from "@/components/home/TestimonialSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { SentipassoSection } from "@/components/sentipasso/SentipassoSection";
+import { SentipassoAudioSystem } from "@/components/sentipasso/SentipassoAudioSystem";
 import { toast } from "@/components/ui/sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -232,6 +233,15 @@ const Index = () => {
         
         {/* Sentipasso Section - Show for all users */}
         <SentipassoSection />
+        
+        {/* SentiPassos Audio System - Show for logged in users */}
+        {user && (
+          <section className="py-16 px-4">
+            <div className="container mx-auto">
+              <SentipassoAudioSystem />
+            </div>
+          </section>
+        )}
         
         {/* Trending Section - Keep existing implementation logic, but improve styling */}
         {trendingFrequencies.length > 0 && (
