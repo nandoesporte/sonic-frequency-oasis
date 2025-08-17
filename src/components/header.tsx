@@ -2,13 +2,14 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Heart, Crown, History, Menu, Home, LogOut, User, Book, Brain } from "lucide-react";
+import { Heart, Crown, History, Menu, Home, LogOut, User, Book, Brain, Smartphone } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePremium } from "@/hooks/use-premium";
 import { Logo } from "@/components/ui/logo";
 import { ProfileMenu } from "@/components/profile-menu";
+import { PWAInstallButton } from "@/components/ui/pwa-install-button";
 
 export function Header() {
   const location = useLocation();
@@ -73,6 +74,8 @@ export function Header() {
         </div>
         
         <div className="flex items-center gap-2">
+          {/* PWA Install Button - only show for logged users */}
+          {user && <PWAInstallButton className="hidden sm:flex" />}
           <ThemeToggle />
           
           {user ? (
@@ -170,6 +173,13 @@ export function Header() {
                       </Link>
                     </Button>
                   </>
+                )}
+                
+                {/* PWA Install in mobile menu for logged users */}
+                {user && (
+                  <div className="mt-4 border-t pt-4">
+                    <PWAInstallButton variant="card" showInstructions />
+                  </div>
                 )}
               </div>
             </SheetContent>

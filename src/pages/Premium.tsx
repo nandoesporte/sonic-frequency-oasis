@@ -7,6 +7,7 @@ import { FrequencyData } from "@/lib/data";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Gift, Crown } from "lucide-react";
+import { PWAInstallButton } from "@/components/ui/pwa-install-button";
 import { usePremium } from "@/hooks/use-premium";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link, useLocation } from "react-router-dom";
@@ -178,6 +179,14 @@ const PremiumContent = () => {
       <div id="planos" className="pt-8 mt-8 border-t border-border/40" ref={plansRef}>
         <h2 className="text-2xl font-bold mb-8 text-center">Planos de Assinatura</h2>
         <SubscriptionPlans />
+      </div>
+      
+      {/* PWA Install Section */}
+      <div className="pt-8 mt-8 border-t border-border/40">
+        <h2 className="text-2xl font-bold mb-8 text-center">Instalar Aplicativo</h2>
+        <div className="max-w-2xl mx-auto">
+          <PWAInstallButton variant="card" showInstructions />
+        </div>
       </div>
     </div>
   );

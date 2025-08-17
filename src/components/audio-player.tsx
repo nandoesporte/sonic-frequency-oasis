@@ -94,7 +94,7 @@ export function AudioPlayer() {
     return (
       <Card className="fixed bottom-0 left-0 right-0 p-4 mx-4 mb-4 rounded-xl glass-card animate-slide-up">
         <div className="flex justify-center items-center text-muted-foreground py-2">
-          <p>Select a frequency to play</p>
+          <p>Selecione uma frequência para reproduzir</p>
         </div>
       </Card>
     );

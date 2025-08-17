@@ -1,8 +1,8 @@
 
 {
-  "name": "Frequency App - Audio Therapy",
-  "short_name": "FrequencyApp",
-  "description": "Experience therapeutic sound frequencies for healing, relaxation, focus and well-being",
+  "name": "Sonic Frequency Oasis - Frequências Terapêuticas",
+  "short_name": "Frequency Oasis",
+  "description": "Plataforma completa de frequências sonoras terapêuticas para bem-estar, relaxamento e cura emocional com SentiPassos",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -22,6 +22,23 @@
     }
   ],
   "orientation": "portrait",
-  "categories": ["health", "wellness", "audio"],
+  "categories": ["health", "wellness", "music", "medical"],
+  "lang": "pt-BR",
+  "shortcuts": [
+    {
+      "name": "SentiPassos",
+      "short_name": "SentiPassos", 
+      "description": "Caminhadas terapêuticas",
+      "url": "/sentipasso",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Frequências Premium",
+      "short_name": "Premium",
+      "description": "Acesso às frequências premium", 
+      "url": "/premium",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ],
   "prefer_related_applications": false
 }
