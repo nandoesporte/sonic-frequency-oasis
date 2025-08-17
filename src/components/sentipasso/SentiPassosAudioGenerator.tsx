@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 export function SentiPassosAudioGenerator() {
   const { user } = useAuth();
   const [generating, setGenerating] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
   const [results, setResults] = useState<any>(null);
 
   const generateAllAudios = async () => {
@@ -58,6 +59,52 @@ export function SentiPassosAudioGenerator() {
     }
   };
 
+  const regenerateWithElevenLabs = async () => {
+    if (!user) {
+      toast.error("Faça login para continuar");
+      return;
+    }
+
+    setRegenerating(true);
+    setResults(null);
+
+    try {
+      toast.info("Regenerando com ElevenLabs e scripts aprimorados...", {
+        description: "Sofia será a nova voz dos rituais em português-BR"
+      });
+
+      const { data, error } = await supabase.functions.invoke('generate-all-sentimento-audios', {
+        body: { action: 'regenerate_elevenlabs' }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      setResults(data);
+      
+      if (data.summary?.success > 0) {
+        toast.success(`Regeneração com ElevenLabs concluída!`, {
+          description: `${data.summary.success} áudios criados com a voz da Sofia`
+        });
+      }
+
+      if (data.summary?.errors > 0) {
+        toast.warning(`Alguns erros ocorreram`, {
+          description: `${data.summary.errors} áudios falharam`
+        });
+      }
+
+    } catch (error) {
+      console.error('Erro ao regenerar áudios:', error);
+      toast.error("Erro ao regenerar áudios", {
+        description: "Verifique os logs para mais detalhes"
+      });
+    } finally {
+      setRegenerating(false);
+    }
+  };
+
   return (
     <Card className="border-purple-200 dark:border-purple-800">
       <CardHeader>
@@ -66,28 +113,55 @@ export function SentiPassosAudioGenerator() {
           Gerador de Áudios SentiPassos
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Gera todos os áudios dos sentimentos usando OpenAI TTS
+          Gera áudios dos sentimentos com OpenAI ou ElevenLabs
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Button 
-          onClick={generateAllAudios}
-          disabled={generating}
-          className="w-full"
-          size="lg"
-        >
-          {generating ? (
-            <>
-              <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-              Gerando áudios...
-            </>
-          ) : (
-            <>
-              <Play className="h-4 w-4 mr-2" />
-              Gerar Todos os Áudios
-            </>
-          )}
-        </Button>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Button 
+            onClick={generateAllAudios}
+            disabled={generating || regenerating}
+            className="w-full"
+            size="lg"
+          >
+            {generating ? (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                Gerando...
+              </>
+            ) : (
+              <>
+                <Play className="h-4 w-4 mr-2" />
+                Gerar com OpenAI
+              </>
+            )}
+          </Button>
+
+          <Button 
+            onClick={regenerateWithElevenLabs}
+            disabled={generating || regenerating}
+            className="w-full"
+            size="lg"
+            variant="secondary"
+          >
+            {regenerating ? (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                Regenerando...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Regenerar com ElevenLabs
+              </>
+            )}
+          </Button>
+        </div>
+
+        <div className="text-sm text-muted-foreground space-y-1">
+          <p><strong>OpenAI:</strong> Usa os scripts existentes</p>
+          <p><strong>ElevenLabs:</strong> Scripts aprimorados em português-BR com Sofia</p>
+        </div>
 
         {results && (
           <div className="space-y-3">
