@@ -294,40 +294,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
+      // Prevent multiple signout attempts
+      if (loading) return;
+      
       console.log('Signing out user');
       setLoading(true);
       
-      // Clear local state BEFORE signout to prevent potential session errors
-      const userEmail = user?.email; // Store for the success message
-      
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        console.error('Signout error:', error);
-        toast.error('Erro ao sair', {
-          description: 'Não foi possível fazer logout. Tente novamente.'
-        });
+      // Check if user is already signed out
+      if (!session && !user) {
+        console.log('User already signed out');
+        navigate('/auth');
         return;
       }
       
-      // Set state after successful signout
+      const { error } = await supabase.auth.signOut();
+      
+      // Even if there's an error, clear local state to ensure logout
       setUser(null);
       setSession(null);
       setIsAdmin(false);
       
-      console.log('User signed out successfully');
-      
-      toast.success('Logout realizado', {
-        description: 'Você foi desconectado com sucesso.'
-      });
+      if (error && error.message !== 'session_not_found') {
+        console.error('Signout error:', error);
+        toast.error('Erro ao sair', {
+          description: 'Não foi possível fazer logout. Tente novamente.'
+        });
+      } else {
+        console.log('User signed out successfully');
+        toast.success('Logout realizado', {
+          description: 'Você foi desconectado com sucesso.'
+        });
+      }
       
       // Navigate after signout is complete
       navigate('/auth');
     } catch (error) {
       console.error('Signout error:', error);
-      toast.error('Erro ao sair', {
-        description: 'Não foi possível fazer logout. Tente novamente.'
-      });
+      // Still clear state and redirect even on error
+      setUser(null);
+      setSession(null);
+      setIsAdmin(false);
+      navigate('/auth');
     } finally {
       setLoading(false);
     }
