@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SubscriptionPlanManager } from '@/components/admin/SubscriptionPlanManager';
 import { SubscriberManager } from '@/components/admin/SubscriberManager';
 import { AdminDashboard } from '@/components/admin/AdminDashboard';
+import { SentiPassosAudioGenerator } from '@/components/sentipasso/SentiPassosAudioGenerator';
 import { GoogleAuthConfig } from '@/components/admin/GoogleAuthConfig';
 import { useForm } from 'react-hook-form';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -269,7 +270,10 @@ export default function Admin() {
         </div>
         
         <TabsContent value="dashboard">
-          <AdminDashboard />
+          <div className="space-y-6">
+            <SentiPassosAudioGenerator />
+            <AdminDashboard />
+          </div>
         </TabsContent>
         
         <TabsContent value="subscribers">

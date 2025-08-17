@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { usePremium } from '@/hooks/use-premium';
 import { FrequencyData } from '@/lib/data';
 import { PremiumContentDialog } from '@/components/subscription/PremiumContentDialog';
+import { supabase } from '@/integrations/supabase/client';
 
 // Define the Screen Orientation API types that are missing in TypeScript
 interface ScreenOrientationExtended extends ScreenOrientation {
@@ -279,7 +280,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
   };
 
-  // Start playing a frequency
+  // Start playing a frequency (enhanced with sentiment audio support)
   const play = async (frequency: FrequencyData) => {
     // Prevent concurrent operations that could cause audio glitches
     if (isProcessing) {
@@ -303,110 +304,166 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         timerRef.current = null;
       }
 
-      // Create audio context if doesn't exist
-      if (!audioContextRef.current) {
+      // Check if this is a sentiment frequency with audio message
+      const isSentimentFreq = frequency.name.includes('Sentimento:');
+      
+      if (isSentimentFreq) {
+        // For sentiment frequencies, play the audio message first, then the frequency
         try {
-          audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({
-            // Use higher latency for better stability
-            latencyHint: 'playback',
-            sampleRate: 48000,
-          });
-        } catch (e) {
-          console.error('Web Audio API is not supported in this browser.', e);
-          toast.error('Seu navegador não suporta Web Audio API');
-          setIsProcessing(false);
-          return;
+          // Get the sentiment audio URL from database
+          const sentimentName = frequency.name.split(':')[1]?.split('-')[0]?.trim().toLowerCase();
+          
+          if (sentimentName) {
+            const { data: sentimentAudio, error } = await supabase
+              .from('sentimento_audios')
+              .select('audio_url')
+              .eq('sentimento', sentimentName)
+              .single();
+
+            if (!error && sentimentAudio?.audio_url) {
+              // Play the sentiment message first
+              const audio = new Audio(sentimentAudio.audio_url);
+              audio.crossOrigin = "anonymous";
+              
+              toast.success(`Reproduzindo mensagem: ${frequency.name}`, {
+                description: "Áudio de sentimento + frequência contínua"
+              });
+              
+              await audio.play();
+              
+              // When audio message ends, start the frequency
+              audio.onended = async () => {
+                await startFrequencyOscillator(frequency);
+              };
+              
+              setCurrentFrequency(frequency);
+              setIsPlaying(true);
+              
+              // Add to history
+              setHistory(prev => {
+                const filtered = prev.filter(item => item.id !== frequency.id);
+                return [frequency, ...filtered].slice(0, 20);
+              });
+              
+              setIsProcessing(false);
+              return;
+            }
+          }
+        } catch (sentimentError) {
+          console.warn('Failed to play sentiment audio, falling back to frequency only:', sentimentError);
         }
       }
+
+      // Default frequency-only playback
+      await startFrequencyOscillator(frequency);
       
-      const ctx = audioContextRef.current;
-      
-      // Clean up existing oscillator with smooth fade out
-      if (oscillatorRef.current) {
-        // Use our fadeOut function for consistent behavior
-        await fadeOut();
-        
-        const oldOscillator = oscillatorRef.current;
-        const oldGain = gainNodeRef.current;
-        
-        setTimeout(() => {
-          try {
-            oldOscillator?.stop();
-            oldOscillator?.disconnect();
-            oldGain?.disconnect();
-          } catch (e) {
-            console.error('Error cleaning up old oscillator:', e);
-          }
-        }, fadeTime * 1000);
-      }
-      
-      // Resume audio context if it's suspended
-      if (ctx.state === 'suspended') {
-        await ctx.resume();
-      }
-      
-      // Create new oscillator and gain node
-      const oscillator = ctx.createOscillator();
-      const gainNode = ctx.createGain();
-      
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(frequency.hz, ctx.currentTime);
-      
-      // Start with zero gain for smooth fade in
-      gainNode.gain.setValueAtTime(0, ctx.currentTime);
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(ctx.destination);
-      
-      // Start the oscillator
-      oscillator.start();
-      
-      oscillatorRef.current = oscillator;
-      gainNodeRef.current = gainNode;
-      
-      setIsPlaying(true);
-      setCurrentFrequency(frequency);
-      
-      // Perform the fade in
-      await fadeIn();
-      
-      // Lock the screen orientation once we're playing
-      lockScreenOrientation();
-      
-      // Set initial remaining time to 30 minutes
-      setRemainingTime(MAX_PLAY_TIME);
-      
-      // Start countdown timer
-      timerRef.current = setInterval(() => {
-        setRemainingTime((prev) => {
-          if (prev === null || prev <= 1) {
-            // Time's up, pause the playback with fade out
-            clearInterval(timerRef.current!);
-            timerRef.current = null;
-            fadeOut().then(() => {
-              setIsPlaying(false);
-              setRemainingTime(null);
-              setIsProcessing(false);
-            });
-            toast.info(`Reprodução de ${frequency.name} encerrada após 30 minutos`);
-            return null;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      
-      // Add to history
-      setHistory(prev => {
-        const filtered = prev.filter(item => item.id !== frequency.id);
-        return [frequency, ...filtered].slice(0, 20);
-      });
-      
-      toast.success(`Tocando ${frequency.name} (${frequency.hz}Hz) por até 30 minutos`);
     } catch (error) {
       console.error('Error playing frequency:', error);
       toast.error("Não foi possível reproduzir a frequência. Tente novamente.");
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  // Helper function to start the frequency oscillator
+  const startFrequencyOscillator = async (frequency: FrequencyData) => {
+    // Create audio context if doesn't exist
+    if (!audioContextRef.current) {
+      try {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({
+          latencyHint: 'playback',
+          sampleRate: 48000,
+        });
+      } catch (e) {
+        console.error('Web Audio API is not supported in this browser.', e);
+        toast.error('Seu navegador não suporta Web Audio API');
+        return;
+      }
+    }
+    
+    const ctx = audioContextRef.current;
+    
+    // Clean up existing oscillator with smooth fade out
+    if (oscillatorRef.current) {
+      await fadeOut();
+      
+      const oldOscillator = oscillatorRef.current;
+      const oldGain = gainNodeRef.current;
+      
+      setTimeout(() => {
+        try {
+          oldOscillator?.stop();
+          oldOscillator?.disconnect();
+          oldGain?.disconnect();
+        } catch (e) {
+          console.error('Error cleaning up old oscillator:', e);
+        }
+      }, fadeTime * 1000);
+    }
+    
+    // Resume audio context if it's suspended
+    if (ctx.state === 'suspended') {
+      await ctx.resume();
+    }
+    
+    // Create new oscillator and gain node
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+    
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(frequency.hz, ctx.currentTime);
+    
+    // Start with zero gain for smooth fade in
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    
+    // Start the oscillator
+    oscillator.start();
+    
+    oscillatorRef.current = oscillator;
+    gainNodeRef.current = gainNode;
+    
+    setIsPlaying(true);
+    setCurrentFrequency(frequency);
+    
+    // Perform the fade in
+    await fadeIn();
+    
+    // Lock the screen orientation once we're playing
+    lockScreenOrientation();
+    
+    // Set initial remaining time to 30 minutes
+    setRemainingTime(MAX_PLAY_TIME);
+    
+    // Start countdown timer
+    timerRef.current = setInterval(() => {
+      setRemainingTime((prev) => {
+        if (prev === null || prev <= 1) {
+          // Time's up, pause the playback with fade out
+          clearInterval(timerRef.current!);
+          timerRef.current = null;
+          fadeOut().then(() => {
+            setIsPlaying(false);
+            setRemainingTime(null);
+            setIsProcessing(false);
+          });
+          toast.info(`Reprodução de ${frequency.name} encerrada após 30 minutos`);
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    
+    // Add to history
+    setHistory(prev => {
+      const filtered = prev.filter(item => item.id !== frequency.id);
+      return [frequency, ...filtered].slice(0, 20);
+    });
+    
+    if (!frequency.name.includes('Sentimento:')) {
+      toast.success(`Tocando ${frequency.name} (${frequency.hz}Hz) por até 30 minutos`);
     }
   };
 

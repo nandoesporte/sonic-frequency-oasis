@@ -1075,6 +1075,10 @@ export type Database = {
         Args: { user_id: string }
         Returns: boolean
       }
+      sync_sentimento_frequencies: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       frequency_category:
