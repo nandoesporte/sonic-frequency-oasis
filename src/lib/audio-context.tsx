@@ -659,9 +659,24 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       setIsProcessing(true);
       
-      // Stop any current audio first
-      if (isPlaying) {
-        await pause();
+      console.log('=== INICIANDO SENTIPASSOS AUDIO ===');
+      
+      // Force stop ANY current audio first (including other SentiPassos)
+      console.log('Pausando qualquer áudio atual...');
+      await pause();
+      await new Promise(resolve => setTimeout(resolve, 300)); // Extra wait for complete cleanup
+      
+      // Double-check: force cleanup any remaining SentiPassos audio
+      if (sentipassoAudioRef.current) {
+        console.log('Limpando áudio SentiPassos anterior...');
+        try {
+          sentipassoAudioRef.current.pause();
+          sentipassoAudioRef.current.currentTime = 0;
+          sentipassoAudioRef.current.src = '';
+          sentipassoAudioRef.current = null;
+        } catch (e) {
+          console.error('Erro na limpeza do áudio anterior:', e);
+        }
       }
       
       // Set up the sentipasso frequency data
@@ -683,10 +698,14 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const walkDurationSeconds = sentipassoData.duration || 600; // Default 10 minutes
       setRemainingTime(walkDurationSeconds);
       
-      // Create audio element for the meditation audio
+      // Create audio element for the meditation audio with safe volume
       const audio = new Audio(sentipassoData.audioUrl);
       audio.loop = false;
-      audio.volume = volume;
+      // Set a safe initial volume (30% of current volume, max 0.3)
+      audio.volume = Math.min(volume * 0.3, 0.3);
+      audio.crossOrigin = "anonymous";
+      
+      console.log(`Volume inicial do SentiPassos: ${audio.volume}`);
       
       // Store reference for pause functionality
       sentipassoAudioRef.current = audio;
