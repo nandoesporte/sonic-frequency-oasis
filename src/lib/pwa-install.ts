@@ -21,6 +21,15 @@ class PWAInstallManager {
   private initializeInstallPrompt() {
     console.log('PWA Manager: Inicializando...');
     
+    // For testing purposes, force show the dialog on mobile devices even without beforeinstallprompt
+    if (isIOS() || isAndroid()) {
+      console.log('PWA Manager: Mobile device detected, enabling manual install');
+      setTimeout(() => {
+        this.isInstallable = true;
+        this.notifyCallbacks(true);
+      }, 500);
+    }
+    
     // Listen for the beforeinstallprompt event
     window.addEventListener('beforeinstallprompt', (e: Event) => {
       console.log('PWA Manager: beforeinstallprompt event fired');
@@ -71,6 +80,10 @@ class PWAInstallManager {
   }
 
   public canInstall(): boolean {
+    // On mobile devices, allow showing the dialog even without deferredPrompt for manual instructions
+    if (isIOS() || isAndroid()) {
+      return this.isInstallable;
+    }
     return this.isInstallable && this.deferredPrompt !== null;
   }
 

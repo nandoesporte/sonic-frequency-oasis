@@ -29,14 +29,17 @@ export function PWAInstallDialog() {
     }
 
     const handleInstallabilityChange = (installable: boolean) => {
+      console.log('PWA Dialog: Installability changed:', installable);
       setCanInstall(installable);
       
-      // Show dialog automatically when PWA becomes installable
+      // Show dialog automatically when PWA becomes installable or on mobile devices
       if (installable && !hasShownDialog) {
+        console.log('PWA Dialog: Showing dialog in 2 seconds...');
         // Small delay to ensure user has settled in after login
         setTimeout(() => {
           setShowDialog(true);
           sessionStorage.setItem('pwa-install-dialog-shown', 'true');
+          console.log('PWA Dialog: Dialog should be visible now');
         }, 2000);
       }
     };
