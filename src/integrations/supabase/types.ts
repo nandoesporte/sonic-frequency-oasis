@@ -633,6 +633,36 @@ export type Database = {
           },
         ]
       }
+      sentimento_audios: {
+        Row: {
+          audio_url: string
+          created_at: string
+          frequencia_hz: number
+          id: string
+          mensagem_texto: string
+          sentimento: string
+          updated_at: string
+        }
+        Insert: {
+          audio_url: string
+          created_at?: string
+          frequencia_hz: number
+          id?: string
+          mensagem_texto: string
+          sentimento: string
+          updated_at?: string
+        }
+        Update: {
+          audio_url?: string
+          created_at?: string
+          frequencia_hz?: number
+          id?: string
+          mensagem_texto?: string
+          sentimento?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sentipasso_audios: {
         Row: {
           activation_phrase: string
