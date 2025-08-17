@@ -12,16 +12,68 @@ serve(async (req) => {
   }
 
   try {
-    const { sentimento, regenerate = false } = await req.json();
+    const { sentimento, text, regenerate = false } = await req.json();
     
-    if (!sentimento) {
-      throw new Error('Sentimento é obrigatório');
+    // Support both sentimento lookup and direct text generation
+    if (!sentimento && !text) {
+      throw new Error('Sentimento ou texto é obrigatório');
     }
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // If direct text is provided (for sentipasso), generate directly
+    if (text && !sentimento) {
+      const ELEVEN_LABS_API_KEY = Deno.env.get('ELEVEN_LABS_API_KEY');
+      if (!ELEVEN_LABS_API_KEY) {
+        throw new Error('Chave da API ElevenLabs não configurada');
+      }
+
+      console.log('Gerando áudio direto para texto fornecido');
+
+      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'audio/mpeg',
+          'Content-Type': 'application/json',
+          'xi-api-key': ELEVEN_LABS_API_KEY,
+        },
+        body: JSON.stringify({
+          text: text,
+          model_id: 'eleven_multilingual_v2',
+          voice_settings: {
+            stability: 0.7,
+            similarity_boost: 0.8,
+            style: 0.2,
+            use_speaker_boost: true
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Erro da API ElevenLabs:', errorText);
+        throw new Error(`Erro da API ElevenLabs: ${response.status} - ${errorText}`);
+      }
+
+      const audioBuffer = await response.arrayBuffer();
+      const base64Audio = btoa(String.fromCharCode(...new Uint8Array(audioBuffer)));
+
+      return new Response(
+        JSON.stringify({ 
+          audioContent: base64Audio,
+          contentType: 'audio/mpeg'
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Original sentimento lookup logic
+    if (!sentimento) {
+      throw new Error('Sentimento é obrigatório para busca no banco');
+    }
 
     // Check if audio already exists
     const { data: existingAudio, error: fetchError } = await supabase

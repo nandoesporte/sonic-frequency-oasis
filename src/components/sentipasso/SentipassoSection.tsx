@@ -79,54 +79,105 @@ export function SentipassoSection() {
     setGeneratingAudio(walk.id);
     
     try {
-      // Generate audio using ElevenLabs
-      const { data, error } = await supabase.functions.invoke('generate-sentipasso-audio', {
-        body: {
-          text: walk.script_content,
-          voice_id: 'cgSgspJ2msm6clMCkdW9' // Jessica voice for Portuguese
-        }
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      if (data?.audioContent) {
-        // Convert base64 to blob URL
-        const audioBlob = new Blob(
-          [Uint8Array.from(atob(data.audioContent), c => c.charCodeAt(0))],
-          { type: 'audio/mpeg' }
-        );
-        const audioUrl = URL.createObjectURL(audioBlob);
-        
-        // Create a sentipasso frequency object compatible with the audio player
-        const sentipassoFrequency = {
-          id: walk.id,
-          name: walk.name,
-          hz: 0, // No frequency for sentipasso
-          purpose: "Caminhada Ritual",
-          description: walk.ritual_preparation,
-          category: "sentipasso" as any,
-          premium: true,
-          trending: false,
-          audioUrl: audioUrl,
-          duration: walk.duration_minutes * 60, // Convert to seconds
-          activationPhrase: walk.activation_phrase
-        };
-
-        // Use the audio context to play the sentipasso audio
-        await playSentipassoAudio(sentipassoFrequency);
-        
-        toast.success(`Iniciando: ${walk.name}`, {
-          description: "Escute com atenção e deixe-se guiar pela caminhada"
+      // Try to generate audio using ElevenLabs first
+      try {
+        const { data, error } = await supabase.functions.invoke('generate-sentimento-audio', {
+          body: {
+            text: walk.script_content
+          }
         });
-      } else {
-        throw new Error('Nenhum conteúdo de áudio retornado');
+
+        if (error) {
+          throw error;
+        }
+
+        if (data?.audioContent) {
+          // Convert base64 to blob URL
+          const audioBlob = new Blob(
+            [Uint8Array.from(atob(data.audioContent), c => c.charCodeAt(0))],
+            { type: 'audio/mpeg' }
+          );
+          const audioUrl = URL.createObjectURL(audioBlob);
+          
+          // Create a sentipasso frequency object compatible with the audio player
+          const sentipassoFrequency = {
+            id: walk.id,
+            name: walk.name,
+            hz: 0, // No frequency for sentipasso
+            purpose: "Caminhada Ritual",
+            description: walk.ritual_preparation,
+            category: "sentipasso" as any,
+            premium: true,
+            trending: false,
+            audioUrl: audioUrl,
+            duration: walk.duration_minutes * 60, // Convert to seconds
+            activationPhrase: walk.activation_phrase
+          };
+
+          // Use the audio context to play the sentipasso audio
+          await playSentipassoAudio(sentipassoFrequency);
+          
+          toast.success(`Iniciando: ${walk.name}`, {
+            description: "Áudio ElevenLabs - Escute com atenção e deixe-se guiar pela caminhada"
+          });
+          return;
+        }
+      } catch (elevenlabsError) {
+        console.warn('ElevenLabs failed, falling back to browser speech synthesis:', elevenlabsError);
       }
+
+      // Fallback to browser speech synthesis
+      if (walk.script_content && 'speechSynthesis' in window) {
+        // Stop any ongoing speech
+        window.speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(walk.script_content);
+        
+        // Configure speech synthesis
+        utterance.lang = 'pt-BR';
+        utterance.rate = 0.8; // Slightly slower for meditation
+        utterance.pitch = 0.9;
+        utterance.volume = 0.8;
+        
+        // Get available voices and try to use a Portuguese voice
+        const voices = window.speechSynthesis.getVoices();
+        const portugueseVoice = voices.find(voice => 
+          voice.lang.includes('pt') || voice.lang.includes('BR')
+        );
+        
+        if (portugueseVoice) {
+          utterance.voice = portugueseVoice;
+        }
+        
+        utterance.onstart = () => {
+          toast.success(`Iniciando: ${walk.name}`, {
+            description: "Síntese de voz do navegador - Escute com atenção e deixe-se guiar pela caminhada"
+          });
+        };
+        
+        utterance.onend = () => {
+          toast.info("Caminhada concluída", {
+            description: "Como você se sente agora? Considere enviar seu feedback"
+          });
+        };
+        
+        utterance.onerror = (event) => {
+          console.error('Erro na síntese de voz:', event);
+          toast.error("Erro ao reproduzir o áudio", {
+            description: "Verifique se seu navegador suporta síntese de voz"
+          });
+        };
+        
+        // Start speaking
+        window.speechSynthesis.speak(utterance);
+      } else {
+        throw new Error('Síntese de voz não suportada pelo navegador');
+      }
+      
     } catch (error) {
-      console.error('Erro ao gerar áudio:', error);
-      toast.error("Erro ao gerar áudio da caminhada", {
-        description: "Tente novamente em alguns instantes"
+      console.error('Erro ao reproduzir áudio:', error);
+      toast.error("Erro ao reproduzir a caminhada", {
+        description: "Não foi possível reproduzir o áudio por nenhum método disponível"
       });
     } finally {
       setGeneratingAudio(null);
