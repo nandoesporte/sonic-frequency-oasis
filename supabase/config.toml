@@ -19,6 +19,12 @@ enabled = true
 [functions.start-trial-for-new-user]
 verify_jwt = true
 
+[functions.handle-webhook]
+verify_jwt = false
+
+[functions.check-payment-status]
+verify_jwt = true
+
 [edge_functions]
 enabled = true
 
