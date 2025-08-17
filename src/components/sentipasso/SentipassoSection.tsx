@@ -41,13 +41,25 @@ export function SentipassoSection() {
   const fetchWalks = async () => {
     try {
       const { data, error } = await supabase
-        .from('sentipasso_audios')
+        .from('sentimento_audios')
         .select('*')
-        .order('duration_minutes');
+        .order('sentimento');
       
       if (error) throw error;
       
-      setRitualWalks(data || []);
+      // Map the sentiment data to ritual walks format
+      const mappedWalks = data?.map(item => ({
+        id: item.id,
+        walk_id: item.sentimento,
+        name: `Caminhada do ${item.sentimento.charAt(0).toUpperCase() + item.sentimento.slice(1)}`,
+        duration_minutes: 10,
+        ritual_preparation: `Prepare-se para uma caminhada de ${item.sentimento}. ${item.mensagem_texto}`,
+        activation_phrase: `Eu sou capaz de sentir e transformar meu ${item.sentimento}`,
+        audio_url: item.audio_url,
+        script_content: item.mensagem_texto
+      })) || [];
+      
+      setRitualWalks(mappedWalks);
     } catch (error) {
       console.error('Erro ao carregar caminhadas:', error);
       toast.error("Erro ao carregar as caminhadas");
@@ -79,51 +91,30 @@ export function SentipassoSection() {
     setGeneratingAudio(walk.id);
     
     try {
-      // Try to generate audio using ElevenLabs first
-      try {
-        const { data, error } = await supabase.functions.invoke('generate-sentimento-audio', {
-          body: {
-            text: walk.script_content
-          }
+      // Check if we have a pre-generated audio URL
+      if (walk.audio_url) {
+        // Create a sentipasso frequency object compatible with the audio player
+        const sentipassoFrequency = {
+          id: walk.id,
+          name: walk.name,
+          hz: 0, // No frequency for sentipasso
+          purpose: "Caminhada Ritual",
+          description: walk.ritual_preparation,
+          category: "sentipasso" as any,
+          premium: true,
+          trending: false,
+          audioUrl: walk.audio_url,
+          duration: walk.duration_minutes * 60, // Convert to seconds
+          activationPhrase: walk.activation_phrase
+        };
+
+        // Use the audio context to play the sentipasso audio
+        await playSentipassoAudio(sentipassoFrequency);
+        
+        toast.success(`Iniciando: ${walk.name}`, {
+          description: "Áudio OpenAI - Escute com atenção e deixe-se guiar pela caminhada"
         });
-
-        if (error) {
-          throw error;
-        }
-
-        if (data?.audioContent) {
-          // Convert base64 to blob URL
-          const audioBlob = new Blob(
-            [Uint8Array.from(atob(data.audioContent), c => c.charCodeAt(0))],
-            { type: 'audio/mpeg' }
-          );
-          const audioUrl = URL.createObjectURL(audioBlob);
-          
-          // Create a sentipasso frequency object compatible with the audio player
-          const sentipassoFrequency = {
-            id: walk.id,
-            name: walk.name,
-            hz: 0, // No frequency for sentipasso
-            purpose: "Caminhada Ritual",
-            description: walk.ritual_preparation,
-            category: "sentipasso" as any,
-            premium: true,
-            trending: false,
-            audioUrl: audioUrl,
-            duration: walk.duration_minutes * 60, // Convert to seconds
-            activationPhrase: walk.activation_phrase
-          };
-
-          // Use the audio context to play the sentipasso audio
-          await playSentipassoAudio(sentipassoFrequency);
-          
-          toast.success(`Iniciando: ${walk.name}`, {
-            description: "Áudio ElevenLabs - Escute com atenção e deixe-se guiar pela caminhada"
-          });
-          return;
-        }
-      } catch (elevenlabsError) {
-        console.warn('ElevenLabs failed, falling back to browser speech synthesis:', elevenlabsError);
+        return;
       }
 
       // Fallback to browser speech synthesis
