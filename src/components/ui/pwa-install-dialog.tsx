@@ -88,22 +88,25 @@ export function PWAInstallDialog() {
       console.log('PWA Dialog: Resultado da instalação:', success);
       
       if (success) {
+        // Only show success message for actual installations (with prompt)
         toast({
           title: "App instalado com sucesso! 🎉",
           description: "O Sonic Frequency Oasis foi adicionado à sua tela inicial.",
         });
         setShowDialog(false);
       } else {
-        // If it's a mobile device, show manual instructions instead of error
+        // Show manual instructions for mobile devices or when prompt not available
         if (isIOS() || isAndroid()) {
-          console.log('PWA Dialog: Instalação não automática, mostrando instruções manuais');
+          console.log('PWA Dialog: Sem prompt nativo, mostrando instruções manuais');
           setShowManualInstructions(true);
           setShowDialog(false);
         } else {
+          // Only show "cancelled" message if it was an actual user cancellation on desktop
           toast({
-            title: "Instalação cancelada",
-            description: "A instalação foi cancelada pelo usuário.",
+            title: "Instalação não disponível",
+            description: "Use as instruções do seu navegador para instalar o app.",
           });
+          setShowDialog(false);
         }
       }
     } catch (error) {

@@ -120,15 +120,10 @@ class PWAInstallManager {
       isAndroid: isAndroid()
     });
     
-    // For iOS and Android, we'll show manual instructions and consider it successful
-    if ((isIOS() || isAndroid()) && !this.deferredPrompt) {
-      console.log('PWA: Dispositivo móvel sem prompt nativo, considerando instalação manual como sucesso');
-      return true; // Manual installation guidance is considered successful
-    }
     
     if (!this.deferredPrompt) {
-      console.log('PWA: No install prompt available for this browser');
-      return false;
+      console.log('PWA: No install prompt available - será necessário instalação manual');
+      return false; // Return false to trigger manual instructions
     }
 
     try {
