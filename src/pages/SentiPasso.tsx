@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Heart, Waves, Sparkles, Volume2, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/components/ui/sonner";
+import { SentipassoSection } from "@/components/sentipasso/SentipassoSection";
 
 interface SentiPassoAudio {
   id: string;
@@ -217,74 +218,8 @@ const SentiPasso = () => {
           </div>
         </section>
 
-        {/* Sentipasso Audios Grid */}
-        <section className="py-16 px-4">
-          <div className="container mx-auto">
-            <h2 className="text-3xl font-bold mb-8 text-center">Caminhadas Disponíveis</h2>
-            
-            {loading ? (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">Carregando caminhadas...</p>
-              </div>
-            ) : sentiPassoAudios.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                {sentiPassoAudios.map((audio) => (
-                  <Card key={audio.id} className="hover-scale">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Waves className="h-5 w-5 text-purple-500" />
-                        {audio.name}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-2">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm">{audio.duration_minutes} minutos</span>
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-medium text-sm mb-1">Frase de Ativação:</h4>
-                          <p className="text-sm text-muted-foreground italic">"{audio.activation_phrase}"</p>
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-medium text-sm mb-1">Preparação:</h4>
-                          <p className="text-sm text-muted-foreground">{audio.ritual_preparation}</p>
-                        </div>
-                        
-                        <Button 
-                          className="w-full" 
-                          disabled={!audio.audio_url}
-                        >
-                          {audio.audio_url ? (
-                            <>
-                              <Volume2 className="mr-2 h-4 w-4" />
-                              Iniciar Caminhada
-                            </>
-                          ) : (
-                            "Em Breve"
-                          )}
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              // Fallback para dados mock quando não há dados no banco
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                {mockSentiPassoData.map((frequency) => (
-                  <FrequencyCard 
-                    key={frequency.id} 
-                    frequency={frequency}
-                    variant="default"
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
+        {/* Caminhadas - Importando da página inicial */}
+        <SentipassoSection />
 
         {/* Call to Action */}
         <section className="py-16 px-4 bg-gradient-to-b from-background to-purple-50/10">
