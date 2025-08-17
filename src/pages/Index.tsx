@@ -230,6 +230,61 @@ const Index = () => {
         {/* How It Works Section - Only show for non-logged in users */}
         {!user && <HowItWorksSection />}
         
+        {/* Sentipasso Display - Show for all users */}
+        <section className="py-12 px-4 bg-gradient-to-b from-background to-purple-50/10">
+          <div className="container mx-auto">
+            <div className="max-w-4xl mx-auto">
+              <Card className="hover-scale overflow-hidden bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-200/30">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2 bg-purple-500/20 rounded-lg">
+                      <Waves className="h-8 w-8 text-purple-600" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-2xl md:text-3xl">SentiPassos</CardTitle>
+                      <p className="text-muted-foreground">Caminhadas Terapêuticas com Frequências Emocionais</p>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="pb-6">
+                  <p className="text-lg mb-6">
+                    Combine movimento e terapia sonora com caminhadas guiadas que utilizam frequências específicas 
+                    para trabalhar estados emocionais como paz, raiva e tristeza.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div className="text-center p-4 bg-white/50 dark:bg-white/5 rounded-lg">
+                      <Heart className="h-6 w-6 text-green-500 mx-auto mb-2" />
+                      <h4 className="font-semibold">Paz Interior</h4>
+                      <p className="text-sm text-muted-foreground">Frequências calmantes</p>
+                    </div>
+                    <div className="text-center p-4 bg-white/50 dark:bg-white/5 rounded-lg">
+                      <Waves className="h-6 w-6 text-red-500 mx-auto mb-2" />
+                      <h4 className="font-semibold">Transformação da Raiva</h4>
+                      <p className="text-sm text-muted-foreground">Liberação emocional</p>
+                    </div>
+                    <div className="text-center p-4 bg-white/50 dark:bg-white/5 rounded-lg">
+                      <Sparkles className="h-6 w-6 text-blue-500 mx-auto mb-2" />
+                      <h4 className="font-semibold">Superação da Tristeza</h4>
+                      <p className="text-sm text-muted-foreground">Elevação vibracional</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-center">
+                    <Button asChild size="lg" className="bg-purple-600 hover:bg-purple-700 text-white">
+                      <Link to="/sentipasso">
+                        <Headphones className="mr-2 h-5 w-5" />
+                        Explorar SentiPassos
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+        
         {/* Sentipasso Section - Show for all users */}
         <SentipassoSection />
         

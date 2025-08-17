@@ -22,6 +22,7 @@ import Admin from "./pages/Admin";
 import WebhookConfig from "./pages/WebhookConfig";
 import Profile from "./pages/Profile";
 import Terms from "./pages/Terms";
+import SentiPasso from "./pages/SentiPasso";
 import { TermsAcceptanceDialog } from "./components/TermsAcceptanceDialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { FrequenciesGuideDialog } from "./components/FrequenciesGuideDialog";
@@ -84,6 +85,7 @@ function AppContent() {
             <Route path="/admin" element={<Admin />} />
             <Route path="/webhook-config" element={<WebhookConfig />} />
             <Route path="/terms" element={<Terms />} />
+            <Route path="/sentipasso" element={<SentiPasso />} />
             
             {/* Catch all route for 404 */}
             <Route path="*" element={<NotFound />} />
