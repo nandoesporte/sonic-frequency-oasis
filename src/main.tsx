@@ -2,11 +2,9 @@
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
-import { pwaInstallManager } from './lib/pwa-install'
 
 // Initialize PWA installation handling
 if (typeof window !== 'undefined') {
-  // Initialize PWA functionality automatically
   
   // Configure exit intent detection for non-logged users
   let exitIntentShown = false;
