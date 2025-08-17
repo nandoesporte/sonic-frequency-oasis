@@ -330,6 +330,14 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       setIsProcessing(true);
       
+      // Always pause current audio before starting new one to prevent overlapping
+      if (isPlaying || oscillatorRef.current || sentipassoAudioRef.current) {
+        console.log('Pausando áudio atual antes de iniciar novo...');
+        await pause();
+        // Wait a bit to ensure complete cleanup
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
       if (frequency.premium && !hasAccess) {
         setPremiumFrequency(frequency);
         setShowPremiumDialog(true);
