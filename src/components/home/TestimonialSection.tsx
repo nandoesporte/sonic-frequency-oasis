@@ -27,13 +27,13 @@ export function TestimonialSection() {
   ];
 
   return (
-    <section className="py-16 px-4 bg-gradient-to-b from-purple-50/10 to-background dark:from-purple-900/5 dark:to-background">
+    <section className="py-8 sm:py-16 px-2 sm:px-4 bg-gradient-to-b from-purple-50/10 to-background dark:from-purple-900/5 dark:to-background">
       <div className="container mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2">
             O que dizem os <span className="text-primary">Profissionais</span>
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto px-2">
             Experiências reais de terapeutas e facilitadores que transformaram sua prática
           </p>
         </div>

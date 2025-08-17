@@ -119,13 +119,13 @@ const Index = () => {
         
         {/* Welcome Section - Only show for logged in users */}
         {user && (
-          <section className="w-full bg-gradient-to-b from-purple-50/50 to-background dark:from-purple-900/10 pt-32 pb-12">
-            <div className="container mx-auto px-4">
+          <section className="w-full bg-gradient-to-b from-purple-50/50 to-background dark:from-purple-900/10 pt-32 pb-12 px-2 sm:px-4">
+            <div className="container mx-auto">
               <div className="max-w-4xl mx-auto text-center">
-                <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in">
+                <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 animate-fade-in leading-tight px-2">
                   Bem-vindo ao Guia de Frequências
                 </h1>
-                <p className="text-lg text-muted-foreground mb-8 animate-fade-in">
+                <p className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 animate-fade-in px-2">
                   Aprenda a maximizar os benefícios das frequências sonoras terapêuticas com nosso guia completo.
                 </p>
                 <Button asChild size="lg" className="rounded-full animate-fade-in hover-scale">
@@ -142,7 +142,7 @@ const Index = () => {
         
         {/* Professional Hero Section - Only show for non-logged in users */}
         {!user && (
-          <section className="pt-28 md:pt-32 pb-16 px-4 relative overflow-hidden bg-gradient-to-b from-purple-100/80 to-background dark:from-purple-900/20 dark:to-background">
+          <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 px-2 sm:px-4 relative overflow-hidden bg-gradient-to-b from-purple-100/80 to-background dark:from-purple-900/20 dark:to-background">
             <div className="absolute inset-0 overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-purple-200/30 to-transparent dark:from-purple-900/10 dark:to-transparent"></div>
               <div className="absolute -top-10 -right-10 w-72 h-72 bg-purple-200/20 dark:bg-purple-700/10 rounded-full blur-3xl"></div>
@@ -151,19 +151,19 @@ const Index = () => {
             
             <div className="container mx-auto relative z-10">
               <div className="max-w-4xl mx-auto text-center">
-                <div className="flex justify-center mb-5">
-                  <Badge variant="success" className="px-3 py-1 text-sm">
-                    <Award className="h-4 w-4 mr-1" />
+                <div className="flex justify-center mb-3 sm:mb-5">
+                  <Badge variant="success" className="px-2 py-1 text-xs sm:text-sm">
+                    <Award className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                     Para Profissionais
                   </Badge>
                 </div>
                 
-                <h1 className="text-5xl md:text-7xl lg:text-7xl font-bold mb-4 md:mb-6 animate-fade-in leading-tight">
-                  <span className="text-primary dark:text-primary">Eleve suas </span> 
-                  <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-blue-400">Terapias Sonoras</span>
+                <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-3 sm:mb-4 md:mb-6 animate-fade-in leading-tight px-2">
+                  <span className="text-primary dark:text-primary block sm:inline">Eleve suas </span> 
+                  <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-blue-400 block sm:inline">Terapias Sonoras</span>
                 </h1>
                 
-                <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in">
+                <p className="text-base sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-6 sm:mb-8 animate-fade-in px-2">
                   A plataforma completa para terapeutas, coaches e facilitadores que utilizam frequências sonoras em suas sessões
                 </p>
                 
@@ -231,7 +231,7 @@ const Index = () => {
         {!user && <HowItWorksSection />}
         
         {/* Sentipasso Display - Show for all users */}
-        <section className="py-12 px-4 bg-gradient-to-b from-background to-purple-50/10">
+        <section className="py-8 sm:py-12 px-2 sm:px-4 bg-gradient-to-b from-background to-purple-50/10">
           <div className="container mx-auto">
             <div className="max-w-4xl mx-auto">
               <Card className="hover-scale overflow-hidden bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-200/30">
@@ -288,12 +288,12 @@ const Index = () => {
         
         {/* Trending Section - Keep existing implementation logic, but improve styling */}
         {trendingFrequencies.length > 0 && (
-          <section className="py-12 px-4">
+          <section className="py-8 sm:py-12 px-2 sm:px-4">
             <div className="container mx-auto">
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex justify-between items-center mb-4 sm:mb-6">
                 <div className="flex items-center">
-                  <Sparkles className="h-5 w-5 mr-2 text-primary hidden sm:block" />
-                  <h2 className="text-2xl md:text-3xl font-bold">Em Alta</h2>
+                  <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 mr-2 text-primary hidden sm:block" />
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">Em Alta</h2>
                 </div>
                 <Button asChild variant="ghost" size="sm" className="gap-1">
                   <Link to="/trending" className="flex items-center">
@@ -325,9 +325,9 @@ const Index = () => {
         {!user && <ScientificEvidence />}
         
         {/* Categories Section with Frequencies - More efficient rendering */}
-        <section className="py-12 px-4">
+        <section className="py-8 sm:py-12 px-2 sm:px-4">
           <div className="container mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Categorias</h2>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 px-2">Categorias</h2>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {categories.map((category) => {
@@ -348,9 +348,9 @@ const Index = () => {
         
         {/* Display Frequencies by Category - With optimized rendering */}
         {Object.entries(categoryFrequencies).length > 0 && (
-          <section className="py-8 px-4">
+          <section className="py-6 sm:py-8 px-2 sm:px-4">
             <div className="container mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6">Explore Frequências por Categoria</h2>
+              <h2 className="text-lg sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 px-2">Explore Frequências por Categoria</h2>
               
               {Object.entries(categoryFrequencies).map(([categoryId, frequencies]) => {
                 const category = categories.find(cat => cat.id === categoryId);

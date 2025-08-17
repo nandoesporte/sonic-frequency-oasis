@@ -23,13 +23,13 @@ export function HowItWorksSection() {
   ];
 
   return (
-    <section className="py-16 px-4 bg-accent/5">
+    <section className="py-8 sm:py-16 px-2 sm:px-4 bg-accent/5">
       <div className="container mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2">
             Como Funciona
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto px-2">
             Processo simples para transformar sua prática profissional
           </p>
         </div>
