@@ -120,7 +120,7 @@ export function SentipassoSection() {
         await playSentipassoAudio(sentipassoFrequency);
         
         toast.success(`Iniciando: ${walk.name}`, {
-          description: `Áudio meditativo + frequência ${sentimentData?.frequencia_hz || 0}Hz de fundo`
+          description: `Áudio ElevenLabs com Sofia + frequência ${sentimentData?.frequencia_hz || 0}Hz de fundo`
         });
         return;
       }
