@@ -329,15 +329,13 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     try {
       setIsProcessing(true);
-      console.log(`=== INICIANDO PLAY: ${frequency.name} ===`);
+      console.log(`=== INICIANDO TRANSIÇÃO SUAVE PARA: ${frequency.name} ===`);
       
-      // FORCE stop ALL current audio before starting new one
+      // Smooth transition: fade-out current audio before starting new one
       if (isPlaying || oscillatorRef.current || sentipassoAudioRef.current || backgroundOscillatorRef.current) {
-        console.log('=== PAUSANDO FORÇADAMENTE TODOS OS ÁUDIOS ATUAIS ===');
-        await pause();
-        // Extended wait to ensure complete cleanup
-        await new Promise(resolve => setTimeout(resolve, 500));
-        console.log('=== LIMPEZA TOTAL CONCLUÍDA, INICIANDO NOVO ÁUDIO ===');
+        console.log('=== FAZENDO FADE-OUT SUAVE DO ÁUDIO ATUAL ===');
+        await pause(); // This now includes smooth fade-out
+        console.log('=== FADE-OUT CONCLUÍDO, INICIANDO NOVO ÁUDIO ===');
       }
       
       if (frequency.premium && !hasAccess) {
@@ -516,9 +514,9 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  // Enhanced pause function to handle both frequencies and SentiPassos
+  // Enhanced pause function with smooth fade-out
   const pause = async () => {
-    console.log('=== INICIANDO PAUSA FORÇADA ===');
+    console.log('=== INICIANDO PAUSA SUAVE ===');
     
     // Immediately set states to prevent new audio from starting
     setIsPlaying(false);
@@ -531,85 +529,88 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       console.log('Timer limpo');
     }
     
-    // Force stop ALL audio elements and oscillators immediately
-    // 1. Stop SentiPassos audio
+    // 1. Smooth fade-out for SentiPassos audio
     if (sentipassoAudioRef.current) {
       try {
-        sentipassoAudioRef.current.pause();
-        sentipassoAudioRef.current.currentTime = 0;
-        sentipassoAudioRef.current.src = '';
-        sentipassoAudioRef.current.load(); // Force reload to clear buffer
+        const audio = sentipassoAudioRef.current;
+        const originalVolume = audio.volume;
+        
+        // Smooth volume fade-out over 300ms
+        const fadeOutSteps = 10;
+        const fadeOutInterval = 30; // 30ms per step
+        
+        for (let i = fadeOutSteps; i >= 0; i--) {
+          audio.volume = (originalVolume * i) / fadeOutSteps;
+          await new Promise(resolve => setTimeout(resolve, fadeOutInterval));
+        }
+        
+        audio.pause();
+        audio.currentTime = 0;
+        audio.src = '';
+        audio.load();
         sentipassoAudioRef.current = null;
-        console.log('SentiPassos audio FORÇADAMENTE pausado');
+        console.log('SentiPassos audio pausado SUAVEMENTE');
       } catch (e) {
         console.error('Erro pausando SentiPassos:', e);
       }
     }
     
-    // 2. Stop background frequency oscillator
-    if (backgroundOscillatorRef.current) {
+    // 2. Smooth fade-out for background frequency
+    if (backgroundOscillatorRef.current && backgroundGainRef.current && audioContextRef.current) {
       try {
+        const context = audioContextRef.current;
+        const gainNode = backgroundGainRef.current;
+        const currentTime = context.currentTime;
+        
+        // Smooth fade-out over 300ms
+        gainNode.gain.setValueAtTime(gainNode.gain.value, currentTime);
+        gainNode.gain.linearRampToValueAtTime(0, currentTime + 0.3);
+        
+        // Wait for fade-out to complete before stopping
+        await new Promise(resolve => setTimeout(resolve, 350));
+        
         backgroundOscillatorRef.current.stop();
         backgroundOscillatorRef.current.disconnect();
         backgroundOscillatorRef.current = null;
-        console.log('Frequência de fundo FORÇADAMENTE parada');
-      } catch (e) {
-        console.error('Erro parando frequência de fundo:', e);
-      }
-    }
-    
-    if (backgroundGainRef.current) {
-      try {
-        backgroundGainRef.current.disconnect();
+        
+        gainNode.disconnect();
         backgroundGainRef.current = null;
-        console.log('Gain de fundo FORÇADAMENTE desconectado');
+        console.log('Frequência de fundo pausada SUAVEMENTE');
       } catch (e) {
-        console.error('Erro desconectando gain de fundo:', e);
+        console.error('Erro pausando frequência de fundo:', e);
       }
     }
     
-    // 3. Stop main oscillator
-    if (oscillatorRef.current) {
+    // 3. Smooth fade-out for main oscillator
+    if (oscillatorRef.current && gainNodeRef.current && audioContextRef.current) {
       try {
+        const context = audioContextRef.current;
+        const gainNode = gainNodeRef.current;
+        const currentTime = context.currentTime;
+        
+        // Smooth fade-out over 300ms
+        gainNode.gain.setValueAtTime(gainNode.gain.value, currentTime);
+        gainNode.gain.linearRampToValueAtTime(0, currentTime + 0.3);
+        
+        // Wait for fade-out to complete before stopping
+        await new Promise(resolve => setTimeout(resolve, 350));
+        
         oscillatorRef.current.stop();
         oscillatorRef.current.disconnect();
         oscillatorRef.current = null;
-        console.log('Oscilador principal FORÇADAMENTE parado');
-      } catch (e) {
-        console.error('Erro parando oscilador principal:', e);
-      }
-    }
-    
-    // 4. Disconnect main gain
-    if (gainNodeRef.current) {
-      try {
-        gainNodeRef.current.disconnect();
+        
+        gainNode.disconnect();
         gainNodeRef.current = null;
-        console.log('Gain principal FORÇADAMENTE desconectado');
+        console.log('Oscilador principal pausado SUAVEMENTE');
       } catch (e) {
-        console.error('Erro desconectando gain principal:', e);
-      }
-    }
-    
-    // 5. Stop any remaining audio context nodes
-    if (audioContextRef.current) {
-      try {
-        // Get all connected nodes and disconnect them
-        const context = audioContextRef.current;
-        if (context.state !== 'closed') {
-          console.log('Suspendendo contexto de áudio para garantir parada completa');
-          await context.suspend();
-          await context.resume(); // Resume to allow new audio
-        }
-      } catch (e) {
-        console.error('Erro manipulando contexto de áudio:', e);
+        console.error('Erro pausando oscilador principal:', e);
       }
     }
     
     // Unlock screen orientation
     unlockScreenOrientation();
     
-    console.log('=== PAUSA FORÇADA CONCLUÍDA ===');
+    console.log('=== PAUSA SUAVE CONCLUÍDA ===');
   };
 
   // Update the volume
