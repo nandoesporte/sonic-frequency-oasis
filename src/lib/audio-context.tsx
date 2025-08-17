@@ -62,6 +62,11 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const gainNodeRef = useRef<GainNode | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const orientationLockedRef = useRef<boolean>(false);
+  
+  // SentiPassos specific refs
+  const sentipassoAudioRef = useRef<HTMLAudioElement | null>(null);
+  const backgroundOscillatorRef = useRef<OscillatorNode | null>(null);
+  const backgroundGainRef = useRef<GainNode | null>(null);
 
   const MAX_PLAY_TIME = 30 * 60; // 30 minutes in seconds
   const fadeTime = 0.5; // 500ms fade time for smoother transitions
@@ -151,12 +156,11 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, [isPlaying]);
 
-  // Cleanup function for audio resources
+  // Cleanup function for all audio resources
   const cleanupAudioResources = () => {
+    // Clean up regular frequency oscillators
     if (oscillatorRef.current && gainNodeRef.current && audioContextRef.current) {
       try {
-        // We now handle fade out in the fadeOut() function
-        // so just disconnect the nodes here
         setTimeout(() => {
           try {
             oscillatorRef.current?.stop();
@@ -166,11 +170,46 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             gainNodeRef.current?.disconnect();
             gainNodeRef.current = null;
           } catch (e) {
-            console.error('Error during audio cleanup:', e);
+            console.error('Error during frequency cleanup:', e);
           }
         }, fadeTime * 1000);
       } catch (error) {
-        console.error('Error in cleanup audio resources:', error);
+        console.error('Error in cleanup frequency resources:', error);
+      }
+    }
+    
+    // Clean up SentiPassos audio elements
+    if (sentipassoAudioRef.current) {
+      try {
+        sentipassoAudioRef.current.pause();
+        sentipassoAudioRef.current.currentTime = 0;
+        sentipassoAudioRef.current = null;
+      } catch (e) {
+        console.error('Error cleaning up SentiPassos audio:', e);
+      }
+    }
+    
+    // Clean up background frequency oscillator
+    if (backgroundOscillatorRef.current && backgroundGainRef.current && audioContextRef.current) {
+      try {
+        const currentTime = audioContextRef.current.currentTime;
+        backgroundGainRef.current.gain.setValueAtTime(backgroundGainRef.current.gain.value, currentTime);
+        backgroundGainRef.current.gain.linearRampToValueAtTime(0, currentTime + 0.5);
+        
+        setTimeout(() => {
+          try {
+            backgroundOscillatorRef.current?.stop();
+            backgroundOscillatorRef.current?.disconnect();
+            backgroundOscillatorRef.current = null;
+            
+            backgroundGainRef.current?.disconnect();
+            backgroundGainRef.current = null;
+          } catch (e) {
+            console.error('Error stopping background frequency:', e);
+          }
+        }, 500);
+      } catch (error) {
+        console.error('Error cleaning up background frequency:', error);
       }
     }
     
@@ -467,7 +506,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  // Pause the currently playing frequency
+  // Enhanced pause function to handle both frequencies and SentiPassos
   const pause = async () => {
     // Prevent concurrent operations
     if (isProcessing) {
@@ -477,10 +516,45 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     try {
       setIsProcessing(true);
-      await fadeOut();
-      cleanupAudioResources(); // This will also unlock the screen orientation
+      console.log('Pausando áudio/frequência...');
+      
+      // Check if we're playing a SentiPassos audio
+      if (sentipassoAudioRef.current) {
+        sentipassoAudioRef.current.pause();
+        console.log('SentiPassos audio pausado');
+      }
+      
+      // Check if we have background frequency playing
+      if (backgroundOscillatorRef.current && backgroundGainRef.current && audioContextRef.current) {
+        const currentTime = audioContextRef.current.currentTime;
+        backgroundGainRef.current.gain.setValueAtTime(backgroundGainRef.current.gain.value, currentTime);
+        backgroundGainRef.current.gain.linearRampToValueAtTime(0, currentTime + 0.5);
+        
+        setTimeout(() => {
+          try {
+            backgroundOscillatorRef.current?.stop();
+            backgroundOscillatorRef.current?.disconnect();
+            backgroundOscillatorRef.current = null;
+            
+            backgroundGainRef.current?.disconnect();
+            backgroundGainRef.current = null;
+            console.log('Frequência de fundo pausada');
+          } catch (e) {
+            console.error('Error stopping background frequency:', e);
+          }
+        }, 500);
+      }
+      
+      // Handle regular frequency oscillators
+      if (oscillatorRef.current) {
+        await fadeOut();
+      }
+      
+      cleanupAudioResources();
       setIsPlaying(false);
       setRemainingTime(null);
+      
+      console.log('Áudio pausado com sucesso');
     } catch (error) {
       console.error('Error pausing frequency:', error);
       setIsPlaying(false);
@@ -583,9 +657,10 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       audio.loop = false;
       audio.volume = volume;
       
+      // Store reference for pause functionality
+      sentipassoAudioRef.current = audio;
+      
       let backgroundStarted = false;
-      let backgroundOscillator: OscillatorNode | null = null;
-      let backgroundGain: GainNode | null = null;
       
       // Function to start background frequency
       const startBackgroundFrequency = async () => {
@@ -609,8 +684,12 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           }
           
           // Create background frequency oscillator
-          backgroundOscillator = ctx.createOscillator();
-          backgroundGain = ctx.createGain();
+          const backgroundOscillator = ctx.createOscillator();
+          const backgroundGain = ctx.createGain();
+          
+          // Store references for pause functionality
+          backgroundOscillatorRef.current = backgroundOscillator;
+          backgroundGainRef.current = backgroundGain;
           
           backgroundOscillator.type = 'sine';
           backgroundOscillator.frequency.setValueAtTime(sentipassoData.frequencia, ctx.currentTime);
@@ -647,19 +726,26 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             setRemainingTime(null);
             
             // Stop audio and background frequency
-            audio.pause();
-            if (backgroundOscillator && backgroundGain) {
+            if (sentipassoAudioRef.current) {
+              sentipassoAudioRef.current.pause();
+              sentipassoAudioRef.current = null;
+            }
+            
+            if (backgroundOscillatorRef.current && backgroundGainRef.current) {
               try {
                 // Fade out background frequency
                 const currentTime = audioContextRef.current?.currentTime || 0;
-                backgroundGain.gain.setValueAtTime(backgroundGain.gain.value, currentTime);
-                backgroundGain.gain.linearRampToValueAtTime(0, currentTime + 1);
+                backgroundGainRef.current.gain.setValueAtTime(backgroundGainRef.current.gain.value, currentTime);
+                backgroundGainRef.current.gain.linearRampToValueAtTime(0, currentTime + 1);
                 
                 setTimeout(() => {
                   try {
-                    backgroundOscillator?.stop();
-                    backgroundOscillator?.disconnect();
-                    backgroundGain?.disconnect();
+                    backgroundOscillatorRef.current?.stop();
+                    backgroundOscillatorRef.current?.disconnect();
+                    backgroundOscillatorRef.current = null;
+                    
+                    backgroundGainRef.current?.disconnect();
+                    backgroundGainRef.current = null;
                   } catch (e) {
                     console.error('Error stopping background frequency:', e);
                   }
