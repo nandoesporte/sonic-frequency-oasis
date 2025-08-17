@@ -329,14 +329,15 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     try {
       setIsProcessing(true);
+      console.log(`=== INICIANDO PLAY: ${frequency.name} ===`);
       
-      // Always pause current audio before starting new one to prevent overlapping
+      // FORCE stop ALL current audio before starting new one
       if (isPlaying || oscillatorRef.current || sentipassoAudioRef.current || backgroundOscillatorRef.current) {
-        console.log('=== PAUSANDO ÁUDIO ATUAL ANTES DE INICIAR NOVO ===');
+        console.log('=== PAUSANDO FORÇADAMENTE TODOS OS ÁUDIOS ATUAIS ===');
         await pause();
-        // Wait to ensure complete cleanup
-        await new Promise(resolve => setTimeout(resolve, 200));
-        console.log('=== LIMPEZA CONCLUÍDA, INICIANDO NOVO ÁUDIO ===');
+        // Extended wait to ensure complete cleanup
+        await new Promise(resolve => setTimeout(resolve, 500));
+        console.log('=== LIMPEZA TOTAL CONCLUÍDA, INICIANDO NOVO ÁUDIO ===');
       }
       
       if (frequency.premium && !hasAccess) {
@@ -517,39 +518,41 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Enhanced pause function to handle both frequencies and SentiPassos
   const pause = async () => {
-    console.log('=== INICIANDO PAUSA ===');
+    console.log('=== INICIANDO PAUSA FORÇADA ===');
     
-    // Force stop any playing state immediately
+    // Immediately set states to prevent new audio from starting
     setIsPlaying(false);
     setRemainingTime(null);
     
-    // Clear timer first
+    // Clear timer immediately
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
       console.log('Timer limpo');
     }
     
-    // Stop SentiPassos audio immediately
+    // Force stop ALL audio elements and oscillators immediately
+    // 1. Stop SentiPassos audio
     if (sentipassoAudioRef.current) {
       try {
         sentipassoAudioRef.current.pause();
         sentipassoAudioRef.current.currentTime = 0;
         sentipassoAudioRef.current.src = '';
+        sentipassoAudioRef.current.load(); // Force reload to clear buffer
         sentipassoAudioRef.current = null;
-        console.log('SentiPassos audio pausado e limpo');
+        console.log('SentiPassos audio FORÇADAMENTE pausado');
       } catch (e) {
         console.error('Erro pausando SentiPassos:', e);
       }
     }
     
-    // Stop background frequency immediately
+    // 2. Stop background frequency oscillator
     if (backgroundOscillatorRef.current) {
       try {
         backgroundOscillatorRef.current.stop();
         backgroundOscillatorRef.current.disconnect();
         backgroundOscillatorRef.current = null;
-        console.log('Frequência de fundo parada');
+        console.log('Frequência de fundo FORÇADAMENTE parada');
       } catch (e) {
         console.error('Erro parando frequência de fundo:', e);
       }
@@ -559,39 +562,54 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       try {
         backgroundGainRef.current.disconnect();
         backgroundGainRef.current = null;
-        console.log('Gain de fundo desconectado');
+        console.log('Gain de fundo FORÇADAMENTE desconectado');
       } catch (e) {
         console.error('Erro desconectando gain de fundo:', e);
       }
     }
     
-    // Stop main oscillator immediately
+    // 3. Stop main oscillator
     if (oscillatorRef.current) {
       try {
         oscillatorRef.current.stop();
         oscillatorRef.current.disconnect();
         oscillatorRef.current = null;
-        console.log('Oscilador principal parado');
+        console.log('Oscilador principal FORÇADAMENTE parado');
       } catch (e) {
         console.error('Erro parando oscilador principal:', e);
       }
     }
     
-    // Disconnect main gain
+    // 4. Disconnect main gain
     if (gainNodeRef.current) {
       try {
         gainNodeRef.current.disconnect();
         gainNodeRef.current = null;
-        console.log('Gain principal desconectado');
+        console.log('Gain principal FORÇADAMENTE desconectado');
       } catch (e) {
         console.error('Erro desconectando gain principal:', e);
+      }
+    }
+    
+    // 5. Stop any remaining audio context nodes
+    if (audioContextRef.current) {
+      try {
+        // Get all connected nodes and disconnect them
+        const context = audioContextRef.current;
+        if (context.state !== 'closed') {
+          console.log('Suspendendo contexto de áudio para garantir parada completa');
+          await context.suspend();
+          await context.resume(); // Resume to allow new audio
+        }
+      } catch (e) {
+        console.error('Erro manipulando contexto de áudio:', e);
       }
     }
     
     // Unlock screen orientation
     unlockScreenOrientation();
     
-    console.log('=== PAUSA CONCLUÍDA ===');
+    console.log('=== PAUSA FORÇADA CONCLUÍDA ===');
   };
 
   // Update the volume
