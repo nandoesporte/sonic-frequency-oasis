@@ -26,7 +26,7 @@ const plans: PricingPlan[] = [
     id: "basic",
     name: "Mensal",
     description: "Ideal para uso pessoal",
-    price: 19.90,
+    price: 39.90,
     interval: "month",
     features: [
       { id: "f1", title: "Acesso a todas frequências premium" },

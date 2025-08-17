@@ -29,7 +29,7 @@ const fallbackPlans: Plan[] = [
     id: 'monthly',
     name: 'Mensal',
     description: 'Acesso a todas as frequências premium',
-    price: 19.90,
+    price: 39.90,
     currency: 'BRL',
     interval: 'month',
   },
@@ -278,7 +278,7 @@ export function SubscriptionPlans() {
                     <>
                       <li className="flex items-start">
                         <Check className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                        <span>Economize {Math.round((1 - (plan.price / (19.90 * 12))) * 100)}% comparado ao plano mensal</span>
+                        <span>Economize {Math.round((1 - (plan.price / (39.90 * 12))) * 100)}% comparado ao plano mensal</span>
                       </li>
                       <li className="flex items-start">
                         <Check className="h-5 w-5 text-primary mr-2 mt-0.5" />
