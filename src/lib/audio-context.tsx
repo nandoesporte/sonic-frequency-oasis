@@ -331,11 +331,12 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setIsProcessing(true);
       
       // Always pause current audio before starting new one to prevent overlapping
-      if (isPlaying || oscillatorRef.current || sentipassoAudioRef.current) {
-        console.log('Pausando áudio atual antes de iniciar novo...');
+      if (isPlaying || oscillatorRef.current || sentipassoAudioRef.current || backgroundOscillatorRef.current) {
+        console.log('=== PAUSANDO ÁUDIO ATUAL ANTES DE INICIAR NOVO ===');
         await pause();
-        // Wait a bit to ensure complete cleanup
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Wait to ensure complete cleanup
+        await new Promise(resolve => setTimeout(resolve, 200));
+        console.log('=== LIMPEZA CONCLUÍDA, INICIANDO NOVO ÁUDIO ===');
       }
       
       if (frequency.premium && !hasAccess) {
@@ -516,88 +517,81 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Enhanced pause function to handle both frequencies and SentiPassos
   const pause = async () => {
-    // Prevent concurrent operations
-    if (isProcessing) {
-      console.log('Audio operation already in progress, ignoring request');
-      return;
+    console.log('=== INICIANDO PAUSA ===');
+    
+    // Force stop any playing state immediately
+    setIsPlaying(false);
+    setRemainingTime(null);
+    
+    // Clear timer first
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+      console.log('Timer limpo');
     }
     
-    try {
-      setIsProcessing(true);
-      console.log('Pausando áudio/frequência...');
-      
-      setIsPlaying(false);
-      
-      // Clear timer first
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      
-      // Check if we're playing a SentiPassos audio
-      if (sentipassoAudioRef.current) {
+    // Stop SentiPassos audio immediately
+    if (sentipassoAudioRef.current) {
+      try {
         sentipassoAudioRef.current.pause();
         sentipassoAudioRef.current.currentTime = 0;
+        sentipassoAudioRef.current.src = '';
         sentipassoAudioRef.current = null;
-        console.log('SentiPassos audio pausado');
+        console.log('SentiPassos audio pausado e limpo');
+      } catch (e) {
+        console.error('Erro pausando SentiPassos:', e);
       }
-      
-      // Check if we have background frequency playing
-      if (backgroundOscillatorRef.current && backgroundGainRef.current && audioContextRef.current) {
-        const currentTime = audioContextRef.current.currentTime;
-        try {
-          backgroundGainRef.current.gain.setValueAtTime(backgroundGainRef.current.gain.value, currentTime);
-          backgroundGainRef.current.gain.linearRampToValueAtTime(0, currentTime + 0.5);
-          
-          setTimeout(() => {
-            try {
-              backgroundOscillatorRef.current?.stop();
-              backgroundOscillatorRef.current?.disconnect();
-              backgroundOscillatorRef.current = null;
-              
-              backgroundGainRef.current?.disconnect();
-              backgroundGainRef.current = null;
-              console.log('Frequência de fundo pausada');
-            } catch (e) {
-              console.error('Error stopping background frequency:', e);
-            }
-          }, 500);
-        } catch (e) {
-          console.error('Error during background frequency fade:', e);
-          // Force cleanup if fade fails
-          try {
-            backgroundOscillatorRef.current?.stop();
-            backgroundOscillatorRef.current?.disconnect();
-            backgroundOscillatorRef.current = null;
-            backgroundGainRef.current?.disconnect();
-            backgroundGainRef.current = null;
-          } catch (cleanupError) {
-            console.error('Error in force cleanup:', cleanupError);
-          }
-        }
-      }
-      
-      // Handle regular frequency oscillators
-      if (oscillatorRef.current) {
-        try {
-          await fadeOut();
-        } catch (fadeError) {
-          console.error('Error during fade out:', fadeError);
-        }
-      }
-      
-      // Always cleanup resources
-      cleanupAudioResources();
-      setRemainingTime(null);
-      
-      console.log('Áudio pausado com sucesso');
-    } catch (error) {
-      console.error('Error pausing frequency:', error);
-      setIsPlaying(false);
-      setRemainingTime(null);
-    } finally {
-      setIsProcessing(false);
     }
+    
+    // Stop background frequency immediately
+    if (backgroundOscillatorRef.current) {
+      try {
+        backgroundOscillatorRef.current.stop();
+        backgroundOscillatorRef.current.disconnect();
+        backgroundOscillatorRef.current = null;
+        console.log('Frequência de fundo parada');
+      } catch (e) {
+        console.error('Erro parando frequência de fundo:', e);
+      }
+    }
+    
+    if (backgroundGainRef.current) {
+      try {
+        backgroundGainRef.current.disconnect();
+        backgroundGainRef.current = null;
+        console.log('Gain de fundo desconectado');
+      } catch (e) {
+        console.error('Erro desconectando gain de fundo:', e);
+      }
+    }
+    
+    // Stop main oscillator immediately
+    if (oscillatorRef.current) {
+      try {
+        oscillatorRef.current.stop();
+        oscillatorRef.current.disconnect();
+        oscillatorRef.current = null;
+        console.log('Oscilador principal parado');
+      } catch (e) {
+        console.error('Erro parando oscilador principal:', e);
+      }
+    }
+    
+    // Disconnect main gain
+    if (gainNodeRef.current) {
+      try {
+        gainNodeRef.current.disconnect();
+        gainNodeRef.current = null;
+        console.log('Gain principal desconectado');
+      } catch (e) {
+        console.error('Erro desconectando gain principal:', e);
+      }
+    }
+    
+    // Unlock screen orientation
+    unlockScreenOrientation();
+    
+    console.log('=== PAUSA CONCLUÍDA ===');
   };
 
   // Update the volume
