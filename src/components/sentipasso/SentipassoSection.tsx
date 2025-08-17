@@ -222,48 +222,48 @@ export function SentipassoSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
           {ritualWalks.map((walk) => (
-            <Card key={walk.id} className="group hover:shadow-lg transition-all duration-300 border-purple-100 dark:border-purple-800/30">
-              <CardHeader className="pb-4">
-                <div className="flex justify-between items-start mb-2">
-                  <CardTitle className="text-lg font-semibold group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+            <Card key={walk.id} className="group hover:shadow-md transition-all duration-300 border-purple-100 dark:border-purple-800/30 hover-scale">
+              <CardHeader className="pb-3">
+                <div className="flex justify-between items-start mb-1">
+                  <CardTitle className="text-base font-semibold group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors leading-tight">
                     {walk.name}
                   </CardTitle>
-                  <Badge variant="secondary" className="flex items-center gap-1">
+                  <Badge variant="secondary" className="flex items-center gap-1 text-xs px-2 py-1">
                     <Clock className="h-3 w-3" />
-                    {walk.duration_minutes} min
+                    {walk.duration_minutes}min
                   </Badge>
                 </div>
               </CardHeader>
               
-              <CardContent className="space-y-4">
-                <div>
-                  <h4 className="font-medium text-sm text-purple-600 dark:text-purple-400 mb-2">
-                    Ritual de Preparação:
+              <CardContent className="space-y-3 pt-0">
+                <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg border-l-4 border-purple-400">
+                  <h4 className="font-medium text-xs text-purple-700 dark:text-purple-300 mb-1">
+                    Frase de Ativação:
                   </h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {walk.ritual_preparation}
+                  <p className="text-xs font-medium text-purple-800 dark:text-purple-200 italic leading-tight">
+                    "{walk.activation_phrase}"
                   </p>
                 </div>
 
-                <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg border-l-4 border-purple-400">
-                  <h4 className="font-medium text-sm text-purple-700 dark:text-purple-300 mb-1">
-                    Frase de Ativação:
+                <div>
+                  <h4 className="font-medium text-xs text-muted-foreground mb-2">
+                    Preparação:
                   </h4>
-                  <p className="text-sm font-medium text-purple-800 dark:text-purple-200 italic">
-                    "{walk.activation_phrase}"
+                  <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
+                    {walk.ritual_preparation}
                   </p>
                 </div>
 
                 <Button 
                   onClick={() => handlePlayWalk(walk)}
-                  className="w-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white"
-                  size="lg"
+                  className="w-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white text-sm"
+                  size="sm"
                   disabled={generatingAudio === walk.id}
                 >
-                  <Play className="h-4 w-4 mr-2" />
-                  {generatingAudio === walk.id ? "Gerando áudio..." : "Ouvir e Caminhar"}
+                  <Play className="h-3 w-3 mr-2" />
+                  {generatingAudio === walk.id ? "Gerando..." : "Ouvir e Caminhar"}
                 </Button>
               </CardContent>
             </Card>
