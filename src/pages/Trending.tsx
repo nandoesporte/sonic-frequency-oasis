@@ -3,14 +3,13 @@ import { useEffect, useState } from "react";
 import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
 import { FrequencyCard } from "@/components/frequency-card";
-import { AudioProvider } from "@/lib/audio-context";
 import { FrequencyData } from "@/lib/data";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const TrendingContent = () => {
+const Trending = () => {
   const [frequencies, setFrequencies] = useState<FrequencyData[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
@@ -51,7 +50,7 @@ const TrendingContent = () => {
           name: freq.name,
           hz: freq.hz,
           purpose: freq.purpose,
-          description: freq.description || freq.purpose, // Ensure description is never undefined
+          description: freq.description || freq.purpose,
           category: freq.category,
           premium: freq.is_premium,
           trending: true
@@ -83,43 +82,36 @@ const TrendingContent = () => {
   };
 
   return (
-    <div className="container pt-32 pb-12 px-4">
-      <h1 className="text-3xl md:text-4xl font-bold mb-2">Frequências em Alta</h1>
-      <p className="text-muted-foreground mb-8">As frequências mais populares do momento</p>
-      
-      {loading ? (
-        <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="text-muted-foreground mt-4">Carregando frequências...</p>
-        </div>
-      ) : frequencies.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {frequencies.map((frequency) => (
-            <FrequencyCard 
-              key={frequency.id} 
-              frequency={frequency}
-              onBeforePlay={handleFrequencyClick} 
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Nenhuma frequência em alta encontrada.</p>
-        </div>
-      )}
-    </div>
-  );
-};
-
-const Trending = () => {
-  return (
-    <AudioProvider>
-      <div className="min-h-screen pb-24">
-        <Header />
-        <TrendingContent />
-        <AudioPlayer />
+    <div className="min-h-screen pb-24">
+      <Header />
+      <div className="container pt-32 pb-12 px-4">
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">Frequências em Alta</h1>
+        <p className="text-muted-foreground mb-8">As frequências mais populares do momento</p>
+        
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            <p className="text-muted-foreground mt-4">Carregando frequências...</p>
+          </div>
+        ) : frequencies.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {frequencies.map((frequency) => (
+              <FrequencyCard 
+                key={frequency.id} 
+                frequency={frequency}
+                variant="trending"
+                onBeforePlay={handleFrequencyClick} 
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Nenhuma frequência em alta encontrada.</p>
+          </div>
+        )}
       </div>
-    </AudioProvider>
+      <AudioPlayer />
+    </div>
   );
 };
 
