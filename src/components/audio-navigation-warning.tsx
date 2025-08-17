@@ -17,7 +17,6 @@ export function AudioNavigationWarning({ children }: { children: React.ReactNode
   const routeNames: Record<string, string> = {
     "/": "página inicial",
     "/scientific": "evidências científicas",
-    "/trending": "frequências populares",
     "/favorites": "favoritos",
     "/guide": "guia de uso",
     "/history": "histórico",

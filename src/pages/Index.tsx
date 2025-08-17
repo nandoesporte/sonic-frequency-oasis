@@ -5,7 +5,7 @@ import { FrequencyCard } from "@/components/frequency-card";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { AudioProvider } from "@/lib/audio-context";
-import { categories, getTrendingFrequencies, FrequencyData, getFrequenciesByCategory } from "@/lib/data";
+import { categories, FrequencyData, getFrequenciesByCategory } from "@/lib/data";
 import { ArrowRight, BookOpen, Crown, Sparkles, Headphones, Waves, ShieldCheck, Gift, CheckCircle, Users, ThumbsUp, Heart, Award, Volume2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,40 +22,11 @@ import { Badge } from "@/components/ui/badge";
 import { useDebouncedEffect, useIsMobile } from "@/hooks";
 
 const Index = () => {
-  const [trendingFrequencies, setTrendingFrequencies] = useState<FrequencyData[]>([]);
   const [categoryFrequencies, setCategoryFrequencies] = useState<Record<string, FrequencyData[]>>({});
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  
-  // Load trending frequencies
-  useEffect(() => {
-    const fetchTrendingFrequencies = async () => {
-      try {
-        setLoading(true);
-        console.log("Fetching trending frequencies for homepage...");
-        const frequencies = await getTrendingFrequencies();
-        console.log("Received trending frequencies:", frequencies);
-        setTrendingFrequencies(frequencies);
-        
-        if (frequencies.length === 0) {
-          toast.info('Sem frequências', {
-            description: 'Não foram encontradas frequências em alta.'
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching trending frequencies:', error);
-        toast.error('Erro ao carregar frequências', {
-          description: 'Não foi possível carregar as frequências em alta.'
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchTrendingFrequencies();
-  }, []);
   
   // Load category frequencies with staggered loading and limiting fetch operations
   useEffect(() => {
@@ -338,35 +309,6 @@ const Index = () => {
           </div>
         </section>
         
-        
-        {/* Trending Section - Keep existing implementation logic, but improve styling */}
-        {trendingFrequencies.length > 0 && (
-          <section className="py-8 sm:py-12 px-2 sm:px-4">
-            <div className="container mx-auto">
-              <div className="flex justify-between items-center mb-4 sm:mb-6">
-                <div className="flex items-center">
-                  <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 mr-2 text-primary hidden sm:block" />
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">Em Alta</h2>
-                </div>
-                <Button asChild variant="ghost" size="sm" className="gap-1">
-                  <Link to="/trending" className="flex items-center">
-                    Ver Mais <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {trendingFrequencies.slice(0, 4).map((frequency) => (
-                  <FrequencyCard 
-                    key={frequency.id} 
-                    frequency={frequency} 
-                    variant="trending"
-                    onBeforePlay={handleFrequencyClick}
-                  />
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
         
         {/* Frequency Ranges Section - Only show for non-logged in users */}
         {!user && <FrequencyRanges />}

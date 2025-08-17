@@ -15,7 +15,7 @@ import Favorites from "./pages/Favorites";
 import History from "./pages/History";
 import Premium from "./pages/Premium";
 import NotFound from "./pages/NotFound";
-import Trending from "./pages/Trending";
+
 import Guide from "./pages/Guide";
 import Scientific from "./pages/Scientific";
 import Admin from "./pages/Admin";
@@ -77,7 +77,6 @@ function AppContent() {
             <Route path="/" element={<Index />} />
             <Route path="/scientific" element={<Scientific />} />
             <Route path="/categories/:category" element={<Category />} />
-            <Route path="/trending" element={<Trending />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/guide" element={<Guide />} />
             <Route path="/history" element={<History />} />
