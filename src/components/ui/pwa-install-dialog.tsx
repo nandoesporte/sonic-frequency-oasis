@@ -129,9 +129,9 @@ export function PWAInstallDialog() {
 
   const getInstallInstructions = () => {
     if (isIOS()) {
-      return "iOS: Usar Safari → Compartilhar → \"Adicionar à Tela Inicial\"";
+      return "Para instalar no iOS: 1) Toque no botão de compartilhar (⬆️), 2) Selecione 'Adicionar à Tela de Início'";
     } else if (isAndroid()) {
-      return "Android: Confirmar no prompt ou usar menu → \"Instalar app\"";
+      return "Para instalar no Android: Toque no menu (⋮) e selecione 'Adicionar à tela inicial' ou 'Instalar app'";
     }
     return "Para instalar: Clique no ícone de instalação na barra de endereços";
   };
