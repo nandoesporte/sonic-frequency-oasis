@@ -549,7 +549,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  // Play sentipasso audio using HTML5 audio element
+  // Play sentipasso audio with background frequency
   const playSentipassoAudio = async (sentipassoData: any) => {
     try {
       setIsProcessing(true);
@@ -559,16 +559,11 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         await pause();
       }
       
-      // Create audio element for the generated audio
-      const audio = new Audio(sentipassoData.audioUrl);
-      audio.loop = false;
-      audio.volume = volume;
-      
       // Set up the sentipasso frequency data
       const sentipassoFrequency = {
         id: sentipassoData.id,
         name: sentipassoData.name,
-        hz: 0,
+        hz: sentipassoData.frequencia || 0,
         purpose: sentipassoData.purpose,
         description: sentipassoData.description,
         category: 'sentipasso' as any,
@@ -583,6 +578,46 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const walkDurationSeconds = sentipassoData.duration || 600; // Default 10 minutes
       setRemainingTime(walkDurationSeconds);
       
+      // Create audio element for the meditation audio
+      const audio = new Audio(sentipassoData.audioUrl);
+      audio.loop = false;
+      audio.volume = volume * 0.8; // Slightly lower volume for narration
+      
+      // Start background frequency if specified
+      let backgroundOscillator: OscillatorNode | null = null;
+      let backgroundGain: GainNode | null = null;
+      
+      if (sentipassoData.frequencia && sentipassoData.frequencia > 0) {
+        // Create audio context for background frequency
+        if (!audioContextRef.current) {
+          audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({
+            latencyHint: 'playback',
+            sampleRate: 48000,
+          });
+        }
+        
+        const ctx = audioContextRef.current;
+        
+        if (ctx.state === 'suspended') {
+          await ctx.resume();
+        }
+        
+        // Create background frequency oscillator
+        backgroundOscillator = ctx.createOscillator();
+        backgroundGain = ctx.createGain();
+        
+        backgroundOscillator.type = 'sine';
+        backgroundOscillator.frequency.setValueAtTime(sentipassoData.frequencia, ctx.currentTime);
+        
+        // Lower volume for background frequency (30% of main volume)
+        backgroundGain.gain.setValueAtTime(volume * 0.3, ctx.currentTime);
+        
+        backgroundOscillator.connect(backgroundGain);
+        backgroundGain.connect(ctx.destination);
+        
+        backgroundOscillator.start();
+      }
+      
       // Start the timer countdown
       timerRef.current = setInterval(() => {
         setRemainingTime((prev) => {
@@ -591,8 +626,19 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             timerRef.current = null;
             setIsPlaying(false);
             setRemainingTime(null);
+            
+            // Stop audio and background frequency
             audio.pause();
-            URL.revokeObjectURL(sentipassoData.audioUrl); // Clean up blob URL
+            if (backgroundOscillator) {
+              try {
+                backgroundOscillator.stop();
+                backgroundOscillator.disconnect();
+                backgroundGain?.disconnect();
+              } catch (e) {
+                console.error('Error stopping background frequency:', e);
+              }
+            }
+            
             toast.info(`Caminhada ${sentipassoData.name} concluída`);
             return null;
           }
@@ -600,13 +646,13 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         });
       }, 1000);
       
-      // Play the audio
+      // Play the meditation audio
       await audio.play();
       
-      // Handle audio end (in case it ends before the timer)
+      // Handle audio end - continue background frequency
       audio.onended = () => {
-        // Audio ended, but keep the timer running for the full walk duration
-        console.log('Audio narration ended, continuing walk timer');
+        console.log('Áudio de meditação finalizado, frequência de fundo continua...');
+        toast.info('Áudio finalizado. Continue caminhando com a frequência de fundo.');
       };
       
       // Add to history

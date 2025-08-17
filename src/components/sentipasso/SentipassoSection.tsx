@@ -93,11 +93,18 @@ export function SentipassoSection() {
     try {
       // Check if we have a pre-generated audio URL
       if (walk.audio_url) {
+        // Get the frequency from sentimento_audios table
+        const { data: sentimentData } = await supabase
+          .from('sentimento_audios')
+          .select('frequencia_hz')
+          .eq('sentimento', walk.walk_id)
+          .single();
+
         // Create a sentipasso frequency object compatible with the audio player
         const sentipassoFrequency = {
           id: walk.id,
           name: walk.name,
-          hz: 0, // No frequency for sentipasso
+          hz: 0, // No frequency for sentipasso itself
           purpose: "Caminhada Ritual",
           description: walk.ritual_preparation,
           category: "sentipasso" as any,
@@ -105,14 +112,15 @@ export function SentipassoSection() {
           trending: false,
           audioUrl: walk.audio_url,
           duration: walk.duration_minutes * 60, // Convert to seconds
-          activationPhrase: walk.activation_phrase
+          activationPhrase: walk.activation_phrase,
+          frequencia: sentimentData?.frequencia_hz || 0 // Background frequency to play
         };
 
         // Use the audio context to play the sentipasso audio
         await playSentipassoAudio(sentipassoFrequency);
         
         toast.success(`Iniciando: ${walk.name}`, {
-          description: "Áudio OpenAI - Escute com atenção e deixe-se guiar pela caminhada"
+          description: `Áudio meditativo + frequência ${sentimentData?.frequencia_hz || 0}Hz de fundo`
         });
         return;
       }
