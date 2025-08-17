@@ -32,6 +32,8 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
   const isFavorite = favorites.some(f => f.id === frequency.id);
   
   const handlePlay = () => {
+    console.log(`=== FREQUENCY CARD: Tentando reproduzir ${frequency.name} ===`);
+    
     // If there's an onBeforePlay callback and it returns true, stop processing
     if (onBeforePlay && onBeforePlay()) {
       console.log("Play prevented by onBeforePlay callback");
@@ -62,6 +64,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
       return;
     }
     
+    console.log(`Chamando play() para frequência: ${frequency.name} (${frequency.hz}Hz)`);
     play(frequency);
   };
   
