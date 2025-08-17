@@ -549,7 +549,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  // Play sentipasso audio with background frequency
+  // Play sentipasso audio first, then background frequency
   const playSentipassoAudio = async (sentipassoData: any) => {
     try {
       setIsProcessing(true);
@@ -581,42 +581,61 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       // Create audio element for the meditation audio
       const audio = new Audio(sentipassoData.audioUrl);
       audio.loop = false;
-      audio.volume = volume * 0.8; // Slightly lower volume for narration
+      audio.volume = volume;
       
-      // Start background frequency if specified
+      let backgroundStarted = false;
       let backgroundOscillator: OscillatorNode | null = null;
       let backgroundGain: GainNode | null = null;
       
-      if (sentipassoData.frequencia && sentipassoData.frequencia > 0) {
-        // Create audio context for background frequency
-        if (!audioContextRef.current) {
-          audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({
-            latencyHint: 'playback',
-            sampleRate: 48000,
+      // Function to start background frequency
+      const startBackgroundFrequency = async () => {
+        if (backgroundStarted || !sentipassoData.frequencia || sentipassoData.frequencia <= 0) {
+          return;
+        }
+        
+        try {
+          // Create audio context for background frequency
+          if (!audioContextRef.current) {
+            audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({
+              latencyHint: 'playback',
+              sampleRate: 48000,
+            });
+          }
+          
+          const ctx = audioContextRef.current;
+          
+          if (ctx.state === 'suspended') {
+            await ctx.resume();
+          }
+          
+          // Create background frequency oscillator
+          backgroundOscillator = ctx.createOscillator();
+          backgroundGain = ctx.createGain();
+          
+          backgroundOscillator.type = 'sine';
+          backgroundOscillator.frequency.setValueAtTime(sentipassoData.frequencia, ctx.currentTime);
+          
+          // Start with zero gain for smooth fade in
+          backgroundGain.gain.setValueAtTime(0, ctx.currentTime);
+          
+          backgroundOscillator.connect(backgroundGain);
+          backgroundGain.connect(ctx.destination);
+          
+          backgroundOscillator.start();
+          
+          // Fade in the background frequency
+          backgroundGain.gain.linearRampToValueAtTime(volume * 0.4, ctx.currentTime + 2); // 40% volume, 2s fade in
+          
+          backgroundStarted = true;
+          
+          toast.info(`Frequência ${sentipassoData.frequencia}Hz iniciada`, {
+            description: "Continue sua caminhada meditativa"
           });
+          
+        } catch (error) {
+          console.error('Error starting background frequency:', error);
         }
-        
-        const ctx = audioContextRef.current;
-        
-        if (ctx.state === 'suspended') {
-          await ctx.resume();
-        }
-        
-        // Create background frequency oscillator
-        backgroundOscillator = ctx.createOscillator();
-        backgroundGain = ctx.createGain();
-        
-        backgroundOscillator.type = 'sine';
-        backgroundOscillator.frequency.setValueAtTime(sentipassoData.frequencia, ctx.currentTime);
-        
-        // Lower volume for background frequency (30% of main volume)
-        backgroundGain.gain.setValueAtTime(volume * 0.3, ctx.currentTime);
-        
-        backgroundOscillator.connect(backgroundGain);
-        backgroundGain.connect(ctx.destination);
-        
-        backgroundOscillator.start();
-      }
+      };
       
       // Start the timer countdown
       timerRef.current = setInterval(() => {
@@ -629,11 +648,22 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             
             // Stop audio and background frequency
             audio.pause();
-            if (backgroundOscillator) {
+            if (backgroundOscillator && backgroundGain) {
               try {
-                backgroundOscillator.stop();
-                backgroundOscillator.disconnect();
-                backgroundGain?.disconnect();
+                // Fade out background frequency
+                const currentTime = audioContextRef.current?.currentTime || 0;
+                backgroundGain.gain.setValueAtTime(backgroundGain.gain.value, currentTime);
+                backgroundGain.gain.linearRampToValueAtTime(0, currentTime + 1);
+                
+                setTimeout(() => {
+                  try {
+                    backgroundOscillator?.stop();
+                    backgroundOscillator?.disconnect();
+                    backgroundGain?.disconnect();
+                  } catch (e) {
+                    console.error('Error stopping background frequency:', e);
+                  }
+                }, 1000);
               } catch (e) {
                 console.error('Error stopping background frequency:', e);
               }
@@ -646,14 +676,18 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         });
       }, 1000);
       
-      // Play the meditation audio
-      await audio.play();
-      
-      // Handle audio end - continue background frequency
+      // Handle audio end - start background frequency
       audio.onended = () => {
-        console.log('Áudio de meditação finalizado, frequência de fundo continua...');
-        toast.info('Áudio finalizado. Continue caminhando com a frequência de fundo.');
+        console.log('Áudio de meditação finalizado, iniciando frequência de fundo...');
+        startBackgroundFrequency();
       };
+      
+      // Play the meditation audio first
+      toast.success(`Iniciando: ${sentipassoData.name}`, {
+        description: "Escute o áudio meditativo primeiro, depois a frequência de fundo será ativada"
+      });
+      
+      await audio.play();
       
       // Add to history
       setHistory(prev => {
