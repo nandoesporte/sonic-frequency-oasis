@@ -9,6 +9,32 @@ interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
 }
 
+// Utility functions (must be declared before PWAInstallManager class)
+// Utility function to check if device is iOS
+export const isIOS = (): boolean => {
+  return /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+};
+
+// Utility function to check if device is Android
+export const isAndroid = (): boolean => {
+  return /android/.test(navigator.userAgent.toLowerCase());
+};
+
+// Utility function to check if app is already installed
+export const isAppInstalled = (): boolean => {
+  // Check if running in standalone mode
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    return true;
+  }
+  
+  // For iOS Safari
+  if ('standalone' in window.navigator && (window.navigator as any).standalone) {
+    return true;
+  }
+  
+  return false;
+};
+
 class PWAInstallManager {
   private deferredPrompt: BeforeInstallPromptEvent | null = null;
   private isInstallable = false;
@@ -158,27 +184,3 @@ class PWAInstallManager {
 // Create and export a singleton instance
 export const pwaInstallManager = new PWAInstallManager();
 
-// Utility function to check if device is iOS
-export const isIOS = (): boolean => {
-  return /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
-};
-
-// Utility function to check if device is Android
-export const isAndroid = (): boolean => {
-  return /android/.test(navigator.userAgent.toLowerCase());
-};
-
-// Utility function to check if app is already installed
-export const isAppInstalled = (): boolean => {
-  // Check if running in standalone mode
-  if (window.matchMedia('(display-mode: standalone)').matches) {
-    return true;
-  }
-  
-  // For iOS Safari
-  if ('standalone' in window.navigator && (window.navigator as any).standalone) {
-    return true;
-  }
-  
-  return false;
-};
