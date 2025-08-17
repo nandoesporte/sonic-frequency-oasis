@@ -65,13 +65,13 @@ function AppContent() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <ScrollToTop />
-      <Toaster />
-      <TermsAcceptanceDialog />
-      <PWAInstallDialog />
-      {user && <FrequenciesGuideDialog />}
-      <AudioProvider>
+    <AudioProvider>
+      <div className="flex flex-col min-h-screen">
+        <ScrollToTop />
+        <Toaster />
+        <TermsAcceptanceDialog />
+        <PWAInstallDialog />
+        {user && <FrequenciesGuideDialog />}
         <AudioNavigationWarning>
           <Routes>
             <Route path="/" element={<Index />} />
@@ -93,9 +93,9 @@ function AppContent() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AudioNavigationWarning>
-      </AudioProvider>
-      <ConditionalFooter />
-    </div>
+        <ConditionalFooter />
+      </div>
+    </AudioProvider>
   );
 }
 
