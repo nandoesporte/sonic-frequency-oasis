@@ -630,14 +630,18 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Toggle between play and pause
   const togglePlayPause = () => {
+    console.log(`=== CONTEXT: togglePlayPause chamado - isProcessing: ${isProcessing}, isPlaying: ${isPlaying} ===`);
+    
     if (isProcessing) {
       console.log('Audio operation already in progress, ignoring request');
       return;
     }
     
     if (isPlaying) {
+      console.log('=== CONTEXT: Chamando função pause() ===');
       pause();
     } else if (currentFrequency) {
+      console.log(`=== CONTEXT: Chamando função play() para ${currentFrequency.name} ===`);
       play(currentFrequency);
     } else {
       toast.info("Selecione uma frequência para tocar");

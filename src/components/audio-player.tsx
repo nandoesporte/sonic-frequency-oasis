@@ -60,15 +60,23 @@ export function AudioPlayer() {
 
   // Smoother toggle with fade in/out
   const handleTogglePlayPause = () => {
+    console.log(`=== AUDIO PLAYER: Toggle chamado - isPlaying: ${isPlaying}, currentFrequency: ${currentFrequency?.name} ===`);
+    
     handleControlInteraction(() => {
       if (isPlaying) {
+        console.log('=== AUDIO PLAYER: Iniciando fade out e pausa ===');
         // If currently playing, trigger a fade out before stopping
-        fadeOut().then(() => togglePlayPause());
+        fadeOut().then(() => {
+          console.log('=== AUDIO PLAYER: Fade out concluído, chamando togglePlayPause ===');
+          togglePlayPause();
+        });
       } else if (currentFrequency) {
+        console.log('=== AUDIO PLAYER: Iniciando reprodução com fade in ===');
         // If not playing but frequency is selected, start playing with fade in
         togglePlayPause();
         fadeIn();
       } else {
+        console.log('=== AUDIO PLAYER: Toggle sem frequência selecionada ===');
         togglePlayPause(); // Just toggle if no frequency is selected
       }
     });
