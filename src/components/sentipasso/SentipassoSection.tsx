@@ -74,13 +74,55 @@ export function SentipassoSection() {
 
     setSelectedWalk(walk);
     
-    // Simular início do áudio (aqui você integraria com um player real)
-    toast.success(`Iniciando: ${walk.name}`, {
-      description: "Prepare-se para sua caminhada ritual"
-    });
-    
-    // Log para debug - aqui você pode ver o script completo
-    console.log('Script da caminhada:', walk.script_content);
+    // Use the browser's speech synthesis API to read the script
+    if (walk.script_content && 'speechSynthesis' in window) {
+      // Stop any ongoing speech
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(walk.script_content);
+      
+      // Configure speech synthesis
+      utterance.lang = 'pt-BR';
+      utterance.rate = 0.8; // Slightly slower for meditation
+      utterance.pitch = 0.9;
+      utterance.volume = 0.8;
+      
+      // Get available voices and try to use a Portuguese voice
+      const voices = window.speechSynthesis.getVoices();
+      const portugueseVoice = voices.find(voice => 
+        voice.lang.includes('pt') || voice.lang.includes('BR')
+      );
+      
+      if (portugueseVoice) {
+        utterance.voice = portugueseVoice;
+      }
+      
+      utterance.onstart = () => {
+        toast.success(`Iniciando: ${walk.name}`, {
+          description: "Escute com atenção e deixe-se guiar pela caminhada"
+        });
+      };
+      
+      utterance.onend = () => {
+        toast.info("Caminhada concluída", {
+          description: "Como você se sente agora? Considere enviar seu feedback"
+        });
+      };
+      
+      utterance.onerror = (event) => {
+        console.error('Erro na síntese de voz:', event);
+        toast.error("Erro ao reproduzir o áudio", {
+          description: "Verifique se seu navegador suporta síntese de voz"
+        });
+      };
+      
+      // Start speaking
+      window.speechSynthesis.speak(utterance);
+    } else {
+      toast.error("Síntese de voz não suportada", {
+        description: "Seu navegador não suporta a funcionalidade de texto para fala"
+      });
+    }
   };
 
   const handleFeedback = () => {
