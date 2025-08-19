@@ -243,13 +243,15 @@ export function FrequencyVisualizer({
             >
               <Minimize2 className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-            >
-              <X className="h-4 w-4" />
-            </Button>
+            {onClose !== (() => {}) && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
 
@@ -294,7 +296,7 @@ export function FrequencyVisualizer({
         <div className="p-4 border-t bg-muted/30">
           <p className="text-xs text-center text-muted-foreground">
             {isPlaying 
-              ? "A tela permanecerá ativa durante a reprodução"
+              ? "A tela permanecerá ativa durante a reprodução. A visualização fecha automaticamente quando a música para."
               : "Toque no botão de reprodução para ver a visualização animada"
             }
           </p>

@@ -2,7 +2,7 @@ import { useAudio } from "@/lib/audio-context";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { Clock, Heart, Pause, Play, RotateCw, Volume2, Activity } from "lucide-react";
+import { Clock, Heart, Pause, Play, RotateCw, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { FrequencyVisualizer } from "./frequency-visualizer";
@@ -23,7 +23,6 @@ export function AudioPlayer() {
   const [waves, setWaves] = useState<number[]>([]);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [isInteracting, setIsInteracting] = useState(false);
-  const [showVisualizer, setShowVisualizer] = useState(false);
   
   const isFavorite = currentFrequency ? favorites.some(f => f.id === currentFrequency.id) : false;
 
@@ -148,15 +147,6 @@ export function AudioPlayer() {
         <div className="flex items-center gap-2">
           {isPlaying && (
             <>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowVisualizer(true)}
-                className="text-purple-600 hover:bg-purple-100 dark:hover:bg-purple-900/30"
-                title="Ver visualização de frequência"
-              >
-                <Activity className="h-5 w-5" />
-              </Button>
               <div className="hidden xs:flex items-end h-8 px-2">
                 {waves.map((height, i) => (
                   <div 
@@ -216,12 +206,12 @@ export function AudioPlayer() {
         </div>
       </div>
       
-      {/* Frequency Visualizer */}
-      {showVisualizer && currentFrequency && (
+      {/* Frequency Visualizer - Shows automatically when playing */}
+      {isPlaying && currentFrequency && (
         <FrequencyVisualizer
           frequency={currentFrequency.hz}
           isPlaying={isPlaying}
-          onClose={() => setShowVisualizer(false)}
+          onClose={() => {}} // Não pode ser fechada manualmente, fecha automaticamente quando para
           frequencyName={currentFrequency.name}
         />
       )}
