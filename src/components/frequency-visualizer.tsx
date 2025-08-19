@@ -9,13 +9,15 @@ interface FrequencyVisualizerProps {
   isPlaying: boolean;
   onClose: () => void;
   frequencyName: string;
+  children?: React.ReactNode;
 }
 
 export function FrequencyVisualizer({ 
   frequency, 
   isPlaying, 
   onClose, 
-  frequencyName 
+  frequencyName,
+  children 
 }: FrequencyVisualizerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number>();
@@ -292,14 +294,9 @@ export function FrequencyVisualizer({
           </div>
         </div>
 
-        {/* Footer with instructions */}
-        <div className="p-4 border-t bg-muted/30">
-          <p className="text-xs text-center text-muted-foreground">
-            {isPlaying 
-              ? "A tela permanecerá ativa durante a reprodução. A visualização fecha automaticamente quando a música para."
-              : "Toque no botão de reprodução para ver a visualização animada"
-            }
-          </p>
+        {/* Player integrated at bottom */}
+        <div className="border-t bg-muted/30">
+          {children}
         </div>
       </Card>
     </div>

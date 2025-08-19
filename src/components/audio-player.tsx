@@ -109,112 +109,185 @@ export function AudioPlayer() {
     );
   }
 
-  return (
-    <Card className="fixed bottom-0 left-0 right-0 p-4 mx-4 mb-4 rounded-xl glass-card animate-slide-up z-50">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button 
-            onClick={handleTogglePlayPause} 
-            variant="secondary" 
-            size="icon" 
-            className={cn(
-              "w-12 h-12 rounded-full text-primary bg-primary/10 hover:bg-primary/20",
-              isInteracting && "pointer-events-none opacity-80"
-            )}
-            disabled={isInteracting}
-          >
-            {isPlaying ? (
-              <Pause className="h-6 w-6" />
-            ) : (
-              <Play className="h-6 w-6 ml-0.5" />
-            )}
-          </Button>
-          
-          <div>
-            <h3 className="font-bold">{currentFrequency.name}</h3>
-            <p className="text-sm text-muted-foreground">
-              {currentFrequency.hz} Hz • {currentFrequency.purpose}
-              {isPlaying && remainingTime !== null && (
-                <span className="ml-2 flex items-center text-primary">
-                  <Clock className="h-3.5 w-3.5 mr-1 inline" />
-                  {formatTime(remainingTime)}
-                </span>
-              )}
-            </p>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          {isPlaying && (
-            <>
-              <div className="hidden xs:flex items-end h-8 px-2">
-                {waves.map((height, i) => (
-                  <div 
-                    key={i}
-                    className="freq-wave"
-                    style={{ 
-                      height: `${height * 24}px`,
-                      animationDelay: `${i * 0.1}s`
-                    }}
-                  />
-                ))}
-              </div>
-              <RotateCw className="h-4 w-4 text-primary/70" />
-            </>
-          )}
-          
-          <div className="relative">
+  // Se não está tocando, mostra apenas o player normal
+  if (!isPlaying) {
+    return (
+      <Card className="fixed bottom-0 left-0 right-0 p-4 mx-4 mb-4 rounded-xl glass-card animate-slide-up z-50">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
             <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => !isInteracting && setShowVolumeSlider(prev => !prev)}
+              onClick={handleTogglePlayPause} 
+              variant="secondary" 
+              size="icon" 
+              className={cn(
+                "w-12 h-12 rounded-full text-primary bg-primary/10 hover:bg-primary/20",
+                isInteracting && "pointer-events-none opacity-80"
+              )}
               disabled={isInteracting}
-              className={isInteracting ? "pointer-events-none opacity-80" : ""}
             >
-              <Volume2 className="h-5 w-5" />
+              <Play className="h-6 w-6 ml-0.5" />
             </Button>
             
-            {showVolumeSlider && (
-              <div className="absolute bottom-full right-0 p-4 bg-card rounded-lg shadow-lg mb-2 w-48">
-                <Slider
-                  value={[volume * 100]} 
-                  min={0}
-                  max={100}
-                  step={1}
-                  onValueChange={handleVolumeChange}
-                  disabled={isInteracting}
-                />
-              </div>
-            )}
+            <div>
+              <h3 className="font-bold">{currentFrequency.name}</h3>
+              <p className="text-sm text-muted-foreground">
+                {currentFrequency.hz} Hz • {currentFrequency.purpose}
+              </p>
+            </div>
           </div>
           
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={handleFavoriteToggle}
-            disabled={isInteracting}
-            className={cn(
-              isFavorite && "text-red-500",
-              isInteracting && "pointer-events-none opacity-80"
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => !isInteracting && setShowVolumeSlider(prev => !prev)}
+                disabled={isInteracting}
+                className={isInteracting ? "pointer-events-none opacity-80" : ""}
+              >
+                <Volume2 className="h-5 w-5" />
+              </Button>
+              
+              {showVolumeSlider && (
+                <div className="absolute bottom-full right-0 p-4 bg-card rounded-lg shadow-lg mb-2 w-48">
+                  <Slider
+                    value={[volume * 100]} 
+                    min={0}
+                    max={100}
+                    step={1}
+                    onValueChange={handleVolumeChange}
+                    disabled={isInteracting}
+                  />
+                </div>
+              )}
+            </div>
+            
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={handleFavoriteToggle}
+              disabled={isInteracting}
+              className={cn(
+                isFavorite && "text-red-500",
+                isInteracting && "pointer-events-none opacity-80"
+              )}
+            >
+              <Heart className={cn(
+                "h-5 w-5",
+                isFavorite && "fill-current"
+              )} />
+            </Button>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
+  // Se está tocando, retorna apenas o visualizador (que contém o player integrado)
+  return (
+    <FrequencyVisualizer
+      frequency={currentFrequency.hz}
+      isPlaying={isPlaying}
+      onClose={() => {}} // Não interrompe o som, só minimiza
+      frequencyName={currentFrequency.name}
+    >
+      {/* Player integrado dentro do visualizador */}
+      <div className="p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Button 
+              onClick={handleTogglePlayPause} 
+              variant="secondary" 
+              size="icon" 
+              className={cn(
+                "w-12 h-12 rounded-full text-primary bg-primary/10 hover:bg-primary/20",
+                isInteracting && "pointer-events-none opacity-80"
+              )}
+              disabled={isInteracting}
+            >
+              {isPlaying ? (
+                <Pause className="h-6 w-6" />
+              ) : (
+                <Play className="h-6 w-6 ml-0.5" />
+              )}
+            </Button>
+            
+            <div>
+              <h3 className="font-bold">{currentFrequency.name}</h3>
+              <p className="text-sm text-muted-foreground">
+                {currentFrequency.hz} Hz • {currentFrequency.purpose}
+                {isPlaying && remainingTime !== null && (
+                  <span className="ml-2 flex items-center text-primary">
+                    <Clock className="h-3.5 w-3.5 mr-1 inline" />
+                    {formatTime(remainingTime)}
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            {isPlaying && (
+              <>
+                <div className="hidden xs:flex items-end h-8 px-2">
+                  {waves.map((height, i) => (
+                    <div 
+                      key={i}
+                      className="freq-wave"
+                      style={{ 
+                        height: `${height * 24}px`,
+                        animationDelay: `${i * 0.1}s`
+                      }}
+                    />
+                  ))}
+                </div>
+                <RotateCw className="h-4 w-4 text-primary/70" />
+              </>
             )}
-          >
-            <Heart className={cn(
-              "h-5 w-5",
-              isFavorite && "fill-current"
-            )} />
-          </Button>
+            
+            <div className="relative">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => !isInteracting && setShowVolumeSlider(prev => !prev)}
+                disabled={isInteracting}
+                className={isInteracting ? "pointer-events-none opacity-80" : ""}
+              >
+                <Volume2 className="h-5 w-5" />
+              </Button>
+              
+              {showVolumeSlider && (
+                <div className="absolute bottom-full right-0 p-4 bg-card rounded-lg shadow-lg mb-2 w-48">
+                  <Slider
+                    value={[volume * 100]} 
+                    min={0}
+                    max={100}
+                    step={1}
+                    onValueChange={handleVolumeChange}
+                    disabled={isInteracting}
+                  />
+                </div>
+              )}
+            </div>
+            
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={handleFavoriteToggle}
+              disabled={isInteracting}
+              className={cn(
+                isFavorite && "text-red-500",
+                isInteracting && "pointer-events-none opacity-80"
+              )}
+            >
+              <Heart className={cn(
+                "h-5 w-5",
+                isFavorite && "fill-current"
+              )} />
+            </Button>
+          </div>
         </div>
       </div>
-      
-      {/* Frequency Visualizer - Shows automatically when playing */}
-      {isPlaying && currentFrequency && (
-        <FrequencyVisualizer
-          frequency={currentFrequency.hz}
-          isPlaying={isPlaying}
-          onClose={() => {}} // Não pode ser fechada manualmente, fecha automaticamente quando para
-          frequencyName={currentFrequency.name}
-        />
-      )}
-    </Card>
+    </FrequencyVisualizer>
   );
 }
