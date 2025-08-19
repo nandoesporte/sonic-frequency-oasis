@@ -33,6 +33,12 @@ export const categories: Category[] = [
     icon: MoonStar
   },
   {
+    id: "meditation",
+    name: "Meditação e Relaxamento",
+    description: "Frequências para meditação, relaxamento e redução do estresse",
+    icon: Circle
+  },
+  {
     id: "healing",
     name: "Cura e Regeneração",
     description: "Frequências para regeneração celular e cura física",
@@ -79,6 +85,7 @@ export const categories: Category[] = [
 // Map our UI categories to database categories
 const categoryMapping: Record<string, ValidDatabaseCategory> = {
   "sleep_meditation": "sleep",
+  "meditation": "meditation",
   "healing": "healing",
   "emotional": "emotional",
   "pain_relief": "pain_relief",
@@ -91,14 +98,14 @@ const categoryMapping: Record<string, ValidDatabaseCategory> = {
 // Map database categories back to UI categories
 const reverseCategoryMapping: Record<ValidDatabaseCategory, string> = {
   "sleep": "sleep_meditation",
+  "meditation": "meditation",
   "healing": "healing",
   "emotional": "emotional",
   "pain_relief": "pain_relief",
   "cognitive": "cognitive",
   "solfeggio": "solfeggio",
   "spiritual": "spiritual",
-  "physical": "physical",
-  "meditation": "sleep_meditation"
+  "physical": "physical"
 };
 
 export async function getFrequenciesByCategory(categoryId: string): Promise<FrequencyData[]> {
@@ -296,21 +303,21 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
         hz: 1.5,
         name: "Delta Profundo",
         purpose: "Sono profundo e regeneração celular",
-        description: "Estímulo de ondas delta para sono profundo e cicatrização",
+        description: "Estímulo de ondas delta para sono profundo e cicatrização. 😴 INSTRUÇÕES: Use durante todo o período de sono ou pelo menos 30 minutos antes de dormir para induzir relaxamento profundo e melhorar a qualidade do sono.",
         premium: false
       },
       {
         hz: 2.5,
         name: "Delta Superior",
         purpose: "Relaxamento profundo e sono reparador",
-        description: "Facilita o sono REM e a recuperação mental",
+        description: "Facilita o sono REM e a recuperação mental. 😴 INSTRUÇÕES: Use durante todo o período de sono ou pelo menos 30 minutos antes de dormir para induzir relaxamento profundo e melhorar a qualidade do sono.",
         premium: false
       },
       {
         hz: 4.0,
         name: "Delta-Theta",
         purpose: "Meditação profunda e sono leve",
-        description: "Transição entre sono profundo e sonho",
+        description: "Transição entre sono profundo e sonho. 😴 INSTRUÇÕES: Use durante todo o período de sono ou pelo menos 30 minutos antes de dormir para induzir relaxamento profundo e melhorar a qualidade do sono.",
         premium: true
       }
     ],
@@ -319,21 +326,21 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
         hz: 7.83,
         name: "Ressonância Schumann",
         purpose: "Harmonização com a frequência da Terra",
-        description: "Promove conexão mente-corpo e bem-estar geral",
+        description: "Promove conexão mente-corpo e bem-estar geral. 🧘‍♀️ INSTRUÇÕES: Use de 15 a 60 minutos conforme sua intenção — pode ser diário, semanal ou conforme sentir necessidade para cura espiritual.",
         premium: false
       },
       {
         hz: 8.0,
         name: "Alpha Inferior",
         purpose: "Cura e regeneração celular",
-        description: "Estimula a produção de endorfinas e regeneração tecidual",
+        description: "Estimula a produção de endorfinas e regeneração tecidual. 🧘‍♀️ INSTRUÇÕES: Use de 15 a 60 minutos conforme sua intenção — pode ser diário, semanal ou conforme sentir necessidade para cura espiritual.",
         premium: false
       },
       {
         hz: 10.5,
         name: "Alpha Superior",
         purpose: "Aceleração da cura e circulação",
-        description: "Melhora o fluxo sanguíneo e acelera processos de cicatrização",
+        description: "Melhora o fluxo sanguíneo e acelera processos de cicatrização. 🧘‍♀️ INSTRUÇÕES: Use de 15 a 60 minutos conforme sua intenção — pode ser diário, semanal ou conforme sentir necessidade para cura espiritual.",
         premium: true
       }
     ],
@@ -342,21 +349,21 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
         hz: 5.5,
         name: "Theta Emocional",
         purpose: "Liberação de traumas emocionais",
-        description: "Acesso ao subconsciente para processamento emocional",
+        description: "Acesso ao subconsciente para processamento emocional. 🧠 INSTRUÇÕES: Use de 20 a 40 minutos, pode ser diário especialmente para concentração, sono ou equilíbrio emocional. Use fones de ouvido para melhores resultados.",
         premium: false
       },
       {
         hz: 7.0,
         name: "Theta-Alpha",
         purpose: "Equilíbrio emocional e relaxamento",
-        description: "Redução da ansiedade e harmonia emocional",
+        description: "Redução da ansiedade e harmonia emocional. 🧠 INSTRUÇÕES: Use de 20 a 40 minutos, pode ser diário especialmente para concentração, sono ou equilíbrio emocional. Use fones de ouvido para melhores resultados.",
         premium: false
       },
       {
         hz: 9.0,
         name: "Alpha Emocional",
         purpose: "Estabilidade e positividade emocional",
-        description: "Promove pensamentos positivos e reduz estresse",
+        description: "Promove pensamentos positivos e reduz estresse. 🧠 INSTRUÇÕES: Use de 20 a 40 minutos, pode ser diário especialmente para concentração, sono ou equilíbrio emocional. Use fones de ouvido para melhores resultados.",
         premium: true
       }
     ],
@@ -365,21 +372,21 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
         hz: 3.5,
         name: "Delta para Dor",
         purpose: "Alívio de dor crônica",
-        description: "Redução da sensibilidade à dor e relaxamento profundo",
+        description: "Redução da sensibilidade à dor e relaxamento profundo. 🧘‍♀️ INSTRUÇÕES: Use de 15 a 60 minutos conforme sua intenção — pode ser diário, semanal ou conforme sentir necessidade para cura espiritual.",
         premium: false
       },
       {
         hz: 6.0,
         name: "Theta para Dor",
         purpose: "Redução da percepção da dor",
-        description: "Liberação de endorfinas naturais para analgesia",
+        description: "Liberação de endorfinas naturais para analgesia. 🧘‍♀️ INSTRUÇÕES: Use de 15 a 60 minutos conforme sua intenção — pode ser diário, semanal ou conforme sentir necessidade para cura espiritual.",
         premium: false
       },
       {
         hz: 9.4,
         name: "Alpha para Dor",
         purpose: "Alívio da dor e inflamação",
-        description: "Frequência específica para redução de processos inflamatórios",
+        description: "Frequência específica para redução de processos inflamatórios. 🧘‍♀️ INSTRUÇÕES: Use de 15 a 60 minutos conforme sua intenção — pode ser diário, semanal ou conforme sentir necessidade para cura espiritual.",
         premium: true
       }
     ],
@@ -388,21 +395,21 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
         hz: 12.5,
         name: "Beta Inferior",
         purpose: "Foco mental e concentração",
-        description: "Estado de alerta relaxado ideal para estudo",
+        description: "Estado de alerta relaxado ideal para estudo. 🧠 INSTRUÇÕES: Use de 20 a 40 minutos, pode ser diário especialmente para concentração, sono ou equilíbrio emocional. Use fones de ouvido para melhores resultados.",
         premium: false
       },
       {
         hz: 15.0,
         name: "Beta Médio",
         purpose: "Pensamento crítico e resolução de problemas",
-        description: "Estimula conexões neurais e raciocínio lógico",
+        description: "Estimula conexões neurais e raciocínio lógico. 🧠 INSTRUÇÕES: Use de 20 a 40 minutos, pode ser diário especialmente para concentração, sono ou equilíbrio emocional. Use fones de ouvido para melhores resultados.",
         premium: false
       },
       {
         hz: 18.0,
         name: "Beta Superior",
         purpose: "Desempenho mental elevado",
-        description: "Estado ideal para tarefas intelectuais complexas",
+        description: "Estado ideal para tarefas intelectuais complexas. 🧠 INSTRUÇÕES: Use de 20 a 40 minutos, pode ser diário especialmente para concentração, sono ou equilíbrio emocional. Use fones de ouvido para melhores resultados.",
         premium: true
       }
     ],
@@ -411,21 +418,21 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
         hz: 396,
         name: "UT - Liberação",
         purpose: "Libertação do medo e culpa",
-        description: "Primeira frequência Solfeggio para liberação de bloqueios emocionais",
+        description: "Primeira frequência Solfeggio para liberação de bloqueios emocionais. 🧘‍♀️ INSTRUÇÕES: Use de 15 a 60 minutos conforme sua intenção — pode ser diário, semanal ou conforme sentir necessidade para cura espiritual.",
         premium: false
       },
       {
         hz: 528,
         name: "MI - Transformação",
         purpose: "Reparo de DNA e milagres",
-        description: "A frequência do amor para transformação e reparação celular",
+        description: "A frequência do amor para transformação e reparação celular. 🧘‍♀️ INSTRUÇÕES: Use de 15 a 60 minutos conforme sua intenção — pode ser diário, semanal ou conforme sentir necessidade para cura espiritual.",
         premium: false
       },
       {
         hz: 852,
         name: "LA - Intuição",
         purpose: "Despertar espiritual e intuição",
-        description: "Ativa o terceiro olho e expande a consciência espiritual",
+        description: "Ativa o terceiro olho e expande a consciência espiritual. 🧘‍♀️ INSTRUÇÕES: Use de 15 a 60 minutos conforme sua intenção — pode ser diário, semanal ou conforme sentir necessidade para cura espiritual.",
         premium: true
       }
     ],
@@ -434,21 +441,21 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
         hz: 33,
         name: "Frequência Cristo",
         purpose: "Amor incondicional e compaixão",
-        description: "Associada à expansão da consciência espiritual",
+        description: "Associada à expansão da consciência espiritual. 🧘‍♀️ INSTRUÇÕES: Use de 15 a 60 minutos conforme sua intenção — pode ser diário, semanal ou conforme sentir necessidade para cura espiritual.",
         premium: false
       },
       {
         hz: 432,
         name: "Harmonia Universal",
         purpose: "Sintonização com o universo",
-        description: "Frequência natural para equilíbrio com as leis cósmicas",
+        description: "Frequência natural para equilíbrio com as leis cósmicas. 🧠 INSTRUÇÕES: Use de 20 a 40 minutos, pode ser diário especialmente para concentração, sono ou equilíbrio emocional. Use fones de ouvido para melhores resultados.",
         premium: false
       },
       {
         hz: 963,
         name: "Pineal Superior",
         purpose: "Despertar espiritual completo",
-        description: "Frequência mais alta do Solfeggio para iluminação",
+        description: "Frequência mais alta do Solfeggio para iluminação. 🧘‍♀️ INSTRUÇÕES: Use de 15 a 60 minutos conforme sua intenção — pode ser diário, semanal ou conforme sentir necessidade para cura espiritual.",
         premium: true
       }
     ],
@@ -457,21 +464,21 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
         hz: 285,
         name: "Regeneração Tecidual",
         purpose: "Reparo de tecidos e órgãos",
-        description: "Estimula a regeneração celular e cura física",
+        description: "Estimula a regeneração celular e cura física. 🧘‍♀️ INSTRUÇÕES: Use de 15 a 60 minutos conforme sua intenção — pode ser diário, semanal ou conforme sentir necessidade para cura espiritual.",
         premium: false
       },
       {
         hz: 5.8,
         name: "Theta Física",
         purpose: "Equilíbrio hormonal e sistema imunológico",
-        description: "Harmonização das funções corporais e fortalecimento imunológico",
+        description: "Harmonização das funções corporais e fortalecimento imunológico. 🧘‍♀️ INSTRUÇÕES: Use de 15 a 60 minutos conforme sua intenção — pode ser diário, semanal ou conforme sentir necessidade para cura espiritual.",
         premium: false
       },
       {
         hz: 136.1,
         name: "Recuperação Muscular",
         purpose: "Alívio de tensão e dor muscular",
-        description: "Frequência específica para relaxamento e recuperação muscular",
+        description: "Frequência específica para relaxamento e recuperação muscular. 🧘‍♀️ INSTRUÇÕES: Use de 15 a 60 minutos conforme sua intenção — pode ser diário, semanal ou conforme sentir necessidade para cura espiritual.",
         premium: true
       }
     ],
@@ -480,21 +487,21 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
         hz: 4.5,
         name: "Theta Meditativo",
         purpose: "Meditação profunda",
-        description: "Estado ideal para meditação e visualização criativa",
+        description: "Estado ideal para meditação e visualização criativa. 🎧 INSTRUÇÕES: Use de 15 a 30 minutos por sessão, diariamente ou algumas vezes por semana para reduzir o estresse, melhorar o foco e induzir estados meditativos.",
         premium: false
       },
       {
         hz: 7.5,
         name: "Alpha Meditativo",
         purpose: "Relaxamento consciente",
-        description: "Equilíbrio entre relaxamento e atenção plena",
+        description: "Equilíbrio entre relaxamento e atenção plena. 🎧 INSTRUÇÕES: Use de 15 a 30 minutos por sessão, diariamente ou algumas vezes por semana para reduzir o estresse, melhorar o foco e induzir estados meditativos.",
         premium: false
       },
       {
         hz: 40.0,
         name: "Gamma Meditativo",
         purpose: "Percepção elevada e consciência expandida",
-        description: "Estado mental observado em meditadores experientes",
+        description: "Estado mental observado em meditadores experientes. 🎧 INSTRUÇÕES: Use de 15 a 30 minutos por sessão, diariamente ou algumas vezes por semana para reduzir o estresse, melhorar o foco e induzir estados meditativos.",
         premium: true
       }
     ]
