@@ -71,6 +71,38 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const MAX_PLAY_TIME = 30 * 60; // 30 minutes in seconds
   const fadeTime = 0.5; // 500ms fade time for smoother transitions
 
+  // Prevent back button from stopping audio
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      if (isPlaying) {
+        // If audio is playing, don't allow navigation back
+        // Push current state back to maintain audio playback
+        window.history.pushState(null, '', window.location.href);
+      }
+    };
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (isPlaying) {
+        // Prevent page unload when audio is playing
+        event.preventDefault();
+        event.returnValue = '';
+      }
+    };
+
+    // Add event listeners when audio is playing
+    if (isPlaying) {
+      // Push a state to prevent back navigation
+      window.history.pushState(null, '', window.location.href);
+      window.addEventListener('popstate', handlePopState);
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    }
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isPlaying]);
+
   // Improved screen orientation locking function
   const lockScreenOrientation = () => {
     // Only try to lock if we're playing audio and haven't already locked
