@@ -61,10 +61,10 @@ serve(async (req) => {
       );
     }
 
-    // Create a 7-day trial period
+    // Create a 30-day trial period
     const trialStartDate = new Date();
     const trialEndDate = new Date();
-    trialEndDate.setDate(trialEndDate.getDate() + 7); // 7 days from now
+    trialEndDate.setDate(trialEndDate.getDate() + 30); // 30 days from now
 
     // Insert the subscriber record with trial information
     const { error: insertError } = await supabaseClient
