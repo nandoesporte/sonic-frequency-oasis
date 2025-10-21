@@ -6,7 +6,7 @@ import { FrequencyData } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Play, Heart, Crown, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { usePremium } from "@/hooks/use-premium";
+import { usePremium } from "@/contexts/PremiumContext";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/components/ui/sonner";

@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { PremiumProvider } from "./contexts/PremiumContext";
 import { Footer } from "./components/ui/footer";
 import { useAuth } from "@/hooks";
 import { AudioNavigationWarning } from "./components/audio-navigation-warning";
@@ -65,36 +66,38 @@ function AppContent() {
   }, []);
 
   return (
-    <AudioProvider>
-      <div className="flex flex-col min-h-screen">
-        <ScrollToTop />
-        <Toaster />
-        <TermsAcceptanceDialog />
-        <PWAInstallDialog />
-        {user && <FrequenciesGuideDialog />}
-        <AudioNavigationWarning>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/scientific" element={<Scientific />} />
-            <Route path="/categories/:category" element={<Category />} />
-            <Route path="/favorites" element={<Favorites />} />
-            <Route path="/guide" element={<Guide />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/premium" element={<Premium />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/webhook-config" element={<WebhookConfig />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/sentipasso" element={<SentiPasso />} />
-            
-            {/* Catch all route for 404 */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AudioNavigationWarning>
-        <ConditionalFooter />
-      </div>
-    </AudioProvider>
+    <PremiumProvider>
+      <AudioProvider>
+        <div className="flex flex-col min-h-screen">
+          <ScrollToTop />
+          <Toaster />
+          <TermsAcceptanceDialog />
+          <PWAInstallDialog />
+          {user && <FrequenciesGuideDialog />}
+          <AudioNavigationWarning>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/scientific" element={<Scientific />} />
+              <Route path="/categories/:category" element={<Category />} />
+              <Route path="/favorites" element={<Favorites />} />
+              <Route path="/guide" element={<Guide />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/premium" element={<Premium />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/webhook-config" element={<WebhookConfig />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/sentipasso" element={<SentiPasso />} />
+              
+              {/* Catch all route for 404 */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AudioNavigationWarning>
+          <ConditionalFooter />
+        </div>
+      </AudioProvider>
+    </PremiumProvider>
   );
 }
 

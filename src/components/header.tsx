@@ -6,7 +6,7 @@ import { Heart, Crown, History, Menu, Home, LogOut, User, Book, Brain, Smartphon
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
-import { usePremium } from "@/hooks/use-premium";
+import { usePremium } from "@/contexts/PremiumContext";
 import { Logo } from "@/components/ui/logo";
 import { ProfileMenu } from "@/components/profile-menu";
 import { PWAInstallButton } from "@/components/ui/pwa-install-button";

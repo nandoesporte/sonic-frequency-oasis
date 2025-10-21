@@ -4,7 +4,7 @@ import { Header } from "@/components/header";
 import { AudioPlayer } from "@/components/audio-player";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { usePremium } from "@/hooks/use-premium";
+import { usePremium } from "@/contexts/PremiumContext";
 import { UserProfile } from "@/components/profile/UserProfile";
 import { Navigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";

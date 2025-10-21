@@ -1,6 +1,6 @@
 
 export { useAuth } from "@/contexts/AuthContext";
-export { usePremium } from "./use-premium";
+export { usePremium } from "@/contexts/PremiumContext";
 export { useDebouncedEffect } from "./use-debounced-effect";
 export { useIsMobile } from "./use-mobile";
 export { useIsDesktop } from "./use-desktop";

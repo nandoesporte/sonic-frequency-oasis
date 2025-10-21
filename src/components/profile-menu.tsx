@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "@supabase/supabase-js";
 import { getProfileMenuItems } from "./profile/profile-data";
-import { usePremium } from "@/hooks/use-premium";
+import { usePremium } from "@/contexts/PremiumContext";
 import { useProfileMenu } from "@/hooks";
 import { LogOut } from "lucide-react";
 

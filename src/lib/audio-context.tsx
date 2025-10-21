@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { toast } from '@/components/ui/sonner';
 import { useAuth } from '@/contexts/AuthContext';
-import { usePremium } from '@/hooks/use-premium';
+import { usePremium } from '@/contexts/PremiumContext';
 import { FrequencyData } from '@/lib/data';
 import { PremiumContentDialog } from '@/components/subscription/PremiumContentDialog';
 import { supabase } from '@/integrations/supabase/client';

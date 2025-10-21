@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Gift, Crown } from "lucide-react";
 import { PWAInstallButton } from "@/components/ui/pwa-install-button";
-import { usePremium } from "@/hooks/use-premium";
+import { usePremium } from "@/contexts/PremiumContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link, useLocation } from "react-router-dom";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";

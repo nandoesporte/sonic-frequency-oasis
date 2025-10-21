@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Play, Clock, Heart } from "lucide-react";
 import { FeedbackDialog } from './FeedbackDialog';
 import { useAuth } from "@/contexts/AuthContext";
-import { usePremium } from "@/hooks/use-premium";
+import { usePremium } from "@/contexts/PremiumContext";
 import { TrialExpiredDialog } from "@/components/TrialExpiredDialog";
 import { toast } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
