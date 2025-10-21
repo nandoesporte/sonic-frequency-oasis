@@ -74,7 +74,7 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
-    font-size: 16px; /* Base font size */
+    font-size: 13px; /* Base font size increased to 13px */
   }
   h1, h2, h3, h4, h5, h6 {
     @apply tracking-tight font-heading;
@@ -99,13 +99,13 @@
   }
   
   button, input, textarea, select {
-    font-size: 1rem;
+    font-size: 13px;
   }
   
   /* Improved mobile typography */
   @media (max-width: 640px) {
     body {
-      font-size: 16px; /* Slightly increased base font on mobile */
+      font-size: 13px; /* Base font on mobile */
     }
     
     h1 {
@@ -130,7 +130,7 @@
     a.btn,
     input[type="submit"] {
       @apply min-h-10 px-4 py-2;
-      font-size: 1rem;
+      font-size: 13px;
       line-height: 1.5;
       touch-action: manipulation;
     }
