@@ -47,7 +47,7 @@ export const useAudio = () => {
 export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentFrequency, setCurrentFrequency] = useState<FrequencyData | null>(null);
-  const [volume, setVolume] = useState(1.0); // Volume máximo padrão
+  const [volume, setVolume] = useState(0.7);
   const [favorites, setFavorites] = useState<FrequencyData[]>([]);
   const [history, setHistory] = useState<FrequencyData[]>([]);
   const [remainingTime, setRemainingTime] = useState<number | null>(null);
@@ -311,11 +311,10 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (gainNodeRef.current && audioContextRef.current) {
         try {
           const currentTime = audioContextRef.current.currentTime;
-          const gainMultiplier = 2.5; // Aumentar volume geral
           // Start from 0 volume
           gainNodeRef.current.gain.setValueAtTime(0, currentTime);
-          // Gradually increase to set volume with multiplier
-          gainNodeRef.current.gain.linearRampToValueAtTime(volume * gainMultiplier, currentTime + fadeTime);
+          // Gradually increase to set volume
+          gainNodeRef.current.gain.linearRampToValueAtTime(volume, currentTime + fadeTime);
           
           // Resolve after the fade is complete
           setTimeout(() => resolve(), fadeTime * 1000);
@@ -492,9 +491,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     oscillator.type = 'sine';
     oscillator.frequency.setValueAtTime(frequency.hz, ctx.currentTime);
-    
-    // Aumentar ganho para melhor audibilidade
-    const gainMultiplier = 2.5; // Multiplicador para aumentar o volume geral
     
     // Start with zero gain for smooth fade in
     gainNode.gain.setValueAtTime(0, ctx.currentTime);
