@@ -47,7 +47,7 @@ export const useAudio = () => {
 export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentFrequency, setCurrentFrequency] = useState<FrequencyData | null>(null);
-  const [volume, setVolume] = useState(3.5);
+  const [volume, setVolume] = useState(0.7);
   const [favorites, setFavorites] = useState<FrequencyData[]>([]);
   const [history, setHistory] = useState<FrequencyData[]>([]);
   const [remainingTime, setRemainingTime] = useState<number | null>(null);
