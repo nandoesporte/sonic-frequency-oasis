@@ -57,12 +57,12 @@ export function HowItWorksSection() {
         <div className="text-center mt-12">
           <Button asChild size="lg" className="rounded-full bg-primary hover:bg-primary/90">
             <Link to="/auth">
-              Comece sua Jornada - 7 dias Grátis
+              Comece sua Jornada - 30 dias Grátis
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
           <p className="text-sm text-muted-foreground mt-3">
-            Acesso completo por 7 dias. Sem cartão de crédito. Cancele quando quiser.
+            Acesso completo por 30 dias. Sem cartão de crédito. Cancele quando quiser.
           </p>
         </div>
       </div>

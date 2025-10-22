@@ -162,7 +162,7 @@ const Index = () => {
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Gift className="h-6 w-6 text-amber-500 dark:text-amber-400" />
                     <h3 className="text-xl md:text-2xl font-bold text-amber-600 dark:text-amber-400">
-                      Teste por 7 dias Grátis
+                      Teste por 30 dias Grátis
                     </h3>
                   </div>
                   <p className="text-amber-700 dark:text-amber-300 mb-3">

@@ -23,7 +23,7 @@ export function TrialExpiredDialog({ open, onOpenChange }: TrialExpiredDialogPro
             Seu período de teste expirou
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Você aproveitou seus 7 dias gratuitos! Para continuar acessando o conteúdo premium, assine um plano.
+            Você aproveitou seus 30 dias gratuitos! Para continuar acessando o conteúdo premium, assine um plano.
           </DialogDescription>
         </DialogHeader>
 
@@ -31,7 +31,7 @@ export function TrialExpiredDialog({ open, onOpenChange }: TrialExpiredDialogPro
           <div className="bg-muted/50 rounded-lg p-4">
             <div className="flex items-center gap-3 text-sm">
               <Calendar className="w-4 h-4 text-primary" />
-              <span>Período de teste: <strong>7 dias</strong></span>
+              <span>Período de teste: <strong>30 dias</strong></span>
             </div>
             <div className="mt-2 text-xs text-muted-foreground">
               Continue explorando frequências exclusivas e caminhadas do Sentipasso

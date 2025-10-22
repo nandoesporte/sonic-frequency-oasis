@@ -74,7 +74,7 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
-    font-size: 16px; /* Base font size */
+    font-size: 18px; /* Base font size increased for better readability */
   }
   h1, h2, h3, h4, h5, h6 {
     @apply tracking-tight font-heading;
@@ -105,7 +105,7 @@
   /* Improved mobile typography */
   @media (max-width: 640px) {
     body {
-      font-size: 16px; /* Slightly increased base font on mobile */
+      font-size: 17px; /* Increased base font on mobile for better readability */
     }
     
     h1 {
