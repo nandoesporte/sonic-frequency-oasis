@@ -619,7 +619,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
-          search_vector: unknown | null
+          search_vector: unknown
           status: string | null
           title: string
           updated_at: string
@@ -630,7 +630,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          search_vector?: unknown | null
+          search_vector?: unknown
           status?: string | null
           title: string
           updated_at?: string
@@ -641,7 +641,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          search_vector?: unknown | null
+          search_vector?: unknown
           status?: string | null
           title?: string
           updated_at?: string
@@ -1091,18 +1091,9 @@ export type Database = {
       }
     }
     Functions: {
-      check_policy_expirations: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      is_admin: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
-      sync_sentimento_frequencies: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      check_policy_expirations: { Args: never; Returns: undefined }
+      is_admin: { Args: { user_id: string }; Returns: boolean }
+      sync_sentimento_frequencies: { Args: never; Returns: undefined }
     }
     Enums: {
       frequency_category:
