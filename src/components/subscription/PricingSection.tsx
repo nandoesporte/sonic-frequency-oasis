@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Crown, Shield, Gift, Clock } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Check, Crown, Shield, Gift, Clock, ArrowRight } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -57,7 +57,6 @@ const plans: PricingPlan[] = [
 ];
 
 export function PricingSection() {
-  const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('month');
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -78,54 +77,63 @@ export function PricingSection() {
   };
 
   return (
-    <section className="py-16 px-4 bg-gradient-to-b from-purple-50/50 to-background dark:from-purple-900/10 dark:to-background rounded-3xl my-8">
-      <div className="container mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Invista em <span className="text-primary">Você</span>
+    <section className="py-16 sm:py-24 px-2 sm:px-4 relative overflow-hidden sales-section">
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-purple-50/50 via-background to-background dark:from-purple-900/10 dark:via-background dark:to-background pointer-events-none"></div>
+      <div className="absolute top-20 left-10 w-64 h-64 bg-purple-300/10 rounded-full blur-3xl animate-float pointer-events-none"></div>
+      <div className="absolute bottom-20 right-10 w-48 h-48 bg-amber-300/10 rounded-full blur-3xl animate-float pointer-events-none" style={{ animationDelay: '2s' }}></div>
+      
+      <div className="container mx-auto relative z-10">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+            Invista em <span className="gradient-text-animated">Você</span>
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
             Quanto você já gastou com médicos, remédios e terapias que não funcionaram? 
             Por menos que uma consulta, transforme sua vida para sempre.
           </p>
         </div>
 
-        {/* Garantia */}
-        <div className="flex flex-wrap justify-center gap-6 mb-10 text-sm">
-          <div className="flex items-center gap-2 bg-green-500/10 text-green-700 dark:text-green-400 px-4 py-2 rounded-full">
-            <Gift className="h-4 w-4" />
+        {/* Garantias */}
+        <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-12">
+          <div className="flex items-center gap-2 bg-green-500/10 text-green-700 dark:text-green-400 px-4 py-2.5 rounded-full font-medium">
+            <Gift className="h-5 w-5" />
             <span>30 dias grátis para testar</span>
           </div>
-          <div className="flex items-center gap-2 bg-blue-500/10 text-blue-700 dark:text-blue-400 px-4 py-2 rounded-full">
-            <Shield className="h-4 w-4" />
+          <div className="flex items-center gap-2 bg-blue-500/10 text-blue-700 dark:text-blue-400 px-4 py-2.5 rounded-full font-medium">
+            <Shield className="h-5 w-5" />
             <span>Garantia total de satisfação</span>
           </div>
-          <div className="flex items-center gap-2 bg-purple-500/10 text-purple-700 dark:text-purple-400 px-4 py-2 rounded-full">
-            <Clock className="h-4 w-4" />
+          <div className="flex items-center gap-2 bg-purple-500/10 text-purple-700 dark:text-purple-400 px-4 py-2.5 rounded-full font-medium">
+            <Clock className="h-5 w-5" />
             <span>Cancele quando quiser</span>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {plans.map((plan) => (
-            <Card key={plan.id} className={`relative overflow-hidden ${
-              plan.popular ? 'border-primary shadow-lg shadow-primary/20 scale-[1.02]' : ''
-            }`}>
+          {plans.map((plan, index) => (
+            <Card 
+              key={plan.id} 
+              className={`relative overflow-hidden card-smooth bg-white/70 dark:bg-white/5 backdrop-blur-sm ${
+                plan.popular ? 'border-primary shadow-xl shadow-primary/20 scale-[1.02]' : 'border-border/50'
+              }`}
+              style={{ animationDelay: `${index * 0.15}s` }}
+            >
               {plan.popular && (
                 <div className="absolute top-0 right-0">
-                  <div className="bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-bl-lg flex items-center gap-1">
-                    <Crown className="h-3 w-3" />
+                  <div className="bg-gradient-to-r from-primary to-purple-600 text-primary-foreground text-xs font-bold px-4 py-1.5 rounded-bl-xl flex items-center gap-1.5">
+                    <Crown className="h-3.5 w-3.5" />
                     Mais Escolhido
                   </div>
                 </div>
               )}
-              <CardHeader>
+              <CardHeader className="pb-4">
                 <CardTitle className="text-2xl flex items-center gap-2">
                   {plan.name}
                   {plan.popular && <Crown className="h-5 w-5 text-primary" />}
                 </CardTitle>
-                <CardDescription>{plan.description}</CardDescription>
-                <div className="mt-4">
+                <CardDescription className="text-base">{plan.description}</CardDescription>
+                <div className="mt-4 pt-4 border-t border-border/50">
                   {plan.originalPrice && (
                     <span className="text-lg text-muted-foreground line-through mr-2">
                       {new Intl.NumberFormat('pt-BR', {
@@ -144,8 +152,8 @@ export function PricingSection() {
                     /{plan.interval === 'month' ? 'mês' : 'ano'}
                   </span>
                   {plan.interval === 'year' && (
-                    <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-                      = R$16,58/mês
+                    <p className="text-sm text-green-600 dark:text-green-400 mt-2 font-medium">
+                      = R$16,58/mês (economize 58%)
                     </p>
                   )}
                 </div>
@@ -154,17 +162,24 @@ export function PricingSection() {
                 <ul className="space-y-3">
                   {plan.features.map((feature) => (
                     <li key={feature.id} className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                      <div className="p-1 rounded-full bg-green-100 dark:bg-green-900/30 mr-3">
+                        <Check className="h-3.5 w-3.5 text-green-500" />
+                      </div>
                       <span>{feature.title}</span>
                     </li>
                   ))}
                 </ul>
                 <Button 
-                  className={`w-full ${plan.popular ? 'bg-primary hover:bg-primary/90' : 'bg-secondary hover:bg-secondary/80'}`}
+                  className={`w-full rounded-full text-base py-6 transition-all duration-300 hover:scale-105 ${
+                    plan.popular 
+                      ? 'bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 glow-effect' 
+                      : 'bg-secondary hover:bg-secondary/80'
+                  }`}
                   size="lg"
                   onClick={() => handleSubscribe(plan.id)}
                 >
                   Começar Minha Transformação
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </CardContent>
             </Card>
@@ -172,28 +187,42 @@ export function PricingSection() {
         </div>
 
         {/* FAQ rápido */}
-        <div className="mt-12 max-w-2xl mx-auto text-center">
-          <h3 className="text-xl font-semibold mb-4">Perguntas Frequentes</h3>
-          <div className="space-y-4 text-left">
-            <div className="bg-white/50 dark:bg-white/5 p-4 rounded-lg">
-              <p className="font-medium mb-1">E se não funcionar para mim?</p>
-              <p className="text-sm text-muted-foreground">
-                Você tem 30 dias para testar gratuitamente. Se não sentir resultados, cancele sem pagar nada.
+        <div className="mt-14 max-w-2xl mx-auto">
+          <h3 className="text-xl font-bold text-center mb-6">Perguntas Frequentes</h3>
+          <div className="space-y-4">
+            <div className="bg-white/60 dark:bg-white/5 p-5 rounded-2xl card-smooth backdrop-blur-sm">
+              <p className="font-semibold mb-2">E se não funcionar para mim?</p>
+              <p className="text-muted-foreground leading-relaxed">
+                Você tem 30 dias para testar gratuitamente. Se não sentir resultados, cancele sem pagar nada. Zero risco.
               </p>
             </div>
-            <div className="bg-white/50 dark:bg-white/5 p-4 rounded-lg">
-              <p className="font-medium mb-1">Preciso de fones especiais?</p>
-              <p className="text-sm text-muted-foreground">
+            <div className="bg-white/60 dark:bg-white/5 p-5 rounded-2xl card-smooth backdrop-blur-sm">
+              <p className="font-semibold mb-2">Preciso de fones especiais?</p>
+              <p className="text-muted-foreground leading-relaxed">
                 Não! Funciona com qualquer fone de ouvido ou até mesmo nas caixas de som do celular.
               </p>
             </div>
-            <div className="bg-white/50 dark:bg-white/5 p-4 rounded-lg">
-              <p className="font-medium mb-1">Quanto tempo preciso usar por dia?</p>
-              <p className="text-sm text-muted-foreground">
+            <div className="bg-white/60 dark:bg-white/5 p-5 rounded-2xl card-smooth backdrop-blur-sm">
+              <p className="font-semibold mb-2">Quanto tempo preciso usar por dia?</p>
+              <p className="text-muted-foreground leading-relaxed">
                 Apenas 15-30 minutos por dia são suficientes. Você pode ouvir enquanto trabalha, medita ou relaxa.
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Final CTA */}
+        <div className="text-center mt-14">
+          <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-xl glow-effect text-lg px-10 py-7 transition-all duration-300 hover:scale-105">
+            <Link to="/auth">
+              <Gift className="mr-2 h-5 w-5" />
+              Começar Teste Grátis de 30 Dias
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+          <p className="text-sm text-muted-foreground mt-4">
+            Sem compromisso • Cancele quando quiser • Garantia de satisfação
+          </p>
         </div>
       </div>
     </section>
