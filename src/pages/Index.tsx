@@ -125,36 +125,27 @@ const Index = () => {
                 <div className="flex justify-center mb-3 sm:mb-5">
                   <Badge variant="success" className="px-2 py-1 text-xs sm:text-sm">
                     <Waves className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    Frequências Terapêuticas
+                    Protocolo de Ressonância Terapêutica 7D
                   </Badge>
                 </div>
                 
                 <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-3 sm:mb-4 md:mb-6 animate-fade-in leading-tight px-2">
-                  <span className="text-primary dark:text-primary block sm:inline">Transforme sua </span> 
-                  <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-blue-400 block sm:inline">Jornada Interior</span>
+                  <span className="text-primary dark:text-primary block sm:inline">Você Está Pronta para uma </span> 
+                  <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-blue-400 block sm:inline">Transformação Radical?</span>
                 </h1>
                 
-                <p className="text-base sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-6 sm:mb-8 animate-fade-in px-2">
-                  Descubra o poder das frequências sonoras para relaxamento, foco, cura emocional e bem-estar através dos SentiPassos
+                <p className="text-base sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-6 sm:mb-8 animate-fade-in px-2">
+                  Elimine dores crônicas, dissolva ansiedade e restaure a harmonia em seus relacionamentos em apenas <strong className="text-primary">21 dias</strong> com a Tecnologia de Ondas Sonoras Direcionadas
                 </p>
-                
-                {/* Destaque do SentiPassos */}
-                <div className="mb-8 bg-gradient-to-r from-purple-500/20 to-pink-500/20 p-4 rounded-lg border border-purple-500/30 shadow-lg dark:from-purple-600/30 dark:to-pink-700/30 dark:border-purple-600/40">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <Headphones className="h-6 w-6 text-purple-500 dark:text-purple-400" />
-                    <h3 className="text-xl md:text-2xl font-bold text-purple-600 dark:text-purple-400">
-                      🎧 SentiPassos - Novidade!
-                    </h3>
-                  </div>
-                  <p className="text-purple-700 dark:text-purple-300 mb-3">
-                    Caminhadas terapêuticas com frequências para trabalhar emoções como paz, raiva e tristeza
+
+                {/* Reality Check */}
+                <div className="mb-8 bg-gradient-to-r from-rose-500/10 to-purple-500/10 p-5 rounded-xl border border-rose-500/20 text-left max-w-2xl mx-auto">
+                  <p className="text-muted-foreground italic mb-3">
+                    "Já tentei de tudo - médicos, terapeutas, remédios, tratamentos caros - e nada resolve de verdade. Continuo sofrendo com dores, ansiedade e relacionamentos que não funcionam."
                   </p>
-                  <Button asChild size="lg" className="bg-purple-500 hover:bg-purple-600 text-white rounded-full shadow-md">
-                    <Link to="/sentipasso">
-                      Experimente os SentiPassos
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
+                  <p className="text-foreground font-medium">
+                    Se você se identifica com isso, finalmente chegou uma solução que funciona de verdade.
+                  </p>
                 </div>
                 
                 {/* Teste Grátis */}
@@ -166,11 +157,11 @@ const Index = () => {
                     </h3>
                   </div>
                   <p className="text-amber-700 dark:text-amber-300 mb-3">
-                    Acesso completo à biblioteca de frequências terapêuticas e SentiPassos
+                    Experimente o poder das frequências terapêuticas sem risco. Garantia total de satisfação.
                   </p>
                   <Button asChild size="lg" className="bg-amber-500 hover:bg-amber-600 text-white rounded-full shadow-md">
                     <Link to="/auth">
-                      Começar Agora
+                      Começar Minha Transformação
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
@@ -179,7 +170,7 @@ const Index = () => {
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-12">
                   <Button asChild size="lg" className="w-full sm:w-auto rounded-full animate-fade-in bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 shadow-md shadow-purple-500/20">
                     <Link to="/auth" className="gap-2 text-base">
-                      Começar Jornada
+                      Quero Transformar Minha Vida
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                   </Button>
@@ -187,26 +178,43 @@ const Index = () => {
                   <Button asChild variant="outline" size="lg" className="w-full sm:w-auto rounded-full animate-fade-in border-purple-300 dark:border-purple-700 shadow-sm">
                     <Link to="/scientific" className="gap-2 text-base">
                       <ShieldCheck className="h-4 w-4" />
-                      Base Científica
+                      Comprovação Científica
                     </Link>
                   </Button>
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+                {/* Key Benefits Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mb-8">
                   <div className="flex flex-col items-center bg-white/50 dark:bg-white/5 p-4 rounded-xl backdrop-blur-sm shadow-sm">
-                    <Heart className="h-6 w-6 text-primary mb-2" />
-                    <h3 className="font-medium">Bem-Estar Emocional</h3>
-                    <p className="text-sm text-muted-foreground">Paz interior e equilíbrio</p>
+                    <Heart className="h-6 w-6 text-rose-500 mb-2" />
+                    <h3 className="font-medium">Ansiedade Zero</h3>
+                    <p className="text-sm text-muted-foreground">Sem efeitos colaterais</p>
                   </div>
                   <div className="flex flex-col items-center bg-white/50 dark:bg-white/5 p-4 rounded-xl backdrop-blur-sm shadow-sm">
-                    <Volume2 className="h-6 w-6 text-primary mb-2" />
-                    <h3 className="font-medium">Biblioteca Completa</h3>
-                    <p className="text-sm text-muted-foreground">Mais de 200 frequências</p>
+                    <Sparkles className="h-6 w-6 text-amber-500 mb-2" />
+                    <h3 className="font-medium">Dores Crônicas</h3>
+                    <p className="text-sm text-muted-foreground">Alívio real e duradouro</p>
                   </div>
                   <div className="flex flex-col items-center bg-white/50 dark:bg-white/5 p-4 rounded-xl backdrop-blur-sm shadow-sm">
-                    <Headphones className="h-6 w-6 text-primary mb-2" />
-                    <h3 className="font-medium">SentiPassos</h3>
-                    <p className="text-sm text-muted-foreground">Caminhadas terapêuticas</p>
+                    <Users className="h-6 w-6 text-purple-500 mb-2" />
+                    <h3 className="font-medium">Relacionamentos</h3>
+                    <p className="text-sm text-muted-foreground">Harmonia restaurada</p>
+                  </div>
+                </div>
+
+                {/* Social Proof */}
+                <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-primary" />
+                    <span><strong>+5.000</strong> mulheres transformadas</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ThumbsUp className="h-4 w-4 text-primary" />
+                    <span><strong>97%</strong> de satisfação</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Award className="h-4 w-4 text-primary" />
+                    <span>Aprovado por especialistas</span>
                   </div>
                 </div>
               </div>
