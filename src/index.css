@@ -139,6 +139,12 @@
     .mobile-spacing {
       @apply mb-5 mt-4;
     }
+    
+    /* Full width containers on mobile */
+    .container {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
   }
 }
 
