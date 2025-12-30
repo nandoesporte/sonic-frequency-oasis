@@ -109,7 +109,7 @@ export function ProfessionalFeatures() {
           </h3>
           <p className="text-muted-foreground text-center mb-6 leading-relaxed">
             Entendemos sua dúvida. Você já gastou tempo e dinheiro com soluções que prometeram e não entregaram. 
-            Por isso oferecemos <strong className="text-foreground">30 dias de teste grátis</strong> - 
+            Por isso oferecemos <strong className="text-foreground">7 dias de teste grátis</strong> - 
             você experimenta primeiro, sem risco, e só continua se realmente funcionar para você.
           </p>
           <div className="flex flex-wrap justify-center gap-3 text-sm">
