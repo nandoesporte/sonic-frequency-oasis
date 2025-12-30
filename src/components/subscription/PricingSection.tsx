@@ -96,15 +96,15 @@ export function PricingSection() {
 
         {/* Garantias */}
         <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-12">
-          <div className="flex items-center gap-2 bg-green-500/10 text-green-700 dark:text-green-400 px-4 py-2.5 rounded-full font-medium">
+          <div className="flex items-center gap-2 bg-green-500/10 text-green-700 dark:text-green-400 px-5 py-3 rounded-full font-medium text-base">
             <Gift className="h-5 w-5" />
-            <span>30 dias grátis para testar</span>
+            <span>7 dias grátis para testar</span>
           </div>
-          <div className="flex items-center gap-2 bg-blue-500/10 text-blue-700 dark:text-blue-400 px-4 py-2.5 rounded-full font-medium">
+          <div className="flex items-center gap-2 bg-blue-500/10 text-blue-700 dark:text-blue-400 px-5 py-3 rounded-full font-medium text-base">
             <Shield className="h-5 w-5" />
             <span>Garantia total de satisfação</span>
           </div>
-          <div className="flex items-center gap-2 bg-purple-500/10 text-purple-700 dark:text-purple-400 px-4 py-2.5 rounded-full font-medium">
+          <div className="flex items-center gap-2 bg-purple-500/10 text-purple-700 dark:text-purple-400 px-5 py-3 rounded-full font-medium text-base">
             <Clock className="h-5 w-5" />
             <span>Cancele quando quiser</span>
           </div>
@@ -191,20 +191,20 @@ export function PricingSection() {
           <h3 className="text-xl font-bold text-center mb-6">Perguntas Frequentes</h3>
           <div className="space-y-4">
             <div className="bg-white/60 dark:bg-white/5 p-5 rounded-2xl card-smooth backdrop-blur-sm">
-              <p className="font-semibold mb-2">E se não funcionar para mim?</p>
-              <p className="text-muted-foreground leading-relaxed">
-                Você tem 30 dias para testar gratuitamente. Se não sentir resultados, cancele sem pagar nada. Zero risco.
+              <p className="font-semibold mb-2 text-lg">E se não funcionar para mim?</p>
+              <p className="text-muted-foreground leading-relaxed text-base">
+                Você tem 7 dias para testar gratuitamente. Se não sentir resultados, cancele sem pagar nada. Zero risco.
               </p>
             </div>
             <div className="bg-white/60 dark:bg-white/5 p-5 rounded-2xl card-smooth backdrop-blur-sm">
-              <p className="font-semibold mb-2">Preciso de fones especiais?</p>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="font-semibold mb-2 text-lg">Preciso de fones especiais?</p>
+              <p className="text-muted-foreground leading-relaxed text-base">
                 Não! Funciona com qualquer fone de ouvido ou até mesmo nas caixas de som do celular.
               </p>
             </div>
             <div className="bg-white/60 dark:bg-white/5 p-5 rounded-2xl card-smooth backdrop-blur-sm">
-              <p className="font-semibold mb-2">Quanto tempo preciso usar por dia?</p>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="font-semibold mb-2 text-lg">Quanto tempo preciso usar por dia?</p>
+              <p className="text-muted-foreground leading-relaxed text-base">
                 Apenas 15-30 minutos por dia são suficientes. Você pode ouvir enquanto trabalha, medita ou relaxa.
               </p>
             </div>
@@ -216,7 +216,7 @@ export function PricingSection() {
           <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-xl glow-effect text-lg px-10 py-7 transition-all duration-300 hover:scale-105">
             <Link to="/auth">
               <Gift className="mr-2 h-5 w-5" />
-              Começar Teste Grátis de 30 Dias
+              Começar Teste Grátis de 7 Dias
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
