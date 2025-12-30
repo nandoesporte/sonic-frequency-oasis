@@ -77,10 +77,10 @@ export function HowItWorksSection() {
         </div>
         
         <div className="text-center mt-10">
-          <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 shadow-lg shadow-primary/25 text-lg px-8 py-6">
+          <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 shadow-lg shadow-primary/25 text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto max-w-sm mx-auto">
             <Link to="/auth" className="gap-2">
-              Quero Começar Minha Transformação
-              <ArrowRight className="h-5 w-5" />
+              Começar Transformação
+              <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
             </Link>
           </Button>
           <p className="text-base text-muted-foreground mt-4">
