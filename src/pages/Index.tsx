@@ -133,35 +133,35 @@ const Index = () => {
                 </div>
                 
                 {/* Main Headline */}
-                <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight px-2 section-fade stagger-2">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-5 sm:mb-7 leading-tight px-2 section-fade stagger-2">
                   <span className="text-foreground block sm:inline">Você Está Pronta para uma </span> 
                   <span className="gradient-text-animated block sm:inline">Transformação Radical?</span>
                 </h1>
                 
                 {/* Subheadline */}
-                <p className="text-base sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-8 sm:mb-10 px-2 section-fade stagger-3 leading-relaxed">
+                <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-8 sm:mb-10 px-2 section-fade stagger-3 leading-relaxed">
                   Elimine dores crônicas, dissolva ansiedade e restaure a harmonia em seus relacionamentos em apenas <strong className="text-primary font-bold">21 dias</strong> com a Tecnologia de Ondas Sonoras Direcionadas
                 </p>
 
                 {/* Reality Check Quote */}
                 <div className="mb-10 bg-gradient-to-r from-rose-500/10 via-purple-500/10 to-rose-500/10 p-6 rounded-2xl border border-rose-500/20 text-left max-w-2xl mx-auto section-fade stagger-4 card-smooth backdrop-blur-sm">
-                  <p className="text-muted-foreground italic mb-3 text-base leading-relaxed">
+                  <p className="text-muted-foreground italic mb-3 text-lg leading-relaxed">
                     "Já tentei de tudo - médicos, terapeutas, remédios, tratamentos caros - e nada resolve de verdade. Continuo sofrendo com dores, ansiedade e relacionamentos que não funcionam."
                   </p>
-                  <p className="text-foreground font-semibold">
+                  <p className="text-foreground font-semibold text-lg">
                     Se você se identifica com isso, finalmente chegou uma solução que funciona de verdade.
                   </p>
                 </div>
                 
                 {/* Main CTA - Free Trial */}
-                <div className="mb-10 bg-gradient-to-r from-amber-500/20 via-amber-400/10 to-amber-500/20 p-6 rounded-2xl border border-amber-500/30 shadow-xl dark:from-amber-600/30 dark:to-amber-700/30 dark:border-amber-600/40 section-fade stagger-5 card-smooth backdrop-blur-sm">
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <Gift className="h-7 w-7 text-amber-500 dark:text-amber-400 animate-pulse-soft" />
-                    <h3 className="text-2xl md:text-3xl font-bold text-amber-600 dark:text-amber-400">
-                      Teste por 30 dias Grátis
+                <div className="mb-10 bg-gradient-to-r from-amber-500/20 via-amber-400/10 to-amber-500/20 p-6 sm:p-8 rounded-2xl border border-amber-500/30 shadow-xl dark:from-amber-600/30 dark:to-amber-700/30 dark:border-amber-600/40 section-fade stagger-5 card-smooth backdrop-blur-sm">
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <Gift className="h-8 w-8 text-amber-500 dark:text-amber-400 animate-pulse-soft" />
+                    <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-600 dark:text-amber-400">
+                      Teste por 7 dias Grátis
                     </h3>
                   </div>
-                  <p className="text-amber-700 dark:text-amber-300 mb-4 text-base">
+                  <p className="text-amber-700 dark:text-amber-300 mb-5 text-lg">
                     Experimente o poder das frequências terapêuticas sem risco. Garantia total de satisfação.
                   </p>
                   <Button asChild size="lg" className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-full shadow-lg glow-effect text-lg px-8 py-6">
@@ -190,27 +190,27 @@ const Index = () => {
                 </div>
                 
                 {/* Key Benefits Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mb-10">
-                  <div className="flex flex-col items-center bg-white/60 dark:bg-white/5 p-5 rounded-2xl backdrop-blur-sm shadow-sm card-smooth border border-rose-100 dark:border-rose-900/20">
-                    <div className="p-3 bg-rose-100 dark:bg-rose-900/30 rounded-full mb-3">
-                      <Heart className="h-6 w-6 text-rose-500" />
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto mb-10">
+                  <div className="flex flex-col items-center bg-white/60 dark:bg-white/5 p-6 rounded-2xl backdrop-blur-sm shadow-sm card-smooth border border-rose-100 dark:border-rose-900/20">
+                    <div className="p-4 bg-rose-100 dark:bg-rose-900/30 rounded-full mb-3">
+                      <Heart className="h-7 w-7 text-rose-500" />
                     </div>
-                    <h3 className="font-semibold text-lg">Ansiedade Zero</h3>
-                    <p className="text-sm text-muted-foreground">Sem efeitos colaterais</p>
+                    <h3 className="font-semibold text-xl">Ansiedade Zero</h3>
+                    <p className="text-base text-muted-foreground">Sem efeitos colaterais</p>
                   </div>
-                  <div className="flex flex-col items-center bg-white/60 dark:bg-white/5 p-5 rounded-2xl backdrop-blur-sm shadow-sm card-smooth border border-amber-100 dark:border-amber-900/20">
-                    <div className="p-3 bg-amber-100 dark:bg-amber-900/30 rounded-full mb-3">
-                      <Sparkles className="h-6 w-6 text-amber-500" />
+                  <div className="flex flex-col items-center bg-white/60 dark:bg-white/5 p-6 rounded-2xl backdrop-blur-sm shadow-sm card-smooth border border-amber-100 dark:border-amber-900/20">
+                    <div className="p-4 bg-amber-100 dark:bg-amber-900/30 rounded-full mb-3">
+                      <Sparkles className="h-7 w-7 text-amber-500" />
                     </div>
-                    <h3 className="font-semibold text-lg">Dores Crônicas</h3>
-                    <p className="text-sm text-muted-foreground">Alívio real e duradouro</p>
+                    <h3 className="font-semibold text-xl">Dores Crônicas</h3>
+                    <p className="text-base text-muted-foreground">Alívio real e duradouro</p>
                   </div>
-                  <div className="flex flex-col items-center bg-white/60 dark:bg-white/5 p-5 rounded-2xl backdrop-blur-sm shadow-sm card-smooth border border-purple-100 dark:border-purple-900/20">
-                    <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full mb-3">
-                      <Users className="h-6 w-6 text-purple-500" />
+                  <div className="flex flex-col items-center bg-white/60 dark:bg-white/5 p-6 rounded-2xl backdrop-blur-sm shadow-sm card-smooth border border-purple-100 dark:border-purple-900/20">
+                    <div className="p-4 bg-purple-100 dark:bg-purple-900/30 rounded-full mb-3">
+                      <Users className="h-7 w-7 text-purple-500" />
                     </div>
-                    <h3 className="font-semibold text-lg">Relacionamentos</h3>
-                    <p className="text-sm text-muted-foreground">Harmonia restaurada</p>
+                    <h3 className="font-semibold text-xl">Relacionamentos</h3>
+                    <p className="text-base text-muted-foreground">Harmonia restaurada</p>
                   </div>
                 </div>
 

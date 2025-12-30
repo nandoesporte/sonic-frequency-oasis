@@ -77,14 +77,14 @@ export function HowItWorksSection() {
         </div>
         
         <div className="text-center mt-10">
-          <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 shadow-lg shadow-primary/25">
+          <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 shadow-lg shadow-primary/25 text-lg px-8 py-6">
             <Link to="/auth" className="gap-2">
               Quero Começar Minha Transformação
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-5 w-5" />
             </Link>
           </Button>
-          <p className="text-sm text-muted-foreground mt-3">
-            30 dias grátis • Sem cartão de crédito • Cancele quando quiser
+          <p className="text-base text-muted-foreground mt-4">
+            7 dias grátis • Sem cartão de crédito • Cancele quando quiser
           </p>
         </div>
       </div>
