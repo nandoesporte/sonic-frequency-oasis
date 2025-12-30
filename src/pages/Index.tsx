@@ -164,24 +164,24 @@ const Index = () => {
                   <p className="text-amber-700 dark:text-amber-300 mb-5 text-lg">
                     Experimente o poder das frequências terapêuticas sem risco. Garantia total de satisfação.
                   </p>
-                  <Button asChild size="lg" className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-full shadow-lg glow-effect text-lg px-8 py-6">
+                  <Button asChild size="lg" className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-full shadow-lg glow-effect text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto">
                     <Link to="/auth">
-                      Começar Minha Transformação
-                      <ArrowRight className="ml-2 h-5 w-5" />
+                      Começar Transformação
+                      <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                     </Link>
                   </Button>
                 </div>
                 
                 {/* Secondary CTAs */}
-                <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-12">
-                  <Button asChild size="lg" className="w-full sm:w-auto rounded-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 shadow-lg shadow-purple-500/25 text-base px-6 transition-all duration-300 hover:scale-105">
+                <div className="flex flex-col sm:flex-row justify-center items-center gap-3 mb-12 px-2">
+                  <Button asChild size="lg" className="w-full sm:w-auto rounded-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 shadow-lg shadow-purple-500/25 text-sm sm:text-base px-5 sm:px-6 py-5 transition-all duration-300 hover:scale-105">
                     <Link to="/auth" className="gap-2">
-                      Quero Transformar Minha Vida
+                      Transformar Minha Vida
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                   </Button>
                   
-                  <Button asChild variant="outline" size="lg" className="w-full sm:w-auto rounded-full border-purple-300 dark:border-purple-700 shadow-sm text-base px-6 transition-all duration-300 hover:scale-105">
+                  <Button asChild variant="outline" size="lg" className="w-full sm:w-auto rounded-full border-purple-300 dark:border-purple-700 shadow-sm text-sm sm:text-base px-5 sm:px-6 py-5 transition-all duration-300 hover:scale-105">
                     <Link to="/scientific" className="gap-2">
                       <ShieldCheck className="h-4 w-4" />
                       Comprovação Científica
@@ -319,19 +319,19 @@ const Index = () => {
                     </div>
                   </div>
                   
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button asChild size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-full shadow-lg glow-effect transition-all duration-300 hover:scale-105">
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center px-2">
+                    <Button asChild size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-full shadow-lg glow-effect transition-all duration-300 hover:scale-105 text-sm sm:text-base px-5 sm:px-6 py-5 w-full sm:w-auto">
                       <Link to="/sentipasso">
-                        <Headphones className="mr-2 h-5 w-5" />
+                        <Headphones className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                         Experimentar SentiPassos
-                        <ArrowRight className="ml-2 h-5 w-5" />
+                        <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                       </Link>
                     </Button>
                     {!user && (
-                      <Button asChild variant="outline" size="lg" className="rounded-full transition-all duration-300 hover:scale-105">
+                      <Button asChild variant="outline" size="lg" className="rounded-full transition-all duration-300 hover:scale-105 text-sm sm:text-base px-5 sm:px-6 py-5 w-full sm:w-auto">
                         <Link to="/auth">
-                          <Gift className="mr-2 h-5 w-5" />
-                          Começar Teste Grátis
+                          <Gift className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                          Teste Grátis
                         </Link>
                       </Button>
                     )}

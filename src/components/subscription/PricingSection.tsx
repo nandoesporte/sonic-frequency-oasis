@@ -212,12 +212,12 @@ export function PricingSection() {
         </div>
 
         {/* Final CTA */}
-        <div className="text-center mt-14">
-          <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-xl glow-effect text-lg px-10 py-7 transition-all duration-300 hover:scale-105">
+        <div className="text-center mt-14 px-2">
+          <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-xl glow-effect text-base sm:text-lg px-6 sm:px-10 py-6 sm:py-7 transition-all duration-300 hover:scale-105 w-full sm:w-auto max-w-md mx-auto">
             <Link to="/auth">
-              <Gift className="mr-2 h-5 w-5" />
-              Começar Teste Grátis de 7 Dias
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <Gift className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+              Teste Grátis de 7 Dias
+              <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
             </Link>
           </Button>
           <p className="text-sm text-muted-foreground mt-4">
