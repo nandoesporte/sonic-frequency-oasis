@@ -190,27 +190,27 @@ const Index = () => {
                 </div>
                 
                 {/* Key Benefits Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto mb-10">
-                  <div className="flex flex-col items-center bg-white/60 dark:bg-white/5 p-6 rounded-2xl backdrop-blur-sm shadow-sm card-smooth border border-rose-100 dark:border-rose-900/20">
-                    <div className="p-4 bg-rose-100 dark:bg-rose-900/30 rounded-full mb-3">
-                      <Heart className="h-7 w-7 text-rose-500" />
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5 max-w-4xl mx-auto mb-10 px-1">
+                  <div className="flex flex-col items-center bg-white/60 dark:bg-white/5 p-4 sm:p-6 rounded-2xl backdrop-blur-sm shadow-sm card-smooth border border-rose-100 dark:border-rose-900/20">
+                    <div className="p-3 sm:p-4 bg-rose-100 dark:bg-rose-900/30 rounded-full mb-2 sm:mb-3">
+                      <Heart className="h-6 w-6 sm:h-7 sm:w-7 text-rose-500" />
                     </div>
-                    <h3 className="font-semibold text-xl">Ansiedade Zero</h3>
-                    <p className="text-base text-muted-foreground">Sem efeitos colaterais</p>
+                    <h3 className="font-semibold text-lg sm:text-xl">Ansiedade Zero</h3>
+                    <p className="text-sm sm:text-base text-muted-foreground">Sem efeitos colaterais</p>
                   </div>
-                  <div className="flex flex-col items-center bg-white/60 dark:bg-white/5 p-6 rounded-2xl backdrop-blur-sm shadow-sm card-smooth border border-amber-100 dark:border-amber-900/20">
-                    <div className="p-4 bg-amber-100 dark:bg-amber-900/30 rounded-full mb-3">
-                      <Sparkles className="h-7 w-7 text-amber-500" />
+                  <div className="flex flex-col items-center bg-white/60 dark:bg-white/5 p-4 sm:p-6 rounded-2xl backdrop-blur-sm shadow-sm card-smooth border border-amber-100 dark:border-amber-900/20">
+                    <div className="p-3 sm:p-4 bg-amber-100 dark:bg-amber-900/30 rounded-full mb-2 sm:mb-3">
+                      <Sparkles className="h-6 w-6 sm:h-7 sm:w-7 text-amber-500" />
                     </div>
-                    <h3 className="font-semibold text-xl">Dores Crônicas</h3>
-                    <p className="text-base text-muted-foreground">Alívio real e duradouro</p>
+                    <h3 className="font-semibold text-lg sm:text-xl">Dores Crônicas</h3>
+                    <p className="text-sm sm:text-base text-muted-foreground">Alívio real e duradouro</p>
                   </div>
-                  <div className="flex flex-col items-center bg-white/60 dark:bg-white/5 p-6 rounded-2xl backdrop-blur-sm shadow-sm card-smooth border border-purple-100 dark:border-purple-900/20">
-                    <div className="p-4 bg-purple-100 dark:bg-purple-900/30 rounded-full mb-3">
-                      <Users className="h-7 w-7 text-purple-500" />
+                  <div className="flex flex-col items-center bg-white/60 dark:bg-white/5 p-4 sm:p-6 rounded-2xl backdrop-blur-sm shadow-sm card-smooth border border-purple-100 dark:border-purple-900/20">
+                    <div className="p-3 sm:p-4 bg-purple-100 dark:bg-purple-900/30 rounded-full mb-2 sm:mb-3">
+                      <Users className="h-6 w-6 sm:h-7 sm:w-7 text-purple-500" />
                     </div>
-                    <h3 className="font-semibold text-xl">Relacionamentos</h3>
-                    <p className="text-base text-muted-foreground">Harmonia restaurada</p>
+                    <h3 className="font-semibold text-lg sm:text-xl">Relacionamentos</h3>
+                    <p className="text-sm sm:text-base text-muted-foreground">Harmonia restaurada</p>
                   </div>
                 </div>
 
@@ -271,27 +271,27 @@ const Index = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="pb-8">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="text-center p-6 bg-white/60 dark:bg-white/5 rounded-2xl card-smooth border border-green-100 dark:border-green-900/20">
-                      <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-full w-fit mx-auto mb-3">
-                        <Heart className="h-8 w-8 text-green-500" />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
+                    <div className="text-center p-4 sm:p-6 bg-white/60 dark:bg-white/5 rounded-2xl card-smooth border border-green-100 dark:border-green-900/20">
+                      <div className="p-2 sm:p-3 bg-green-100 dark:bg-green-900/30 rounded-full w-fit mx-auto mb-2 sm:mb-3">
+                        <Heart className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
                       </div>
-                      <h4 className="font-semibold text-lg mb-2">Cultive a Paz</h4>
-                      <p className="text-sm text-muted-foreground leading-relaxed">Frequências de 40Hz e 528Hz para acalmar a mente e encontrar tranquilidade interior</p>
+                      <h4 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">Cultive a Paz</h4>
+                      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">Frequências de 40Hz e 528Hz para acalmar a mente e encontrar tranquilidade interior</p>
                     </div>
-                    <div className="text-center p-6 bg-white/60 dark:bg-white/5 rounded-2xl card-smooth border border-red-100 dark:border-red-900/20">
-                      <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-full w-fit mx-auto mb-3">
-                        <Waves className="h-8 w-8 text-red-500" />
+                    <div className="text-center p-4 sm:p-6 bg-white/60 dark:bg-white/5 rounded-2xl card-smooth border border-red-100 dark:border-red-900/20">
+                      <div className="p-2 sm:p-3 bg-red-100 dark:bg-red-900/30 rounded-full w-fit mx-auto mb-2 sm:mb-3">
+                        <Waves className="h-6 w-6 sm:h-8 sm:w-8 text-red-500" />
                       </div>
-                      <h4 className="font-semibold text-lg mb-2">Transforme a Raiva</h4>
-                      <p className="text-sm text-muted-foreground leading-relaxed">Frequências de 396Hz para liberar tensões e transformar energia negativa</p>
+                      <h4 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">Transforme a Raiva</h4>
+                      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">Frequências de 396Hz para liberar tensões e transformar energia negativa</p>
                     </div>
-                    <div className="text-center p-6 bg-white/60 dark:bg-white/5 rounded-2xl card-smooth border border-blue-100 dark:border-blue-900/20">
-                      <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full w-fit mx-auto mb-3">
-                        <Sparkles className="h-8 w-8 text-blue-500" />
+                    <div className="text-center p-4 sm:p-6 bg-white/60 dark:bg-white/5 rounded-2xl card-smooth border border-blue-100 dark:border-blue-900/20">
+                      <div className="p-2 sm:p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full w-fit mx-auto mb-2 sm:mb-3">
+                        <Sparkles className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
                       </div>
-                      <h4 className="font-semibold text-lg mb-2">Supere a Tristeza</h4>
-                      <p className="text-sm text-muted-foreground leading-relaxed">Frequências de 741Hz para elevação vibracional e renovação emocional</p>
+                      <h4 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">Supere a Tristeza</h4>
+                      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">Frequências de 741Hz para elevação vibracional e renovação emocional</p>
                     </div>
                   </div>
                   

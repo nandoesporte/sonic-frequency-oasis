@@ -47,29 +47,32 @@ export function CategoryCard({ id, name, description, icon }: CategoryCardProps)
   
   return (
     <Card 
-      className="overflow-hidden hover-scale cursor-pointer"
+      className={cn(
+        "overflow-hidden hover-scale cursor-pointer",
+        isMobile && "p-0"
+      )}
       onClick={handleClick}
     >
-      <CardHeader className="pb-2">
+      <CardHeader className={cn("pb-2", isMobile && "p-3 pb-1")}>
         <div className="flex justify-between items-start">
           <div className="flex items-center">
             {icon}
-            <CardTitle className={cn("ml-2 text-xl", isMobile && "text-2xl")}>{name}</CardTitle>
+            <CardTitle className={cn("ml-2 text-xl", isMobile && "text-lg")}>{name}</CardTitle>
           </div>
         </div>
       </CardHeader>
       
-      <CardContent>
-        <CardDescription className={cn("mb-3", isMobile && "text-base")}>{description}</CardDescription>
+      <CardContent className={cn(isMobile && "p-3 pt-1")}>
+        <CardDescription className={cn("mb-3", isMobile && "text-sm mb-2")}>{description}</CardDescription>
         
         <div className="flex items-center justify-between">
           {count !== null && (
-            <span className={cn("text-xs text-muted-foreground", isMobile && "text-sm")}>
+            <span className={cn("text-xs text-muted-foreground", isMobile && "text-xs")}>
               {count} frequências
             </span>
           )}
           
-          <Button variant="ghost" size="sm" className="ml-auto">
+          <Button variant="ghost" size="sm" className={cn("ml-auto", isMobile && "h-8 px-2 text-xs")}>
             <span className="flex items-center">
               Explorar <ArrowRight className="ml-1 h-3 w-3" />
             </span>

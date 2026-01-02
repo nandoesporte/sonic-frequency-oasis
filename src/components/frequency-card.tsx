@@ -103,7 +103,7 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
         )}
         onClick={handleCardClick}
       >
-        <div className="flex items-center p-4">
+        <div className="flex items-center p-3 sm:p-4">
           <Button
             onClick={(e) => {
               e.stopPropagation();
@@ -112,26 +112,26 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
             variant="secondary"
             size="icon"
             className={cn(
-              "w-10 h-10 rounded-full mr-3 flex-shrink-0",
+              "w-9 h-9 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3 flex-shrink-0",
               isCurrentlyPlaying ? "bg-purple-500 text-white" : "bg-secondary"
             )}
           >
-            {frequency.premium && !hasAccess ? <Lock className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
+            {frequency.premium && !hasAccess ? <Lock className="h-4 w-4 sm:h-5 sm:w-5" /> : <Play className="h-4 w-4 sm:h-5 sm:w-5 ml-0.5" />}
           </Button>
           
           <div className="flex-grow min-w-0">
             <div className="flex items-center">
-              <h3 className="font-semibold truncate text-base">
+              <h3 className="font-semibold truncate text-sm sm:text-base">
                 {frequency.name}
                 {frequency.premium && (
-                  <Crown className="inline-block w-4 h-4 ml-1 text-purple-500" />
+                  <Crown className="inline-block w-3 h-3 sm:w-4 sm:h-4 ml-1 text-purple-500" />
                 )}
               </h3>
               {!frequency.premium && (
-                <Badge variant="success" className="ml-2 text-xs">Grátis</Badge>
+                <Badge variant="success" className="ml-1 sm:ml-2 text-[10px] sm:text-xs px-1 sm:px-2">Grátis</Badge>
               )}
             </div>
-            <p className="text-sm text-muted-foreground truncate">
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">
               {frequency.hz} Hz • {frequency.purpose}
             </p>
           </div>
@@ -141,12 +141,12 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
             size="icon" 
             onClick={handleAddToFavorites}
             className={cn(
-              "flex-shrink-0",
+              "flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10",
               isFavorite && "text-red-500"
             )}
           >
             <Heart className={cn(
-              "h-4 w-4",
+              "h-3 w-3 sm:h-4 sm:w-4",
               isFavorite && "fill-current"
             )} />
           </Button>
