@@ -145,6 +145,11 @@
       max-width: 100% !important;
       width: 100% !important;
     }
+    
+    /* Improved card and grid spacing on mobile */
+    .grid {
+      gap: 0.75rem !important;
+    }
   }
 }
 
