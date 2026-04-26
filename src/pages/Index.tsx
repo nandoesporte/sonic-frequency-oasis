@@ -147,38 +147,27 @@ const Index = () => {
 
                 {/* Quick actions */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
-                  <Link to="/guide" className="sp-glass group p-6 hover:bg-white/[0.07] transition-all">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #8B5CF6, #A78BFA)' }}>
-                        <BookOpen className="h-5 w-5 text-white" />
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                    </div>
-                    <h3 className="font-semibold text-white mb-1">Guia de Uso</h3>
-                    <p className="text-xs text-white/50 leading-relaxed">Aprenda a maximizar cada frequência</p>
-                  </Link>
-
-                  <Link to="/sentipasso" className="sp-glass group p-6 hover:bg-white/[0.07] transition-all">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #3B82F6, #818CF8)' }}>
-                        <Headphones className="h-5 w-5 text-white" />
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                    </div>
-                    <h3 className="font-semibold text-white mb-1">SentiPassos</h3>
-                    <p className="text-xs text-white/50 leading-relaxed">Caminhadas terapêuticas guiadas</p>
-                  </Link>
-
-                  <Link to="/favorites" className="sp-glass group p-6 hover:bg-white/[0.07] transition-all">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #A78BFA, #60A5FA)' }}>
-                        <Heart className="h-5 w-5 text-white" />
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                    </div>
-                    <h3 className="font-semibold text-white mb-1">Favoritos</h3>
-                    <p className="text-xs text-white/50 leading-relaxed">Suas frequências mais usadas</p>
-                  </Link>
+                  <DashboardQuickAction
+                    to="/guide"
+                    icon={<BookOpen className="h-5 w-5" />}
+                    title="Guia de Uso"
+                    description="Aprenda a maximizar cada frequência"
+                    gradient="linear-gradient(135deg, #8B5CF6, #A78BFA)"
+                  />
+                  <DashboardQuickAction
+                    to="/sentipasso"
+                    icon={<Headphones className="h-5 w-5" />}
+                    title="SentiPassos"
+                    description="Caminhadas terapêuticas guiadas"
+                    gradient="linear-gradient(135deg, #3B82F6, #818CF8)"
+                  />
+                  <DashboardQuickAction
+                    to="/favorites"
+                    icon={<Heart className="h-5 w-5" />}
+                    title="Favoritos"
+                    description="Suas frequências mais usadas"
+                    gradient="linear-gradient(135deg, #A78BFA, #60A5FA)"
+                  />
                 </div>
 
                 {/* Subtle divider */}
