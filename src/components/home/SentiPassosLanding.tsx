@@ -17,6 +17,7 @@ import {
   Lock,
   MessageCircle,
   Gem,
+  ChevronRight,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -83,20 +84,58 @@ const Navbar = () => {
 
 const Hero = () => (
   <section id="inicio" className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
+    {/* Animated grid backdrop */}
+    <div className="absolute inset-0 sp-grid-pattern opacity-40 pointer-events-none" />
+    <div className="sp-noise absolute inset-0" />
+
+    {/* Floating orbs */}
     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
-      <div className="absolute top-20 left-1/4 w-96 h-96 bg-[#6366F1]/30 rounded-full blur-[120px] animate-pulse"></div>
-      <div className="absolute top-40 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <div className="sp-orb absolute top-20 left-1/4 w-96 h-96 bg-[#6366F1] sp-animate-float-slow" />
+      <div className="sp-orb absolute top-40 right-1/4 w-96 h-96 bg-[#2DD4BF] sp-animate-float-rev" style={{ animationDelay: '1s' }} />
+    </div>
+
+    {/* Rotating concentric rings (right) */}
+    <div className="hidden md:block absolute top-1/3 -right-32 pointer-events-none sp-animate-spin-slow">
+      <svg width="500" height="500" viewBox="0 0 500 500" fill="none">
+        <circle cx="250" cy="250" r="120" stroke="rgba(99,102,241,0.18)" strokeDasharray="4 8" />
+        <circle cx="250" cy="250" r="170" stroke="rgba(45,212,191,0.15)" strokeDasharray="2 14" />
+        <circle cx="250" cy="250" r="220" stroke="rgba(255,255,255,0.06)" />
+        <circle cx="250" cy="130" r="3" fill="#2DD4BF" />
+        <circle cx="370" cy="250" r="3" fill="#6366F1" />
+      </svg>
+    </div>
+
+    {/* Floating brackets/coordinates (left) */}
+    <div className="hidden md:flex absolute top-40 left-8 flex-col gap-2 text-[10px] sp-font-mono text-white/30 pointer-events-none">
+      <span>// PROTOCOLO_7D</span>
+      <span>$ status: <span className="text-[#2DD4BF]">active</span></span>
+      <span>$ wavelength: 432Hz</span>
     </div>
 
     <div className="container mx-auto px-6 relative z-10 text-center">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
         <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full sp-glass border-white/5 mb-6">
-          <span className="w-2 h-2 rounded-full bg-[#2DD4BF] mr-1 animate-pulse"></span>
+          <span className="relative flex">
+            <span className="absolute inset-0 rounded-full bg-[#2DD4BF] sp-animate-pulse-ring"></span>
+            <span className="w-2 h-2 rounded-full bg-[#2DD4BF] mr-1"></span>
+          </span>
           <span className="text-[10px] uppercase tracking-widest font-bold text-white/80">Sistema v4.2 Ativo</span>
         </span>
         <h1 className="sp-font-display text-4xl md:text-8xl font-bold leading-[0.9] mb-8 sp-glow-text tracking-tighter text-white">
           Restaure sua <br /><span className="sp-text-gradient">Saúde</span>
         </h1>
+
+        {/* Equalizer / sound bars */}
+        <div className="flex items-center justify-center gap-1 mb-8 h-8" aria-hidden="true">
+          {[0.4, 0.7, 1, 0.6, 0.9, 0.5, 0.8, 1, 0.55, 0.75, 0.4].map((h, i) => (
+            <span
+              key={i}
+              className="w-1 bg-gradient-to-t from-[#6366F1] to-[#2DD4BF] rounded-full sp-animate-wave-bar"
+              style={{ height: `${h * 100}%`, animationDelay: `${i * 0.1}s` }}
+            />
+          ))}
+        </div>
+
         <p className="text-white/50 text-lg md:text-xl max-w-lg mx-auto mb-10 leading-relaxed font-light">
           Elimine dores crônicas, ansiedade e estresse através de ondas sonoras direcionadas e neurociência aplicada.
         </p>
@@ -110,7 +149,11 @@ const Hero = () => (
           </Link>
         </div>
 
-        <div className="mt-12 p-8 sp-glass max-w-2xl mx-auto flex flex-col justify-center items-center text-center">
+        <div className="mt-12 p-8 sp-glass max-w-2xl mx-auto flex flex-col justify-center items-center text-center relative">
+          <span className="sp-corner-bracket tl" />
+          <span className="sp-corner-bracket tr" />
+          <span className="sp-corner-bracket bl" />
+          <span className="sp-corner-bracket br" />
           <p className="text-xs text-white/60 italic mb-4">"A arquitetura do futuro não é apenas rápida, é intuitiva e autocurativa."</p>
           <div className="flex items-center justify-center space-x-2">
             <div className="w-6 h-6 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center">
@@ -121,12 +164,34 @@ const Hero = () => (
         </div>
       </motion.div>
     </div>
+
+    {/* Bottom wave divider */}
+    <div className="absolute bottom-0 left-0 right-0 pointer-events-none" aria-hidden="true">
+      <svg viewBox="0 0 1440 80" className="w-full h-12 md:h-20" preserveAspectRatio="none">
+        <path d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z" fill="rgba(99,102,241,0.05)" />
+        <path d="M0,50 C240,90 480,10 720,50 C960,90 1200,10 1440,50" stroke="rgba(45,212,191,0.25)" fill="none" strokeWidth="1" />
+      </svg>
+    </div>
   </section>
 );
 
 const TrustBar = () => (
-  <div className="border-y border-white/5 py-10 sp-glass-nav">
-    <div className="container mx-auto px-6">
+  <div className="border-y border-white/5 py-10 sp-glass-nav relative overflow-hidden">
+    {/* Marquee tags */}
+    <div className="absolute -top-3 left-0 right-0 flex overflow-hidden opacity-30 pointer-events-none">
+      <div className="sp-animate-marquee flex gap-8 whitespace-nowrap text-[8px] sp-font-mono uppercase tracking-[0.4em] text-white/40">
+        {Array(2).fill(null).map((_, k) => (
+          <div key={k} className="flex gap-8">
+            {['Resonance', '432Hz', 'Theta', 'Binaural', 'Alpha', 'Solfeggio', '528Hz', 'Delta', 'Gamma', '7D Protocol'].map((t, i) => (
+              <span key={i} className="flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full bg-[#2DD4BF]" />{t}
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+    <div className="container mx-auto px-6 relative">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 items-center uppercase tracking-[0.2em] font-bold text-[10px]">
         <div className="text-center">
           <div className="text-3xl font-bold mb-1 sp-glow-text text-white">5,000+</div>
@@ -149,10 +214,14 @@ const TrustBar = () => (
   </div>
 );
 
-const BenefitCard = ({ icon: Icon, title, description, color }: any) => (
-  <motion.div whileHover={{ y: -5 }} className="p-8 sp-glass flex flex-col items-start gap-4 h-full">
-    <div className={`p-4 rounded-2xl ${color}`}>
-      <Icon size={32} className="text-white" />
+const BenefitCard = ({ icon: Icon, title, description, color, index }: any) => (
+  <motion.div whileHover={{ y: -5 }} className="p-8 sp-glass flex flex-col items-start gap-4 h-full relative overflow-hidden group">
+    {/* Hover gradient sheen */}
+    <div className="absolute inset-0 bg-gradient-to-br from-[#6366F1]/0 via-[#2DD4BF]/0 to-[#6366F1]/0 group-hover:from-[#6366F1]/5 group-hover:to-[#2DD4BF]/10 transition-all duration-500 pointer-events-none" />
+    <span className="absolute top-4 right-4 text-[9px] sp-font-mono text-white/20">0{index}</span>
+    <div className={`p-4 rounded-2xl ${color} relative`}>
+      <Icon size={32} className="text-white relative z-10" />
+      <span className="absolute inset-0 rounded-2xl bg-white/5 blur-md" />
     </div>
     <h3 className="text-2xl font-bold tracking-tight text-white">{title}</h3>
     <p className="text-white/50 text-sm leading-relaxed font-light">{description}</p>
@@ -160,9 +229,14 @@ const BenefitCard = ({ icon: Icon, title, description, color }: any) => (
 );
 
 const BentoBenefits = () => (
-  <section id="sobre" className="py-24">
-    <div className="container mx-auto px-6">
+  <section id="sobre" className="py-24 relative overflow-hidden">
+    <div className="absolute inset-0 sp-dot-pattern opacity-50 pointer-events-none" />
+    <div className="sp-orb absolute -top-20 left-10 w-72 h-72 bg-[#6366F1]/40 sp-animate-float-slow" />
+    <div className="container mx-auto px-6 relative">
       <div className="text-center mb-16">
+        <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-[#2DD4BF] font-bold mb-4">
+          <span className="w-8 h-px bg-[#2DD4BF]" /> Benefícios <span className="w-8 h-px bg-[#2DD4BF]" />
+        </span>
         <h2 className="text-4xl md:text-7xl font-bold mb-6 sp-glow-text tracking-tighter text-white">
           Adeus ao <span className="sp-text-gradient">Ciclo de Sofrimento</span>
         </h2>
@@ -171,35 +245,57 @@ const BentoBenefits = () => (
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <BenefitCard icon={Brain} title="Ansiedade e Estresse" description="Elimine a angústia no peito e as crises de preocupação. Reestabeleça a calma profunda." color="bg-indigo-600/20" />
-        <BenefitCard icon={Activity} title="Dores Crônicas" description="Alívio real para dores nas costas, enxaquecas e tensões musculares sem medicamentos." color="bg-teal-600/20" />
-        <BenefitCard icon={CloudRain} title="Sono Reparador" description="Durma profundamente em minutos. Acabe com a insônia que te persegue há anos." color="bg-indigo-600/20" />
-        <BenefitCard icon={Heart} title="Equilíbrio Emocional" description="Liberte-se das oscilações de humor e encontre a paz interior que você merece." color="bg-teal-600/20" />
-        <BenefitCard icon={ShieldCheck} title="Sem Efeitos Colaterais" description="Tratamento 100% natural baseado em biofísica e neurociência. Seguro para todas." color="bg-indigo-600/20" />
-        <BenefitCard icon={Zap} title="Energia Vital" description="Aumente seu foco e disposição diária através da ressonância de alta frequência." color="bg-teal-600/20" />
+        <BenefitCard index={1} icon={Brain} title="Ansiedade e Estresse" description="Elimine a angústia no peito e as crises de preocupação. Reestabeleça a calma profunda." color="bg-indigo-600/20" />
+        <BenefitCard index={2} icon={Activity} title="Dores Crônicas" description="Alívio real para dores nas costas, enxaquecas e tensões musculares sem medicamentos." color="bg-teal-600/20" />
+        <BenefitCard index={3} icon={CloudRain} title="Sono Reparador" description="Durma profundamente em minutos. Acabe com a insônia que te persegue há anos." color="bg-indigo-600/20" />
+        <BenefitCard index={4} icon={Heart} title="Equilíbrio Emocional" description="Liberte-se das oscilações de humor e encontre a paz interior que você merece." color="bg-teal-600/20" />
+        <BenefitCard index={5} icon={ShieldCheck} title="Sem Efeitos Colaterais" description="Tratamento 100% natural baseado em biofísica e neurociência. Seguro para todas." color="bg-indigo-600/20" />
+        <BenefitCard index={6} icon={Zap} title="Energia Vital" description="Aumente seu foco e disposição diária através da ressonância de alta frequência." color="bg-teal-600/20" />
       </div>
     </div>
   </section>
 );
 
-const ProcessStep = ({ number, title, description }: any) => (
-  <div className="relative flex flex-col items-center text-center p-6 sp-glass m-2">
-    <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center font-bold text-black mb-6">{number}</div>
+const ProcessStep = ({ number, title, description, isLast }: any) => (
+  <div className="relative flex flex-col items-center text-center p-6 sp-glass m-2 group">
+    {/* Connecting line for desktop */}
+    {!isLast && (
+      <div className="hidden md:block absolute top-1/2 -right-6 w-12 h-px">
+        <div className="h-px bg-gradient-to-r from-[#6366F1]/60 to-transparent" />
+        <ChevronRight className="absolute -top-2 right-0 text-[#6366F1]/60" size={16} />
+      </div>
+    )}
+    <div className="relative mb-6">
+      <span className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#6366F1] to-[#2DD4BF] blur-md opacity-50 group-hover:opacity-80 transition-opacity" />
+      <div className="relative w-12 h-12 rounded-xl bg-white flex items-center justify-center font-bold text-black">{number}</div>
+    </div>
     <h3 className="text-xl font-bold mb-3 text-white">{title}</h3>
     <p className="text-white/50 text-sm font-light">{description}</p>
   </div>
 );
 
 const HowItWorks = () => (
-  <section className="py-24 relative">
-    <div className="container mx-auto px-6">
-      <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 sp-glow-text tracking-tighter text-white">
-        Protocolo <span className="sp-text-gradient">7D</span>
-      </h2>
+  <section className="py-24 relative overflow-hidden">
+    {/* Decorative grid */}
+    <div className="absolute inset-0 sp-grid-pattern opacity-30 pointer-events-none" />
+    {/* Decorative SVG circle (left) */}
+    <div className="hidden md:block absolute -left-40 top-1/2 -translate-y-1/2 sp-animate-spin-slow pointer-events-none">
+      <svg width="320" height="320" viewBox="0 0 320 320" fill="none">
+        <circle cx="160" cy="160" r="140" stroke="rgba(255,255,255,0.05)" strokeDasharray="2 6" />
+        <circle cx="160" cy="160" r="100" stroke="rgba(45,212,191,0.15)" />
+      </svg>
+    </div>
+    <div className="container mx-auto px-6 relative">
+      <div className="text-center mb-16">
+        <span className="inline-block text-[10px] uppercase tracking-[0.3em] text-[#2DD4BF] font-bold mb-4 sp-font-mono">// 03_PROCESSO</span>
+        <h2 className="text-4xl md:text-5xl font-bold sp-glow-text tracking-tighter text-white">
+          Protocolo <span className="sp-text-gradient">7D</span>
+        </h2>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
         <ProcessStep number="01" title="Escolha sua necessidade" description="Ansiedade? Insônia? Dores? Selecione o protocolo inteligente para você." />
         <ProcessStep number="02" title="Ouça por 15-30 minutos" description="Use fones de ouvido. Deixe as ondas regenerativas atuarem no seu sistema." />
-        <ProcessStep number="03" title="Sinta a Transformação" description="Sinta o alívio imediato e a harmonia florescer em todas as áreas da vida." />
+        <ProcessStep number="03" title="Sinta a Transformação" description="Sinta o alívio imediato e a harmonia florescer em todas as áreas da vida." isLast />
       </div>
     </div>
   </section>
@@ -273,9 +369,27 @@ const ScientificProof = () => {
   ];
   return (
     <section className="py-24 relative overflow-hidden">
-      <div className="container mx-auto px-6">
+      {/* Decorative waveform background */}
+      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 opacity-20 pointer-events-none" aria-hidden="true">
+        <svg viewBox="0 0 1200 200" className="w-full h-48" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="sp-wave-grad" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0%" stopColor="#6366F1" stopOpacity="0" />
+              <stop offset="50%" stopColor="#2DD4BF" stopOpacity="1" />
+              <stop offset="100%" stopColor="#6366F1" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <path d="M0,100 Q150,20 300,100 T600,100 T900,100 T1200,100" stroke="url(#sp-wave-grad)" strokeWidth="1.5" fill="none" />
+          <path d="M0,100 Q150,180 300,100 T600,100 T900,100 T1200,100" stroke="url(#sp-wave-grad)" strokeWidth="1" fill="none" opacity="0.5" />
+        </svg>
+      </div>
+      <div className="sp-orb absolute top-10 right-10 w-72 h-72 bg-[#2DD4BF]/30 sp-animate-float-rev" />
+
+      <div className="container mx-auto px-6 relative">
         <div className="text-center mb-16">
-          <span className="text-[#2DD4BF] font-bold text-[10px] uppercase tracking-[0.3em] block mb-4">Evidência Clínica</span>
+          <span className="inline-flex items-center gap-3 text-[#2DD4BF] font-bold text-[10px] uppercase tracking-[0.3em] mb-4">
+            <span className="w-8 h-px bg-[#2DD4BF]" />Evidência Clínica<span className="w-8 h-px bg-[#2DD4BF]" />
+          </span>
           <h2 className="text-4xl md:text-7xl font-bold mb-6 sp-glow-text tracking-tighter text-white">
             Neurobiologia <span className="sp-text-gradient">Aplicada</span>
           </h2>
@@ -285,22 +399,24 @@ const ScientificProof = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
           {data.map((item, i) => (
-            <div key={i} className="space-y-4">
+            <div key={i} className="space-y-4 sp-glass p-6 relative overflow-hidden">
+              <span className="absolute top-3 right-3 text-[8px] sp-font-mono text-white/20">DATA_0{i + 1}</span>
               <div className="flex justify-between items-end">
                 <span className="font-bold text-[10px] uppercase tracking-widest text-white/40">{item.label}</span>
                 <span className="text-[#2DD4BF] font-bold text-2xl">{item.value}</span>
               </div>
               <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                <motion.div initial={{ width: 0 }} whileInView={{ width: item.value }} transition={{ duration: 1.5, ease: 'easeOut' }} className="h-full bg-[#2DD4BF]" />
+                <motion.div initial={{ width: 0 }} whileInView={{ width: item.value }} transition={{ duration: 1.5, ease: 'easeOut' }} className="h-full bg-gradient-to-r from-[#6366F1] to-[#2DD4BF]" />
               </div>
-              <p className="text-[10px] text-white/30 leading-relaxed font-mono">{item.desc}</p>
+              <p className="text-[10px] text-white/30 leading-relaxed sp-font-mono">{item.desc}</p>
             </div>
           ))}
         </div>
-        <div className="mt-16 flex flex-wrap justify-center gap-6 text-[8px] text-white/40 font-bold uppercase tracking-widest">
-          <span className="px-4 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={10} /> ISO 27001 Certified System</span>
-          <span className="px-4 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={10} /> Peer-Reviewed Research</span>
-          <span className="px-4 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={10} /> Clinical Compliance</span>
+        <div className="sp-divider-line my-16 max-w-2xl mx-auto" />
+        <div className="flex flex-wrap justify-center gap-6 text-[8px] text-white/40 font-bold uppercase tracking-widest">
+          <span className="px-4 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={10} className="text-[#2DD4BF]" /> ISO 27001 Certified System</span>
+          <span className="px-4 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={10} className="text-[#2DD4BF]" /> Peer-Reviewed Research</span>
+          <span className="px-4 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={10} className="text-[#2DD4BF]" /> Clinical Compliance</span>
         </div>
       </div>
     </section>
@@ -452,16 +568,33 @@ export const SentiPassosLanding = () => {
       <Testimonials />
       <Pricing />
 
-      <section className="py-24">
-        <div className="container mx-auto px-6 text-center">
-          <div className="max-w-4xl mx-auto sp-glass p-12 md:p-20 border-white/5" style={{ borderRadius: 50 }}>
-            <h2 className="text-4xl md:text-7xl font-bold mb-8 sp-glow-text tracking-tighter text-white">
+      <section className="py-24 relative overflow-hidden">
+        <div className="absolute inset-0 sp-grid-pattern opacity-30 pointer-events-none" />
+        <div className="sp-orb absolute top-0 left-1/4 w-96 h-96 bg-[#6366F1]/40 sp-animate-float-slow" />
+        <div className="sp-orb absolute bottom-0 right-1/4 w-96 h-96 bg-[#2DD4BF]/30 sp-animate-float-rev" />
+
+        <div className="container mx-auto px-6 text-center relative">
+          <div className="max-w-4xl mx-auto sp-glass p-12 md:p-20 border-white/5 relative overflow-hidden" style={{ borderRadius: 50 }}>
+            <span className="sp-corner-bracket tl" />
+            <span className="sp-corner-bracket tr" />
+            <span className="sp-corner-bracket bl" />
+            <span className="sp-corner-bracket br" />
+
+            {/* Animated rings */}
+            <div className="absolute -top-20 -right-20 sp-animate-spin-slow opacity-30 pointer-events-none">
+              <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
+                <circle cx="100" cy="100" r="80" stroke="#2DD4BF" strokeDasharray="2 8" />
+                <circle cx="100" cy="100" r="50" stroke="#6366F1" strokeDasharray="4 4" />
+              </svg>
+            </div>
+
+            <h2 className="text-4xl md:text-7xl font-bold mb-8 sp-glow-text tracking-tighter text-white relative">
               Pronta para sua<br /><span className="sp-text-gradient">Transformação?</span>
             </h2>
-            <p className="text-white/50 text-lg mb-12 max-w-xl mx-auto font-light">
+            <p className="text-white/50 text-lg mb-12 max-w-xl mx-auto font-light relative">
               Junte-se a mais de 5.000 mulheres que já resgataram sua saúde emocional e física. Comece agora seu teste gratuito.
             </p>
-            <Link to="/auth" className="inline-flex px-12 py-6 rounded-xl bg-white text-black font-bold text-lg hover:scale-105 transition-transform shadow-2xl items-center justify-center gap-3 mx-auto">
+            <Link to="/auth" className="relative inline-flex px-12 py-6 rounded-xl bg-white text-black font-bold text-lg hover:scale-105 transition-transform shadow-2xl items-center justify-center gap-3 mx-auto">
               Começar Transformação <Zap size={24} fill="currentColor" />
             </Link>
             <p className="mt-8 text-[10px] text-white/30 uppercase tracking-[0.2em] flex items-center justify-center gap-2">
