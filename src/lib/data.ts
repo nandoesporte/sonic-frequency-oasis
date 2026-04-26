@@ -527,9 +527,12 @@ async function seedFrequenciesForCategory(category: ValidDatabaseCategory) {
     const { error } = await supabase
       .from('frequencies')
       .insert([{ 
-        ...freq,
+        name: freq.name,
+        hz: freq.hz,
+        purpose: freq.purpose,
+        description: freq.description,
         category: category,
-        is_premium: freq.premium
+        is_premium: freq.premium,
       }]);
     
     if (error && error.code !== '23505') { // Ignore duplicate key errors
