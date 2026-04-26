@@ -15,6 +15,7 @@ import { ScientificEvidence } from "@/components/home/ScientificEvidence";
 import { ProfessionalFeatures } from "@/components/home/ProfessionalFeatures";
 import { TestimonialSection } from "@/components/home/TestimonialSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
+import { SentiPassosLanding } from "@/components/home/SentiPassosLanding";
 import { SentipassoSection } from "@/components/sentipasso/SentipassoSection";
 import { toast } from "@/components/ui/sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -82,6 +83,11 @@ const Index = () => {
     }
     return false;
   }, [user, navigate]);
+
+  // Visitors (non-logged in) see the new SentiPassos landing page
+  if (!user) {
+    return <SentiPassosLanding />;
+  }
 
   return (
     <AudioProvider>
