@@ -33,6 +33,9 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  display: inline-block;
+  line-height: 1.1;
+  padding-bottom: 0.1em;
 }
 .sp-accent-gradient {
   background: linear-gradient(135deg, #6366F1, #2DD4BF);
