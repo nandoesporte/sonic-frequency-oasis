@@ -84,6 +84,11 @@ const Index = () => {
     return false;
   }, [user, navigate]);
 
+  // Visitors (non-logged in) see the new SentiPassos landing page
+  if (!user) {
+    return <SentiPassosLanding />;
+  }
+
   return (
     <AudioProvider>
       <div className={`min-h-screen ${user ? 'pb-24' : 'pb-0'}`}>
