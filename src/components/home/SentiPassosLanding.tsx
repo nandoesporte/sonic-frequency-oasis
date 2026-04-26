@@ -397,26 +397,26 @@ const ScientificProof = () => {
             Não é mágica, é ciência. Nossas frequências são baseadas em décadas de pesquisas em neurociência e medicina integrativa.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {data.map((item, i) => (
-            <div key={i} className="space-y-4 sp-glass p-6 relative overflow-hidden">
-              <span className="absolute top-3 right-3 text-[8px] sp-font-mono text-white/20">DATA_0{i + 1}</span>
-              <div className="flex justify-between items-end">
-                <span className="font-bold text-[10px] uppercase tracking-widest text-white/40">{item.label}</span>
-                <span className="text-[#2DD4BF] font-bold text-2xl">{item.value}</span>
+            <div key={i} className="space-y-5 sp-glass p-8 relative overflow-hidden">
+              <span className="absolute top-3 right-3 text-[10px] sp-font-mono text-white/20">DATA_0{i + 1}</span>
+              <div className="flex justify-between items-end gap-4">
+                <span className="font-bold text-sm md:text-base uppercase tracking-widest text-white/70">{item.label}</span>
+                <span className="text-[#2DD4BF] font-bold text-4xl md:text-5xl leading-none">{item.value}</span>
               </div>
-              <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                 <motion.div initial={{ width: 0 }} whileInView={{ width: item.value }} transition={{ duration: 1.5, ease: 'easeOut' }} className="h-full bg-gradient-to-r from-[#6366F1] to-[#2DD4BF]" />
               </div>
-              <p className="text-[10px] text-white/30 leading-relaxed sp-font-mono">{item.desc}</p>
+              <p className="text-sm md:text-base text-white/60 leading-relaxed">{item.desc}</p>
             </div>
           ))}
         </div>
         <div className="sp-divider-line my-16 max-w-2xl mx-auto" />
-        <div className="flex flex-wrap justify-center gap-6 text-[8px] text-white/40 font-bold uppercase tracking-widest">
-          <span className="px-4 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={10} className="text-[#2DD4BF]" /> ISO 27001 Certified System</span>
-          <span className="px-4 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={10} className="text-[#2DD4BF]" /> Peer-Reviewed Research</span>
-          <span className="px-4 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={10} className="text-[#2DD4BF]" /> Clinical Compliance</span>
+        <div className="flex flex-wrap justify-center gap-4 text-xs md:text-sm text-white/60 font-semibold uppercase tracking-wider">
+          <span className="px-5 py-2.5 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={14} className="text-[#2DD4BF]" /> ISO 27001 Certified System</span>
+          <span className="px-5 py-2.5 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={14} className="text-[#2DD4BF]" /> Peer-Reviewed Research</span>
+          <span className="px-5 py-2.5 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={14} className="text-[#2DD4BF]" /> Clinical Compliance</span>
         </div>
       </div>
     </section>
