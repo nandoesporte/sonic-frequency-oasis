@@ -175,8 +175,22 @@ const Hero = () => (
 );
 
 const TrustBar = () => (
-  <div className="border-y border-white/5 py-10 sp-glass-nav">
-    <div className="container mx-auto px-6">
+  <div className="border-y border-white/5 py-10 sp-glass-nav relative overflow-hidden">
+    {/* Marquee tags */}
+    <div className="absolute -top-3 left-0 right-0 flex overflow-hidden opacity-30 pointer-events-none">
+      <div className="sp-animate-marquee flex gap-8 whitespace-nowrap text-[8px] sp-font-mono uppercase tracking-[0.4em] text-white/40">
+        {Array(2).fill(null).map((_, k) => (
+          <div key={k} className="flex gap-8">
+            {['Resonance', '432Hz', 'Theta', 'Binaural', 'Alpha', 'Solfeggio', '528Hz', 'Delta', 'Gamma', '7D Protocol'].map((t, i) => (
+              <span key={i} className="flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full bg-[#2DD4BF]" />{t}
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+    <div className="container mx-auto px-6 relative">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 items-center uppercase tracking-[0.2em] font-bold text-[10px]">
         <div className="text-center">
           <div className="text-3xl font-bold mb-1 sp-glow-text text-white">5,000+</div>
@@ -199,10 +213,14 @@ const TrustBar = () => (
   </div>
 );
 
-const BenefitCard = ({ icon: Icon, title, description, color }: any) => (
-  <motion.div whileHover={{ y: -5 }} className="p-8 sp-glass flex flex-col items-start gap-4 h-full">
-    <div className={`p-4 rounded-2xl ${color}`}>
-      <Icon size={32} className="text-white" />
+const BenefitCard = ({ icon: Icon, title, description, color, index }: any) => (
+  <motion.div whileHover={{ y: -5 }} className="p-8 sp-glass flex flex-col items-start gap-4 h-full relative overflow-hidden group">
+    {/* Hover gradient sheen */}
+    <div className="absolute inset-0 bg-gradient-to-br from-[#6366F1]/0 via-[#2DD4BF]/0 to-[#6366F1]/0 group-hover:from-[#6366F1]/5 group-hover:to-[#2DD4BF]/10 transition-all duration-500 pointer-events-none" />
+    <span className="absolute top-4 right-4 text-[9px] sp-font-mono text-white/20">0{index}</span>
+    <div className={`p-4 rounded-2xl ${color} relative`}>
+      <Icon size={32} className="text-white relative z-10" />
+      <span className="absolute inset-0 rounded-2xl bg-white/5 blur-md" />
     </div>
     <h3 className="text-2xl font-bold tracking-tight text-white">{title}</h3>
     <p className="text-white/50 text-sm leading-relaxed font-light">{description}</p>
@@ -210,9 +228,14 @@ const BenefitCard = ({ icon: Icon, title, description, color }: any) => (
 );
 
 const BentoBenefits = () => (
-  <section id="sobre" className="py-24">
-    <div className="container mx-auto px-6">
+  <section id="sobre" className="py-24 relative overflow-hidden">
+    <div className="absolute inset-0 sp-dot-pattern opacity-50 pointer-events-none" />
+    <div className="sp-orb absolute -top-20 left-10 w-72 h-72 bg-[#6366F1]/40 sp-animate-float-slow" />
+    <div className="container mx-auto px-6 relative">
       <div className="text-center mb-16">
+        <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-[#2DD4BF] font-bold mb-4">
+          <span className="w-8 h-px bg-[#2DD4BF]" /> Benefícios <span className="w-8 h-px bg-[#2DD4BF]" />
+        </span>
         <h2 className="text-4xl md:text-7xl font-bold mb-6 sp-glow-text tracking-tighter text-white">
           Adeus ao <span className="sp-text-gradient">Ciclo de Sofrimento</span>
         </h2>
@@ -221,35 +244,57 @@ const BentoBenefits = () => (
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <BenefitCard icon={Brain} title="Ansiedade e Estresse" description="Elimine a angústia no peito e as crises de preocupação. Reestabeleça a calma profunda." color="bg-indigo-600/20" />
-        <BenefitCard icon={Activity} title="Dores Crônicas" description="Alívio real para dores nas costas, enxaquecas e tensões musculares sem medicamentos." color="bg-teal-600/20" />
-        <BenefitCard icon={CloudRain} title="Sono Reparador" description="Durma profundamente em minutos. Acabe com a insônia que te persegue há anos." color="bg-indigo-600/20" />
-        <BenefitCard icon={Heart} title="Equilíbrio Emocional" description="Liberte-se das oscilações de humor e encontre a paz interior que você merece." color="bg-teal-600/20" />
-        <BenefitCard icon={ShieldCheck} title="Sem Efeitos Colaterais" description="Tratamento 100% natural baseado em biofísica e neurociência. Seguro para todas." color="bg-indigo-600/20" />
-        <BenefitCard icon={Zap} title="Energia Vital" description="Aumente seu foco e disposição diária através da ressonância de alta frequência." color="bg-teal-600/20" />
+        <BenefitCard index={1} icon={Brain} title="Ansiedade e Estresse" description="Elimine a angústia no peito e as crises de preocupação. Reestabeleça a calma profunda." color="bg-indigo-600/20" />
+        <BenefitCard index={2} icon={Activity} title="Dores Crônicas" description="Alívio real para dores nas costas, enxaquecas e tensões musculares sem medicamentos." color="bg-teal-600/20" />
+        <BenefitCard index={3} icon={CloudRain} title="Sono Reparador" description="Durma profundamente em minutos. Acabe com a insônia que te persegue há anos." color="bg-indigo-600/20" />
+        <BenefitCard index={4} icon={Heart} title="Equilíbrio Emocional" description="Liberte-se das oscilações de humor e encontre a paz interior que você merece." color="bg-teal-600/20" />
+        <BenefitCard index={5} icon={ShieldCheck} title="Sem Efeitos Colaterais" description="Tratamento 100% natural baseado em biofísica e neurociência. Seguro para todas." color="bg-indigo-600/20" />
+        <BenefitCard index={6} icon={Zap} title="Energia Vital" description="Aumente seu foco e disposição diária através da ressonância de alta frequência." color="bg-teal-600/20" />
       </div>
     </div>
   </section>
 );
 
-const ProcessStep = ({ number, title, description }: any) => (
-  <div className="relative flex flex-col items-center text-center p-6 sp-glass m-2">
-    <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center font-bold text-black mb-6">{number}</div>
+const ProcessStep = ({ number, title, description, isLast }: any) => (
+  <div className="relative flex flex-col items-center text-center p-6 sp-glass m-2 group">
+    {/* Connecting line for desktop */}
+    {!isLast && (
+      <div className="hidden md:block absolute top-1/2 -right-6 w-12 h-px">
+        <div className="h-px bg-gradient-to-r from-[#6366F1]/60 to-transparent" />
+        <ChevronRight className="absolute -top-2 right-0 text-[#6366F1]/60" size={16} />
+      </div>
+    )}
+    <div className="relative mb-6">
+      <span className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#6366F1] to-[#2DD4BF] blur-md opacity-50 group-hover:opacity-80 transition-opacity" />
+      <div className="relative w-12 h-12 rounded-xl bg-white flex items-center justify-center font-bold text-black">{number}</div>
+    </div>
     <h3 className="text-xl font-bold mb-3 text-white">{title}</h3>
     <p className="text-white/50 text-sm font-light">{description}</p>
   </div>
 );
 
 const HowItWorks = () => (
-  <section className="py-24 relative">
-    <div className="container mx-auto px-6">
-      <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 sp-glow-text tracking-tighter text-white">
-        Protocolo <span className="sp-text-gradient">7D</span>
-      </h2>
+  <section className="py-24 relative overflow-hidden">
+    {/* Decorative grid */}
+    <div className="absolute inset-0 sp-grid-pattern opacity-30 pointer-events-none" />
+    {/* Decorative SVG circle (left) */}
+    <div className="hidden md:block absolute -left-40 top-1/2 -translate-y-1/2 sp-animate-spin-slow pointer-events-none">
+      <svg width="320" height="320" viewBox="0 0 320 320" fill="none">
+        <circle cx="160" cy="160" r="140" stroke="rgba(255,255,255,0.05)" strokeDasharray="2 6" />
+        <circle cx="160" cy="160" r="100" stroke="rgba(45,212,191,0.15)" />
+      </svg>
+    </div>
+    <div className="container mx-auto px-6 relative">
+      <div className="text-center mb-16">
+        <span className="inline-block text-[10px] uppercase tracking-[0.3em] text-[#2DD4BF] font-bold mb-4 sp-font-mono">// 03_PROCESSO</span>
+        <h2 className="text-4xl md:text-5xl font-bold sp-glow-text tracking-tighter text-white">
+          Protocolo <span className="sp-text-gradient">7D</span>
+        </h2>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
         <ProcessStep number="01" title="Escolha sua necessidade" description="Ansiedade? Insônia? Dores? Selecione o protocolo inteligente para você." />
         <ProcessStep number="02" title="Ouça por 15-30 minutos" description="Use fones de ouvido. Deixe as ondas regenerativas atuarem no seu sistema." />
-        <ProcessStep number="03" title="Sinta a Transformação" description="Sinta o alívio imediato e a harmonia florescer em todas as áreas da vida." />
+        <ProcessStep number="03" title="Sinta a Transformação" description="Sinta o alívio imediato e a harmonia florescer em todas as áreas da vida." isLast />
       </div>
     </div>
   </section>
