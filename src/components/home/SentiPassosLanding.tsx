@@ -19,6 +19,9 @@ import {
   Gem,
   ChevronRight,
   AudioWaveform,
+  MapPin,
+  Mail,
+  Phone,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -515,8 +518,9 @@ const Pricing = () => (
 const Footer = () => (
   <footer className="py-20 border-t border-white/5">
     <div className="container mx-auto px-6">
-      <div className="flex flex-col md:flex-row justify-between gap-12 mb-16">
-        <div className="max-w-sm">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+        {/* Brand */}
+        <div className="md:col-span-4">
           <div className="flex items-center gap-2 mb-6">
             <div className="relative w-12 h-12 flex items-center justify-center">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full animate-pulse" />
@@ -527,41 +531,47 @@ const Footer = () => (
               <span className="text-white ml-1">App</span>
             </span>
           </div>
-          <p className="text-gray-500 leading-relaxed text-sm">
-            Somos focados em neurociência e bem-estar através de frequências bioacústicas. Nossa missão é restaurar a qualidade de vida de milhares de mulheres.
+          <p className="text-gray-400 leading-relaxed text-sm mb-4">
+            Soluções tecnológicas que transformam frequências em bem-estar e qualidade de vida.
           </p>
+          <p className="text-xs text-gray-500 sp-font-mono">CNPJ: 14.164.334/0001-05</p>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-12">
-          <div>
-            <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-white">Produto</h4>
-            <ul className="space-y-4 text-sm text-gray-500">
-              <li><a href="#sobre" className="hover:text-[#8B5CF6] transition-colors">Protocolo 7D</a></li>
-              <li><a href="#caminhadas" className="hover:text-[#8B5CF6] transition-colors">Caminhadas</a></li>
-              <li><a href="#" className="hover:text-[#8B5CF6] transition-colors">Preços</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-white">Suporte</h4>
-            <ul className="space-y-4 text-sm text-gray-500">
-              <li><a href="#" className="hover:text-[#8B5CF6] transition-colors">FAQ</a></li>
-              <li><a href="#" className="hover:text-[#8B5CF6] transition-colors">Contato</a></li>
-              <li><a href="/terms" className="hover:text-[#8B5CF6] transition-colors">Aviso Legal</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-white">Social</h4>
-            <ul className="space-y-4 text-sm text-gray-500">
-              <li><a href="#" className="hover:text-[#8B5CF6] transition-colors">Instagram</a></li>
-              <li><a href="#" className="hover:text-[#8B5CF6] transition-colors">YouTube</a></li>
-            </ul>
-          </div>
+
+        {/* Informações de contato */}
+        <div className="md:col-span-5">
+          <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-white">Informações</h4>
+          <ul className="space-y-4 text-sm text-gray-400">
+            <li className="flex items-start gap-3">
+              <MapPin size={16} className="text-[#8B5CF6] mt-0.5 flex-shrink-0" />
+              <span>Avenida Doutor Luiz Teixeira Mendes, 3096 — Zona 05, Maringá - PR, 87.015-001</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <Mail size={16} className="text-[#8B5CF6] flex-shrink-0" />
+              <a href="mailto:contato@kefersolucoes.com.br" className="hover:text-white transition-colors">contato@kefersolucoes.com.br</a>
+            </li>
+            <li className="flex items-center gap-3">
+              <Phone size={16} className="text-[#8B5CF6] flex-shrink-0" />
+              <a href="https://wa.me/5544997270698" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">WhatsApp: (44) 99727-0698</a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Links */}
+        <div className="md:col-span-3">
+          <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-white">Navegação</h4>
+          <ul className="space-y-3 text-sm text-gray-400">
+            <li><a href="#sobre" className="hover:text-[#8B5CF6] transition-colors">Protocolo 7D</a></li>
+            <li><a href="#caminhadas" className="hover:text-[#8B5CF6] transition-colors">Caminhadas</a></li>
+            <li><Link to="/scientific" className="hover:text-[#8B5CF6] transition-colors">Comprovação</Link></li>
+            <li><Link to="/terms" className="hover:text-[#8B5CF6] transition-colors">Termos</Link></li>
+          </ul>
         </div>
       </div>
       <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-gray-600 uppercase tracking-[0.2em]">
-        <p>© 2024 SentiPassos Ltda. Todos os direitos reservados.</p>
+        <p>© 2024 Frequency App. Todos os direitos reservados.</p>
         <div className="flex gap-8">
-          <a href="/terms">Privacidade</a>
-          <a href="/terms">Termos</a>
+          <Link to="/terms">Privacidade</Link>
+          <Link to="/terms">Termos</Link>
         </div>
       </div>
     </div>
