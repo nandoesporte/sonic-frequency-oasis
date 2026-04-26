@@ -83,20 +83,58 @@ const Navbar = () => {
 
 const Hero = () => (
   <section id="inicio" className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
+    {/* Animated grid backdrop */}
+    <div className="absolute inset-0 sp-grid-pattern opacity-40 pointer-events-none" />
+    <div className="sp-noise absolute inset-0" />
+
+    {/* Floating orbs */}
     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
-      <div className="absolute top-20 left-1/4 w-96 h-96 bg-[#6366F1]/30 rounded-full blur-[120px] animate-pulse"></div>
-      <div className="absolute top-40 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <div className="sp-orb absolute top-20 left-1/4 w-96 h-96 bg-[#6366F1] sp-animate-float-slow" />
+      <div className="sp-orb absolute top-40 right-1/4 w-96 h-96 bg-[#2DD4BF] sp-animate-float-rev" style={{ animationDelay: '1s' }} />
+    </div>
+
+    {/* Rotating concentric rings (right) */}
+    <div className="hidden md:block absolute top-1/3 -right-32 pointer-events-none sp-animate-spin-slow">
+      <svg width="500" height="500" viewBox="0 0 500 500" fill="none">
+        <circle cx="250" cy="250" r="120" stroke="rgba(99,102,241,0.18)" strokeDasharray="4 8" />
+        <circle cx="250" cy="250" r="170" stroke="rgba(45,212,191,0.15)" strokeDasharray="2 14" />
+        <circle cx="250" cy="250" r="220" stroke="rgba(255,255,255,0.06)" />
+        <circle cx="250" cy="130" r="3" fill="#2DD4BF" />
+        <circle cx="370" cy="250" r="3" fill="#6366F1" />
+      </svg>
+    </div>
+
+    {/* Floating brackets/coordinates (left) */}
+    <div className="hidden md:flex absolute top-40 left-8 flex-col gap-2 text-[10px] sp-font-mono text-white/30 pointer-events-none">
+      <span>// PROTOCOLO_7D</span>
+      <span>$ status: <span className="text-[#2DD4BF]">active</span></span>
+      <span>$ wavelength: 432Hz</span>
     </div>
 
     <div className="container mx-auto px-6 relative z-10 text-center">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
         <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full sp-glass border-white/5 mb-6">
-          <span className="w-2 h-2 rounded-full bg-[#2DD4BF] mr-1 animate-pulse"></span>
+          <span className="relative flex">
+            <span className="absolute inset-0 rounded-full bg-[#2DD4BF] sp-animate-pulse-ring"></span>
+            <span className="w-2 h-2 rounded-full bg-[#2DD4BF] mr-1"></span>
+          </span>
           <span className="text-[10px] uppercase tracking-widest font-bold text-white/80">Sistema v4.2 Ativo</span>
         </span>
         <h1 className="sp-font-display text-4xl md:text-8xl font-bold leading-[0.9] mb-8 sp-glow-text tracking-tighter text-white">
           Restaure sua <br /><span className="sp-text-gradient">Saúde</span>
         </h1>
+
+        {/* Equalizer / sound bars */}
+        <div className="flex items-center justify-center gap-1 mb-8 h-8" aria-hidden="true">
+          {[0.4, 0.7, 1, 0.6, 0.9, 0.5, 0.8, 1, 0.55, 0.75, 0.4].map((h, i) => (
+            <span
+              key={i}
+              className="w-1 bg-gradient-to-t from-[#6366F1] to-[#2DD4BF] rounded-full sp-animate-wave-bar"
+              style={{ height: `${h * 100}%`, animationDelay: `${i * 0.1}s` }}
+            />
+          ))}
+        </div>
+
         <p className="text-white/50 text-lg md:text-xl max-w-lg mx-auto mb-10 leading-relaxed font-light">
           Elimine dores crônicas, ansiedade e estresse através de ondas sonoras direcionadas e neurociência aplicada.
         </p>
@@ -110,7 +148,11 @@ const Hero = () => (
           </Link>
         </div>
 
-        <div className="mt-12 p-8 sp-glass max-w-2xl mx-auto flex flex-col justify-center items-center text-center">
+        <div className="mt-12 p-8 sp-glass max-w-2xl mx-auto flex flex-col justify-center items-center text-center relative">
+          <span className="sp-corner-bracket tl" />
+          <span className="sp-corner-bracket tr" />
+          <span className="sp-corner-bracket bl" />
+          <span className="sp-corner-bracket br" />
           <p className="text-xs text-white/60 italic mb-4">"A arquitetura do futuro não é apenas rápida, é intuitiva e autocurativa."</p>
           <div className="flex items-center justify-center space-x-2">
             <div className="w-6 h-6 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center">
@@ -120,6 +162,14 @@ const Hero = () => (
           </div>
         </div>
       </motion.div>
+    </div>
+
+    {/* Bottom wave divider */}
+    <div className="absolute bottom-0 left-0 right-0 pointer-events-none" aria-hidden="true">
+      <svg viewBox="0 0 1440 80" className="w-full h-12 md:h-20" preserveAspectRatio="none">
+        <path d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z" fill="rgba(99,102,241,0.05)" />
+        <path d="M0,50 C240,90 480,10 720,50 C960,90 1200,10 1440,50" stroke="rgba(45,212,191,0.25)" fill="none" strokeWidth="1" />
+      </svg>
     </div>
   </section>
 );
