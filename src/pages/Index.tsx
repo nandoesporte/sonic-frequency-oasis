@@ -406,7 +406,7 @@ const Index = () => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                {categories.map((category) => {
+                {categories.map((category, idx) => {
                   const CategoryIcon = category.icon;
                   return (
                     <CategoryCard
