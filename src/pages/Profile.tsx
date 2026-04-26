@@ -24,9 +24,6 @@ interface SubscriptionData {
   plan_description?: string;
   subscription_tier?: string;
   last_payment_date?: string;
-  is_trial?: boolean;
-  trial_ends_at?: string;
-  trial_started_at?: string;
 }
 
 const Profile = () => {
