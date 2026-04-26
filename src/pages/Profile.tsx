@@ -94,9 +94,6 @@ const Profile = () => {
             plan_description: planDescription,
             subscription_tier: subData.subscription_tier,
             last_payment_date: subData.last_payment_date,
-            is_trial: subData.is_trial,
-            trial_ends_at: subData.trial_ends_at,
-            trial_started_at: subData.trial_started_at
           });
         }
       } catch (error) {
