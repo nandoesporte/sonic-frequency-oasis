@@ -95,7 +95,7 @@ const Hero = () => (
           <span className="text-[10px] uppercase tracking-widest font-bold text-white/80">Sistema v4.2 Ativo</span>
         </span>
         <h1 className="sp-font-display text-4xl md:text-8xl font-bold leading-[0.9] mb-8 sp-glow-text tracking-tighter text-white">
-          Restaure sua <br /><span className="sp-text-gradient inline-block pb-2">Saúde</span>
+          Restaure sua <br /><span className="sp-text-gradient">Saúde</span>
         </h1>
         <p className="text-white/50 text-lg md:text-xl max-w-lg mx-auto mb-10 leading-relaxed font-light">
           Elimine dores crônicas, ansiedade e estresse através de ondas sonoras direcionadas e neurociência aplicada.
