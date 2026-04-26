@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { AudioPlayer } from "@/components/audio-player";
 import { CategoryCard } from "@/components/category-card";
 import { FrequencyCard } from "@/components/frequency-card";
+import { DashboardCategoryCard, DashboardFrequencyCard, DashboardQuickAction } from "@/components/home/DashboardCards";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { AudioProvider } from "@/lib/audio-context";
