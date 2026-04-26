@@ -29,13 +29,19 @@
 }
 .sp-glow-text { text-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
 .sp-text-gradient {
-  background: linear-gradient(135deg, #6366F1, #2DD4BF);
+  background-image: linear-gradient(135deg, #6366F1, #2DD4BF);
   -webkit-background-clip: text;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
   color: transparent;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  font-family: inherit;
   display: inline-block;
-  line-height: 1.1;
-  padding-bottom: 0.1em;
+  padding-bottom: 0.15em;
+  margin-bottom: -0.15em;
 }
 .sp-accent-gradient {
   background: linear-gradient(135deg, #6366F1, #2DD4BF);
