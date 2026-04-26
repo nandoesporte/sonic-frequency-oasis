@@ -616,13 +616,13 @@ export const SentiPassosLanding = () => {
               Pronta para sua<br /><span className="sp-text-gradient">Transformação?</span>
             </h2>
             <p className="text-white/50 text-lg mb-12 max-w-xl mx-auto font-light relative">
-              Junte-se a mais de 5.000 mulheres que já resgataram sua saúde emocional e física. Comece agora seu teste gratuito.
+              Junte-se a mais de 5.000 mulheres que já resgataram sua saúde emocional e física. Comece agora sua jornada de transformação.
             </p>
             <Link to="/auth" className="relative inline-flex px-12 py-6 rounded-xl bg-white text-black font-bold text-lg hover:scale-105 transition-transform shadow-2xl items-center justify-center gap-3 mx-auto">
               Começar Transformação <Zap size={24} fill="currentColor" />
             </Link>
             <p className="mt-8 text-[10px] text-white/30 uppercase tracking-[0.2em] flex items-center justify-center gap-2">
-              <ShieldCheck size={14} className="text-[#A78BFA]" /> Garantia de 7 dias ou seu dinheiro de volta.
+              <ShieldCheck size={14} className="text-[#A78BFA]" /> Acesso imediato e seguro.
             </p>
           </div>
         </div>
