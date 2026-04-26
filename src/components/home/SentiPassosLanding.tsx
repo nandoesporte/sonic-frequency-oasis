@@ -17,6 +17,7 @@ import {
   Lock,
   MessageCircle,
   Gem,
+  ChevronRight,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
