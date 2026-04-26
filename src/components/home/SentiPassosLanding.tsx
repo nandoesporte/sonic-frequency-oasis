@@ -369,9 +369,27 @@ const ScientificProof = () => {
   ];
   return (
     <section className="py-24 relative overflow-hidden">
-      <div className="container mx-auto px-6">
+      {/* Decorative waveform background */}
+      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 opacity-20 pointer-events-none" aria-hidden="true">
+        <svg viewBox="0 0 1200 200" className="w-full h-48" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="sp-wave-grad" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0%" stopColor="#6366F1" stopOpacity="0" />
+              <stop offset="50%" stopColor="#2DD4BF" stopOpacity="1" />
+              <stop offset="100%" stopColor="#6366F1" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <path d="M0,100 Q150,20 300,100 T600,100 T900,100 T1200,100" stroke="url(#sp-wave-grad)" strokeWidth="1.5" fill="none" />
+          <path d="M0,100 Q150,180 300,100 T600,100 T900,100 T1200,100" stroke="url(#sp-wave-grad)" strokeWidth="1" fill="none" opacity="0.5" />
+        </svg>
+      </div>
+      <div className="sp-orb absolute top-10 right-10 w-72 h-72 bg-[#2DD4BF]/30 sp-animate-float-rev" />
+
+      <div className="container mx-auto px-6 relative">
         <div className="text-center mb-16">
-          <span className="text-[#2DD4BF] font-bold text-[10px] uppercase tracking-[0.3em] block mb-4">Evidência Clínica</span>
+          <span className="inline-flex items-center gap-3 text-[#2DD4BF] font-bold text-[10px] uppercase tracking-[0.3em] mb-4">
+            <span className="w-8 h-px bg-[#2DD4BF]" />Evidência Clínica<span className="w-8 h-px bg-[#2DD4BF]" />
+          </span>
           <h2 className="text-4xl md:text-7xl font-bold mb-6 sp-glow-text tracking-tighter text-white">
             Neurobiologia <span className="sp-text-gradient">Aplicada</span>
           </h2>
@@ -381,22 +399,24 @@ const ScientificProof = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
           {data.map((item, i) => (
-            <div key={i} className="space-y-4">
+            <div key={i} className="space-y-4 sp-glass p-6 relative overflow-hidden">
+              <span className="absolute top-3 right-3 text-[8px] sp-font-mono text-white/20">DATA_0{i + 1}</span>
               <div className="flex justify-between items-end">
                 <span className="font-bold text-[10px] uppercase tracking-widest text-white/40">{item.label}</span>
                 <span className="text-[#2DD4BF] font-bold text-2xl">{item.value}</span>
               </div>
               <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                <motion.div initial={{ width: 0 }} whileInView={{ width: item.value }} transition={{ duration: 1.5, ease: 'easeOut' }} className="h-full bg-[#2DD4BF]" />
+                <motion.div initial={{ width: 0 }} whileInView={{ width: item.value }} transition={{ duration: 1.5, ease: 'easeOut' }} className="h-full bg-gradient-to-r from-[#6366F1] to-[#2DD4BF]" />
               </div>
-              <p className="text-[10px] text-white/30 leading-relaxed font-mono">{item.desc}</p>
+              <p className="text-[10px] text-white/30 leading-relaxed sp-font-mono">{item.desc}</p>
             </div>
           ))}
         </div>
-        <div className="mt-16 flex flex-wrap justify-center gap-6 text-[8px] text-white/40 font-bold uppercase tracking-widest">
-          <span className="px-4 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={10} /> ISO 27001 Certified System</span>
-          <span className="px-4 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={10} /> Peer-Reviewed Research</span>
-          <span className="px-4 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={10} /> Clinical Compliance</span>
+        <div className="sp-divider-line my-16 max-w-2xl mx-auto" />
+        <div className="flex flex-wrap justify-center gap-6 text-[8px] text-white/40 font-bold uppercase tracking-widest">
+          <span className="px-4 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={10} className="text-[#2DD4BF]" /> ISO 27001 Certified System</span>
+          <span className="px-4 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={10} className="text-[#2DD4BF]" /> Peer-Reviewed Research</span>
+          <span className="px-4 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={10} className="text-[#2DD4BF]" /> Clinical Compliance</span>
         </div>
       </div>
     </section>
