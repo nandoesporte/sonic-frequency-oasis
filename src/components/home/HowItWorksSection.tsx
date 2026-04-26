@@ -84,7 +84,7 @@ export function HowItWorksSection() {
             </Link>
           </Button>
           <p className="text-base text-muted-foreground mt-4">
-            7 dias grátis • Sem cartão de crédito • Cancele quando quiser
+            Acesso imediato • Cancele quando quiser
           </p>
         </div>
       </div>
