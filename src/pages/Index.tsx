@@ -89,29 +89,99 @@ const Index = () => {
     return <SentiPassosLanding />;
   }
 
+  // Welcome name for the dashboard hero
+  const welcomeName = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Bem-vinda';
+
   return (
     <AudioProvider>
-      <div className={`min-h-screen ${user ? 'pb-24' : 'pb-0'}`}>
+      <div className={`min-h-screen ${user ? 'pb-24 bg-[#0A0B10] text-white sp-font-display' : 'pb-0'}`}>
         <Header />
-        
-        {/* Welcome Section - Only show for logged in users */}
+
+        {/* Dashboard Hero — Logged in users (landing-aligned dark theme) */}
         {user && (
-          <section className="w-full bg-gradient-to-b from-purple-50/50 to-background dark:from-purple-900/10 pt-32 pb-12 px-2 sm:px-4">
-            <div className="container mx-auto">
-              <div className="max-w-4xl mx-auto text-center">
-                <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 animate-fade-in leading-tight px-2">
-                  Bem-vindo ao Guia de Frequências
+          <section className="relative overflow-hidden pt-32 pb-20 px-4">
+            {/* Ambient orbs */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="sp-orb sp-animate-float-slow absolute -top-20 -left-20 w-[420px] h-[420px]" style={{ background: 'radial-gradient(circle, #8B5CF6 0%, transparent 70%)', opacity: 0.35 }} />
+              <div className="sp-orb sp-animate-float-rev absolute top-10 -right-20 w-[380px] h-[380px]" style={{ background: 'radial-gradient(circle, #3B82F6 0%, transparent 70%)', opacity: 0.28 }} />
+              <div className="absolute inset-0 sp-grid-pattern opacity-40" />
+              <div className="sp-noise absolute inset-0" />
+            </div>
+
+            <div className="container mx-auto relative z-10">
+              <div className="max-w-5xl mx-auto">
+                {/* Top badge */}
+                <div className="flex justify-center mb-8">
+                  <div className="sp-glass inline-flex items-center gap-2 px-4 py-2 text-[11px] uppercase tracking-[0.25em] text-white/70">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#A78BFA] animate-pulse" />
+                    Painel Frequency · Sessão Ativa
+                  </div>
+                </div>
+
+                {/* Equalizer */}
+                <div className="flex items-end justify-center gap-1.5 h-12 mb-8">
+                  {[0.4, 0.8, 0.6, 1, 0.7, 0.5, 0.9, 0.6, 0.4].map((h, i) => (
+                    <span
+                      key={i}
+                      className="w-1.5 rounded-full sp-animate-wave-bar"
+                      style={{
+                        height: `${h * 100}%`,
+                        background: 'linear-gradient(180deg, #3B82F6, #A78BFA)',
+                        animationDelay: `${i * 0.12}s`,
+                        boxShadow: '0 0 12px rgba(96,165,250,0.45)',
+                      }}
+                    />
+                  ))}
+                </div>
+
+                {/* Headline */}
+                <h1 className="text-center text-4xl sm:text-6xl md:text-7xl font-bold tracking-tighter sp-glow-text leading-[0.95] mb-6">
+                  Bem-vinda,<br />
+                  <span className="sp-text-gradient-blue">{welcomeName}</span>
                 </h1>
-                <p className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 animate-fade-in px-2">
-                  Aprenda a maximizar os benefícios das frequências sonoras terapêuticas com nosso guia completo.
+
+                <p className="text-center text-white/60 text-base sm:text-lg max-w-2xl mx-auto font-light mb-12 leading-relaxed">
+                  Continue sua jornada de transformação. Selecione uma frequência, abra uma caminhada SentiPasso ou explore o guia para potencializar seus resultados.
                 </p>
-                <Button asChild size="lg" className="rounded-full animate-fade-in hover-scale">
-                  <Link to="/guide" className="gap-2">
-                    <BookOpen className="h-5 w-5" />
-                    Acessar o Guia de Uso
-                    <ArrowRight className="h-5 w-5" />
+
+                {/* Quick actions */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
+                  <Link to="/guide" className="sp-glass group p-6 hover:bg-white/[0.07] transition-all">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #8B5CF6, #A78BFA)' }}>
+                        <BookOpen className="h-5 w-5 text-white" />
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                    </div>
+                    <h3 className="font-semibold text-white mb-1">Guia de Uso</h3>
+                    <p className="text-xs text-white/50 leading-relaxed">Aprenda a maximizar cada frequência</p>
                   </Link>
-                </Button>
+
+                  <Link to="/sentipasso" className="sp-glass group p-6 hover:bg-white/[0.07] transition-all">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #3B82F6, #818CF8)' }}>
+                        <Headphones className="h-5 w-5 text-white" />
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                    </div>
+                    <h3 className="font-semibold text-white mb-1">SentiPassos</h3>
+                    <p className="text-xs text-white/50 leading-relaxed">Caminhadas terapêuticas guiadas</p>
+                  </Link>
+
+                  <Link to="/favorites" className="sp-glass group p-6 hover:bg-white/[0.07] transition-all">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #A78BFA, #60A5FA)' }}>
+                        <Heart className="h-5 w-5 text-white" />
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                    </div>
+                    <h3 className="font-semibold text-white mb-1">Favoritos</h3>
+                    <p className="text-xs text-white/50 leading-relaxed">Suas frequências mais usadas</p>
+                  </Link>
+                </div>
+
+                {/* Subtle divider */}
+                <div className="sp-divider-line mt-16 max-w-2xl mx-auto" />
               </div>
             </div>
           </section>
