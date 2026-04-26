@@ -24,14 +24,11 @@ interface SubscriptionData {
   plan_description?: string;
   subscription_tier?: string;
   last_payment_date?: string;
-  is_trial?: boolean;
-  trial_ends_at?: string;
-  trial_started_at?: string;
 }
 
 const Profile = () => {
   const { user, signOut } = useAuth();
-  const { isPremium, isInTrialPeriod, trialDaysLeft, loading: premiumLoading } = usePremium();
+  const { isPremium, loading: premiumLoading } = usePremium();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [subscriptionData, setSubscriptionData] = useState<SubscriptionData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -97,9 +94,6 @@ const Profile = () => {
             plan_description: planDescription,
             subscription_tier: subData.subscription_tier,
             last_payment_date: subData.last_payment_date,
-            is_trial: subData.is_trial,
-            trial_ends_at: subData.trial_ends_at,
-            trial_started_at: subData.trial_started_at
           });
         }
       } catch (error) {
@@ -131,8 +125,6 @@ const Profile = () => {
           userData={userData}
           subscriptionData={subscriptionData}
           isPremium={isPremium}
-          isInTrialPeriod={isInTrialPeriod}
-          trialDaysLeft={trialDaysLeft}
           loading={loading || premiumLoading}
         />
       </div>

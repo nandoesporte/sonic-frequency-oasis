@@ -131,17 +131,11 @@ serve(async (req) => {
       }
     }
 
-    // Return current subscription status
-    const isTrialActive = subscriber.is_trial && 
-      subscriber.trial_ends_at && 
-      new Date(subscriber.trial_ends_at) > new Date();
-
-    const hasAccess = subscriber.subscribed || isTrialActive;
+    // Return current subscription status (trial period removed)
+    const hasAccess = subscriber.subscribed === true;
 
     return new Response(JSON.stringify({
       subscribed: subscriber.subscribed,
-      is_trial: subscriber.is_trial,
-      trial_ends_at: subscriber.trial_ends_at,
       subscription_end: subscriber.subscription_end,
       has_access: hasAccess,
       payment_history_count: paymentHistory?.length || 0

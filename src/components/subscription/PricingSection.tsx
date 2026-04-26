@@ -96,10 +96,6 @@ export function PricingSection() {
 
         {/* Garantias */}
         <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-12">
-          <div className="flex items-center gap-2 bg-green-500/10 text-green-700 dark:text-green-400 px-5 py-3 rounded-full font-medium text-base">
-            <Gift className="h-5 w-5" />
-            <span>7 dias grátis para testar</span>
-          </div>
           <div className="flex items-center gap-2 bg-blue-500/10 text-blue-700 dark:text-blue-400 px-5 py-3 rounded-full font-medium text-base">
             <Shield className="h-5 w-5" />
             <span>Garantia total de satisfação</span>
@@ -193,7 +189,7 @@ export function PricingSection() {
             <div className="bg-white/60 dark:bg-white/5 p-5 rounded-2xl card-smooth backdrop-blur-sm">
               <p className="font-semibold mb-2 text-lg">E se não funcionar para mim?</p>
               <p className="text-muted-foreground leading-relaxed text-base">
-                Você tem 7 dias para testar gratuitamente. Se não sentir resultados, cancele sem pagar nada. Zero risco.
+                Você pode cancelar sua assinatura a qualquer momento, sem multas nem burocracia. Sem amarras.
               </p>
             </div>
             <div className="bg-white/60 dark:bg-white/5 p-5 rounded-2xl card-smooth backdrop-blur-sm">

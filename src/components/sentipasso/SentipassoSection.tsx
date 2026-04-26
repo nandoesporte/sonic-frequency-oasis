@@ -7,7 +7,7 @@ import { Play, Clock, Heart } from "lucide-react";
 import { FeedbackDialog } from './FeedbackDialog';
 import { useAuth } from "@/contexts/AuthContext";
 import { usePremium } from "@/contexts/PremiumContext";
-import { TrialExpiredDialog } from "@/components/TrialExpiredDialog";
+
 import { toast } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAudio } from "@/lib/audio-context";
@@ -25,13 +25,13 @@ interface RitualWalk {
 
 export function SentipassoSection() {
   const { user } = useAuth();
-  const { hasAccess, isInTrialPeriod, trialDaysLeft } = usePremium();
+  const { hasAccess } = usePremium();
   const { playSentipassoAudio } = useAudio();
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [selectedWalk, setSelectedWalk] = useState<RitualWalk | null>(null);
   const [ritualWalks, setRitualWalks] = useState<RitualWalk[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showTrialExpiredDialog, setShowTrialExpiredDialog] = useState(false);
+  
   const [generatingAudio, setGeneratingAudio] = useState<string | null>(null);
 
   useEffect(() => {
@@ -77,14 +77,10 @@ export function SentipassoSection() {
     }
 
     if (!hasAccess) {
-      if (isInTrialPeriod) {
-        toast.info("Período de Teste", {
-          description: `Você tem ${trialDaysLeft} dias restantes no seu teste gratuito`
-        });
-      } else {
-        setShowTrialExpiredDialog(true);
-        return;
-      }
+      toast.info("Conteúdo Premium", {
+        description: "Assine um plano para acessar as caminhadas rituais"
+      });
+      return;
     }
 
     setSelectedWalk(walk);
@@ -286,11 +282,6 @@ export function SentipassoSection() {
           open={feedbackOpen} 
           onOpenChange={setFeedbackOpen}
           selectedWalk={selectedWalk?.name}
-        />
-
-        <TrialExpiredDialog 
-          open={showTrialExpiredDialog}
-          onOpenChange={setShowTrialExpiredDialog}
         />
       </div>
     </section>

@@ -219,18 +219,18 @@ const Index = () => {
                   </p>
                 </div>
                 
-                {/* Main CTA - Free Trial */}
-                <div className="mb-10 bg-gradient-to-r from-amber-500/20 via-amber-400/10 to-amber-500/20 p-6 sm:p-8 rounded-2xl border border-amber-500/30 shadow-xl dark:from-amber-600/30 dark:to-amber-700/30 dark:border-amber-600/40 section-fade stagger-5 card-smooth backdrop-blur-sm">
+                {/* Main CTA */}
+                <div className="mb-10 bg-gradient-to-r from-purple-500/20 via-purple-400/10 to-purple-500/20 p-6 sm:p-8 rounded-2xl border border-purple-500/30 shadow-xl dark:from-purple-600/30 dark:to-purple-700/30 dark:border-purple-600/40 section-fade stagger-5 card-smooth backdrop-blur-sm">
                   <div className="flex items-center justify-center gap-3 mb-4">
-                    <Gift className="h-8 w-8 text-amber-500 dark:text-amber-400 animate-pulse-soft" />
-                    <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-600 dark:text-amber-400">
-                      Teste por 7 dias Grátis
+                    <Sparkles className="h-8 w-8 text-purple-500 dark:text-purple-400 animate-pulse-soft" />
+                    <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-purple-600 dark:text-purple-400">
+                      Comece sua Transformação
                     </h3>
                   </div>
-                  <p className="text-amber-700 dark:text-amber-300 mb-5 text-lg">
-                    Experimente o poder das frequências terapêuticas sem risco. Garantia total de satisfação.
+                  <p className="text-purple-700 dark:text-purple-300 mb-5 text-lg">
+                    Acesse frequências terapêuticas comprovadas e inicie hoje mesmo sua jornada de bem-estar.
                   </p>
-                  <Button asChild size="lg" className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-full shadow-lg glow-effect text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto">
+                  <Button asChild size="lg" className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-full shadow-lg glow-effect text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto">
                     <Link to="/auth">
                       Começar Transformação
                       <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />

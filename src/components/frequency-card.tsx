@@ -19,7 +19,7 @@ interface FrequencyCardProps {
 
 export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: FrequencyCardProps) {
   const { play, isPlaying, currentFrequency, addToFavorites, favorites } = useAudio();
-  const { hasAccess, isInTrialPeriod, trialDaysLeft } = usePremium();
+  const { hasAccess } = usePremium();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   
@@ -49,17 +49,11 @@ export function FrequencyCard({ frequency, variant = "default", onBeforePlay }: 
       return;
     }
     
-    // Check if user has access (premium or trial)
+    // Check if user has premium access
     if (frequency.premium && !hasAccess) {
-      if (isInTrialPeriod) {
-        toast.info("Período de Teste", {
-          description: `Você tem ${trialDaysLeft} dias restantes no seu teste gratuito`
-        });
-      } else {
-        toast.info("Teste Expirado", {
-          description: "Seu período de teste expirou. Assine para continuar ouvindo"
-        });
-      }
+      toast.info("Conteúdo Premium", {
+        description: "Assine um plano para desbloquear esta frequência"
+      });
       navigate("/premium#planos");
       return;
     }

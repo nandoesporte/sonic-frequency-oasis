@@ -20,7 +20,7 @@ export function TestimonialSection() {
     },
     {
       id: 3,
-      quote: "Estava cética no início - já tinha gastado fortunas com terapias que não funcionavam. Mas resolvi dar uma chance pelo teste grátis. Hoje, 2 meses depois, minha vida mudou completamente.",
+      quote: "Estava cética no início - já tinha gastado fortunas com terapias que não funcionavam. Mas resolvi dar uma chance. Hoje, 2 meses depois, minha vida mudou completamente.",
       author: "Patricia R.",
       role: "Psicóloga, 45 anos",
       location: "Rio de Janeiro, RJ",

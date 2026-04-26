@@ -89,7 +89,7 @@ interface DashboardFrequencyCardProps {
 
 export function DashboardFrequencyCard({ frequency, onBeforePlay }: DashboardFrequencyCardProps) {
   const { play, isPlaying, currentFrequency, addToFavorites, favorites } = useAudio();
-  const { hasAccess, isInTrialPeriod, trialDaysLeft } = usePremium();
+  const { hasAccess } = usePremium();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -107,9 +107,7 @@ export function DashboardFrequencyCard({ frequency, onBeforePlay }: DashboardFre
       return;
     }
     if (locked) {
-      if (isInTrialPeriod) {
-        toast.info("Período de Teste", { description: `Você tem ${trialDaysLeft} dias restantes` });
-      }
+      toast.info("Conteúdo Premium", { description: "Assine um plano para desbloquear" });
       navigate("/premium#planos");
       return;
     }
