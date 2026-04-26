@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Crown, User, Calendar, LogOut, Mail, Clock, Gift } from "lucide-react";
+import { Crown, User, Calendar, LogOut, Mail, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -26,9 +26,6 @@ interface SubscriptionData {
   plan_description?: string;
   subscription_tier?: string;
   last_payment_date?: string;
-  is_trial?: boolean;
-  trial_ends_at?: string;
-  trial_started_at?: string;
 }
 
 interface UserProfileProps {
@@ -36,8 +33,6 @@ interface UserProfileProps {
   userData: UserData | null;
   subscriptionData: SubscriptionData | null;
   isPremium: boolean;
-  isInTrialPeriod?: boolean;
-  trialDaysLeft?: number;
   loading: boolean;
 }
 
@@ -46,8 +41,6 @@ export function UserProfile({
   userData, 
   subscriptionData, 
   isPremium, 
-  isInTrialPeriod = false,
-  trialDaysLeft = 0,
   loading 
 }: UserProfileProps) {
   const [showConfirmLogout, setShowConfirmLogout] = useState(false);

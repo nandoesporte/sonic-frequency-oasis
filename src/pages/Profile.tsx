@@ -31,7 +31,7 @@ interface SubscriptionData {
 
 const Profile = () => {
   const { user, signOut } = useAuth();
-  const { isPremium, isInTrialPeriod, trialDaysLeft, loading: premiumLoading } = usePremium();
+  const { isPremium, loading: premiumLoading } = usePremium();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [subscriptionData, setSubscriptionData] = useState<SubscriptionData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -131,8 +131,6 @@ const Profile = () => {
           userData={userData}
           subscriptionData={subscriptionData}
           isPremium={isPremium}
-          isInTrialPeriod={isInTrialPeriod}
-          trialDaysLeft={trialDaysLeft}
           loading={loading || premiumLoading}
         />
       </div>
