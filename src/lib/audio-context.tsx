@@ -60,7 +60,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const orientationLockedRef = useRef<boolean>(false);
   
   // SentiPassos specific refs
