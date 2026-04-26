@@ -172,10 +172,11 @@ serve(async (req) => {
       }
     );
   } catch (err) {
-    logStep("Error processing webhook", { error: err.message, stack: err.stack });
+    const error = err as Error;
+    logStep("Error processing webhook", { error: error.message, stack: error.stack });
     
     return new Response(
-      JSON.stringify({ error: "Internal server error", details: err.message }),
+      JSON.stringify({ error: "Internal server error", details: error.message }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,
