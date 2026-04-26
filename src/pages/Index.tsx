@@ -316,124 +316,106 @@ const Index = () => {
         {/* How It Works Section - Only show for non-logged in users */}
         {!user && <HowItWorksSection />}
         
-        {/* SentiPassos Destacado - Show for all users */}
-        <section className="py-16 sm:py-24 px-2 sm:px-4 relative overflow-hidden sales-section">
-          {/* Background decorations */}
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/5 to-blue-500/10 pointer-events-none"></div>
-          <div className="absolute top-10 right-10 w-64 h-64 bg-purple-300/10 rounded-full blur-3xl animate-float pointer-events-none"></div>
-          <div className="absolute bottom-10 left-10 w-48 h-48 bg-pink-300/10 rounded-full blur-3xl animate-float pointer-events-none" style={{ animationDelay: '1.5s' }}></div>
-          
+        {/* SentiPassos Featured — dark, landing-aligned */}
+        <section className="relative py-20 sm:py-28 px-4 overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="sp-orb sp-animate-float-slow absolute top-1/3 -left-32 w-[420px] h-[420px]" style={{ background: 'radial-gradient(circle, #8B5CF6 0%, transparent 70%)', opacity: 0.22 }} />
+            <div className="sp-orb sp-animate-float-rev absolute bottom-0 -right-32 w-[420px] h-[420px]" style={{ background: 'radial-gradient(circle, #3B82F6 0%, transparent 70%)', opacity: 0.2 }} />
+          </div>
+
           <div className="container mx-auto relative z-10">
             <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-10 sm:mb-14">
-                <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 px-2">
-                  🎧 <span className="gradient-text-animated">SentiPassos</span>
+              {/* Section header */}
+              <div className="text-center mb-14">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] uppercase tracking-[0.25em] text-white/60 border border-white/10 mb-6">
+                  <AudioWaveform size={12} className="text-[#A78BFA]" />
+                  Movimento + Frequência
+                </div>
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter sp-glow-text leading-[0.95] mb-5">
+                  <span className="sp-text-gradient">SentiPassos</span>
                 </h2>
-                <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto px-2 leading-relaxed">
-                  Uma revolução em terapia sonora: caminhadas guiadas que combinam movimento e frequências específicas para transformar estados emocionais
+                <p className="text-white/55 text-base sm:text-lg max-w-2xl mx-auto font-light leading-relaxed">
+                  Caminhadas terapêuticas guiadas que combinam frequências específicas e movimento para transformar estados emocionais.
                 </p>
               </div>
 
-              <Card className="overflow-hidden bg-gradient-to-br from-purple-500/15 to-pink-500/15 border-purple-200/30 dark:border-purple-700/30 mb-8 card-smooth shadow-xl">
-                <CardHeader className="pb-4">
-                  <div className="flex flex-col sm:flex-row items-center gap-4 mb-4">
-                    <div className="p-4 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-2xl">
-                      <Waves className="h-10 w-10 text-purple-600 dark:text-purple-400" />
+              {/* Emotion cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+                {[
+                  { icon: Heart, title: 'Cultive a Paz', freq: '40Hz · 528Hz', desc: 'Acalma a mente e restaura o equilíbrio interior', grad: 'linear-gradient(135deg, #8B5CF6, #A78BFA)' },
+                  { icon: Waves, title: 'Transforme a Raiva', freq: '396Hz', desc: 'Libera tensões e dissolve energia densa', grad: 'linear-gradient(135deg, #3B82F6, #818CF8)' },
+                  { icon: Sparkles, title: 'Supere a Tristeza', freq: '741Hz', desc: 'Eleva a vibração e renova a perspectiva', grad: 'linear-gradient(135deg, #A78BFA, #60A5FA)' },
+                ].map((item, i) => (
+                  <div key={i} className="sp-glass p-6 hover:bg-white/[0.07] transition-all">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: item.grad }}>
+                      <item.icon className="h-6 w-6 text-white" />
                     </div>
-                    <div className="text-center sm:text-left">
-                      <CardTitle className="text-2xl md:text-3xl">Caminhadas Terapêuticas</CardTitle>
-                      <p className="text-muted-foreground text-lg">Movimento + Frequências = Transformação Emocional</p>
-                    </div>
+                    <div className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-1">{item.freq}</div>
+                    <h4 className="text-lg font-semibold text-white mb-2">{item.title}</h4>
+                    <p className="text-sm text-white/55 leading-relaxed">{item.desc}</p>
                   </div>
-                </CardHeader>
-                <CardContent className="pb-8">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
-                    <div className="text-center p-4 sm:p-6 bg-white/60 dark:bg-white/5 rounded-2xl card-smooth border border-green-100 dark:border-green-900/20">
-                      <div className="p-2 sm:p-3 bg-green-100 dark:bg-green-900/30 rounded-full w-fit mx-auto mb-2 sm:mb-3">
-                        <Heart className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
-                      </div>
-                      <h4 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">Cultive a Paz</h4>
-                      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">Frequências de 40Hz e 528Hz para acalmar a mente e encontrar tranquilidade interior</p>
+                ))}
+              </div>
+
+              {/* How it works */}
+              <div className="sp-glass p-6 sm:p-8 mb-10">
+                <h4 className="text-sm uppercase tracking-[0.2em] text-white/50 mb-5 flex items-center gap-2">
+                  <span className="w-6 h-px bg-[#A78BFA]" /> Como Funciona
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {[
+                    'Escolha sua emoção alvo (paz, raiva ou tristeza)',
+                    'Inicie a caminhada com a frequência específica',
+                    'Movimento + som trabalham juntos na transformação',
+                    'Sinta a mudança acontecer naturalmente',
+                  ].map((step, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-[#A78BFA] mt-0.5 flex-shrink-0" />
+                      <span className="text-white/75 text-sm leading-relaxed">{step}</span>
                     </div>
-                    <div className="text-center p-4 sm:p-6 bg-white/60 dark:bg-white/5 rounded-2xl card-smooth border border-red-100 dark:border-red-900/20">
-                      <div className="p-2 sm:p-3 bg-red-100 dark:bg-red-900/30 rounded-full w-fit mx-auto mb-2 sm:mb-3">
-                        <Waves className="h-6 w-6 sm:h-8 sm:w-8 text-red-500" />
-                      </div>
-                      <h4 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">Transforme a Raiva</h4>
-                      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">Frequências de 396Hz para liberar tensões e transformar energia negativa</p>
-                    </div>
-                    <div className="text-center p-4 sm:p-6 bg-white/60 dark:bg-white/5 rounded-2xl card-smooth border border-blue-100 dark:border-blue-900/20">
-                      <div className="p-2 sm:p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full w-fit mx-auto mb-2 sm:mb-3">
-                        <Sparkles className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
-                      </div>
-                      <h4 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">Supere a Tristeza</h4>
-                      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">Frequências de 741Hz para elevação vibracional e renovação emocional</p>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gradient-to-r from-purple-100/50 to-pink-100/50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 rounded-2xl mb-8">
-                    <h4 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                      <span className="text-2xl">🚶‍♀️</span> Como Funciona:
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-base">
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>Escolha sua emoção alvo (paz, raiva ou tristeza)</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>Inicie a caminhada com frequência específica</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>Movimento + som trabalham juntos na transformação</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>Sinta a mudança acontecer naturalmente</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-col sm:flex-row gap-3 justify-center px-2">
-                    <Button asChild size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-full shadow-lg glow-effect transition-all duration-300 hover:scale-105 text-sm sm:text-base px-5 sm:px-6 py-5 w-full sm:w-auto">
-                      <Link to="/sentipasso">
-                        <Headphones className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                        Experimentar SentiPassos
-                        <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-                      </Link>
-                    </Button>
-                    {!user && (
-                      <Button asChild variant="outline" size="lg" className="rounded-full transition-all duration-300 hover:scale-105 text-sm sm:text-base px-5 sm:px-6 py-5 w-full sm:w-auto">
-                        <Link to="/auth">
-                          <Gift className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                          Teste Grátis
-                        </Link>
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div className="flex justify-center">
+                <Link
+                  to="/sentipasso"
+                  className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-white text-black font-bold text-sm hover:scale-105 transition-transform shadow-2xl"
+                >
+                  <Headphones size={18} />
+                  Iniciar Caminhada SentiPasso
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
             </div>
           </div>
         </section>
-        
+
         {/* Frequency Ranges Section - Only show for non-logged in users */}
         {!user && <FrequencyRanges />}
-        
+
         {/* Testimonial Section - Only show for non-logged in users */}
         {!user && <TestimonialSection />}
-        
+
         {/* Scientific Evidence Section - Only show for non-logged in users */}
         {!user && <ScientificEvidence />}
-        
-        {/* Categories Section with Frequencies - Only show for logged in users */}
+
+        {/* Categories — dark dashboard style */}
         {user && (
-          <section className="py-8 sm:py-12 px-2 sm:px-4">
-            <div className="container mx-auto">
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 px-2">Categorias</h2>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <section className="relative py-16 px-4">
+            <div className="container mx-auto max-w-6xl">
+              <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.25em] text-white/40 mb-2">Explore</div>
+                  <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter text-white">
+                    Categorias de <span className="sp-text-gradient">Frequência</span>
+                  </h2>
+                </div>
+                <div className="h-px flex-1 min-w-[60px] bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {categories.map((category) => {
                   const CategoryIcon = category.icon;
                   return (
@@ -450,47 +432,54 @@ const Index = () => {
             </div>
           </section>
         )}
-        
-        {/* Display Frequencies by Category - Only show for logged in users */}
+
+        {/* Frequencies by Category — dark dashboard style */}
         {user && Object.entries(categoryFrequencies).length > 0 && (
-          <section className="py-6 sm:py-8 px-2 sm:px-4">
-            <div className="container mx-auto">
-              <h2 className="text-lg sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 px-2">Explore Frequências por Categoria</h2>
-              
+          <section className="relative py-12 px-4">
+            <div className="container mx-auto max-w-6xl">
+              <div className="flex items-end justify-between mb-10 flex-wrap gap-4">
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.25em] text-white/40 mb-2">Biblioteca</div>
+                  <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter text-white">
+                    Frequências em <span className="sp-text-gradient-blue">Destaque</span>
+                  </h2>
+                </div>
+                <div className="h-px flex-1 min-w-[60px] bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+              </div>
+
               {Object.entries(categoryFrequencies).map(([categoryId, frequencies]) => {
                 const category = categories.find(cat => cat.id === categoryId);
                 if (!category || frequencies.length === 0) return null;
-                
                 const CategoryIcon = category.icon;
-                
+
                 return (
-                  <Card key={categoryId} className="mb-8">
-                    <CardHeader className="pb-0">
-                      <div className="flex items-center">
-                        <CategoryIcon className="h-6 w-6 mr-2" />
-                        <CardTitle>{category.name}</CardTitle>
+                  <div key={categoryId} className="sp-glass mb-6 p-6 sm:p-8">
+                    <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.25), rgba(59,130,246,0.25))', border: '1px solid rgba(167,139,250,0.3)' }}>
+                          <CategoryIcon className="h-5 w-5 text-[#A78BFA]" />
+                        </div>
+                        <h3 className="text-xl font-semibold text-white">{category.name}</h3>
                       </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                        {frequencies.map(frequency => (
-                          <FrequencyCard 
-                            key={frequency.id} 
-                            frequency={frequency}
-                            variant="compact"
-                            onBeforePlay={handleFrequencyClick}
-                          />
-                        ))}
-                      </div>
-                      
-                      <Button asChild variant="outline" className="mt-4">
-                        <Link to={`/categories/${categoryId}`}>
-                          Ver mais desta categoria
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                      </Button>
-                    </CardContent>
-                  </Card>
+                      <Link
+                        to={`/categories/${categoryId}`}
+                        className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-white/60 hover:text-white transition-colors"
+                      >
+                        Ver tudo <ChevronRight size={14} />
+                      </Link>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {frequencies.map(frequency => (
+                        <FrequencyCard
+                          key={frequency.id}
+                          frequency={frequency}
+                          variant="compact"
+                          onBeforePlay={handleFrequencyClick}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 );
               })}
             </div>
