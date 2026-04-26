@@ -409,12 +409,13 @@ const Index = () => {
                 {categories.map((category, idx) => {
                   const CategoryIcon = category.icon;
                   return (
-                    <CategoryCard
+                    <DashboardCategoryCard
                       key={category.id}
                       id={category.id}
                       name={category.name}
                       description={category.description}
                       icon={<CategoryIcon className="h-6 w-6" />}
+                      index={idx}
                     />
                   );
                 })}
