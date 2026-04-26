@@ -18,6 +18,7 @@ import {
   MessageCircle,
   Gem,
   ChevronRight,
+  AudioWaveform,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -34,12 +35,16 @@ const Navbar = () => {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'sp-glass-nav py-3' : 'bg-transparent py-6'}`}>
       <div className="container mx-auto px-6 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: '#6366F1' }}>
-            <Volume2 className="text-white" size={24} />
+        <Link to="/" className="flex items-center gap-2">
+          <div className="relative w-10 h-10 flex items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full animate-pulse" />
+            <AudioWaveform className="relative z-10 text-white" size={22} strokeWidth={2.5} />
           </div>
-          <span className="sp-font-display font-bold text-xl tracking-tight text-white">SentiPassos</span>
-        </div>
+          <span className="sp-font-display font-bold text-xl tracking-tight">
+            <span className="text-purple-400">Frequency</span>
+            <span className="text-white ml-1">App</span>
+          </span>
+        </Link>
 
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white">
           <a href="#inicio" className="hover:text-[#6366F1] transition-colors">Início</a>
@@ -509,9 +514,15 @@ const Footer = () => (
     <div className="container mx-auto px-6">
       <div className="flex flex-col md:flex-row justify-between gap-12 mb-16">
         <div className="max-w-sm">
-          <div className="flex items-center gap-2 mb-6 text-[#6366F1]">
-            <Volume2 size={32} />
-            <span className="sp-font-display font-bold text-2xl tracking-tighter text-white">SentiPassos</span>
+          <div className="flex items-center gap-2 mb-6">
+            <div className="relative w-12 h-12 flex items-center justify-center">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full animate-pulse" />
+              <AudioWaveform className="relative z-10 text-white" size={26} strokeWidth={2.5} />
+            </div>
+            <span className="sp-font-display font-bold text-2xl tracking-tighter">
+              <span className="text-purple-400">Frequency</span>
+              <span className="text-white ml-1">App</span>
+            </span>
           </div>
           <p className="text-gray-500 leading-relaxed text-sm">
             Somos focados em neurociência e bem-estar através de frequências bioacústicas. Nossa missão é restaurar a qualidade de vida de milhares de mulheres.
