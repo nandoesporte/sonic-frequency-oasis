@@ -93,10 +93,11 @@ const Hero = () => (
     <div className="absolute inset-0 sp-grid-pattern opacity-40 pointer-events-none" />
     <div className="sp-noise absolute inset-0" />
 
-    {/* Floating orbs */}
+    {/* Floating orbs - softer, more diffuse */}
     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
-      <div className="sp-orb absolute top-20 left-1/4 w-96 h-96 bg-[#8B5CF6] sp-animate-float-slow" />
-      <div className="sp-orb absolute top-40 right-1/4 w-96 h-96 bg-[#A78BFA] sp-animate-float-rev" style={{ animationDelay: '1s' }} />
+      <div className="sp-orb absolute top-32 left-[15%] w-[500px] h-[500px] bg-[#8B5CF6]/40 sp-animate-float-slow" />
+      <div className="sp-orb absolute top-60 right-[10%] w-[400px] h-[400px] bg-[#A78BFA]/30 sp-animate-float-rev" style={{ animationDelay: '1.5s' }} />
+      <div className="sp-orb absolute bottom-20 left-[40%] w-[300px] h-[300px] bg-[#8B5CF6]/20 sp-animate-float-slow" style={{ animationDelay: '3s' }} />
     </div>
 
     {/* Rotating concentric rings (right) */}
@@ -126,12 +127,12 @@ const Hero = () => (
           </span>
           <span className="text-[10px] uppercase tracking-widest font-bold text-white/80">Sistema v4.2 Ativo</span>
         </span>
-        <h1 className="sp-font-display text-4xl md:text-8xl font-bold leading-[0.9] mb-8 sp-glow-text tracking-tighter text-white">
+        <h1 className="sp-font-display text-5xl md:text-8xl font-bold leading-[0.95] mb-10 sp-glow-text tracking-tighter text-white">
           Restaure sua <br /><span className="sp-text-gradient">Saúde</span>
         </h1>
 
         {/* Equalizer / sound bars */}
-        <div className="flex items-center justify-center gap-1 mb-8 h-8" aria-hidden="true">
+        <div className="flex items-center justify-center gap-1.5 mb-10 h-10" aria-hidden="true">
           {[0.4, 0.7, 1, 0.6, 0.9, 0.5, 0.8, 1, 0.55, 0.75, 0.4].map((h, i) => (
             <span
               key={i}
@@ -141,7 +142,7 @@ const Hero = () => (
           ))}
         </div>
 
-        <p className="text-white/50 text-lg md:text-xl max-w-lg mx-auto mb-10 leading-relaxed font-light">
+        <p className="text-white/70 text-lg md:text-xl max-w-xl mx-auto mb-12 leading-relaxed font-light">
           Elimine dores crônicas, ansiedade e estresse através de ondas sonoras direcionadas e neurociência aplicada.
         </p>
 
@@ -181,22 +182,24 @@ const Hero = () => (
 );
 
 const TrustBar = () => (
-  <div className="border-y border-white/5 py-10 sp-glass-nav relative overflow-hidden">
-    {/* Marquee tags */}
-    <div className="absolute -top-3 left-0 right-0 flex overflow-hidden opacity-30 pointer-events-none">
-      <div className="sp-animate-marquee flex gap-8 whitespace-nowrap text-[8px] sp-font-mono uppercase tracking-[0.4em] text-white/40">
-        {Array(2).fill(null).map((_, k) => (
-          <div key={k} className="flex gap-8">
-            {['Resonance', '432Hz', 'Theta', 'Binaural', 'Alpha', 'Solfeggio', '528Hz', 'Delta', 'Gamma', '7D Protocol'].map((t, i) => (
-              <span key={i} className="flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-[#A78BFA]" />{t}
-              </span>
-            ))}
-          </div>
-        ))}
+  <div className="border-y border-white/5 sp-glass-nav relative overflow-hidden">
+    {/* Marquee tags - top, contained, no overlap */}
+    <div className="border-b border-white/5 py-3 overflow-hidden">
+      <div className="flex">
+        <div className="sp-animate-marquee flex gap-10 whitespace-nowrap text-[10px] sp-font-mono uppercase tracking-[0.4em] text-white/40">
+          {Array(2).fill(null).map((_, k) => (
+            <div key={k} className="flex gap-10 pr-10">
+              {['Resonance', '432Hz', 'Theta', 'Binaural', 'Alpha', 'Solfeggio', '528Hz', 'Delta', 'Gamma', '7D Protocol'].map((t, i) => (
+                <span key={i} className="flex items-center gap-2">
+                  <span className="w-1 h-1 rounded-full bg-[#A78BFA]" />{t}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
-    <div className="container mx-auto px-6 relative">
+    <div className="container mx-auto px-6 relative py-10">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 items-center uppercase tracking-[0.2em] font-bold text-[10px]">
         <div className="text-center">
           <div className="text-3xl font-bold mb-1 sp-glow-text text-white">5,000+</div>
