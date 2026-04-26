@@ -46,6 +46,22 @@
 .sp-accent-gradient {
   background: linear-gradient(135deg, #8B5CF6, #A78BFA);
 }
+.sp-text-gradient-blue {
+  background-image: linear-gradient(135deg, #60A5FA, #3B82F6, #818CF8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  font-family: inherit;
+  display: inline-block;
+  padding-bottom: 0.15em;
+  margin-bottom: -0.15em;
+  filter: drop-shadow(0 0 30px rgba(96, 165, 250, 0.35));
+}
 .sp-font-display { font-family: 'Outfit', sans-serif; }
 .sp-font-serif { font-family: 'Playfair Display', serif; }
 .sp-font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }

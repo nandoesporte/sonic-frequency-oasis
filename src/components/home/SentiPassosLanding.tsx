@@ -128,16 +128,16 @@ const Hero = () => (
           <span className="text-[10px] uppercase tracking-widest font-bold text-white/80">Sistema v4.2 Ativo</span>
         </span>
         <h1 className="sp-font-display text-5xl md:text-8xl font-bold leading-[0.95] mb-10 sp-glow-text tracking-tighter text-white">
-          Restaure sua <br /><span className="sp-text-gradient">Saúde</span>
+          Restaure sua <br /><span className="sp-text-gradient-blue">Saúde</span>
         </h1>
 
-        {/* Equalizer / sound bars */}
-        <div className="flex items-center justify-center gap-1.5 mb-10 h-10" aria-hidden="true">
+        {/* Equalizer / sound bars - blue accent harmonizing with Saúde */}
+        <div className="flex items-center justify-center gap-1.5 mb-10 h-12" aria-hidden="true">
           {[0.4, 0.7, 1, 0.6, 0.9, 0.5, 0.8, 1, 0.55, 0.75, 0.4].map((h, i) => (
             <span
               key={i}
-              className="w-1 bg-gradient-to-t from-[#8B5CF6] to-[#A78BFA] rounded-full sp-animate-wave-bar"
-              style={{ height: `${h * 100}%`, animationDelay: `${i * 0.1}s` }}
+              className="w-1.5 bg-gradient-to-t from-[#3B82F6] via-[#60A5FA] to-[#A78BFA] rounded-full sp-animate-wave-bar"
+              style={{ height: `${h * 100}%`, animationDelay: `${i * 0.1}s`, boxShadow: '0 0 12px rgba(96, 165, 250, 0.4)' }}
             />
           ))}
         </div>
