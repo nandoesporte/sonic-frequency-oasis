@@ -47,17 +47,17 @@ const Navbar = () => {
         </Link>
 
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white">
-          <a href="#inicio" className="hover:text-[#6366F1] transition-colors">Início</a>
-          <a href="#sobre" className="hover:text-[#6366F1] transition-colors">O que é?</a>
-          <a href="#caminhadas" className="hover:text-[#6366F1] transition-colors">Caminhadas</a>
-          <a href="#testemunhos" className="hover:text-[#6366F1] transition-colors">Relatos</a>
+          <a href="#inicio" className="hover:text-[#A855F7] transition-colors">Início</a>
+          <a href="#sobre" className="hover:text-[#A855F7] transition-colors">O que é?</a>
+          <a href="#caminhadas" className="hover:text-[#A855F7] transition-colors">Caminhadas</a>
+          <a href="#testemunhos" className="hover:text-[#A855F7] transition-colors">Relatos</a>
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          <Link to="/auth" className="text-sm font-medium text-white hover:text-[#6366F1] transition-colors flex items-center gap-1">
+          <Link to="/auth" className="text-sm font-medium text-white hover:text-[#A855F7] transition-colors flex items-center gap-1">
             <Lock size={14} /> Entrar
           </Link>
-          <Link to="/auth" className="bg-[#6366F1] hover:bg-[#6366F1]/90 px-6 py-2 rounded-full text-sm font-bold text-white transition-all transform hover:scale-105 shadow-lg shadow-[#6366F1]/20 flex items-center gap-2">
+          <Link to="/auth" className="bg-[#A855F7] hover:bg-[#A855F7]/90 px-6 py-2 rounded-full text-sm font-bold text-white transition-all transform hover:scale-105 shadow-lg shadow-[#A855F7]/20 flex items-center gap-2">
             <Gem size={16} /> Obter Premium
           </Link>
         </div>
@@ -79,7 +79,7 @@ const Navbar = () => {
             <a href="#inicio" className="text-lg py-2 border-b border-white/5" onClick={() => setMobileMenuOpen(false)}>Início</a>
             <a href="#sobre" className="text-lg py-2 border-b border-white/5" onClick={() => setMobileMenuOpen(false)}>O que é?</a>
             <a href="#caminhadas" className="text-lg py-2 border-b border-white/5" onClick={() => setMobileMenuOpen(false)}>Caminhadas</a>
-            <Link to="/auth" className="bg-[#6366F1] py-3 rounded-xl font-bold mt-2 text-center">Obter Premium</Link>
+            <Link to="/auth" className="bg-[#A855F7] py-3 rounded-xl font-bold mt-2 text-center">Obter Premium</Link>
           </motion.div>
         )}
       </AnimatePresence>
@@ -95,8 +95,8 @@ const Hero = () => (
 
     {/* Floating orbs */}
     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
-      <div className="sp-orb absolute top-20 left-1/4 w-96 h-96 bg-[#6366F1] sp-animate-float-slow" />
-      <div className="sp-orb absolute top-40 right-1/4 w-96 h-96 bg-[#2DD4BF] sp-animate-float-rev" style={{ animationDelay: '1s' }} />
+      <div className="sp-orb absolute top-20 left-1/4 w-96 h-96 bg-[#A855F7] sp-animate-float-slow" />
+      <div className="sp-orb absolute top-40 right-1/4 w-96 h-96 bg-[#D946EF] sp-animate-float-rev" style={{ animationDelay: '1s' }} />
     </div>
 
     {/* Rotating concentric rings (right) */}
@@ -105,15 +105,15 @@ const Hero = () => (
         <circle cx="250" cy="250" r="120" stroke="rgba(99,102,241,0.18)" strokeDasharray="4 8" />
         <circle cx="250" cy="250" r="170" stroke="rgba(45,212,191,0.15)" strokeDasharray="2 14" />
         <circle cx="250" cy="250" r="220" stroke="rgba(255,255,255,0.06)" />
-        <circle cx="250" cy="130" r="3" fill="#2DD4BF" />
-        <circle cx="370" cy="250" r="3" fill="#6366F1" />
+        <circle cx="250" cy="130" r="3" fill="#D946EF" />
+        <circle cx="370" cy="250" r="3" fill="#A855F7" />
       </svg>
     </div>
 
     {/* Floating brackets/coordinates (left) */}
     <div className="hidden md:flex absolute top-40 left-8 flex-col gap-2 text-[10px] sp-font-mono text-white/30 pointer-events-none">
       <span>// PROTOCOLO_7D</span>
-      <span>$ status: <span className="text-[#2DD4BF]">active</span></span>
+      <span>$ status: <span className="text-[#D946EF]">active</span></span>
       <span>$ wavelength: 432Hz</span>
     </div>
 
@@ -121,8 +121,8 @@ const Hero = () => (
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
         <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full sp-glass border-white/5 mb-6">
           <span className="relative flex">
-            <span className="absolute inset-0 rounded-full bg-[#2DD4BF] sp-animate-pulse-ring"></span>
-            <span className="w-2 h-2 rounded-full bg-[#2DD4BF] mr-1"></span>
+            <span className="absolute inset-0 rounded-full bg-[#D946EF] sp-animate-pulse-ring"></span>
+            <span className="w-2 h-2 rounded-full bg-[#D946EF] mr-1"></span>
           </span>
           <span className="text-[10px] uppercase tracking-widest font-bold text-white/80">Sistema v4.2 Ativo</span>
         </span>
@@ -135,7 +135,7 @@ const Hero = () => (
           {[0.4, 0.7, 1, 0.6, 0.9, 0.5, 0.8, 1, 0.55, 0.75, 0.4].map((h, i) => (
             <span
               key={i}
-              className="w-1 bg-gradient-to-t from-[#6366F1] to-[#2DD4BF] rounded-full sp-animate-wave-bar"
+              className="w-1 bg-gradient-to-t from-[#A855F7] to-[#D946EF] rounded-full sp-animate-wave-bar"
               style={{ height: `${h * 100}%`, animationDelay: `${i * 0.1}s` }}
             />
           ))}
@@ -189,7 +189,7 @@ const TrustBar = () => (
           <div key={k} className="flex gap-8">
             {['Resonance', '432Hz', 'Theta', 'Binaural', 'Alpha', 'Solfeggio', '528Hz', 'Delta', 'Gamma', '7D Protocol'].map((t, i) => (
               <span key={i} className="flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-[#2DD4BF]" />{t}
+                <span className="w-1 h-1 rounded-full bg-[#D946EF]" />{t}
               </span>
             ))}
           </div>
@@ -200,19 +200,19 @@ const TrustBar = () => (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 items-center uppercase tracking-[0.2em] font-bold text-[10px]">
         <div className="text-center">
           <div className="text-3xl font-bold mb-1 sp-glow-text text-white">5,000+</div>
-          <div className="opacity-40 text-[#2DD4BF]">Mulheres</div>
+          <div className="opacity-40 text-[#D946EF]">Mulheres</div>
         </div>
         <div className="text-center">
           <div className="text-3xl font-bold mb-1 sp-glow-text text-white">99.9%</div>
-          <div className="opacity-40 text-[#6366F1]">Confiabilidade</div>
+          <div className="opacity-40 text-[#A855F7]">Confiabilidade</div>
         </div>
         <div className="text-center">
           <div className="text-3xl font-bold mb-1 sp-glow-text text-white">21 Dias</div>
-          <div className="opacity-40 text-[#2DD4BF]">Ciclo de Cura</div>
+          <div className="opacity-40 text-[#D946EF]">Ciclo de Cura</div>
         </div>
         <div className="text-center">
           <div className="text-3xl font-bold mb-1 sp-glow-text text-white">7D</div>
-          <div className="opacity-40 text-[#6366F1]">Dimensões</div>
+          <div className="opacity-40 text-[#A855F7]">Dimensões</div>
         </div>
       </div>
     </div>
@@ -222,7 +222,7 @@ const TrustBar = () => (
 const BenefitCard = ({ icon: Icon, title, description, color, index }: any) => (
   <motion.div whileHover={{ y: -5 }} className="p-8 sp-glass flex flex-col items-start gap-4 h-full relative overflow-hidden group">
     {/* Hover gradient sheen */}
-    <div className="absolute inset-0 bg-gradient-to-br from-[#6366F1]/0 via-[#2DD4BF]/0 to-[#6366F1]/0 group-hover:from-[#6366F1]/5 group-hover:to-[#2DD4BF]/10 transition-all duration-500 pointer-events-none" />
+    <div className="absolute inset-0 bg-gradient-to-br from-[#A855F7]/0 via-[#D946EF]/0 to-[#A855F7]/0 group-hover:from-[#A855F7]/5 group-hover:to-[#D946EF]/10 transition-all duration-500 pointer-events-none" />
     <span className="absolute top-4 right-4 text-[9px] sp-font-mono text-white/20">0{index}</span>
     <div className={`p-4 rounded-2xl ${color} relative`}>
       <Icon size={32} className="text-white relative z-10" />
@@ -236,11 +236,11 @@ const BenefitCard = ({ icon: Icon, title, description, color, index }: any) => (
 const BentoBenefits = () => (
   <section id="sobre" className="py-24 relative overflow-hidden">
     <div className="absolute inset-0 sp-dot-pattern opacity-50 pointer-events-none" />
-    <div className="sp-orb absolute -top-20 left-10 w-72 h-72 bg-[#6366F1]/40 sp-animate-float-slow" />
+    <div className="sp-orb absolute -top-20 left-10 w-72 h-72 bg-[#A855F7]/40 sp-animate-float-slow" />
     <div className="container mx-auto px-6 relative">
       <div className="text-center mb-16">
-        <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-[#2DD4BF] font-bold mb-4">
-          <span className="w-8 h-px bg-[#2DD4BF]" /> Benefícios <span className="w-8 h-px bg-[#2DD4BF]" />
+        <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-[#D946EF] font-bold mb-4">
+          <span className="w-8 h-px bg-[#D946EF]" /> Benefícios <span className="w-8 h-px bg-[#D946EF]" />
         </span>
         <h2 className="text-4xl md:text-7xl font-bold mb-6 sp-glow-text tracking-tighter text-white">
           Adeus ao <span className="sp-text-gradient">Ciclo de Sofrimento</span>
@@ -266,12 +266,12 @@ const ProcessStep = ({ number, title, description, isLast }: any) => (
     {/* Connecting line for desktop */}
     {!isLast && (
       <div className="hidden md:block absolute top-1/2 -right-6 w-12 h-px">
-        <div className="h-px bg-gradient-to-r from-[#6366F1]/60 to-transparent" />
-        <ChevronRight className="absolute -top-2 right-0 text-[#6366F1]/60" size={16} />
+        <div className="h-px bg-gradient-to-r from-[#A855F7]/60 to-transparent" />
+        <ChevronRight className="absolute -top-2 right-0 text-[#A855F7]/60" size={16} />
       </div>
     )}
     <div className="relative mb-6">
-      <span className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#6366F1] to-[#2DD4BF] blur-md opacity-50 group-hover:opacity-80 transition-opacity" />
+      <span className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#A855F7] to-[#D946EF] blur-md opacity-50 group-hover:opacity-80 transition-opacity" />
       <div className="relative w-12 h-12 rounded-xl bg-white flex items-center justify-center font-bold text-black">{number}</div>
     </div>
     <h3 className="text-xl font-bold mb-3 text-white">{title}</h3>
@@ -292,7 +292,7 @@ const HowItWorks = () => (
     </div>
     <div className="container mx-auto px-6 relative">
       <div className="text-center mb-16">
-        <span className="inline-block text-[10px] uppercase tracking-[0.3em] text-[#2DD4BF] font-bold mb-4 sp-font-mono">// 03_PROCESSO</span>
+        <span className="inline-block text-[10px] uppercase tracking-[0.3em] text-[#D946EF] font-bold mb-4 sp-font-mono">// 03_PROCESSO</span>
         <h2 className="text-4xl md:text-5xl font-bold sp-glow-text tracking-tighter text-white">
           Protocolo <span className="sp-text-gradient">7D</span>
         </h2>
@@ -312,7 +312,7 @@ const WalkingTherapy = () => (
       <div className="sp-glass p-8 md:p-16" style={{ borderRadius: 40 }}>
         <div className="flex flex-col md:flex-row items-center gap-12">
           <div className="flex-1">
-            <span className="flex items-center gap-2 text-[#2DD4BF] font-bold text-[10px] uppercase tracking-widest mb-4">
+            <span className="flex items-center gap-2 text-[#D946EF] font-bold text-[10px] uppercase tracking-widest mb-4">
               <Ear size={16} /> Bônus Exclusivo
             </span>
             <h2 className="text-4xl md:text-6xl font-bold mb-8 sp-glow-text tracking-tighter text-white">
@@ -329,7 +329,7 @@ const WalkingTherapy = () => (
                 'Sincronização entre corpo, mente e solo',
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-3 text-white/70">
-                  <CheckCircle2 className="text-[#2DD4BF]" size={18} /> {item}
+                  <CheckCircle2 className="text-[#D946EF]" size={18} /> {item}
                 </li>
               ))}
             </ul>
@@ -340,21 +340,21 @@ const WalkingTherapy = () => (
           <div className="flex-1 grid grid-cols-2 gap-4">
             <div className="space-y-4 pt-8">
               <div className="sp-glass p-6 text-center sp-animate-bounce-slow">
-                <Play className="mx-auto mb-2 text-[#2DD4BF]" fill="currentColor" size={24} />
+                <Play className="mx-auto mb-2 text-[#D946EF]" fill="currentColor" size={24} />
                 <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Cultive a Paz</span>
               </div>
               <div className="sp-glass p-6 text-center">
-                <Play className="mx-auto mb-2 text-[#6366F1]" fill="currentColor" size={24} />
+                <Play className="mx-auto mb-2 text-[#A855F7]" fill="currentColor" size={24} />
                 <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Supere a Tristeza</span>
               </div>
             </div>
             <div className="space-y-4">
               <div className="sp-glass p-6 text-center">
-                <Play className="mx-auto mb-2 text-[#6366F1]" fill="currentColor" size={24} />
+                <Play className="mx-auto mb-2 text-[#A855F7]" fill="currentColor" size={24} />
                 <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Autoestima +</span>
               </div>
               <div className="sp-glass p-6 text-center sp-animate-bounce-slow">
-                <Play className="mx-auto mb-2 text-[#2DD4BF]" fill="currentColor" size={24} />
+                <Play className="mx-auto mb-2 text-[#D946EF]" fill="currentColor" size={24} />
                 <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Energia Vital</span>
               </div>
             </div>
@@ -379,21 +379,21 @@ const ScientificProof = () => {
         <svg viewBox="0 0 1200 200" className="w-full h-48" preserveAspectRatio="none">
           <defs>
             <linearGradient id="sp-wave-grad" x1="0" x2="1" y1="0" y2="0">
-              <stop offset="0%" stopColor="#6366F1" stopOpacity="0" />
-              <stop offset="50%" stopColor="#2DD4BF" stopOpacity="1" />
-              <stop offset="100%" stopColor="#6366F1" stopOpacity="0" />
+              <stop offset="0%" stopColor="#A855F7" stopOpacity="0" />
+              <stop offset="50%" stopColor="#D946EF" stopOpacity="1" />
+              <stop offset="100%" stopColor="#A855F7" stopOpacity="0" />
             </linearGradient>
           </defs>
           <path d="M0,100 Q150,20 300,100 T600,100 T900,100 T1200,100" stroke="url(#sp-wave-grad)" strokeWidth="1.5" fill="none" />
           <path d="M0,100 Q150,180 300,100 T600,100 T900,100 T1200,100" stroke="url(#sp-wave-grad)" strokeWidth="1" fill="none" opacity="0.5" />
         </svg>
       </div>
-      <div className="sp-orb absolute top-10 right-10 w-72 h-72 bg-[#2DD4BF]/30 sp-animate-float-rev" />
+      <div className="sp-orb absolute top-10 right-10 w-72 h-72 bg-[#D946EF]/30 sp-animate-float-rev" />
 
       <div className="container mx-auto px-6 relative">
         <div className="text-center mb-16">
-          <span className="inline-flex items-center gap-3 text-[#2DD4BF] font-bold text-[10px] uppercase tracking-[0.3em] mb-4">
-            <span className="w-8 h-px bg-[#2DD4BF]" />Evidência Clínica<span className="w-8 h-px bg-[#2DD4BF]" />
+          <span className="inline-flex items-center gap-3 text-[#D946EF] font-bold text-[10px] uppercase tracking-[0.3em] mb-4">
+            <span className="w-8 h-px bg-[#D946EF]" />Evidência Clínica<span className="w-8 h-px bg-[#D946EF]" />
           </span>
           <h2 className="text-4xl md:text-7xl font-bold mb-6 sp-glow-text tracking-tighter text-white">
             Neurobiologia <span className="sp-text-gradient">Aplicada</span>
@@ -408,10 +408,10 @@ const ScientificProof = () => {
               <span className="absolute top-3 right-3 text-[10px] sp-font-mono text-white/20">DATA_0{i + 1}</span>
               <div className="flex justify-between items-end gap-4">
                 <span className="font-bold text-sm md:text-base uppercase tracking-widest text-white/70">{item.label}</span>
-                <span className="text-[#2DD4BF] font-bold text-4xl md:text-5xl leading-none">{item.value}</span>
+                <span className="text-[#D946EF] font-bold text-4xl md:text-5xl leading-none">{item.value}</span>
               </div>
               <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                <motion.div initial={{ width: 0 }} whileInView={{ width: item.value }} transition={{ duration: 1.5, ease: 'easeOut' }} className="h-full bg-gradient-to-r from-[#6366F1] to-[#2DD4BF]" />
+                <motion.div initial={{ width: 0 }} whileInView={{ width: item.value }} transition={{ duration: 1.5, ease: 'easeOut' }} className="h-full bg-gradient-to-r from-[#A855F7] to-[#D946EF]" />
               </div>
               <p className="text-sm md:text-base text-white/60 leading-relaxed">{item.desc}</p>
             </div>
@@ -419,9 +419,9 @@ const ScientificProof = () => {
         </div>
         <div className="sp-divider-line my-16 max-w-2xl mx-auto" />
         <div className="flex flex-wrap justify-center gap-4 text-xs md:text-sm text-white/60 font-semibold uppercase tracking-wider">
-          <span className="px-5 py-2.5 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={14} className="text-[#2DD4BF]" /> ISO 27001 Certified System</span>
-          <span className="px-5 py-2.5 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={14} className="text-[#2DD4BF]" /> Peer-Reviewed Research</span>
-          <span className="px-5 py-2.5 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={14} className="text-[#2DD4BF]" /> Clinical Compliance</span>
+          <span className="px-5 py-2.5 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={14} className="text-[#D946EF]" /> ISO 27001 Certified System</span>
+          <span className="px-5 py-2.5 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={14} className="text-[#D946EF]" /> Peer-Reviewed Research</span>
+          <span className="px-5 py-2.5 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={14} className="text-[#D946EF]" /> Clinical Compliance</span>
         </div>
       </div>
     </section>
@@ -444,12 +444,12 @@ const Testimonials = () => {
             <div key={i} className="p-8 sp-glass relative overflow-hidden h-full flex flex-col">
               <div className="flex gap-1 mb-4">
                 {[...Array(item.stars)].map((_, s) => (
-                  <Star key={s} size={12} fill="currentColor" className="text-[#2DD4BF]" />
+                  <Star key={s} size={12} fill="currentColor" className="text-[#D946EF]" />
                 ))}
               </div>
               <p className="text-white/70 italic mb-6 leading-relaxed font-light text-sm flex-grow">"{item.text}"</p>
               <div>
-                <p className="font-bold tracking-tight text-[#2DD4BF] text-sm">{item.name}</p>
+                <p className="font-bold tracking-tight text-[#D946EF] text-sm">{item.name}</p>
                 <p className="text-[10px] text-white/30 uppercase tracking-widest">{item.role}</p>
               </div>
             </div>
@@ -476,9 +476,9 @@ const Pricing = () => (
             <span className="text-white/40 text-sm"> /mês</span>
           </div>
           <ul className="space-y-4 mb-10 text-sm font-light text-white">
-            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#6366F1]" /> Acesso total aos protocolos</li>
-            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#6366F1]" /> 21 dias de guia inicial</li>
-            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#6366F1]" /> Atualizações frequentes</li>
+            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#A855F7]" /> Acesso total aos protocolos</li>
+            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#A855F7]" /> 21 dias de guia inicial</li>
+            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#A855F7]" /> Atualizações frequentes</li>
             <li className="flex items-center gap-3 opacity-30"><X size={18} /> Caminhadas Terapêuticas (Bônus)</li>
           </ul>
           <Link to="/auth" className="block text-center w-full py-4 rounded-xl border border-white/10 font-bold hover:bg-white/5 transition-colors text-sm text-white">
@@ -486,7 +486,7 @@ const Pricing = () => (
           </Link>
         </div>
 
-        <div className="p-10 sp-glass border-[#6366F1]/50 relative overflow-hidden md:scale-105 shadow-2xl shadow-[#6366F1]/20" style={{ borderRadius: 40 }}>
+        <div className="p-10 sp-glass border-[#A855F7]/50 relative overflow-hidden md:scale-105 shadow-2xl shadow-[#A855F7]/20" style={{ borderRadius: 40 }}>
           <div className="absolute top-6 right-6 px-4 py-1 bg-white text-black font-bold text-[8px] uppercase rounded-full tracking-widest">Mais Escolhido</div>
           <h3 className="font-bold text-2xl mb-2 text-white">Anual</h3>
           <p className="text-white/40 text-sm mb-8">Melhor custo-benefício.</p>
@@ -495,10 +495,10 @@ const Pricing = () => (
             <span className="text-white/40 italic text-xs"> /ano (menos de R$ 17/mês)</span>
           </div>
           <ul className="space-y-4 mb-10 text-sm font-light text-white">
-            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#2DD4BF]" /> Tudo do plano mensal</li>
-            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#2DD4BF]" /> Caminhadas Terapêuticas (Bônus)</li>
-            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#2DD4BF]" /> Acesso antecipado a novidades</li>
-            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#2DD4BF]" /> Suporte VIP via WhatsApp</li>
+            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#D946EF]" /> Tudo do plano mensal</li>
+            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#D946EF]" /> Caminhadas Terapêuticas (Bônus)</li>
+            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#D946EF]" /> Acesso antecipado a novidades</li>
+            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#D946EF]" /> Suporte VIP via WhatsApp</li>
           </ul>
           <Link to="/auth" className="block text-center w-full py-4 bg-white text-black rounded-xl font-bold hover:scale-105 transition-transform shadow-lg text-sm">
             Assinar Anual com Desconto
@@ -532,24 +532,24 @@ const Footer = () => (
           <div>
             <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-white">Produto</h4>
             <ul className="space-y-4 text-sm text-gray-500">
-              <li><a href="#sobre" className="hover:text-[#6366F1] transition-colors">Protocolo 7D</a></li>
-              <li><a href="#caminhadas" className="hover:text-[#6366F1] transition-colors">Caminhadas</a></li>
-              <li><a href="#" className="hover:text-[#6366F1] transition-colors">Preços</a></li>
+              <li><a href="#sobre" className="hover:text-[#A855F7] transition-colors">Protocolo 7D</a></li>
+              <li><a href="#caminhadas" className="hover:text-[#A855F7] transition-colors">Caminhadas</a></li>
+              <li><a href="#" className="hover:text-[#A855F7] transition-colors">Preços</a></li>
             </ul>
           </div>
           <div>
             <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-white">Suporte</h4>
             <ul className="space-y-4 text-sm text-gray-500">
-              <li><a href="#" className="hover:text-[#6366F1] transition-colors">FAQ</a></li>
-              <li><a href="#" className="hover:text-[#6366F1] transition-colors">Contato</a></li>
-              <li><a href="/terms" className="hover:text-[#6366F1] transition-colors">Aviso Legal</a></li>
+              <li><a href="#" className="hover:text-[#A855F7] transition-colors">FAQ</a></li>
+              <li><a href="#" className="hover:text-[#A855F7] transition-colors">Contato</a></li>
+              <li><a href="/terms" className="hover:text-[#A855F7] transition-colors">Aviso Legal</a></li>
             </ul>
           </div>
           <div>
             <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-white">Social</h4>
             <ul className="space-y-4 text-sm text-gray-500">
-              <li><a href="#" className="hover:text-[#6366F1] transition-colors">Instagram</a></li>
-              <li><a href="#" className="hover:text-[#6366F1] transition-colors">YouTube</a></li>
+              <li><a href="#" className="hover:text-[#A855F7] transition-colors">Instagram</a></li>
+              <li><a href="#" className="hover:text-[#A855F7] transition-colors">YouTube</a></li>
             </ul>
           </div>
         </div>
@@ -581,8 +581,8 @@ export const SentiPassosLanding = () => {
 
       <section className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 sp-grid-pattern opacity-30 pointer-events-none" />
-        <div className="sp-orb absolute top-0 left-1/4 w-96 h-96 bg-[#6366F1]/40 sp-animate-float-slow" />
-        <div className="sp-orb absolute bottom-0 right-1/4 w-96 h-96 bg-[#2DD4BF]/30 sp-animate-float-rev" />
+        <div className="sp-orb absolute top-0 left-1/4 w-96 h-96 bg-[#A855F7]/40 sp-animate-float-slow" />
+        <div className="sp-orb absolute bottom-0 right-1/4 w-96 h-96 bg-[#D946EF]/30 sp-animate-float-rev" />
 
         <div className="container mx-auto px-6 text-center relative">
           <div className="max-w-4xl mx-auto sp-glass p-12 md:p-20 border-white/5 relative overflow-hidden" style={{ borderRadius: 50 }}>
@@ -594,8 +594,8 @@ export const SentiPassosLanding = () => {
             {/* Animated rings */}
             <div className="absolute -top-20 -right-20 sp-animate-spin-slow opacity-30 pointer-events-none">
               <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
-                <circle cx="100" cy="100" r="80" stroke="#2DD4BF" strokeDasharray="2 8" />
-                <circle cx="100" cy="100" r="50" stroke="#6366F1" strokeDasharray="4 4" />
+                <circle cx="100" cy="100" r="80" stroke="#D946EF" strokeDasharray="2 8" />
+                <circle cx="100" cy="100" r="50" stroke="#A855F7" strokeDasharray="4 4" />
               </svg>
             </div>
 
@@ -609,7 +609,7 @@ export const SentiPassosLanding = () => {
               Começar Transformação <Zap size={24} fill="currentColor" />
             </Link>
             <p className="mt-8 text-[10px] text-white/30 uppercase tracking-[0.2em] flex items-center justify-center gap-2">
-              <ShieldCheck size={14} className="text-[#2DD4BF]" /> Garantia de 7 dias ou seu dinheiro de volta.
+              <ShieldCheck size={14} className="text-[#D946EF]" /> Garantia de 7 dias ou seu dinheiro de volta.
             </p>
           </div>
         </div>
