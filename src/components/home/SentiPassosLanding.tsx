@@ -568,16 +568,33 @@ export const SentiPassosLanding = () => {
       <Testimonials />
       <Pricing />
 
-      <section className="py-24">
-        <div className="container mx-auto px-6 text-center">
-          <div className="max-w-4xl mx-auto sp-glass p-12 md:p-20 border-white/5" style={{ borderRadius: 50 }}>
-            <h2 className="text-4xl md:text-7xl font-bold mb-8 sp-glow-text tracking-tighter text-white">
+      <section className="py-24 relative overflow-hidden">
+        <div className="absolute inset-0 sp-grid-pattern opacity-30 pointer-events-none" />
+        <div className="sp-orb absolute top-0 left-1/4 w-96 h-96 bg-[#6366F1]/40 sp-animate-float-slow" />
+        <div className="sp-orb absolute bottom-0 right-1/4 w-96 h-96 bg-[#2DD4BF]/30 sp-animate-float-rev" />
+
+        <div className="container mx-auto px-6 text-center relative">
+          <div className="max-w-4xl mx-auto sp-glass p-12 md:p-20 border-white/5 relative overflow-hidden" style={{ borderRadius: 50 }}>
+            <span className="sp-corner-bracket tl" />
+            <span className="sp-corner-bracket tr" />
+            <span className="sp-corner-bracket bl" />
+            <span className="sp-corner-bracket br" />
+
+            {/* Animated rings */}
+            <div className="absolute -top-20 -right-20 sp-animate-spin-slow opacity-30 pointer-events-none">
+              <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
+                <circle cx="100" cy="100" r="80" stroke="#2DD4BF" strokeDasharray="2 8" />
+                <circle cx="100" cy="100" r="50" stroke="#6366F1" strokeDasharray="4 4" />
+              </svg>
+            </div>
+
+            <h2 className="text-4xl md:text-7xl font-bold mb-8 sp-glow-text tracking-tighter text-white relative">
               Pronta para sua<br /><span className="sp-text-gradient">Transformação?</span>
             </h2>
-            <p className="text-white/50 text-lg mb-12 max-w-xl mx-auto font-light">
+            <p className="text-white/50 text-lg mb-12 max-w-xl mx-auto font-light relative">
               Junte-se a mais de 5.000 mulheres que já resgataram sua saúde emocional e física. Comece agora seu teste gratuito.
             </p>
-            <Link to="/auth" className="inline-flex px-12 py-6 rounded-xl bg-white text-black font-bold text-lg hover:scale-105 transition-transform shadow-2xl items-center justify-center gap-3 mx-auto">
+            <Link to="/auth" className="relative inline-flex px-12 py-6 rounded-xl bg-white text-black font-bold text-lg hover:scale-105 transition-transform shadow-2xl items-center justify-center gap-3 mx-auto">
               Começar Transformação <Zap size={24} fill="currentColor" />
             </Link>
             <p className="mt-8 text-[10px] text-white/30 uppercase tracking-[0.2em] flex items-center justify-center gap-2">
