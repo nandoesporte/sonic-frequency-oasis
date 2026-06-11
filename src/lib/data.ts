@@ -157,7 +157,8 @@ export async function getFrequenciesByCategory(categoryId: string): Promise<Freq
         purpose: freq.purpose,
         description: freq.description || freq.purpose,
         category: reverseCategoryMapping[freq.category as ValidDatabaseCategory] || freq.category,
-        premium: freq.is_premium
+        premium: freq.is_premium,
+        audioUrl: freq.audio_url || undefined,
       }));
     }
 
@@ -170,7 +171,8 @@ export async function getFrequenciesByCategory(categoryId: string): Promise<Freq
       purpose: freq.purpose,
       description: freq.description || freq.purpose,
       category: reverseCategoryMapping[freq.category as ValidDatabaseCategory] || freq.category,
-      premium: freq.is_premium
+      premium: freq.is_premium,
+      audioUrl: freq.audio_url || undefined,
     }));
   } catch (error) {
     console.error('Error in getFrequenciesByCategory:', error);
