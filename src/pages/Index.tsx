@@ -151,6 +151,13 @@ const Index = () => {
                   Continue sua jornada de transformação. Selecione uma frequência, abra uma caminhada SentiPasso ou explore o guia para potencializar seus resultados.
                 </p>
 
+                {/* Featured highlight */}
+                {featured && (
+                  <div className="max-w-4xl mx-auto mb-10">
+                    <DashboardFeaturedCard frequency={featured} durationLabel="20 min" />
+                  </div>
+                )}
+
                 {/* Quick actions */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
                   <DashboardQuickAction
