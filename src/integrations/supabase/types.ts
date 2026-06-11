@@ -111,6 +111,7 @@ export type Database = {
       }
       frequencies: {
         Row: {
+          audio_url: string | null
           category: Database["public"]["Enums"]["frequency_category"]
           created_at: string | null
           description: string | null
@@ -122,6 +123,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          audio_url?: string | null
           category: Database["public"]["Enums"]["frequency_category"]
           created_at?: string | null
           description?: string | null
@@ -133,6 +135,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          audio_url?: string | null
           category?: Database["public"]["Enums"]["frequency_category"]
           created_at?: string | null
           description?: string | null
