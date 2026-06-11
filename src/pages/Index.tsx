@@ -67,7 +67,12 @@ const Index = () => {
     };
     
     fetchCategoriesInBatches();
-    
+
+    // Load featured highlighted frequency
+    getFeaturedFrequency()
+      .then((f) => { if (f) setFeatured(f); })
+      .catch((err) => console.error('Error loading featured frequency:', err));
+
     return () => {
       isMounted = false;
     };
