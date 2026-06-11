@@ -272,7 +272,7 @@ export async function getFeaturedFrequency(): Promise<FrequencyData | null> {
     .limit(1)
     .maybeSingle();
 
-  console.log('[featured] result:', { data, error });
+  
 
   if (error || !data) {
     if (error) console.error('Error fetching featured frequency:', error);
