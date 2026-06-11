@@ -256,7 +256,37 @@ export async function getFrequencyById(id: string): Promise<FrequencyData | null
     purpose: data.purpose,
     description: data.description || data.purpose,
     category: reverseCategoryMapping[data.category as ValidDatabaseCategory] || data.category,
-    premium: data.is_premium
+    premium: data.is_premium,
+    audioUrl: data.audio_url || undefined,
+  };
+}
+
+/**
+ * Fetches the highlighted "Saúde Corporal" featured frequency (premium, 20min audio).
+ */
+export async function getFeaturedFrequency(): Promise<FrequencyData | null> {
+  const { data, error } = await supabase
+    .from('frequencies')
+    .select('*')
+    .eq('name', 'Saúde Corporal')
+    .not('audio_url', 'is', null)
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !data) {
+    if (error) console.error('Error fetching featured frequency:', error);
+    return null;
+  }
+
+  return {
+    id: data.id,
+    name: data.name,
+    hz: data.hz,
+    purpose: data.purpose,
+    description: data.description || data.purpose,
+    category: reverseCategoryMapping[data.category as ValidDatabaseCategory] || data.category,
+    premium: data.is_premium,
+    audioUrl: data.audio_url || undefined,
   };
 }
 
