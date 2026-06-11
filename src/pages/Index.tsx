@@ -25,6 +25,7 @@ import { useDebouncedEffect, useIsMobile } from "@/hooks";
 
 const Index = () => {
   const [categoryFrequencies, setCategoryFrequencies] = useState<Record<string, FrequencyData[]>>({});
+  const [featured, setFeatured] = useState<FrequencyData | null>(null);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
