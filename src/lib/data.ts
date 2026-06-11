@@ -262,13 +262,13 @@ export async function getFrequencyById(id: string): Promise<FrequencyData | null
 }
 
 /**
- * Fetches the highlighted "Saúde Corporal" featured frequency (premium, 20min audio).
+ * Fetches the highlighted "PIN de Cristal" featured frequency (premium, 20min audio).
  */
 export async function getFeaturedFrequency(): Promise<FrequencyData | null> {
   const { data, error } = await supabase
     .from('frequencies')
     .select('*')
-    .eq('name', 'Saúde Corporal')
+    .eq('name', 'PIN de Cristal')
     .limit(1)
     .maybeSingle();
 
