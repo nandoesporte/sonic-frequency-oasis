@@ -269,9 +269,10 @@ export async function getFeaturedFrequency(): Promise<FrequencyData | null> {
     .from('frequencies')
     .select('*')
     .eq('name', 'Saúde Corporal')
-    .not('audio_url', 'is', null)
     .limit(1)
     .maybeSingle();
+
+  
 
   if (error || !data) {
     if (error) console.error('Error fetching featured frequency:', error);
