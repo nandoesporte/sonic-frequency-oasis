@@ -23,6 +23,7 @@ export type FrequencyData = {
   category: string;
   premium: boolean;
   trending?: boolean;
+  audioUrl?: string;
 };
 
 export const categories: Category[] = [
