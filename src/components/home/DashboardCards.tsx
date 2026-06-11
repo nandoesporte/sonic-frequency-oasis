@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Play, Heart, Crown, Lock, ChevronRight } from "lucide-react";
+import { Play, Heart, Crown, Lock, ChevronRight, Sparkles, Clock } from "lucide-react";
 import { useAudio } from "@/lib/audio-context";
 import { usePremium } from "@/contexts/PremiumContext";
 import { useAuth } from "@/contexts/AuthContext";
