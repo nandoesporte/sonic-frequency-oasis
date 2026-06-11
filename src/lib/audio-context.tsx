@@ -383,6 +383,62 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         timerRef.current = null;
       }
 
+      // If this frequency has a pre-recorded audio (e.g. featured "Saúde Corporal"),
+      // play the MP3 file directly instead of starting the oscillator.
+      if (frequency.audioUrl) {
+        try {
+          const audio = new Audio(frequency.audioUrl);
+          audio.crossOrigin = "anonymous";
+          audio.preload = "auto";
+          audio.volume = 0;
+          sentipassoAudioRef.current = audio;
+
+          await audio.play();
+
+          // Smooth fade-in via HTMLAudioElement volume
+          const targetVolume = Math.min(1, volume);
+          const steps = 20;
+          const stepMs = (fadeTime * 1000) / steps;
+          for (let i = 1; i <= steps; i++) {
+            setTimeout(() => {
+              if (sentipassoAudioRef.current === audio) {
+                audio.volume = (targetVolume * i) / steps;
+              }
+            }, stepMs * i);
+          }
+
+          audio.onended = () => {
+            if (sentipassoAudioRef.current === audio) {
+              sentipassoAudioRef.current = null;
+              setIsPlaying(false);
+              unlockScreenOrientation();
+            }
+          };
+
+          setCurrentFrequency(frequency);
+          setIsPlaying(true);
+
+          // Add to history
+          setHistory(prev => {
+            const filtered = prev.filter(item => item.id !== frequency.id);
+            return [frequency, ...filtered].slice(0, 20);
+          });
+
+          try { await lockScreenOrientation(); } catch {}
+
+          toast.success(`Reproduzindo: ${frequency.name}`, {
+            description: "Áudio guiado em alta qualidade",
+          });
+
+          setIsProcessing(false);
+          return;
+        } catch (audioErr) {
+          console.error('Failed to play audio_url, falling back to oscillator:', audioErr);
+          sentipassoAudioRef.current = null;
+        }
+      }
+
+
       // Check if this is a sentiment frequency with audio message
       const isSentimentFreq = frequency.name.includes('Sentimento:');
       

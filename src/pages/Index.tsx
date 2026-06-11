@@ -2,11 +2,11 @@ import { useEffect, useState, useCallback } from 'react';
 import { AudioPlayer } from "@/components/audio-player";
 import { CategoryCard } from "@/components/category-card";
 import { FrequencyCard } from "@/components/frequency-card";
-import { DashboardCategoryCard, DashboardFrequencyCard, DashboardQuickAction } from "@/components/home/DashboardCards";
+import { DashboardCategoryCard, DashboardFrequencyCard, DashboardQuickAction, DashboardFeaturedCard } from "@/components/home/DashboardCards";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { AudioProvider } from "@/lib/audio-context";
-import { categories, FrequencyData, getFrequenciesByCategory } from "@/lib/data";
+import { categories, FrequencyData, getFrequenciesByCategory, getFeaturedFrequency } from "@/lib/data";
 import { ArrowRight, BookOpen, Crown, Sparkles, Headphones, Waves, ShieldCheck, Gift, CheckCircle, Users, ThumbsUp, Heart, Award, Volume2, AudioWaveform, ChevronRight, Zap } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -25,6 +25,7 @@ import { useDebouncedEffect, useIsMobile } from "@/hooks";
 
 const Index = () => {
   const [categoryFrequencies, setCategoryFrequencies] = useState<Record<string, FrequencyData[]>>({});
+  const [featured, setFeatured] = useState<FrequencyData | null>(null);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -66,7 +67,12 @@ const Index = () => {
     };
     
     fetchCategoriesInBatches();
-    
+
+    // Load featured highlighted frequency
+    getFeaturedFrequency()
+      .then((f) => { if (f) setFeatured(f); })
+      .catch((err) => console.error('Error loading featured frequency:', err));
+
     return () => {
       isMounted = false;
     };
@@ -144,6 +150,13 @@ const Index = () => {
                 <p className="text-center text-white/60 text-base sm:text-lg max-w-2xl mx-auto font-light mb-12 leading-relaxed">
                   Continue sua jornada de transformação. Selecione uma frequência, abra uma caminhada SentiPasso ou explore o guia para potencializar seus resultados.
                 </p>
+
+                {/* Featured highlight */}
+                {featured && (
+                  <div className="max-w-4xl mx-auto mb-10">
+                    <DashboardFeaturedCard frequency={featured} durationLabel="20 min" />
+                  </div>
+                )}
 
                 {/* Quick actions */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
