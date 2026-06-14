@@ -4,9 +4,11 @@ import { MapPin, Mail, MessageSquare } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const { t } = useTranslation();
   
   return (
     <footer className="bg-background border-t border-border/40 mt-auto relative">
@@ -27,7 +29,7 @@ export function Footer() {
           <div className="space-y-4">
             <Logo />
             <p className="text-sm text-muted-foreground">
-              Soluções tecnológicas que transformam frequências em bem-estar e qualidade de vida.
+              {t("footer.description")}
             </p>
             <p className="text-sm text-muted-foreground font-medium">
               CNPJ: 14.164.334/0001-05
@@ -36,7 +38,7 @@ export function Footer() {
           
           {/* Company Information */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-foreground">Informações</h4>
+            <h4 className="text-lg font-semibold text-foreground">{t("footer.info")}</h4>
             <ul className="space-y-3">
               <li className="flex items-start">
                 <MapPin className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
@@ -66,31 +68,31 @@ export function Footer() {
           
           {/* Quick Links */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-foreground">Links Rápidos</h4>
+            <h4 className="text-lg font-semibold text-foreground">{t("footer.quickLinks")}</h4>
             <ul className="space-y-2">
               <li>
                 <Link to="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Início
+                  {t("nav.home")}
                 </Link>
               </li>
               <li>
                 <Link to="/scientific" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Base Científica
+                  {t("nav.scientific")}
                 </Link>
               </li>
               <li>
                 <Link to="/guide" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Guia de Uso
+                  {t("nav.guide")}
                 </Link>
               </li>
               <li>
                 <Link to="/premium" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Assinatura Premium
+                  {t("footer.premiumSubscription")}
                 </Link>
               </li>
               <li>
                 <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Termos e Privacidade
+                  {t("footer.terms")}
                 </Link>
               </li>
             </ul>
@@ -102,10 +104,10 @@ export function Footer() {
         {/* Copyright Section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-2">
           <p className="text-sm text-muted-foreground">
-            &copy; {currentYear} Todos os direitos reservados
+            &copy; {currentYear} {t("footer.rights")}
           </p>
           <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-            Termos de Uso e Política de Privacidade
+            {t("footer.terms")}
           </Link>
         </div>
       </div>
