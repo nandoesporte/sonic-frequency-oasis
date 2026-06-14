@@ -1,0 +1,94 @@
+{
+  "language": {
+    "label": "Language",
+    "pt": "Portuguese",
+    "en": "English",
+    "es": "Spanish"
+  },
+  "nav": {
+    "home": "Home",
+    "scientific": "Scientific Basis",
+    "favorites": "Favorites",
+    "history": "History",
+    "guide": "User Guide",
+    "premium": "Premium",
+    "premiumActive": "Premium Active",
+    "getPremium": "Get Premium",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "profile": "My Profile",
+    "subscribePremium": "Subscribe Premium",
+    "manageSubscription": "Manage Subscription"
+  },
+  "dashboard": {
+    "badge": "Frequency Panel · Active Session",
+    "welcome": "Welcome,",
+    "subtitle": "Continue your transformation journey. Select a frequency, start a SentiPasso walk, or explore the guide to boost your results.",
+    "quickActions": {
+      "guide": { "title": "User Guide", "description": "Learn how to maximize each frequency" },
+      "sentipasso": { "title": "SentiPassos", "description": "Guided therapeutic walks" },
+      "favorites": { "title": "Favorites", "description": "Your most-used frequencies" }
+    },
+    "featured": {
+      "badge": "Featured",
+      "premium": "Premium",
+      "listenNow": "Listen now",
+      "playing": "Playing",
+      "unlock": "Unlock"
+    },
+    "card": {
+      "explore": "Explore",
+      "freq": "freq."
+    }
+  },
+  "toasts": {
+    "loginRequired": "Sign in to continue",
+    "loginRequiredDesc": "You need to be signed in to access frequencies",
+    "loginToListen": "Sign in to listen",
+    "loginToListenDesc": "You need to be signed in to listen to frequencies",
+    "loginToFavorite": "Sign in to favorite",
+    "premiumContent": "Premium Content",
+    "premiumContentDesc": "Subscribe to a plan to unlock",
+    "premiumFeaturedDesc": "Subscribe to a plan to unlock this session",
+    "featuredLoginDesc": "You need to be signed in to access the featured content"
+  },
+  "footer": {
+    "description": "Technology solutions that transform frequencies into wellness and quality of life.",
+    "info": "Information",
+    "quickLinks": "Quick Links",
+    "rights": "All rights reserved",
+    "terms": "Terms of Use and Privacy Policy",
+    "premiumSubscription": "Premium Subscription"
+  },
+  "terms": {
+    "title": "Terms of Use and Privacy",
+    "description": "Before continuing, we need your consent to our terms.",
+    "intro": "By using our services, you agree to our",
+    "link": "Terms of Use and Privacy Policy",
+    "importantPoints": "Important points:",
+    "point1": "Your personal information is protected",
+    "point2": "Sound frequencies are informational and complementary",
+    "point3": "We do not sell data to third parties",
+    "point4": "You can request deletion of your data at any time",
+    "decline": "Decline and Exit",
+    "accept": "Accept",
+    "processing": "Processing...",
+    "accepted": "Terms accepted",
+    "acceptedDesc": "Thanks for accepting our terms of use and privacy policy.",
+    "errorRecording": "Error recording terms acceptance",
+    "errorRetry": "Please try again."
+  },
+  "premiumDialog": {
+    "title": "Premium Content",
+    "subtitle": "is exclusive to premium subscribers",
+    "thisIs": "This content is",
+    "benefits": "Premium Benefits:",
+    "benefit1": "Unlimited access to all frequencies",
+    "benefit2": "Exclusive content updated monthly",
+    "benefit3": "No ads or interruptions",
+    "tryFree": "Try for Free",
+    "tryFreeDesc": "Each category has free frequencies available for you to try.",
+    "exploreFree": "Explore Free",
+    "viewPlans": "View subscription plans"
+  }
+}
