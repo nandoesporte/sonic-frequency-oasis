@@ -2,7 +2,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Heart, Crown, History, Menu, Home, LogOut, User, Book, Brain, Smartphone } from "lucide-react";
+import { Heart, Crown, History, Menu, Home, LogOut, User, Book, Brain } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,12 +10,15 @@ import { usePremium } from "@/contexts/PremiumContext";
 import { Logo } from "@/components/ui/logo";
 import { ProfileMenu } from "@/components/profile-menu";
 import { PWAInstallButton } from "@/components/ui/pwa-install-button";
+import { LanguageSelector } from "@/components/language-selector";
+import { useTranslation } from "react-i18next";
 
 export function Header() {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const { user, signOut } = useAuth();
   const { isPremium } = usePremium();
+  const { t } = useTranslation();
   
   if (typeof window !== 'undefined') {
     window.addEventListener('scroll', () => {
@@ -28,19 +31,18 @@ export function Header() {
   };
   
   const navLinks = [
-    { name: "Início", path: "/", icon: <Home className="w-4 h-4 mr-2" /> },
-    { name: "Base Científica", path: "/scientific", icon: <Brain className="w-4 h-4 mr-2" /> },
-    { name: "Favoritos", path: "/favorites", icon: <Heart className="w-4 h-4 mr-2" /> },
-    { name: "Histórico", path: "/history", icon: <History className="w-4 h-4 mr-2" /> },
-    { name: "Guia de Uso", path: "/guide", icon: <Book className="w-4 h-4 mr-2" /> }
+    { name: t("nav.home"), path: "/", icon: <Home className="w-4 h-4 mr-2" /> },
+    { name: t("nav.scientific"), path: "/scientific", icon: <Brain className="w-4 h-4 mr-2" /> },
+    { name: t("nav.favorites"), path: "/favorites", icon: <Heart className="w-4 h-4 mr-2" /> },
+    { name: t("nav.history"), path: "/history", icon: <History className="w-4 h-4 mr-2" /> },
+    { name: t("nav.guide"), path: "/guide", icon: <Book className="w-4 h-4 mr-2" /> }
   ];
 
-  // Determine if we're on the premium page to avoid adding the hash when already there
   const isPremiumPage = location.pathname === "/premium";
   const premiumPath = isPremiumPage ? "/premium#planos" : "/premium";
   
   const handleSignOut = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent default link behavior
+    e.preventDefault();
     signOut();
   };
 
@@ -50,7 +52,6 @@ export function Header() {
     }`}>
       <div className="container px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center">
-          {/* Replace the old text logo with our new Logo component */}
           <Logo 
             variant={window.innerWidth < 640 ? "mobile" : "default"} 
             className="mr-6"
@@ -74,19 +75,18 @@ export function Header() {
         </div>
         
         <div className="flex items-center gap-2">
-          {/* PWA Install Button - only show for logged users */}
           {user && <PWAInstallButton className="hidden sm:flex" />}
+          <LanguageSelector />
           <ThemeToggle />
           
           {user ? (
             <>
-              {/* Replace the old user buttons with Profile Menu component */}
               <ProfileMenu user={user} onSignOut={handleSignOut} />
               
               <Button variant={isPremium ? "ghost" : "default"} size="sm" asChild className="hidden sm:flex">
                 <Link to={premiumPath}>
                   <Crown className="mr-2 h-4 w-4" />
-                  {isPremium ? "Premium Ativo" : "Obter Premium"}
+                  {isPremium ? t("nav.premiumActive") : t("nav.getPremium")}
                 </Link>
               </Button>
             </>
@@ -95,14 +95,14 @@ export function Header() {
               <Button variant="default" size="sm" asChild className="hidden sm:flex">
                 <Link to="/auth">
                   <User className="mr-2 h-4 w-4" />
-                  Entrar
+                  {t("nav.signIn")}
                 </Link>
               </Button>
               
               <Button variant="default" size="sm" asChild className="hidden sm:flex">
                 <Link to={premiumPath}>
                   <Crown className="mr-2 h-4 w-4" />
-                  Obter Premium
+                  {t("nav.getPremium")}
                 </Link>
               </Button>
             </>
@@ -138,6 +138,10 @@ export function Header() {
                     </Link>
                   </Button>
                 ))}
+
+                <div className="px-1">
+                  <LanguageSelector variant="full" />
+                </div>
                 
                 {user ? (
                   <>
@@ -147,13 +151,13 @@ export function Header() {
                       className="justify-start"
                     >
                       <LogOut className="mr-2 h-4 w-4" />
-                      Sair
+                      {t("nav.signOut")}
                     </Button>
                     
                     <Button variant={isPremium ? "ghost" : "default"} className="justify-start" asChild>
                       <Link to={premiumPath}>
                         <Crown className="mr-2 h-4 w-4" />
-                        {isPremium ? "Premium Ativo" : "Obter Premium"}
+                        {isPremium ? t("nav.premiumActive") : t("nav.getPremium")}
                       </Link>
                     </Button>
                   </>
@@ -162,20 +166,19 @@ export function Header() {
                     <Button variant="default" asChild className="justify-start">
                       <Link to="/auth">
                         <User className="mr-2 h-4 w-4" />
-                        Entrar
+                        {t("nav.signIn")}
                       </Link>
                     </Button>
                     
                     <Button variant="default" className="mt-4" asChild>
                       <Link to={premiumPath}>
                         <Crown className="mr-2 h-4 w-4" />
-                        Obter Premium
+                        {t("nav.getPremium")}
                       </Link>
                     </Button>
                   </>
                 )}
                 
-                {/* PWA Install in mobile menu for logged users */}
                 {user && (
                   <div className="mt-4 border-t pt-4">
                     <PWAInstallButton variant="card" showInstructions />
