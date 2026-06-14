@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/sonner";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 // Current version of the Terms - update this when terms are modified
 const CURRENT_TERMS_VERSION = "v1.0.0";
@@ -14,6 +15,7 @@ export function TermsAcceptanceDialog() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const { t } = useTranslation();
   
   // Check if user has already accepted the current terms version
   useEffect(() => {
@@ -69,20 +71,20 @@ export function TermsAcceptanceDialog() {
       
       if (error) {
         console.error("Error recording terms acceptance:", error);
-        toast.error("Erro ao registrar aceite dos termos", {
-          description: "Por favor, tente novamente."
+        toast.error(t("terms.errorRecording"), {
+          description: t("terms.errorRetry")
         });
         return;
       }
       
       setOpen(false);
-      toast.success("Termos aceitos", {
-        description: "Obrigado por aceitar os nossos termos de uso e política de privacidade."
+      toast.success(t("terms.accepted"), {
+        description: t("terms.acceptedDesc")
       });
     } catch (err) {
       console.error("Error accepting terms:", err);
-      toast.error("Erro ao processar aceite", {
-        description: "Por favor, tente novamente."
+      toast.error(t("terms.errorRecording"), {
+        description: t("terms.errorRetry")
       });
     } finally {
       setLoading(false);
@@ -97,16 +99,16 @@ export function TermsAcceptanceDialog() {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl flex items-center gap-2">
-            <span className="text-2xl">📋</span> Termos de Uso e Privacidade
+            <span className="text-2xl">📋</span> {t("terms.title")}
           </DialogTitle>
           <DialogDescription className="text-base pt-2">
-            Antes de continuar, precisamos do seu consentimento em nossos termos.
+            {t("terms.description")}
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4 py-4">
           <p className="text-sm">
-            Ao utilizar nossos serviços, você concorda com nossos{" "}
+            {t("terms.intro")}{" "}
             <Link 
               to="/terms" 
               target="_blank" 
@@ -114,17 +116,17 @@ export function TermsAcceptanceDialog() {
               className="text-primary underline underline-offset-2"
               onClick={() => setOpen(false)}
             >
-              Termos de Uso e Política de Privacidade
+              {t("terms.link")}
             </Link>.
           </p>
           
           <div className="bg-muted/50 p-4 rounded-lg text-sm">
-            <p className="font-medium mb-2">Pontos importantes:</p>
+            <p className="font-medium mb-2">{t("terms.importantPoints")}</p>
             <ul className="list-disc pl-5 space-y-1">
-              <li>Suas informações pessoais são protegidas</li>
-              <li>As frequências sonoras têm caráter informativo e complementar</li>
-              <li>Não comercializamos dados com terceiros</li>
-              <li>Você pode solicitar exclusão dos seus dados a qualquer momento</li>
+              <li>{t("terms.point1")}</li>
+              <li>{t("terms.point2")}</li>
+              <li>{t("terms.point3")}</li>
+              <li>{t("terms.point4")}</li>
             </ul>
           </div>
         </div>
@@ -137,7 +139,7 @@ export function TermsAcceptanceDialog() {
             className="mt-2 sm:mt-0"
             disabled={loading}
           >
-            Recusar e Sair
+            {t("terms.decline")}
           </Button>
           <Button
             type="button"
@@ -145,7 +147,7 @@ export function TermsAcceptanceDialog() {
             disabled={loading}
             className="min-w-[120px]"
           >
-            {loading ? "Processando..." : "Aceitar"}
+            {loading ? t("terms.processing") : t("terms.accept")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,0 +1,94 @@
+{
+  "language": {
+    "label": "Idioma",
+    "pt": "Português",
+    "en": "Inglês",
+    "es": "Espanhol"
+  },
+  "nav": {
+    "home": "Início",
+    "scientific": "Base Científica",
+    "favorites": "Favoritos",
+    "history": "Histórico",
+    "guide": "Guia de Uso",
+    "premium": "Premium",
+    "premiumActive": "Premium Ativo",
+    "getPremium": "Obter Premium",
+    "signIn": "Entrar",
+    "signOut": "Sair",
+    "profile": "Meu Perfil",
+    "subscribePremium": "Assinar Premium",
+    "manageSubscription": "Gerenciar Assinatura"
+  },
+  "dashboard": {
+    "badge": "Painel Frequency · Sessão Ativa",
+    "welcome": "Bem-vinda,",
+    "subtitle": "Continue sua jornada de transformação. Selecione uma frequência, abra uma caminhada SentiPasso ou explore o guia para potencializar seus resultados.",
+    "quickActions": {
+      "guide": { "title": "Guia de Uso", "description": "Aprenda a maximizar cada frequência" },
+      "sentipasso": { "title": "SentiPassos", "description": "Caminhadas terapêuticas guiadas" },
+      "favorites": { "title": "Favoritos", "description": "Suas frequências mais usadas" }
+    },
+    "featured": {
+      "badge": "Destaque",
+      "premium": "Premium",
+      "listenNow": "Ouvir agora",
+      "playing": "Tocando",
+      "unlock": "Desbloquear"
+    },
+    "card": {
+      "explore": "Explorar",
+      "freq": "freq."
+    }
+  },
+  "toasts": {
+    "loginRequired": "Faça login para continuar",
+    "loginRequiredDesc": "É necessário estar logado para acessar as frequências",
+    "loginToListen": "Faça login para ouvir",
+    "loginToListenDesc": "É necessário estar logado para ouvir as frequências",
+    "loginToFavorite": "Faça login para favoritar",
+    "premiumContent": "Conteúdo Premium",
+    "premiumContentDesc": "Assine um plano para desbloquear",
+    "premiumFeaturedDesc": "Assine um plano para desbloquear esta sessão",
+    "featuredLoginDesc": "É necessário estar logado para acessar o destaque"
+  },
+  "footer": {
+    "description": "Soluções tecnológicas que transformam frequências em bem-estar e qualidade de vida.",
+    "info": "Informações",
+    "quickLinks": "Links Rápidos",
+    "rights": "Todos os direitos reservados",
+    "terms": "Termos de Uso e Política de Privacidade",
+    "premiumSubscription": "Assinatura Premium"
+  },
+  "terms": {
+    "title": "Termos de Uso e Privacidade",
+    "description": "Antes de continuar, precisamos do seu consentimento em nossos termos.",
+    "intro": "Ao utilizar nossos serviços, você concorda com nossos",
+    "link": "Termos de Uso e Política de Privacidade",
+    "importantPoints": "Pontos importantes:",
+    "point1": "Suas informações pessoais são protegidas",
+    "point2": "As frequências sonoras têm caráter informativo e complementar",
+    "point3": "Não comercializamos dados com terceiros",
+    "point4": "Você pode solicitar exclusão dos seus dados a qualquer momento",
+    "decline": "Recusar e Sair",
+    "accept": "Aceitar",
+    "processing": "Processando...",
+    "accepted": "Termos aceitos",
+    "acceptedDesc": "Obrigado por aceitar os nossos termos de uso e política de privacidade.",
+    "errorRecording": "Erro ao registrar aceite dos termos",
+    "errorRetry": "Por favor, tente novamente."
+  },
+  "premiumDialog": {
+    "title": "Conteúdo Premium",
+    "subtitle": "é exclusivo para assinantes premium",
+    "thisIs": "Este conteúdo é",
+    "benefits": "Benefícios do Premium:",
+    "benefit1": "Acesso ilimitado a todas as frequências",
+    "benefit2": "Conteúdo exclusivo atualizado mensalmente",
+    "benefit3": "Sem anúncios ou interrupções",
+    "tryFree": "Experimente Grátis",
+    "tryFreeDesc": "Cada categoria possui frequências gratuitas disponíveis para você experimentar.",
+    "exploreFree": "Explorar Gratuitas",
+    "viewPlans": "Ver planos de assinatura"
+  }
+}

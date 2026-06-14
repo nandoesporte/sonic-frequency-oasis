@@ -22,8 +22,10 @@ import { toast } from "@/components/ui/sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useDebouncedEffect, useIsMobile } from "@/hooks";
+import { useTranslation } from "react-i18next";
 
 const Index = () => {
+  const { t } = useTranslation();
   const [categoryFrequencies, setCategoryFrequencies] = useState<Record<string, FrequencyData[]>>({});
   const [featured, setFeatured] = useState<FrequencyData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -82,8 +84,8 @@ const Index = () => {
   const handleFrequencyClick = useCallback(() => {
     if (!user) {
       console.log("User not logged in, redirecting to auth page from home page");
-      toast.info("Faça login para continuar", {
-        description: "É necessário estar logado para acessar as frequências"
+      toast.info(t("toasts.loginRequired"), {
+        description: t("toasts.loginRequiredDesc")
       });
       navigate("/auth");
       return true;
@@ -97,7 +99,7 @@ const Index = () => {
   }
 
   // Welcome name for the dashboard hero
-  const welcomeName = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Bem-vinda';
+  const welcomeName = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || t("dashboard.welcome").replace(",", "");
 
   return (
     <AudioProvider>
@@ -121,7 +123,7 @@ const Index = () => {
                 <div className="flex justify-center mb-8">
                   <div className="sp-glass inline-flex items-center gap-2 px-4 py-2 text-[11px] uppercase tracking-[0.25em] text-white/70">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#A78BFA] animate-pulse" />
-                    Painel Frequency · Sessão Ativa
+                    {t("dashboard.badge")}
                   </div>
                 </div>
 
@@ -143,12 +145,12 @@ const Index = () => {
 
                 {/* Headline */}
                 <h1 className="text-center text-4xl sm:text-6xl md:text-7xl font-bold tracking-tighter sp-glow-text leading-[0.95] mb-6">
-                  Bem-vinda,<br />
+                  {t("dashboard.welcome")}<br />
                   <span className="sp-text-gradient-blue">{welcomeName}</span>
                 </h1>
 
                 <p className="text-center text-white/60 text-base sm:text-lg max-w-2xl mx-auto font-light mb-12 leading-relaxed">
-                  Continue sua jornada de transformação. Selecione uma frequência, abra uma caminhada SentiPasso ou explore o guia para potencializar seus resultados.
+                  {t("dashboard.subtitle")}
                 </p>
 
                 {/* Featured highlight */}
@@ -163,22 +165,22 @@ const Index = () => {
                   <DashboardQuickAction
                     to="/guide"
                     icon={<BookOpen className="h-5 w-5" />}
-                    title="Guia de Uso"
-                    description="Aprenda a maximizar cada frequência"
+                    title={t("dashboard.quickActions.guide.title")}
+                    description={t("dashboard.quickActions.guide.description")}
                     gradient="linear-gradient(135deg, #8B5CF6, #A78BFA)"
                   />
                   <DashboardQuickAction
                     to="/sentipasso"
                     icon={<Headphones className="h-5 w-5" />}
-                    title="SentiPassos"
-                    description="Caminhadas terapêuticas guiadas"
+                    title={t("dashboard.quickActions.sentipasso.title")}
+                    description={t("dashboard.quickActions.sentipasso.description")}
                     gradient="linear-gradient(135deg, #3B82F6, #818CF8)"
                   />
                   <DashboardQuickAction
                     to="/favorites"
                     icon={<Heart className="h-5 w-5" />}
-                    title="Favoritos"
-                    description="Suas frequências mais usadas"
+                    title={t("dashboard.quickActions.favorites.title")}
+                    description={t("dashboard.quickActions.favorites.description")}
                     gradient="linear-gradient(135deg, #A78BFA, #60A5FA)"
                   />
                 </div>

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Crown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface PremiumContentDialogProps {
   open: boolean;
@@ -23,6 +24,7 @@ export function PremiumContentDialog({
   frequencyName,
 }: PremiumContentDialogProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleSubscribe = () => {
     onOpenChange(false);
@@ -39,49 +41,49 @@ export function PremiumContentDialog({
             <Crown className="h-8 w-8 text-purple-500 dark:text-purple-300" />
           </div>
           <DialogTitle className="text-center text-xl">
-            Conteúdo Premium
+            {t("premiumDialog.title")}
           </DialogTitle>
           <DialogDescription className="text-center pt-2">
-            {frequencyName ? `"${frequencyName}" é` : "Este conteúdo é"} exclusivo para assinantes premium
+            {frequencyName ? `"${frequencyName}" ${t("premiumDialog.subtitle")}` : `${t("premiumDialog.thisIs")} ${t("premiumDialog.subtitle")}`}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="rounded-lg bg-muted p-4">
-            <h4 className="font-medium mb-2">Benefícios do Premium:</h4>
+            <h4 className="font-medium mb-2">{t("premiumDialog.benefits")}</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-center">
                 <span className="bg-purple-500 rounded-full h-1.5 w-1.5 mr-2"></span>
-                Acesso ilimitado a todas as frequências
+                {t("premiumDialog.benefit1")}
               </li>
               <li className="flex items-center">
                 <span className="bg-purple-500 rounded-full h-1.5 w-1.5 mr-2"></span>
-                Conteúdo exclusivo atualizado mensalmente
+                {t("premiumDialog.benefit2")}
               </li>
               <li className="flex items-center">
                 <span className="bg-purple-500 rounded-full h-1.5 w-1.5 mr-2"></span>
-                Sem anúncios ou interrupções
+                {t("premiumDialog.benefit3")}
               </li>
             </ul>
           </div>
           <div className="bg-green-500/10 p-4 rounded-lg border border-green-500/20">
             <h4 className="font-medium text-green-600 dark:text-green-400 flex items-center mb-2">
               <span className="bg-green-500 rounded-full h-2 w-2 mr-2"></span>
-              Experimente Grátis
+              {t("premiumDialog.tryFree")}
             </h4>
             <p className="text-sm text-muted-foreground">
-              Cada categoria possui frequências gratuitas disponíveis para você experimentar.
+              {t("premiumDialog.tryFreeDesc")}
             </p>
           </div>
         </div>
         <DialogFooter className="flex flex-col sm:flex-row gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)} className="sm:w-full">
-            Explorar Gratuitas
+            {t("premiumDialog.exploreFree")}
           </Button>
           <Button 
             onClick={handleSubscribe} 
             className="sm:w-full bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700"
           >
-            Ver planos de assinatura
+            {t("premiumDialog.viewPlans")}
           </Button>
         </DialogFooter>
       </DialogContent>
