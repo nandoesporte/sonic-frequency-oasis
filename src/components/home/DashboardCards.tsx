@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/components/ui/sonner";
 import { getCategoryCount, FrequencyData } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 /**
  * Dark, glass-styled category card aligned with the landing page aesthetic.
@@ -23,6 +24,7 @@ interface DashboardCategoryCardProps {
 export function DashboardCategoryCard({ id, name, description, icon, index = 0 }: DashboardCategoryCardProps) {
   const [count, setCount] = useState<number | null>(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Rotate gradients across cards for visual rhythm
   const gradients = [
@@ -69,10 +71,10 @@ export function DashboardCategoryCard({ id, name, description, icon, index = 0 }
 
       <div className="flex items-center justify-between pt-3 border-t border-white/5">
         <span className="text-[10px] uppercase tracking-[0.2em] text-white/40">
-          {count !== null ? `${count} freq.` : "—"}
+          {count !== null ? `${count} ${t("dashboard.card.freq")}` : "—"}
         </span>
         <span className="text-[10px] uppercase tracking-[0.2em] text-[#A78BFA] font-medium">
-          Explorar
+          {t("dashboard.card.explore")}
         </span>
       </div>
     </button>
@@ -92,6 +94,7 @@ export function DashboardFrequencyCard({ frequency, onBeforePlay }: DashboardFre
   const { hasAccess } = usePremium();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   if (!frequency) return null;
 
@@ -102,12 +105,12 @@ export function DashboardFrequencyCard({ frequency, onBeforePlay }: DashboardFre
   const handlePlay = () => {
     if (onBeforePlay && onBeforePlay()) return;
     if (!user && !loading) {
-      toast.info("Faça login para ouvir", { description: "É necessário estar logado para ouvir as frequências" });
+      toast.info(t("toasts.loginToListen"), { description: t("toasts.loginToListenDesc") });
       navigate("/auth");
       return;
     }
     if (locked) {
-      toast.info("Conteúdo Premium", { description: "Assine um plano para desbloquear" });
+      toast.info(t("toasts.premiumContent"), { description: t("toasts.premiumContentDesc") });
       navigate("/premium#planos");
       return;
     }
@@ -117,7 +120,7 @@ export function DashboardFrequencyCard({ frequency, onBeforePlay }: DashboardFre
   const handleFav = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!user && !loading) {
-      toast.info("Faça login para favoritar");
+      toast.info(t("toasts.loginToFavorite"));
       navigate("/auth");
       return;
     }
@@ -220,18 +223,19 @@ export function DashboardFeaturedCard({ frequency, durationLabel = "20 min" }: D
   const { hasAccess } = usePremium();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const isCurrent = isPlaying && currentFrequency?.id === frequency.id;
   const locked = frequency.premium && !hasAccess;
 
   const handlePlay = () => {
     if (!user && !loading) {
-      toast.info("Faça login para ouvir", { description: "É necessário estar logado para acessar o destaque" });
+      toast.info(t("toasts.loginToListen"), { description: t("toasts.featuredLoginDesc") });
       navigate("/auth");
       return;
     }
     if (locked) {
-      toast.info("Conteúdo Premium", { description: "Assine um plano para desbloquear esta sessão" });
+      toast.info(t("toasts.premiumContent"), { description: t("toasts.premiumFeaturedDesc") });
       navigate("/premium#planos");
       return;
     }
@@ -260,12 +264,12 @@ export function DashboardFeaturedCard({ frequency, durationLabel = "20 min" }: D
           <div className="flex items-center gap-2 mb-3">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[10px] uppercase tracking-[0.22em] text-white/80">
               <Sparkles className="h-3 w-3 text-[#A78BFA]" />
-              Destaque
+              {t("dashboard.featured.badge")}
             </span>
             {frequency.premium && (
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-[#8B5CF6] to-[#3B82F6] text-[10px] uppercase tracking-[0.2em] text-white font-medium">
                 <Crown className="h-3 w-3" />
-                Premium
+                {t("dashboard.featured.premium")}
               </span>
             )}
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] uppercase tracking-[0.2em] text-white/70">
@@ -307,12 +311,12 @@ export function DashboardFeaturedCard({ frequency, durationLabel = "20 min" }: D
             {locked ? (
               <>
                 <Lock className="h-4 w-4" />
-                Desbloquear
+                {t("dashboard.featured.unlock")}
               </>
             ) : (
               <>
                 <Play className="h-4 w-4 ml-0.5" />
-                {isCurrent ? "Tocando" : "Ouvir agora"}
+                {isCurrent ? t("dashboard.featured.playing") : t("dashboard.featured.listenNow")}
               </>
             )}
           </button>
