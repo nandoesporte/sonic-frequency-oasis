@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Crown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface PremiumContentDialogProps {
   open: boolean;
@@ -23,6 +24,7 @@ export function PremiumContentDialog({
   frequencyName,
 }: PremiumContentDialogProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleSubscribe = () => {
     onOpenChange(false);
