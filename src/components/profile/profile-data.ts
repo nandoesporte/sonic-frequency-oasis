@@ -1,5 +1,5 @@
-
-import { User, LogOut, Crown, BadgeCheck, BadgeDollarSign } from "lucide-react";
+import { User, Crown, BadgeDollarSign } from "lucide-react";
+import type { TFunction } from "i18next";
 
 export interface ProfileMenuItem {
   label: string;
@@ -8,28 +8,28 @@ export interface ProfileMenuItem {
   action?: () => void;
 }
 
-export const getProfileMenuItems = (isPremium: boolean): ProfileMenuItem[] => {
+export const getProfileMenuItems = (isPremium: boolean, t: TFunction): ProfileMenuItem[] => {
   const menuItems: ProfileMenuItem[] = [
     {
-      label: "Meu Perfil",
+      label: t("nav.profile"),
       icon: User,
-      href: "/profile"
-    }
+      href: "/profile",
+    },
   ];
-  
+
   if (!isPremium) {
     menuItems.push({
-      label: "Assinar Premium",
+      label: t("nav.subscribePremium"),
       icon: Crown,
-      href: "/premium#planos"
+      href: "/premium#planos",
     });
   } else {
     menuItems.push({
-      label: "Gerenciar Assinatura",
+      label: t("nav.manageSubscription"),
       icon: BadgeDollarSign,
-      href: "/premium#planos"
+      href: "/premium#planos",
     });
   }
-  
+
   return menuItems;
 };

@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "@supabase/supabase-js";
@@ -6,6 +5,7 @@ import { getProfileMenuItems } from "./profile/profile-data";
 import { usePremium } from "@/contexts/PremiumContext";
 import { useProfileMenu } from "@/hooks";
 import { LogOut } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface ProfileMenuProps {
   user: User;
@@ -15,9 +15,10 @@ interface ProfileMenuProps {
 export function ProfileMenu({ user, onSignOut }: ProfileMenuProps) {
   const { isOpen, toggleMenu, closeMenu, menuRef } = useProfileMenu();
   const { isPremium } = usePremium();
+  const { t } = useTranslation();
   
   // Get menu items
-  const menuItems = getProfileMenuItems(isPremium);
+  const menuItems = getProfileMenuItems(isPremium, t);
   
   // Get user initials for avatar fallback
   const getUserInitials = (): string => {
@@ -74,7 +75,7 @@ export function ProfileMenu({ user, onSignOut }: ProfileMenuProps) {
               className="flex w-full items-center px-4 py-2 text-sm text-foreground hover:bg-accent"
             >
               <LogOut className="mr-2 h-4 w-4" />
-              Sair
+              {t("nav.signOut")}
             </button>
           </div>
         </div>
