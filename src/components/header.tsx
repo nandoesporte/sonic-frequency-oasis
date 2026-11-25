@@ -1,7 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { Heart, Crown, History, Menu, Home, LogOut, User, Book, Brain } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -31,11 +30,11 @@ export function Header() {
   };
   
   const navLinks = [
-    { name: t("nav.home"), path: "/", icon: <Home className="w-4 h-4 mr-2" /> },
-    { name: t("nav.scientific"), path: "/scientific", icon: <Brain className="w-4 h-4 mr-2" /> },
-    { name: t("nav.favorites"), path: "/favorites", icon: <Heart className="w-4 h-4 mr-2" /> },
-    { name: t("nav.history"), path: "/history", icon: <History className="w-4 h-4 mr-2" /> },
-    { name: t("nav.guide"), path: "/guide", icon: <Book className="w-4 h-4 mr-2" /> }
+    { name: t("nav.home"), path: "/", icon: <Home className="w-4 h-4" /> },
+    { name: t("nav.scientific"), path: "/scientific", icon: <Brain className="w-4 h-4" /> },
+    { name: t("nav.favorites"), path: "/favorites", icon: <Heart className="w-4 h-4" /> },
+    { name: t("nav.history"), path: "/history", icon: <History className="w-4 h-4" /> },
+    { name: t("nav.guide"), path: "/guide", icon: <Book className="w-4 h-4" /> }
   ];
 
   const isPremiumPage = location.pathname === "/premium";
@@ -50,34 +49,33 @@ export function Header() {
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled ? 'bg-background/80 backdrop-blur-md border-b' : 'bg-transparent'
     }`}>
-      <div className="container px-4 sm:px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center">
+      <div className="sp-container !max-w-[1280px] py-2 sm:py-4 flex items-center justify-between gap-4">
+        <div className="flex items-center min-w-0">
           <Logo 
             variant={window.innerWidth < 640 ? "mobile" : "default"} 
-            className="mr-6"
+            className="mr-4 xl:mr-6 flex-shrink-0"
           />
           
-          <nav className="hidden md:flex items-center space-x-1">
+          <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <Button
                 key={link.path}
                 variant={isActive(link.path) ? "secondary" : "ghost"}
                 asChild
-                className="h-9"
+                className="h-9 px-3"
               >
-                <Link to={link.path} className="flex items-center">
+                <Link to={link.path} className="flex items-center" title={link.name} aria-label={link.name}>
                   {link.icon}
-                  {link.name}
+                  <span className="hidden xl:inline">{link.name}</span>
                 </Link>
               </Button>
             ))}
           </nav>
         </div>
         
-        <div className="flex items-center gap-2">
-          {user && <PWAInstallButton className="hidden sm:flex" />}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {user && <PWAInstallButton className="hidden 2xl:flex" />}
           <LanguageSelector />
-          <ThemeToggle />
           
           {user ? (
             <>
@@ -110,7 +108,7 @@ export function Header() {
           
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Menu">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>

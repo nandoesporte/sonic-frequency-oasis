@@ -17,7 +17,7 @@ export function Footer() {
         href="https://wa.me/5544997270698" 
         target="_blank" 
         rel="noopener noreferrer" 
-        className="fixed bottom-6 right-6 z-50 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full p-3 shadow-lg transition-transform hover:scale-110"
+        className="fixed bottom-24 right-4 sm:right-6 z-50 w-12 h-12 flex items-center justify-center bg-secondary border border-input text-foreground hover:bg-card rounded-full shadow-lg transition-colors duration-100"
         aria-label="Contato WhatsApp"
       >
         <MessageSquare className="h-6 w-6" />

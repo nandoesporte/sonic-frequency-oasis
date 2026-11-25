@@ -101,9 +101,9 @@ export function AudioPlayer() {
 
   if (!currentFrequency) {
     return (
-      <Card className="fixed bottom-0 left-0 right-0 p-4 mx-4 mb-4 rounded-xl glass-card animate-slide-up">
-        <div className="flex justify-center items-center text-muted-foreground py-2">
-          <p>Selecione uma frequência para reproduzir</p>
+      <Card className="fixed bottom-4 left-4 right-4 mx-auto w-fit max-w-[calc(100%-2rem)] px-6 py-2 rounded-full border-border bg-card/90 backdrop-blur-md shadow-lg animate-slide-up z-40">
+        <div className="flex justify-center items-center text-muted-foreground">
+          <p className="text-sm">Selecione uma frequência para reproduzir</p>
         </div>
       </Card>
     );
@@ -112,7 +112,7 @@ export function AudioPlayer() {
   // Se não está tocando, mostra apenas o player normal
   if (!isPlaying) {
     return (
-      <Card className="fixed bottom-0 left-0 right-0 p-4 mx-4 mb-4 rounded-xl glass-card animate-slide-up z-50">
+      <Card className="fixed bottom-4 left-4 right-4 mx-auto max-w-5xl p-4 rounded-2xl border-border bg-card/95 backdrop-blur-md shadow-lg animate-slide-up z-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button 

@@ -46,7 +46,7 @@ export function DashboardCategoryCard({ id, name, description, icon, index = 0 }
       type="button"
       onClick={handleClick}
       data-index={index}
-      className="sp-glass group p-6 text-left hover:bg-brand-secondary hover:border-brand-border-strong hover:-translate-y-0.5 transition-[background-color,border-color,transform] duration-100 w-full"
+      className="sp-glass group p-6 text-left hover:bg-brand-secondary hover:border-brand-border-strong hover:-translate-y-0.5 transition-[background-color,border-color,transform] duration-100 w-full h-full flex flex-col"
     >
       <div className="flex items-start justify-between mb-6">
         <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-brand-secondary border border-brand-border text-brand-primary">
@@ -58,7 +58,7 @@ export function DashboardCategoryCard({ id, name, description, icon, index = 0 }
       <h3 className="text-lg font-semibold text-brand-text mb-2 tracking-tight">{name}</h3>
       <p className="text-sm text-brand-muted leading-relaxed line-clamp-2 mb-4">{description}</p>
 
-      <div className="flex items-center justify-between pt-4 border-t border-brand-border">
+      <div className="flex items-center justify-between pt-4 mt-auto border-t border-brand-border w-full">
         <span className="text-xs uppercase tracking-[0.12em] text-brand-muted">
           {count !== null ? `${count} ${t("dashboard.card.freq")}` : "—"}
         </span>
@@ -253,7 +253,7 @@ export function DashboardFeaturedCard({ frequency, durationLabel = "20 min" }: D
             </span>
           </div>
 
-          <h3 className="sp-font-serif text-3xl sm:text-4xl font-bold tracking-tight text-brand-text mb-2">
+          <h3 className="sp-font-serif text-[1.75rem] leading-tight sm:text-4xl font-bold tracking-tight text-brand-text mb-2">
             {frequency.name}
           </h3>
           <p className="text-base text-brand-muted leading-relaxed max-w-xl mb-4 line-clamp-3">
@@ -267,11 +267,11 @@ export function DashboardFeaturedCard({ frequency, durationLabel = "20 min" }: D
           </div>
         </div>
 
-        <div className="flex-shrink-0 flex sm:flex-col items-center sm:items-end gap-4">
+        <div className="flex-shrink-0 flex w-full sm:w-auto sm:flex-col items-stretch sm:items-end gap-4">
           <button
             type="button"
             onClick={handlePlay}
-            className="sp-btn sp-btn-primary min-w-[192px]"
+            className="sp-btn sp-btn-primary w-full sm:w-auto sm:min-w-[192px]"
             aria-label={locked ? "Conteúdo premium" : isCurrent ? "Tocando agora" : "Ouvir agora"}
           >
             {locked ? (

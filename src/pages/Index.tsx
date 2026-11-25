@@ -29,6 +29,7 @@ const Index = () => {
   const [categoryFrequencies, setCategoryFrequencies] = useState<Record<string, FrequencyData[]>>({});
   const [featured, setFeatured] = useState<FrequencyData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [activeLibrary, setActiveLibrary] = useState<string | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -108,16 +109,16 @@ const Index = () => {
 
         {/* Dashboard Hero — Logged in users (paleta musica-roxo) */}
         {user && (
-          <section className="relative overflow-hidden pt-32 pb-16 px-4">
+          <section className="relative overflow-hidden pt-24 sm:pt-32 pb-12 sm:pb-16">
             <div className="absolute inset-0 pointer-events-none">
               <div className="sp-halo w-[520px] h-[520px] -top-40 -right-24" />
               <div className="absolute inset-0 sp-grid-pattern opacity-40" />
               <div className="sp-noise absolute inset-0" />
             </div>
 
-            <div className="container mx-auto relative z-10">
-              <div className="max-w-5xl mx-auto text-left">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end mb-12">
+            <div className="sp-container relative z-10">
+              <div className="text-left">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end mb-8 sm:mb-12">
                   <div className="md:col-span-2">
                     {/* Top badge */}
                     <div className="sp-glass inline-flex items-center gap-2 px-4 py-2 mb-8">
@@ -126,7 +127,7 @@ const Index = () => {
                     </div>
 
                     {/* Headline — fórmula Editorial */}
-                    <h1 className="text-brand-text mb-6" style={{ fontSize: 'clamp(2.75rem, 8vw, 5.5rem)' }}>
+                    <h1 className="text-brand-text mb-6" style={{ fontSize: 'clamp(2.5rem, 9vw, 5.5rem)' }}>
                       <span className="sp-hero-l1" style={{ fontSize: '0.5em' }}>{t("dashboard.welcome")}</span>
                       <span className="sp-hero-l2 break-words">{welcomeName}</span>
                     </h1>
@@ -177,7 +178,7 @@ const Index = () => {
                   />
                 </div>
 
-                <div className="sp-divider-line mt-16" />
+                <div className="sp-divider-line mt-12 sm:mt-16" />
               </div>
             </div>
           </section>
@@ -313,9 +314,9 @@ const Index = () => {
         {!user && <HowItWorksSection />}
         
         {/* SentiPassos Featured — paleta musica-roxo */}
-        <section className="relative py-16 sm:py-24 px-4 overflow-hidden">
-          <div className="container mx-auto relative z-10">
-            <div className="max-w-6xl mx-auto text-left">
+        <section className="relative py-12 sm:py-24 overflow-hidden">
+          <div className="sp-container relative z-10">
+            <div className="text-left">
               {/* Section header */}
               <div className="mb-12">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-border mb-6">
@@ -370,7 +371,7 @@ const Index = () => {
 
               {/* CTA */}
               <div className="flex">
-                <Link to="/sentipasso" className="group sp-btn sp-btn-primary">
+                <Link to="/sentipasso" className="group sp-btn sp-btn-primary w-full sm:w-auto">
                   Iniciar Caminhada SentiPasso
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform duration-100" />
                 </Link>
@@ -390,8 +391,8 @@ const Index = () => {
 
         {/* Categories — dashboard */}
         {user && (
-          <section className="relative py-16 px-4">
-            <div className="container mx-auto max-w-6xl text-left">
+          <section className="relative py-12 sm:py-16">
+            <div className="sp-container text-left">
               <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
                 <div>
                   <div className="sp-kicker mb-2">Explore</div>
@@ -402,7 +403,7 @@ const Index = () => {
                 <div className="h-px flex-1 min-w-[64px] bg-brand-border" />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {categories.map((category, idx) => {
                   const CategoryIcon = category.icon;
                   return (
@@ -423,9 +424,9 @@ const Index = () => {
 
         {/* Frequencies by Category — dashboard */}
         {user && Object.entries(categoryFrequencies).length > 0 && (
-          <section className="relative py-12 px-4">
-            <div className="container mx-auto max-w-6xl text-left">
-              <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
+          <section className="relative py-12 sm:py-16">
+            <div className="sp-container text-left">
+              <div className="flex items-end justify-between mb-6 flex-wrap gap-4">
                 <div>
                   <div className="sp-kicker mb-2">Biblioteca</div>
                   <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-brand-text">
@@ -435,40 +436,68 @@ const Index = () => {
                 <div className="h-px flex-1 min-w-[64px] bg-brand-border" />
               </div>
 
-              {Object.entries(categoryFrequencies).map(([categoryId, frequencies]) => {
-                const category = categories.find(cat => cat.id === categoryId);
-                if (!category || frequencies.length === 0) return null;
+              {(() => {
+                // Filtro por chips: uma categoria por vez, cabendo em uma tela
+                const loaded = categories.filter(cat => (categoryFrequencies[cat.id] || []).length > 0);
+                if (loaded.length === 0) return null;
+                const activeId = activeLibrary && loaded.some(c => c.id === activeLibrary) ? activeLibrary : loaded[0].id;
+                const category = loaded.find(c => c.id === activeId)!;
+                const frequencies = categoryFrequencies[activeId] || [];
                 const CategoryIcon = category.icon;
 
                 return (
-                  <div key={categoryId} className="sp-glass mb-6 p-6 sm:p-8">
-                    <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-brand-secondary border border-brand-border">
-                          <CategoryIcon className="h-5 w-5 text-brand-primary" />
-                        </div>
-                        <h3 className="text-xl font-semibold text-brand-text">{category.name}</h3>
-                      </div>
-                      <Link
-                        to={`/categories/${categoryId}`}
-                        className="inline-flex items-center gap-2 h-11 px-4 rounded-full text-sm font-semibold text-brand-muted hover:text-brand-text hover:bg-brand-secondary transition-colors duration-100"
-                      >
-                        Ver tudo <ChevronRight size={16} />
-                      </Link>
+                  <>
+                    <div className="sp-chip-row -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap mb-6" role="tablist" aria-label="Categorias da biblioteca">
+                      {loaded.map(cat => {
+                        const active = cat.id === activeId;
+                        return (
+                          <button
+                            key={cat.id}
+                            type="button"
+                            role="tab"
+                            aria-selected={active}
+                            onClick={() => setActiveLibrary(cat.id)}
+                            className={`flex-shrink-0 inline-flex items-center h-11 px-4 rounded-full border text-sm font-semibold transition-colors duration-100 ${
+                              active
+                                ? 'bg-brand-secondary border-brand-primary text-brand-text'
+                                : 'border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-border-strong'
+                            }`}
+                          >
+                            {cat.name}
+                          </button>
+                        );
+                      })}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {frequencies.map(frequency => (
-                        <DashboardFrequencyCard
-                          key={frequency.id}
-                          frequency={frequency}
-                          onBeforePlay={handleFrequencyClick}
-                        />
-                      ))}
+                    <div className="sp-glass p-4 sm:p-8" role="tabpanel">
+                      <div className="flex items-center justify-between mb-6 gap-4">
+                        <div className="flex items-center gap-4 min-w-0">
+                          <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-brand-secondary border border-brand-border flex-shrink-0">
+                            <CategoryIcon className="h-5 w-5 text-brand-primary" />
+                          </div>
+                          <h3 className="text-xl font-semibold text-brand-text truncate">{category.name}</h3>
+                        </div>
+                        <Link
+                          to={`/categories/${activeId}`}
+                          className="flex-shrink-0 inline-flex items-center gap-2 h-11 px-4 rounded-full text-sm font-semibold text-brand-muted hover:text-brand-text hover:bg-brand-secondary transition-colors duration-100"
+                        >
+                          Ver tudo <ChevronRight size={16} />
+                        </Link>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {frequencies.map(frequency => (
+                          <DashboardFrequencyCard
+                            key={frequency.id}
+                            frequency={frequency}
+                            onBeforePlay={handleFrequencyClick}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  </>
                 );
-              })}
+              })()}
             </div>
           </section>
         )}

@@ -83,7 +83,8 @@
   font-weight: 700;
   font-size: 1em;
   letter-spacing: -0.02em;
-  line-height: 0.95;
+  line-height: 1;
+  margin-bottom: 0.06em;
 }
 .sp-hero-l2 {
   display: block;
@@ -92,8 +93,33 @@
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: -0.04em;
-  line-height: 0.82;
+  line-height: 0.86;
+  /* respiro para acentos em maiúsculas (Ú, Ê, Ç, Ã) não colidirem com a linha 1 */
+  padding-top: 0.14em;
+  overflow-wrap: anywhere;
 }
+
+/* Container único das telas de vendas e dashboard (escala de 8) */
+.sp-container {
+  width: 100%;
+  max-width: 1152px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+@media (max-width: 639px) {
+  .sp-container { padding-left: 16px; padding-right: 16px; }
+}
+/* Linha de chips com rolagem horizontal no celular */
+.sp-chip-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.sp-chip-row::-webkit-scrollbar { display: none; }
 
 /* === Botões: 48px, padding 24px, 17px semibold, pill, luz de cima === */
 .sp-btn {

@@ -48,7 +48,7 @@ const Navbar = () => {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'sp-glass-nav py-2' : 'bg-transparent py-4'}`}>
-      <div className="container mx-auto px-6 flex justify-between items-center">
+      <div className="sp-container flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2">
           <BrandMark />
           <span className="font-bold text-xl tracking-tight">
@@ -99,11 +99,11 @@ const Navbar = () => {
 };
 
 const Hero = () => (
-  <section id="inicio" className="relative pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden">
+  <section id="inicio" className="relative pt-32 pb-16 md:pt-40 md:pb-32 overflow-hidden">
     <div className="absolute inset-0 sp-grid-pattern opacity-40 pointer-events-none" />
     <div className="sp-noise absolute inset-0" />
 
-    <div className="container mx-auto px-6 relative z-10">
+    <div className="sp-container relative z-10">
       {/* Composição 2/3 texto + 1/3 visual, fora do centro */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
         <motion.div
@@ -120,12 +120,12 @@ const Hero = () => (
             <span className="sp-kicker">Sistema v4.2 Ativo</span>
           </span>
 
-          <h1 className="text-brand-text mb-8" style={{ fontSize: 'clamp(3rem, 9vw, 7.5rem)' }}>
+          <h1 className="text-brand-text mb-8" style={{ fontSize: 'clamp(3.5rem, 11vw, 7.5rem)' }}>
             <span className="sp-hero-l1" style={{ fontSize: '0.55em' }}>Restaure sua</span>
             <span className="sp-hero-l2">Saúde</span>
           </h1>
 
-          <p className="text-brand-muted text-lg md:text-xl max-w-xl mb-12 leading-relaxed">
+          <p className="text-brand-muted text-lg md:text-xl max-w-xl mb-8 md:mb-12 leading-relaxed">
             Elimine dores crônicas, ansiedade e estresse através de ondas sonoras direcionadas e neurociência aplicada.
           </p>
 
@@ -151,7 +151,7 @@ const Hero = () => (
         </motion.div>
 
         {/* Visual: equalizador com halo de luz (claro-escuro) */}
-        <div className="relative flex flex-col items-center lg:items-end">
+        <div className="relative hidden md:flex flex-col items-center lg:items-end">
           <div className="sp-halo w-[360px] h-[360px] -top-12 left-1/2 -translate-x-1/2 lg:left-auto lg:right-0 lg:translate-x-0" />
           <div className="relative sp-glass w-full max-w-sm p-8">
             <span className="sp-corner-bracket tl" />
@@ -206,7 +206,7 @@ const TrustBar = () => (
         </div>
       </div>
     </div>
-    <div className="container mx-auto px-6 relative py-12">
+    <div className="sp-container relative py-8 md:py-12">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
         {[
           { value: '5,000+', label: 'Mulheres' },
@@ -215,7 +215,7 @@ const TrustBar = () => (
           { value: '7D', label: 'Dimensões' },
         ].map((s) => (
           <div key={s.label} className="text-center">
-            <div className="sp-font-serif text-4xl font-bold mb-2 text-brand-text">{s.value}</div>
+            <div className="sp-font-serif text-3xl sm:text-4xl font-bold mb-2 text-brand-text">{s.value}</div>
             <div className="sp-kicker">{s.label}</div>
           </div>
         ))}
@@ -225,11 +225,11 @@ const TrustBar = () => (
 );
 
 const SectionHeader = ({ kicker, title, accent, description }: { kicker: string; title: string; accent?: string; description?: string }) => (
-  <div className="text-center mb-16">
+  <div className="text-center mb-12 md:mb-16">
     <span className="sp-kicker inline-flex items-center gap-4 mb-4">
       <span className="w-8 h-px bg-brand-border-strong" /> {kicker} <span className="w-8 h-px bg-brand-border-strong" />
     </span>
-    <h2 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-brand-text">
+    <h2 className="text-[2rem] leading-[1.1] sm:text-5xl md:text-6xl font-bold mb-6 tracking-tight text-brand-text">
       {title} {accent && <span className="sp-text-gradient">{accent}</span>}
     </h2>
     {description && <p className="text-brand-muted max-w-2xl mx-auto leading-relaxed">{description}</p>}
@@ -237,7 +237,7 @@ const SectionHeader = ({ kicker, title, accent, description }: { kicker: string;
 );
 
 const BenefitCard = ({ icon: Icon, title, description, index }: any) => (
-  <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.1 }} className="p-8 sp-glass flex flex-col items-start gap-4 h-full relative overflow-hidden text-left">
+  <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.1 }} className="p-6 md:p-8 sp-glass flex flex-col items-start gap-4 h-full relative overflow-hidden text-left">
     <span className="absolute top-4 right-4 text-xs sp-font-mono text-brand-muted">0{index}</span>
     <div className="p-4 rounded-2xl bg-brand-secondary border border-brand-border">
       <Icon size={32} className="text-brand-primary" />
@@ -248,9 +248,9 @@ const BenefitCard = ({ icon: Icon, title, description, index }: any) => (
 );
 
 const BentoBenefits = () => (
-  <section id="sobre" className="py-24 relative overflow-hidden">
+  <section id="sobre" className="py-16 md:py-24 relative overflow-hidden">
     <div className="absolute inset-0 sp-dot-pattern opacity-50 pointer-events-none" />
-    <div className="container mx-auto px-6 relative">
+    <div className="sp-container relative">
       <SectionHeader
         kicker="Benefícios"
         title="Adeus ao"
@@ -270,7 +270,7 @@ const BentoBenefits = () => (
 );
 
 const ProcessStep = ({ number, title, description, isLast }: any) => (
-  <div className="relative flex flex-col items-start text-left p-8 sp-glass">
+  <div className="relative flex flex-col items-start text-left p-6 md:p-8 sp-glass">
     {!isLast && (
       <div className="hidden md:flex absolute top-1/2 -right-8 w-8 items-center justify-center text-brand-border-strong" aria-hidden="true">
         <ChevronRight size={16} />
@@ -283,9 +283,9 @@ const ProcessStep = ({ number, title, description, isLast }: any) => (
 );
 
 const HowItWorks = () => (
-  <section className="py-24 relative overflow-hidden">
+  <section className="py-16 md:py-24 relative overflow-hidden">
     <div className="absolute inset-0 sp-grid-pattern opacity-30 pointer-events-none" />
-    <div className="container mx-auto px-6 relative">
+    <div className="sp-container relative">
       <SectionHeader kicker="03 · Processo" title="Protocolo" accent="7D" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
         <ProcessStep number="01" title="Escolha sua necessidade" description="Ansiedade? Insônia? Dores? Selecione o protocolo inteligente para você." />
@@ -297,16 +297,16 @@ const HowItWorks = () => (
 );
 
 const WalkingTherapy = () => (
-  <section id="caminhadas" className="py-24 relative overflow-hidden">
-    <div className="container mx-auto px-6 relative z-10">
-      <div className="sp-glass p-8 md:p-16 relative overflow-hidden" style={{ borderRadius: 40 }}>
+  <section id="caminhadas" className="py-16 md:py-24 relative overflow-hidden">
+    <div className="sp-container relative z-10">
+      <div className="sp-glass p-6 sm:p-8 md:p-16 relative overflow-hidden rounded-[32px] md:rounded-[40px]">
         <div className="sp-halo w-[420px] h-[420px] -right-24 -bottom-24" />
         <div className="relative grid grid-cols-1 md:grid-cols-3 items-center gap-12">
           <div className="md:col-span-2 text-left">
             <span className="sp-kicker flex items-center gap-2 mb-4">
               <Ear size={16} className="text-brand-accent" /> Bônus Exclusivo
             </span>
-            <h2 className="text-brand-text mb-8" style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)' }}>
+            <h2 className="text-brand-text mb-8" style={{ fontSize: 'clamp(2rem, 8vw, 4.5rem)' }}>
               <span className="sp-hero-l1" style={{ fontSize: '0.6em' }}>Caminhadas</span>
               <span className="sp-hero-l2">Terapêuticas</span>
             </h2>
@@ -325,7 +325,7 @@ const WalkingTherapy = () => (
                 </li>
               ))}
             </ul>
-            <Link to="/auth" className="sp-btn sp-btn-primary">
+            <Link to="/auth" className="sp-btn sp-btn-primary w-full sm:w-auto">
               Experimentar SentiPassos
             </Link>
           </div>
@@ -351,8 +351,8 @@ const ScientificProof = () => {
     { label: 'Equilíbrio Hormonal', value: '78%', desc: 'Pesquisas indicam normalização de cortisol e melhora nos sintomas da menopausa com terapia sonora.' },
   ];
   return (
-    <section className="py-24 relative overflow-hidden">
-      <div className="container mx-auto px-6 relative">
+    <section className="py-16 md:py-24 relative overflow-hidden">
+      <div className="sp-container relative">
         <SectionHeader
           kicker="Evidência Clínica"
           title="Neurobiologia"
@@ -361,11 +361,11 @@ const ScientificProof = () => {
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {data.map((item, i) => (
-            <div key={i} className="space-y-4 sp-glass p-8 relative overflow-hidden text-left">
+            <div key={i} className="space-y-4 sp-glass p-6 md:p-8 relative overflow-hidden text-left">
               <span className="absolute top-4 right-4 text-xs sp-font-mono text-brand-muted">DATA_0{i + 1}</span>
               <div className="flex justify-between items-end gap-4 pt-4">
                 <span className="font-semibold text-sm md:text-base uppercase tracking-[0.12em] text-brand-text">{item.label}</span>
-                <span className="sp-font-serif text-brand-primary font-black text-5xl leading-none">{item.value}</span>
+                <span className="sp-font-serif text-brand-primary font-black text-4xl md:text-5xl leading-none">{item.value}</span>
               </div>
               <div className="h-2 w-full bg-brand-secondary rounded-full overflow-hidden">
                 <motion.div initial={{ width: 0 }} whileInView={{ width: item.value }} transition={{ duration: 1.2, ease: 'easeOut' }} className="h-full bg-brand-primary rounded-full" />
@@ -376,9 +376,9 @@ const ScientificProof = () => {
         </div>
         <div className="sp-divider-line my-16 max-w-2xl mx-auto" />
         <div className="flex flex-wrap justify-center gap-4 text-sm text-brand-text font-semibold uppercase tracking-[0.08em]">
-          <span className="px-6 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={16} className="text-brand-primary" /> ISO 27001 Certified System</span>
-          <span className="px-6 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={16} className="text-brand-primary" /> Peer-Reviewed Research</span>
-          <span className="px-6 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={16} className="text-brand-primary" /> Clinical Compliance</span>
+          <span className="px-4 sm:px-6 py-2 sp-glass rounded-full flex items-center gap-2 text-xs sm:text-sm"><CheckCircle2 size={16} className="text-brand-primary" /> ISO 27001 Certified System</span>
+          <span className="px-4 sm:px-6 py-2 sp-glass rounded-full flex items-center gap-2 text-xs sm:text-sm"><CheckCircle2 size={16} className="text-brand-primary" /> Peer-Reviewed Research</span>
+          <span className="px-4 sm:px-6 py-2 sp-glass rounded-full flex items-center gap-2 text-xs sm:text-sm"><CheckCircle2 size={16} className="text-brand-primary" /> Clinical Compliance</span>
         </div>
       </div>
     </section>
@@ -392,15 +392,15 @@ const Testimonials = () => {
     { name: 'Luciana A.', role: 'Arquiteta, 44 anos', text: 'Após um divórcio difícil, estava destruída emocionalmente. As frequências me ajudaram a processar a dor e encontrar paz.', stars: 5 },
   ];
   return (
-    <section id="testemunhos" className="py-24 bg-brand-secondary border-y border-brand-border">
-      <div className="container mx-auto px-6">
+    <section id="testemunhos" className="py-16 md:py-24 bg-brand-secondary border-y border-brand-border">
+      <div className="sp-container">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-6xl font-bold italic tracking-tight text-brand-text mb-4">Histórias Reais</h2>
+          <h2 className="text-[2.5rem] leading-[1.1] md:text-6xl font-bold italic tracking-tight text-brand-text mb-4">Histórias Reais</h2>
           <p className="sp-kicker">Depoimentos de transformação</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {items.map((item, i) => (
-            <div key={i} className="p-8 rounded-3xl bg-brand-surface border border-brand-border relative overflow-hidden h-full flex flex-col text-left">
+            <div key={i} className="p-6 md:p-8 rounded-3xl bg-brand-surface border border-brand-border relative overflow-hidden h-full flex flex-col text-left">
               <div className="flex gap-1 mb-4" aria-label={`${item.stars} de 5 estrelas`}>
                 {[...Array(item.stars)].map((_, s) => (
                   <Star key={s} size={16} fill="currentColor" className="text-brand-accent" />
@@ -420,18 +420,18 @@ const Testimonials = () => {
 };
 
 const Pricing = () => (
-  <section className="py-24">
-    <div className="container mx-auto px-6">
+  <section className="py-16 md:py-24">
+    <div className="sp-container">
       <div className="text-center mb-16">
-        <h2 className="text-4xl md:text-6xl font-bold italic tracking-tight text-brand-text mb-4">Investimento</h2>
+        <h2 className="text-[2.5rem] leading-[1.1] md:text-6xl font-bold italic tracking-tight text-brand-text mb-4">Investimento</h2>
         <p className="sp-kicker">Escolha sua arquitetura de vida</p>
       </div>
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center text-left">
-        <div className="p-8 md:p-12 rounded-[40px] bg-brand-surface border border-brand-border relative">
+        <div className="p-6 sm:p-8 md:p-12 rounded-[32px] md:rounded-[40px] bg-brand-surface border border-brand-border relative">
           <h3 className="font-bold text-2xl mb-2 text-brand-text">Mensal</h3>
           <p className="text-brand-muted text-base mb-8">Ideal para experimentar.</p>
           <div className="mb-8">
-            <span className="sp-font-serif text-5xl font-bold text-brand-text">R$ 39,90</span>
+            <span className="sp-font-serif text-4xl sm:text-5xl font-bold text-brand-text">R$ 39,90</span>
             <span className="text-brand-muted text-base"> /mês</span>
           </div>
           <ul className="space-y-4 mb-12 text-base text-brand-text">
@@ -445,12 +445,12 @@ const Pricing = () => (
           </Link>
         </div>
 
-        <div className="p-8 md:p-12 rounded-[40px] bg-brand-surface border-2 border-brand-primary relative overflow-hidden md:scale-105 shadow-[0_24px_64px_-24px_rgba(124,103,255,0.45)]">
+        <div className="p-6 sm:p-8 md:p-12 pt-16 sm:pt-16 md:pt-12 rounded-[32px] md:rounded-[40px] bg-brand-surface border-2 border-brand-primary relative overflow-hidden lg:scale-105 shadow-[0_24px_64px_-24px_rgba(124,103,255,0.45)]">
           <div className="absolute top-6 right-6 px-4 py-1 bg-brand-accent text-brand-on-primary font-bold text-xs uppercase rounded-full tracking-[0.12em]">Mais Escolhido</div>
           <h3 className="font-bold text-2xl mb-2 text-brand-text">Anual</h3>
           <p className="text-brand-muted text-base mb-8">Melhor custo-benefício.</p>
           <div className="mb-8">
-            <span className="sp-font-serif text-5xl font-bold text-brand-text">R$ 199,00</span>
+            <span className="sp-font-serif text-4xl sm:text-5xl font-bold text-brand-text">R$ 199,00</span>
             <span className="text-brand-muted italic text-sm"> /ano (menos de R$ 17/mês)</span>
           </div>
           <ul className="space-y-4 mb-12 text-base text-brand-text">
@@ -470,7 +470,7 @@ const Pricing = () => (
 
 const Footer = () => (
   <footer className="py-24 border-t border-brand-border">
-    <div className="container mx-auto px-6 text-left">
+    <div className="sp-container text-left">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
         <div className="md:col-span-4">
           <div className="flex items-center gap-2 mb-6">
@@ -539,23 +539,23 @@ export const SentiPassosLanding = () => {
       <Testimonials />
       <Pricing />
 
-      <section className="py-24 relative overflow-hidden">
-        <div className="container mx-auto px-6 text-center relative">
-          <div className="max-w-4xl mx-auto sp-glass p-12 md:p-24 relative overflow-hidden" style={{ borderRadius: 48 }}>
+      <section className="py-16 md:py-24 relative overflow-hidden">
+        <div className="sp-container text-center relative">
+          <div className="max-w-4xl mx-auto sp-glass px-6 py-16 sm:p-12 md:p-24 relative overflow-hidden rounded-[32px] md:rounded-[48px]">
             <span className="sp-corner-bracket tl" />
             <span className="sp-corner-bracket tr" />
             <span className="sp-corner-bracket bl" />
             <span className="sp-corner-bracket br" />
             <div className="sp-halo w-[480px] h-[480px] left-1/2 -translate-x-1/2 -top-48" />
 
-            <h2 className="text-brand-text mb-8 relative" style={{ fontSize: 'clamp(2.5rem, 7vw, 5rem)' }}>
+            <h2 className="text-brand-text mb-8 relative" style={{ fontSize: 'clamp(1.75rem, 7vw, 5rem)' }}>
               <span className="sp-hero-l1" style={{ fontSize: '0.6em' }}>Pronta para sua</span>
               <span className="sp-hero-l2">Transformação?</span>
             </h2>
             <p className="text-brand-muted text-lg mb-12 max-w-xl mx-auto relative">
               Junte-se a mais de 5.000 mulheres que já resgataram sua saúde emocional e física. Comece agora sua jornada de transformação.
             </p>
-            <Link to="/auth" className="sp-btn sp-btn-primary relative">
+            <Link to="/auth" className="sp-btn sp-btn-primary relative w-full sm:w-auto">
               Começar Transformação <Zap size={20} fill="currentColor" />
             </Link>
             <p className="mt-8 sp-kicker flex items-center justify-center gap-2 relative">
@@ -571,7 +571,7 @@ export const SentiPassosLanding = () => {
         href="https://wa.me/5500000000000"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-8 right-8 w-14 h-14 bg-brand-secondary border border-brand-border-strong rounded-full flex items-center justify-center text-[#25D366] shadow-[0_12px_32px_-12px_rgba(13,15,23,0.9)] hover:bg-brand-surface transition-colors duration-100 z-40"
+        className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 w-14 h-14 bg-brand-secondary border border-brand-border-strong rounded-full flex items-center justify-center text-[#25D366] shadow-[0_12px_32px_-12px_rgba(13,15,23,0.9)] hover:bg-brand-surface transition-colors duration-100 z-40"
         aria-label="Chat"
       >
         <MessageCircle size={28} />
