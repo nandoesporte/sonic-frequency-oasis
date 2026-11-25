@@ -1,85 +1,154 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* === SentiPassos Landing Page Design System === */
+/* =====================================================================
+   Design system — paleta "Preto, Carvão e Roxo" (musica-roxo)
+   Sistema visual: vidro (glass) sobre quase-preto azulado, estilo cinemático
+   Tipografia: fórmula Editorial — Playfair Display (títulos) + Inter (texto)
+   Proporção 60/30/10: fundo / secundária / acento (só CTA, selos e destaques)
+   Contrastes (WCAG): texto/fundo 17,3:1 · texto secundário/fundo 8,3:1
+   rótulo/botão 4,8:1 · borda do botão secundário/fundo 4,2:1
+   ===================================================================== */
+:root {
+  --color-bg: #0D0F17;           /* Fundo ≈60% — nunca #000000 */
+  --color-surface: #141722;      /* Superfície: cards, campos, barras */
+  --color-secondary: #181C22;    /* Secundária ≈30%: faixas, botões secundários */
+  --color-text: #F2F3F7;         /* Texto principal */
+  --color-text-muted: #A9AAAF;   /* Texto secundário (texto a 68%) */
+  --color-border: #2B2D34;       /* Divisórias (texto a 13%) */
+  --color-border-strong: #74767C;/* Contorno de botões e campos (texto a 45%, ≥3:1) */
+  --color-primary: #7C67FF;      /* Primária: botão principal e item ativo */
+  --color-on-primary: #0D0F17;   /* Rótulo do botão (4,8:1) */
+  --color-accent: #7C67FF;       /* Acento ≈10%: selos, avaliações, destaques */
+  --color-overlay: rgba(13, 15, 23, 0.72); /* Escurece a tela atrás de modais */
+}
+
+/* === Base visual (landing + dashboard) === */
 .sp-mesh-bg {
   position: fixed;
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(circle at 20% 30%, rgba(79, 70, 229, 0.25) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(45, 212, 191, 0.2) 0%, transparent 50%),
-    #0A0B10;
+    radial-gradient(ellipse 60% 50% at 78% 18%, rgba(124, 103, 255, 0.16) 0%, transparent 60%),
+    var(--color-bg);
 }
 .sp-glass {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(20, 23, 34, 0.72);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  border: 1px solid var(--color-border);
   border-radius: 24px;
 }
 .sp-glass-nav {
-  background: rgba(10, 11, 16, 0.70);
+  background: rgba(13, 15, 23, 0.82);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--color-border);
 }
-.sp-glow-text { text-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
-.sp-text-gradient {
-  background-image: linear-gradient(135deg, #8B5CF6, #A78BFA);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  font-size: inherit;
-  font-weight: inherit;
-  line-height: inherit;
-  letter-spacing: inherit;
-  font-family: inherit;
-  display: inline-block;
-  padding-bottom: 0.15em;
-  margin-bottom: -0.15em;
-}
-.sp-accent-gradient {
-  background: linear-gradient(135deg, #8B5CF6, #A78BFA);
-}
+.sp-glow-text { text-shadow: none; }
+/* Palavra de acento do título: itálico editorial na cor primária */
+.sp-text-gradient,
 .sp-text-gradient-blue {
-  background-image: linear-gradient(135deg, #60A5FA, #3B82F6, #818CF8);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  font-size: inherit;
+  color: var(--color-primary);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
   font-weight: inherit;
+  font-size: inherit;
   line-height: inherit;
-  letter-spacing: inherit;
-  font-family: inherit;
   display: inline-block;
-  padding-bottom: 0.15em;
-  margin-bottom: -0.15em;
-  filter: drop-shadow(0 0 30px rgba(96, 165, 250, 0.35));
 }
-.sp-font-display { font-family: 'Outfit', sans-serif; }
-.sp-font-serif { font-family: 'Playfair Display', serif; }
-.sp-font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+.sp-accent-gradient { background: var(--color-primary); }
+.sp-font-display { font-family: 'Inter', system-ui, sans-serif; }
+.sp-font-serif { font-family: 'Playfair Display', Georgia, serif; }
+/* Microtextos técnicos: mesma família Inter (máx. 2 famílias), números tabulares */
+.sp-font-mono { font-family: 'Inter', system-ui, sans-serif; font-variant-numeric: tabular-nums; letter-spacing: 0.12em; }
 
-/* === Modern Graphics === */
+/* Kicker: sans em maiúsculas, +0,14em */
+.sp-kicker {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-text-muted);
+}
+/* Título do hero — fórmula Editorial */
+.sp-hero-l1 {
+  display: block;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1em;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+.sp-hero-l2 {
+  display: block;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1em;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  line-height: 0.82;
+}
+
+/* === Botões: 48px, padding 24px, 17px semibold, pill, luz de cima === */
+.sp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 48px;
+  min-height: 44px;
+  padding: 0 24px;
+  border-radius: 50px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  transition: transform 100ms ease, background-color 100ms ease, box-shadow 100ms ease, border-color 100ms ease;
+}
+.sp-btn:active { transform: translateY(1px); }
+.sp-btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+.sp-btn-primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border: 1px solid var(--color-primary);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 8px 20px -8px rgba(124, 103, 255, 0.55);
+}
+.sp-btn-primary:hover { background: #8C79FF; }
+.sp-btn-secondary {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.sp-btn-secondary:hover { background: var(--color-secondary); border-color: var(--color-text-muted); }
+.sp-btn-ghost {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid transparent;
+}
+.sp-btn-ghost:hover { background: var(--color-secondary); }
+
+/* === Gráficos de apoio (discretos) === */
 .sp-grid-pattern {
   background-image:
-    linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size: 60px 60px;
-  mask-image: radial-gradient(ellipse at center, #000 30%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 80%);
+    linear-gradient(to right, rgba(242,243,247,0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(242,243,247,0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at center, #0D0F17 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, #0D0F17 30%, transparent 80%);
 }
 .sp-dot-pattern {
-  background-image: radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(242,243,247,0.08) 1px, transparent 1px);
   background-size: 24px 24px;
-  mask-image: radial-gradient(ellipse at center, #000 40%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse at center, #000 40%, transparent 80%);
+  mask-image: radial-gradient(ellipse at center, #0D0F17 40%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, #0D0F17 40%, transparent 80%);
 }
 .sp-noise {
   background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
@@ -87,26 +156,34 @@
   mix-blend-mode: overlay;
   pointer-events: none;
 }
+/* Halo de luz atrás do elemento principal (claro-escuro) */
+.sp-halo {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(124, 103, 255, 0.32) 0%, rgba(124, 103, 255, 0.08) 45%, transparent 70%);
+  filter: blur(24px);
+  pointer-events: none;
+}
 .sp-orb {
   border-radius: 9999px;
   filter: blur(80px);
-  opacity: 0.5;
+  opacity: 0.35;
   pointer-events: none;
 }
 .sp-divider-line {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(99,102,241,0.5), rgba(45,212,191,0.5), transparent);
+  background: var(--color-border);
 }
 .sp-corner-bracket {
   position: absolute;
   width: 24px;
   height: 24px;
-  border-color: rgba(45,212,191,0.5);
+  border-color: var(--color-border-strong);
 }
-.sp-corner-bracket.tl { top: 12px; left: 12px; border-top: 1px solid; border-left: 1px solid; }
-.sp-corner-bracket.tr { top: 12px; right: 12px; border-top: 1px solid; border-right: 1px solid; }
-.sp-corner-bracket.bl { bottom: 12px; left: 12px; border-bottom: 1px solid; border-left: 1px solid; }
-.sp-corner-bracket.br { bottom: 12px; right: 12px; border-bottom: 1px solid; border-right: 1px solid; }
+.sp-corner-bracket.tl { top: 16px; left: 16px; border-top: 1px solid; border-left: 1px solid; }
+.sp-corner-bracket.tr { top: 16px; right: 16px; border-top: 1px solid; border-right: 1px solid; }
+.sp-corner-bracket.bl { bottom: 16px; left: 16px; border-bottom: 1px solid; border-left: 1px solid; }
+.sp-corner-bracket.br { bottom: 16px; right: 16px; border-bottom: 1px solid; border-right: 1px solid; }
 
 @keyframes sp-float-slow { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(20px, -30px); } }
 @keyframes sp-float-rev { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-25px, 20px); } }
@@ -128,68 +205,57 @@
 .sp-animate-wave-bar { animation: sp-wave-bar 1.2s ease-in-out infinite; transform-origin: center; }
 @keyframes sp-bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 .sp-animate-bounce-slow { animation: sp-bounce-slow 3s ease-in-out infinite; }
- 
+@media (prefers-reduced-motion: reduce) {
+  .sp-animate-float-slow, .sp-animate-float-rev, .sp-animate-spin-slow, .sp-animate-marquee,
+  .sp-animate-pulse-ring, .sp-animate-wave-bar, .sp-animate-bounce-slow { animation: none; }
+}
+
 @layer base {
+  /* Modo claro derivado da mesma paleta (o app força o modo escuro) */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
+    --background: 228 23% 96%;        /* #F4F5F9 */
+    --foreground: 228 28% 7%;         /* #0D0F17 */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
- 
+    --card-foreground: 228 28% 7%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
- 
-    --primary: 260 70% 75%;
-    --primary-foreground: 210 40% 98%;
- 
-    --secondary: 260 50% 95%;
-    --secondary-foreground: 260 70% 40%;
- 
-    --muted: 260 30% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
- 
-    --accent: 260 40% 96.1%;
-    --accent-foreground: 260 70% 40%;
- 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 260 30% 90%;
-    --input: 260 30% 90%;
-    --ring: 260 70% 75%;
- 
-    --radius: 0.5rem;
+    --popover-foreground: 228 28% 7%;
+    --primary: 249 100% 70%;          /* #7C67FF */
+    --primary-foreground: 228 28% 7%; /* #0D0F17 — 4,8:1 */
+    --secondary: 228 12% 89%;
+    --secondary-foreground: 228 28% 7%;
+    --muted: 228 16% 92%;
+    --muted-foreground: 225 4% 36%;   /* #57595F — 6,4:1 */
+    --accent: 228 12% 89%;
+    --accent-foreground: 228 28% 7%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 228 7% 85%;             /* #D6D7DC */
+    --input: 225 4% 46%;
+    --ring: 249 100% 70%;
+    --radius: 1rem;
   }
- 
+
+  /* Modo escuro — paleta musica-roxo */
   .dark {
-    --background: 220 10% 10%; /* Cinza escuro quase preto para o fundo */
-    --foreground: 210 40% 95%; /* Texto mais claro para melhor contraste */
- 
-    --card: 220 10% 12%; /* Cinza escuro para cards */
-    --card-foreground: 210 40% 95%; /* Texto claro para cards */
- 
-    --popover: 220 10% 10%; /* Cinza escuro para popovers */
-    --popover-foreground: 210 40% 95%; /* Texto claro para popovers */
- 
-    --primary: 260 70% 70%; /* Mantém a cor primária da marca */
-    --primary-foreground: 210 40% 98%; /* Texto claro para elementos primários */
- 
-    --secondary: 220 8% 18%; /* Cinza escuro para elementos secundários */
-    --secondary-foreground: 210 40% 95%; /* Texto claro para elementos secundários */
- 
-    --muted: 220 8% 16%; /* Cinza escuro para elementos atenuados */
-    --muted-foreground: 220 10% 60%; /* Texto mais apagado mas ainda legível */
- 
-    --accent: 220 8% 15%; /* Cinza escuro para acentos */
-    --accent-foreground: 210 40% 95%; /* Texto claro para acentos */
- 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
- 
-    --border: 220 8% 20%; /* Bordas em cinza escuro */
-    --input: 220 8% 18%; /* Inputs em cinza escuro */
-    --ring: 260 60% 60%; /* Mantém o ring visível */
+    --background: 228 28% 7%;         /* #0D0F17 */
+    --foreground: 228 20% 96%;        /* #F2F3F7 */
+    --card: 228 25% 11%;              /* #141722 superfície */
+    --card-foreground: 228 20% 96%;
+    --popover: 228 25% 11%;
+    --popover-foreground: 228 20% 96%;
+    --primary: 249 100% 70%;          /* #7C67FF */
+    --primary-foreground: 228 28% 7%; /* #0D0F17 — 4,8:1 */
+    --secondary: 216 17% 11%;         /* #181C22 */
+    --secondary-foreground: 228 20% 96%;
+    --muted: 216 17% 11%;
+    --muted-foreground: 228 3% 67%;   /* #A9AAAF — 8,3:1 */
+    --accent: 216 17% 13%;
+    --accent-foreground: 228 20% 96%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 228 9% 19%;             /* #2B2D34 */
+    --input: 228 3% 47%;              /* #74767C — 4,2:1 */
+    --ring: 249 100% 70%;
   }
 }
  
@@ -202,7 +268,10 @@
     font-size: 18px; /* Base font size increased for better readability */
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply tracking-tight font-heading;
+    @apply tracking-tight font-sans;
+  }
+  h1, h2 {
+    @apply font-heading;
   }
   h1 {
     @apply text-3xl font-bold md:text-4xl lg:text-5xl;
@@ -412,12 +481,9 @@
 }
 
 .gradient-text-animated {
-  background: linear-gradient(90deg, hsl(var(--primary)), hsl(260, 80%, 60%), hsl(280, 70%, 65%), hsl(var(--primary)));
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: gradient-shift 6s ease infinite;
+  color: hsl(var(--primary));
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
 }
 
 /* Glow effect for CTAs */

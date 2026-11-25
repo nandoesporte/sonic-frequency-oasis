@@ -103,90 +103,81 @@ const Index = () => {
 
   return (
     <AudioProvider>
-      <div className={`min-h-screen ${user ? 'pb-24 bg-[#0A0B10] text-white sp-font-display' : 'pb-0'}`}>
+      <div className={`min-h-screen ${user ? 'pb-24 bg-brand-bg text-brand-text font-sans' : 'pb-0'}`}>
         <Header />
 
-        {/* Dashboard Hero — Logged in users (landing-aligned dark theme) */}
+        {/* Dashboard Hero — Logged in users (paleta musica-roxo) */}
         {user && (
-          <section className="relative overflow-hidden pt-32 pb-20 px-4">
-            {/* Ambient orbs */}
+          <section className="relative overflow-hidden pt-32 pb-16 px-4">
             <div className="absolute inset-0 pointer-events-none">
-              <div className="sp-orb sp-animate-float-slow absolute -top-20 -left-20 w-[420px] h-[420px]" style={{ background: 'radial-gradient(circle, #8B5CF6 0%, transparent 70%)', opacity: 0.35 }} />
-              <div className="sp-orb sp-animate-float-rev absolute top-10 -right-20 w-[380px] h-[380px]" style={{ background: 'radial-gradient(circle, #3B82F6 0%, transparent 70%)', opacity: 0.28 }} />
+              <div className="sp-halo w-[520px] h-[520px] -top-40 -right-24" />
               <div className="absolute inset-0 sp-grid-pattern opacity-40" />
               <div className="sp-noise absolute inset-0" />
             </div>
 
             <div className="container mx-auto relative z-10">
-              <div className="max-w-5xl mx-auto">
-                {/* Top badge */}
-                <div className="flex justify-center mb-8">
-                  <div className="sp-glass inline-flex items-center gap-2 px-4 py-2 text-[11px] uppercase tracking-[0.25em] text-white/70">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#A78BFA] animate-pulse" />
-                    {t("dashboard.badge")}
+              <div className="max-w-5xl mx-auto text-left">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end mb-12">
+                  <div className="md:col-span-2">
+                    {/* Top badge */}
+                    <div className="sp-glass inline-flex items-center gap-2 px-4 py-2 mb-8">
+                      <span className="w-2 h-2 rounded-full bg-brand-accent animate-pulse" />
+                      <span className="sp-kicker">{t("dashboard.badge")}</span>
+                    </div>
+
+                    {/* Headline — fórmula Editorial */}
+                    <h1 className="text-brand-text mb-6" style={{ fontSize: 'clamp(2.75rem, 8vw, 5.5rem)' }}>
+                      <span className="sp-hero-l1" style={{ fontSize: '0.5em' }}>{t("dashboard.welcome")}</span>
+                      <span className="sp-hero-l2 text-brand-primary break-words">{welcomeName}</span>
+                    </h1>
+
+                    <p className="text-brand-muted text-base sm:text-lg max-w-xl leading-relaxed">
+                      {t("dashboard.subtitle")}
+                    </p>
+                  </div>
+
+                  {/* Equalizer */}
+                  <div className="hidden md:flex items-end justify-end gap-2 h-24" aria-hidden="true">
+                    {[0.4, 0.8, 0.6, 1, 0.7, 0.5, 0.9, 0.6, 0.4].map((h, i) => (
+                      <span
+                        key={i}
+                        className="w-2 rounded-full bg-brand-primary sp-animate-wave-bar"
+                        style={{ height: `${h * 100}%`, animationDelay: `${i * 0.12}s`, opacity: 0.55 + h * 0.45 }}
+                      />
+                    ))}
                   </div>
                 </div>
 
-                {/* Equalizer */}
-                <div className="flex items-end justify-center gap-1.5 h-12 mb-8">
-                  {[0.4, 0.8, 0.6, 1, 0.7, 0.5, 0.9, 0.6, 0.4].map((h, i) => (
-                    <span
-                      key={i}
-                      className="w-1.5 rounded-full sp-animate-wave-bar"
-                      style={{
-                        height: `${h * 100}%`,
-                        background: 'linear-gradient(180deg, #3B82F6, #A78BFA)',
-                        animationDelay: `${i * 0.12}s`,
-                        boxShadow: '0 0 12px rgba(96,165,250,0.45)',
-                      }}
-                    />
-                  ))}
-                </div>
-
-                {/* Headline */}
-                <h1 className="text-center text-4xl sm:text-6xl md:text-7xl font-bold tracking-tighter sp-glow-text leading-[0.95] mb-6">
-                  {t("dashboard.welcome")}<br />
-                  <span className="sp-text-gradient-blue">{welcomeName}</span>
-                </h1>
-
-                <p className="text-center text-white/60 text-base sm:text-lg max-w-2xl mx-auto font-light mb-12 leading-relaxed">
-                  {t("dashboard.subtitle")}
-                </p>
-
                 {/* Featured highlight */}
                 {featured && (
-                  <div className="max-w-4xl mx-auto mb-10">
+                  <div className="mb-8">
                     <DashboardFeaturedCard frequency={featured} durationLabel="20 min" />
                   </div>
                 )}
 
                 {/* Quick actions */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <DashboardQuickAction
                     to="/guide"
                     icon={<BookOpen className="h-5 w-5" />}
                     title={t("dashboard.quickActions.guide.title")}
                     description={t("dashboard.quickActions.guide.description")}
-                    gradient="linear-gradient(135deg, #8B5CF6, #A78BFA)"
                   />
                   <DashboardQuickAction
                     to="/sentipasso"
                     icon={<Headphones className="h-5 w-5" />}
                     title={t("dashboard.quickActions.sentipasso.title")}
                     description={t("dashboard.quickActions.sentipasso.description")}
-                    gradient="linear-gradient(135deg, #3B82F6, #818CF8)"
                   />
                   <DashboardQuickAction
                     to="/favorites"
                     icon={<Heart className="h-5 w-5" />}
                     title={t("dashboard.quickActions.favorites.title")}
                     description={t("dashboard.quickActions.favorites.description")}
-                    gradient="linear-gradient(135deg, #A78BFA, #60A5FA)"
                   />
                 </div>
 
-                {/* Subtle divider */}
-                <div className="sp-divider-line mt-16 max-w-2xl mx-auto" />
+                <div className="sp-divider-line mt-16" />
               </div>
             </div>
           </section>
@@ -321,51 +312,46 @@ const Index = () => {
         {/* How It Works Section - Only show for non-logged in users */}
         {!user && <HowItWorksSection />}
         
-        {/* SentiPassos Featured — dark, landing-aligned */}
-        <section className="relative py-20 sm:py-28 px-4 overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="sp-orb sp-animate-float-slow absolute top-1/3 -left-32 w-[420px] h-[420px]" style={{ background: 'radial-gradient(circle, #8B5CF6 0%, transparent 70%)', opacity: 0.22 }} />
-            <div className="sp-orb sp-animate-float-rev absolute bottom-0 -right-32 w-[420px] h-[420px]" style={{ background: 'radial-gradient(circle, #3B82F6 0%, transparent 70%)', opacity: 0.2 }} />
-          </div>
-
+        {/* SentiPassos Featured — paleta musica-roxo */}
+        <section className="relative py-16 sm:py-24 px-4 overflow-hidden">
           <div className="container mx-auto relative z-10">
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-6xl mx-auto text-left">
               {/* Section header */}
-              <div className="text-center mb-14">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] uppercase tracking-[0.25em] text-white/60 border border-white/10 mb-6">
-                  <AudioWaveform size={12} className="text-[#A78BFA]" />
-                  Movimento + Frequência
+              <div className="mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-border mb-6">
+                  <AudioWaveform size={14} className="text-brand-primary" />
+                  <span className="sp-kicker">Movimento + Frequência</span>
                 </div>
-                <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter sp-glow-text leading-[0.95] mb-5">
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[0.95] mb-4">
                   <span className="sp-text-gradient">SentiPassos</span>
                 </h2>
-                <p className="text-white/55 text-base sm:text-lg max-w-2xl mx-auto font-light leading-relaxed">
+                <p className="text-brand-muted text-base sm:text-lg max-w-2xl leading-relaxed">
                   Caminhadas terapêuticas guiadas que combinam frequências específicas e movimento para transformar estados emocionais.
                 </p>
               </div>
 
               {/* Emotion cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 {[
-                  { icon: Heart, title: 'Cultive a Paz', freq: '40Hz · 528Hz', desc: 'Acalma a mente e restaura o equilíbrio interior', grad: 'linear-gradient(135deg, #8B5CF6, #A78BFA)' },
-                  { icon: Waves, title: 'Transforme a Raiva', freq: '396Hz', desc: 'Libera tensões e dissolve energia densa', grad: 'linear-gradient(135deg, #3B82F6, #818CF8)' },
-                  { icon: Sparkles, title: 'Supere a Tristeza', freq: '741Hz', desc: 'Eleva a vibração e renova a perspectiva', grad: 'linear-gradient(135deg, #A78BFA, #60A5FA)' },
+                  { icon: Heart, title: 'Cultive a Paz', freq: '40Hz · 528Hz', desc: 'Acalma a mente e restaura o equilíbrio interior' },
+                  { icon: Waves, title: 'Transforme a Raiva', freq: '396Hz', desc: 'Libera tensões e dissolve energia densa' },
+                  { icon: Sparkles, title: 'Supere a Tristeza', freq: '741Hz', desc: 'Eleva a vibração e renova a perspectiva' },
                 ].map((item, i) => (
-                  <div key={i} className="sp-glass p-6 hover:bg-white/[0.07] transition-all">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: item.grad }}>
-                      <item.icon className="h-6 w-6 text-white" />
+                  <div key={i} className="sp-glass p-6 hover:bg-brand-secondary transition-colors duration-100">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-brand-secondary border border-brand-border">
+                      <item.icon className="h-6 w-6 text-brand-primary" />
                     </div>
-                    <div className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-1">{item.freq}</div>
-                    <h4 className="text-lg font-semibold text-white mb-2">{item.title}</h4>
-                    <p className="text-sm text-white/55 leading-relaxed">{item.desc}</p>
+                    <div className="sp-kicker mb-2">{item.freq}</div>
+                    <h4 className="text-lg font-semibold text-brand-text mb-2">{item.title}</h4>
+                    <p className="text-sm text-brand-muted leading-relaxed">{item.desc}</p>
                   </div>
                 ))}
               </div>
 
               {/* How it works */}
-              <div className="sp-glass p-6 sm:p-8 mb-10">
-                <h4 className="text-sm uppercase tracking-[0.2em] text-white/50 mb-5 flex items-center gap-2">
-                  <span className="w-6 h-px bg-[#A78BFA]" /> Como Funciona
+              <div className="sp-glass p-6 sm:p-8 mb-12">
+                <h4 className="sp-kicker mb-6 flex items-center gap-2">
+                  <span className="w-6 h-px bg-brand-primary" /> Como Funciona
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
@@ -374,23 +360,20 @@ const Index = () => {
                     'Movimento + som trabalham juntos na transformação',
                     'Sinta a mudança acontecer naturalmente',
                   ].map((step, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-[#A78BFA] mt-0.5 flex-shrink-0" />
-                      <span className="text-white/75 text-sm leading-relaxed">{step}</span>
+                    <div key={i} className="flex items-start gap-4">
+                      <CheckCircle className="h-5 w-5 text-brand-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-brand-text text-sm leading-relaxed">{step}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* CTA */}
-              <div className="flex justify-center">
-                <Link
-                  to="/sentipasso"
-                  className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-white text-black font-bold text-sm hover:scale-105 transition-transform shadow-2xl"
-                >
+              <div className="flex">
+                <Link to="/sentipasso" className="group sp-btn sp-btn-primary">
                   <Headphones size={18} />
                   Iniciar Caminhada SentiPasso
-                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform duration-100" />
                 </Link>
               </div>
             </div>
@@ -406,21 +389,21 @@ const Index = () => {
         {/* Scientific Evidence Section - Only show for non-logged in users */}
         {!user && <ScientificEvidence />}
 
-        {/* Categories — dark dashboard style */}
+        {/* Categories — dashboard */}
         {user && (
           <section className="relative py-16 px-4">
-            <div className="container mx-auto max-w-6xl">
+            <div className="container mx-auto max-w-6xl text-left">
               <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
                 <div>
-                  <div className="text-[10px] uppercase tracking-[0.25em] text-white/40 mb-2">Explore</div>
-                  <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter text-white">
+                  <div className="sp-kicker mb-2">Explore</div>
+                  <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-brand-text">
                     Categorias de <span className="sp-text-gradient">Frequência</span>
                   </h2>
                 </div>
-                <div className="h-px flex-1 min-w-[60px] bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+                <div className="h-px flex-1 min-w-[64px] bg-brand-border" />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {categories.map((category, idx) => {
                   const CategoryIcon = category.icon;
                   return (
@@ -439,18 +422,18 @@ const Index = () => {
           </section>
         )}
 
-        {/* Frequencies by Category — dark dashboard style */}
+        {/* Frequencies by Category — dashboard */}
         {user && Object.entries(categoryFrequencies).length > 0 && (
           <section className="relative py-12 px-4">
-            <div className="container mx-auto max-w-6xl">
-              <div className="flex items-end justify-between mb-10 flex-wrap gap-4">
+            <div className="container mx-auto max-w-6xl text-left">
+              <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
                 <div>
-                  <div className="text-[10px] uppercase tracking-[0.25em] text-white/40 mb-2">Biblioteca</div>
-                  <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter text-white">
-                    Frequências em <span className="sp-text-gradient-blue">Destaque</span>
+                  <div className="sp-kicker mb-2">Biblioteca</div>
+                  <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-brand-text">
+                    Frequências em <span className="sp-text-gradient">Destaque</span>
                   </h2>
                 </div>
-                <div className="h-px flex-1 min-w-[60px] bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+                <div className="h-px flex-1 min-w-[64px] bg-brand-border" />
               </div>
 
               {Object.entries(categoryFrequencies).map(([categoryId, frequencies]) => {
@@ -460,22 +443,22 @@ const Index = () => {
 
                 return (
                   <div key={categoryId} className="sp-glass mb-6 p-6 sm:p-8">
-                    <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.25), rgba(59,130,246,0.25))', border: '1px solid rgba(167,139,250,0.3)' }}>
-                          <CategoryIcon className="h-5 w-5 text-[#A78BFA]" />
+                    <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-brand-secondary border border-brand-border">
+                          <CategoryIcon className="h-5 w-5 text-brand-primary" />
                         </div>
-                        <h3 className="text-xl font-semibold text-white">{category.name}</h3>
+                        <h3 className="text-xl font-semibold text-brand-text">{category.name}</h3>
                       </div>
                       <Link
                         to={`/categories/${categoryId}`}
-                        className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-white/60 hover:text-white transition-colors"
+                        className="inline-flex items-center gap-2 h-11 px-4 rounded-full text-sm font-semibold text-brand-muted hover:text-brand-text hover:bg-brand-secondary transition-colors duration-100"
                       >
-                        Ver tudo <ChevronRight size={14} />
+                        Ver tudo <ChevronRight size={16} />
                       </Link>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {frequencies.map(frequency => (
                         <DashboardFrequencyCard
                           key={frequency.id}

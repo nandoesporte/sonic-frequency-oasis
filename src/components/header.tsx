@@ -83,7 +83,7 @@ export function Header() {
             <>
               <ProfileMenu user={user} onSignOut={handleSignOut} />
               
-              <Button variant={isPremium ? "ghost" : "default"} size="sm" asChild className="hidden sm:flex">
+              <Button variant={isPremium ? "ghost" : "outline"} size="sm" asChild className="hidden sm:flex">
                 <Link to={premiumPath}>
                   <Crown className="mr-2 h-4 w-4" />
                   {isPremium ? t("nav.premiumActive") : t("nav.getPremium")}
@@ -92,14 +92,14 @@ export function Header() {
             </>
           ) : (
             <>
-              <Button variant="default" size="sm" asChild className="hidden sm:flex">
+              <Button variant="ghost" size="sm" asChild className="hidden sm:flex">
                 <Link to="/auth">
                   <User className="mr-2 h-4 w-4" />
                   {t("nav.signIn")}
                 </Link>
               </Button>
               
-              <Button variant="default" size="sm" asChild className="hidden sm:flex">
+              <Button variant="outline" size="sm" asChild className="hidden sm:flex">
                 <Link to={premiumPath}>
                   <Crown className="mr-2 h-4 w-4" />
                   {t("nav.getPremium")}

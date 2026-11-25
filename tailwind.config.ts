@@ -62,23 +62,36 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Frequency app custom colors based on the image
+				// Paleta musica-roxo — 8 papéis (valores em src/index.css :root)
+				brand: {
+					bg: 'var(--color-bg)',
+					surface: 'var(--color-surface)',
+					secondary: 'var(--color-secondary)',
+					text: 'var(--color-text)',
+					muted: 'var(--color-text-muted)',
+					border: 'var(--color-border)',
+					'border-strong': 'var(--color-border-strong)',
+					primary: 'var(--color-primary)',
+					'on-primary': 'var(--color-on-primary)',
+					accent: 'var(--color-accent)',
+					overlay: 'var(--color-overlay)'
+				},
 				purple: {
-					light: '#E5DEFF', // Lighter shade for backgrounds
-					DEFAULT: '#A78BFA', // Main purple from the image
-					dark: '#7E69AB' // Darker shade for hover states
+					light: '#181C22',
+					DEFAULT: '#7C67FF',
+					dark: '#5B45E0'
 				},
 				blue: {
-					light: '#D3E4FD'
+					light: '#181C22'
 				},
 				neutral: {
-					DEFAULT: '#8E9196',
-					dark: '#1A1F2C'
+					DEFAULT: '#A9AAAF',
+					dark: '#0D0F17'
 				},
 				premium: {
-					DEFAULT: '#B56BFF', // Premium button color
-					light: '#E0CCFF',
-					dark: '#9452CC'
+					DEFAULT: '#7C67FF',
+					light: '#181C22',
+					dark: '#5B45E0'
 				}
 			},
 			borderRadius: {
@@ -125,7 +138,7 @@ export default {
 			},
 			fontFamily: {
 				sans: ['Inter', 'system-ui', 'sans-serif'],
-				heading: ['DM Sans', 'Inter', 'sans-serif']
+				heading: ['Playfair Display', 'Georgia', 'serif']
 			},
 			fontSize: {
 				'2xs': ['0.625rem', { lineHeight: '1rem' }],

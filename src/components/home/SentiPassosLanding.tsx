@@ -10,7 +10,6 @@ import {
   ShieldCheck,
   Menu,
   X,
-  Volume2,
   Ear,
   CloudRain,
   Activity,
@@ -25,6 +24,18 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+/*
+ * Página de vendas — paleta musica-roxo (tokens em src/index.css).
+ * Regra: um único botão de cor cheia (sp-btn-primary) por tela;
+ * demais ações usam sp-btn-secondary (contorno) ou sp-btn-ghost.
+ */
+
+const BrandMark = ({ size = 40 }: { size?: number }) => (
+  <div className="relative flex items-center justify-center rounded-full bg-brand-primary" style={{ width: size, height: size }}>
+    <AudioWaveform className="text-brand-on-primary" size={Math.round(size * 0.55)} strokeWidth={2.5} />
+  </div>
+);
+
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -36,36 +47,33 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'sp-glass-nav py-3' : 'bg-transparent py-6'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'sp-glass-nav py-2' : 'bg-transparent py-4'}`}>
       <div className="container mx-auto px-6 flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2">
-          <div className="relative w-10 h-10 flex items-center justify-center">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full animate-pulse" />
-            <AudioWaveform className="relative z-10 text-white" size={22} strokeWidth={2.5} />
-          </div>
-          <span className="sp-font-display font-bold text-xl tracking-tight">
-            <span className="text-purple-400">Frequency</span>
-            <span className="text-white ml-1">App</span>
+          <BrandMark />
+          <span className="font-bold text-xl tracking-tight">
+            <span className="text-brand-primary">Frequency</span>
+            <span className="text-brand-text ml-1">App</span>
           </span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white">
-          <a href="#inicio" className="hover:text-[#8B5CF6] transition-colors">Início</a>
-          <a href="#sobre" className="hover:text-[#8B5CF6] transition-colors">O que é?</a>
-          <a href="#caminhadas" className="hover:text-[#8B5CF6] transition-colors">Caminhadas</a>
-          <a href="#testemunhos" className="hover:text-[#8B5CF6] transition-colors">Relatos</a>
+        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-brand-muted">
+          <a href="#inicio" className="hover:text-brand-text transition-colors">Início</a>
+          <a href="#sobre" className="hover:text-brand-text transition-colors">O que é?</a>
+          <a href="#caminhadas" className="hover:text-brand-text transition-colors">Caminhadas</a>
+          <a href="#testemunhos" className="hover:text-brand-text transition-colors">Relatos</a>
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
-          <Link to="/auth" className="text-sm font-medium text-white hover:text-[#8B5CF6] transition-colors flex items-center gap-1">
-            <Lock size={14} /> Entrar
+        <div className="hidden md:flex items-center gap-2">
+          <Link to="/auth" className="sp-btn sp-btn-ghost">
+            <Lock size={16} /> Entrar
           </Link>
-          <Link to="/auth" className="bg-[#8B5CF6] hover:bg-[#8B5CF6]/90 px-6 py-2 rounded-full text-sm font-bold text-white transition-all transform hover:scale-105 shadow-lg shadow-[#8B5CF6]/20 flex items-center gap-2">
+          <Link to="/auth" className="sp-btn sp-btn-secondary">
             <Gem size={16} /> Obter Premium
           </Link>
         </div>
 
-        <button className="md:hidden text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Menu">
+        <button className="md:hidden w-12 h-12 flex items-center justify-center text-brand-text" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Menu">
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -73,16 +81,16 @@ const Navbar = () => {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 sp-glass py-6 px-6 md:hidden flex flex-col gap-4 border-t border-white/10 text-white"
+            exit={{ opacity: 0, y: -16 }}
+            className="absolute top-full left-0 right-0 sp-glass py-6 px-6 md:hidden flex flex-col gap-2 text-brand-text"
             style={{ borderRadius: 0 }}
           >
-            <a href="#inicio" className="text-lg py-2 border-b border-white/5" onClick={() => setMobileMenuOpen(false)}>Início</a>
-            <a href="#sobre" className="text-lg py-2 border-b border-white/5" onClick={() => setMobileMenuOpen(false)}>O que é?</a>
-            <a href="#caminhadas" className="text-lg py-2 border-b border-white/5" onClick={() => setMobileMenuOpen(false)}>Caminhadas</a>
-            <Link to="/auth" className="bg-[#8B5CF6] py-3 rounded-xl font-bold mt-2 text-center">Obter Premium</Link>
+            <a href="#inicio" className="text-lg py-2 border-b border-brand-border" onClick={() => setMobileMenuOpen(false)}>Início</a>
+            <a href="#sobre" className="text-lg py-2 border-b border-brand-border" onClick={() => setMobileMenuOpen(false)}>O que é?</a>
+            <a href="#caminhadas" className="text-lg py-2 border-b border-brand-border" onClick={() => setMobileMenuOpen(false)}>Caminhadas</a>
+            <Link to="/auth" className="sp-btn sp-btn-primary w-full mt-4">Obter Premium</Link>
           </motion.div>
         )}
       </AnimatePresence>
@@ -91,110 +99,95 @@ const Navbar = () => {
 };
 
 const Hero = () => (
-  <section id="inicio" className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
-    {/* Animated grid backdrop */}
+  <section id="inicio" className="relative pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden">
     <div className="absolute inset-0 sp-grid-pattern opacity-40 pointer-events-none" />
     <div className="sp-noise absolute inset-0" />
 
-    {/* Floating orbs - softer, more diffuse */}
-    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
-      <div className="sp-orb absolute top-32 left-[15%] w-[500px] h-[500px] bg-[#8B5CF6]/40 sp-animate-float-slow" />
-      <div className="sp-orb absolute top-60 right-[10%] w-[400px] h-[400px] bg-[#A78BFA]/30 sp-animate-float-rev" style={{ animationDelay: '1.5s' }} />
-      <div className="sp-orb absolute bottom-20 left-[40%] w-[300px] h-[300px] bg-[#8B5CF6]/20 sp-animate-float-slow" style={{ animationDelay: '3s' }} />
-    </div>
-
-    {/* Rotating concentric rings (right) */}
-    <div className="hidden md:block absolute top-1/3 -right-32 pointer-events-none sp-animate-spin-slow">
-      <svg width="500" height="500" viewBox="0 0 500 500" fill="none">
-        <circle cx="250" cy="250" r="120" stroke="rgba(99,102,241,0.18)" strokeDasharray="4 8" />
-        <circle cx="250" cy="250" r="170" stroke="rgba(45,212,191,0.15)" strokeDasharray="2 14" />
-        <circle cx="250" cy="250" r="220" stroke="rgba(255,255,255,0.06)" />
-        <circle cx="250" cy="130" r="3" fill="#A78BFA" />
-        <circle cx="370" cy="250" r="3" fill="#8B5CF6" />
-      </svg>
-    </div>
-
-    {/* Floating brackets/coordinates (left) */}
-    <div className="hidden md:flex absolute top-40 left-8 flex-col gap-2 text-[10px] sp-font-mono text-white/30 pointer-events-none">
-      <span>// PROTOCOLO_7D</span>
-      <span>$ status: <span className="text-[#A78BFA]">active</span></span>
-      <span>$ wavelength: 432Hz</span>
-    </div>
-
-    <div className="container mx-auto px-6 relative z-10 text-center">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full sp-glass border-white/5 mb-6">
-          <span className="relative flex">
-            <span className="absolute inset-0 rounded-full bg-[#A78BFA] sp-animate-pulse-ring"></span>
-            <span className="w-2 h-2 rounded-full bg-[#A78BFA] mr-1"></span>
+    <div className="container mx-auto px-6 relative z-10">
+      {/* Composição 2/3 texto + 1/3 visual, fora do centro */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+        <motion.div
+          className="lg:col-span-2 text-left"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full sp-glass mb-8">
+            <span className="relative flex">
+              <span className="absolute inset-0 rounded-full bg-brand-accent sp-animate-pulse-ring"></span>
+              <span className="w-2 h-2 rounded-full bg-brand-accent"></span>
+            </span>
+            <span className="sp-kicker">Sistema v4.2 Ativo</span>
           </span>
-          <span className="text-[10px] uppercase tracking-widest font-bold text-white/80">Sistema v4.2 Ativo</span>
-        </span>
-        <h1 className="sp-font-display text-5xl md:text-8xl font-bold leading-[0.95] mb-10 sp-glow-text tracking-tighter text-white">
-          Restaure sua <br /><span className="sp-text-gradient-blue">Saúde</span>
-        </h1>
 
-        {/* Equalizer / sound bars - blue accent harmonizing with Saúde */}
-        <div className="flex items-center justify-center gap-1.5 mb-10 h-12" aria-hidden="true">
-          {[0.4, 0.7, 1, 0.6, 0.9, 0.5, 0.8, 1, 0.55, 0.75, 0.4].map((h, i) => (
-            <span
-              key={i}
-              className="w-1.5 bg-gradient-to-t from-[#3B82F6] via-[#60A5FA] to-[#A78BFA] rounded-full sp-animate-wave-bar"
-              style={{ height: `${h * 100}%`, animationDelay: `${i * 0.1}s`, boxShadow: '0 0 12px rgba(96, 165, 250, 0.4)' }}
-            />
-          ))}
-        </div>
+          <h1 className="text-brand-text mb-8" style={{ fontSize: 'clamp(3rem, 9vw, 7.5rem)' }}>
+            <span className="sp-hero-l1" style={{ fontSize: '0.55em' }}>Restaure sua</span>
+            <span className="sp-hero-l2 text-brand-primary">Saúde</span>
+          </h1>
 
-        <p className="text-white/70 text-lg md:text-xl max-w-xl mx-auto mb-12 leading-relaxed font-light">
-          Elimine dores crônicas, ansiedade e estresse através de ondas sonoras direcionadas e neurociência aplicada.
-        </p>
+          <p className="text-brand-muted text-lg md:text-xl max-w-xl mb-12 leading-relaxed">
+            Elimine dores crônicas, ansiedade e estresse através de ondas sonoras direcionadas e neurociência aplicada.
+          </p>
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-          <Link to="/auth" className="w-full md:w-auto bg-white text-black px-10 py-5 rounded-xl font-bold text-sm transition-all transform hover:scale-105 shadow-2xl">
-            Transformar Minha Vida
-          </Link>
-          <Link to="/scientific" className="w-full md:w-auto sp-glass hover:bg-white/5 px-10 py-5 rounded-xl text-white font-bold text-sm border-white/10 transition-colors">
-            Comprovação Científica
-          </Link>
-        </div>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+            <Link to="/auth" className="sp-btn sp-btn-primary">
+              Transformar Minha Vida
+            </Link>
+            <Link to="/scientific" className="sp-btn sp-btn-secondary">
+              Comprovação Científica
+            </Link>
+          </div>
+        </motion.div>
 
-        <div className="mt-12 p-8 sp-glass max-w-2xl mx-auto flex flex-col justify-center items-center text-center relative">
-          <span className="sp-corner-bracket tl" />
-          <span className="sp-corner-bracket tr" />
-          <span className="sp-corner-bracket bl" />
-          <span className="sp-corner-bracket br" />
-          <p className="text-xs text-white/60 italic mb-4">"A arquitetura do futuro não é apenas rápida, é intuitiva e autocurativa."</p>
-          <div className="flex items-center justify-center space-x-2">
-            <div className="w-6 h-6 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center">
-              <Star size={10} className="text-amber-400" fill="currentColor" />
+        {/* Visual: equalizador com halo de luz (claro-escuro) */}
+        <div className="relative flex flex-col items-center lg:items-end">
+          <div className="sp-halo w-[360px] h-[360px] -top-12 left-1/2 -translate-x-1/2 lg:left-auto lg:right-0 lg:translate-x-0" />
+          <div className="relative sp-glass w-full max-w-sm p-8">
+            <span className="sp-corner-bracket tl" />
+            <span className="sp-corner-bracket tr" />
+            <span className="sp-corner-bracket bl" />
+            <span className="sp-corner-bracket br" />
+
+            <div className="flex flex-col gap-2 text-xs sp-font-mono text-brand-muted mb-8" aria-hidden="true">
+              <span>// PROTOCOLO_7D</span>
+              <span>$ status: <span className="text-brand-text">active</span></span>
+              <span>$ wavelength: 432Hz</span>
             </div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-white">Protocolo de Ressonância 7D</p>
+
+            <div className="flex items-end justify-center gap-2 h-24 mb-8" aria-hidden="true">
+              {[0.4, 0.7, 1, 0.6, 0.9, 0.5, 0.8, 1, 0.55, 0.75, 0.4].map((h, i) => (
+                <span
+                  key={i}
+                  className="w-2 rounded-full bg-brand-primary sp-animate-wave-bar"
+                  style={{ height: `${h * 100}%`, animationDelay: `${i * 0.1}s`, opacity: 0.55 + h * 0.45 }}
+                />
+              ))}
+            </div>
+
+            <p className="text-sm text-brand-muted italic mb-4">"A arquitetura do futuro não é apenas rápida, é intuitiva e autocurativa."</p>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-brand-secondary border border-brand-border flex items-center justify-center">
+                <Star size={12} className="text-brand-accent" fill="currentColor" />
+              </div>
+              <p className="sp-kicker text-brand-text">Protocolo de Ressonância 7D</p>
+            </div>
           </div>
         </div>
-      </motion.div>
-    </div>
-
-    {/* Bottom wave divider */}
-    <div className="absolute bottom-0 left-0 right-0 pointer-events-none" aria-hidden="true">
-      <svg viewBox="0 0 1440 80" className="w-full h-12 md:h-20" preserveAspectRatio="none">
-        <path d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z" fill="rgba(99,102,241,0.05)" />
-        <path d="M0,50 C240,90 480,10 720,50 C960,90 1200,10 1440,50" stroke="rgba(45,212,191,0.25)" fill="none" strokeWidth="1" />
-      </svg>
+      </div>
     </div>
   </section>
 );
 
 const TrustBar = () => (
-  <div className="border-y border-white/5 sp-glass-nav relative overflow-hidden">
-    {/* Marquee tags - top, contained, no overlap */}
-    <div className="border-b border-white/5 py-3 overflow-hidden">
+  <div className="border-y border-brand-border bg-brand-secondary relative overflow-hidden">
+    <div className="border-b border-brand-border py-4 overflow-hidden">
       <div className="flex">
-        <div className="sp-animate-marquee flex gap-10 whitespace-nowrap text-[10px] sp-font-mono uppercase tracking-[0.4em] text-white/40">
+        <div className="sp-animate-marquee flex gap-12 whitespace-nowrap text-xs sp-font-mono uppercase text-brand-muted">
           {Array(2).fill(null).map((_, k) => (
-            <div key={k} className="flex gap-10 pr-10">
+            <div key={k} className="flex gap-12 pr-12">
               {['Resonance', '432Hz', 'Theta', 'Binaural', 'Alpha', 'Solfeggio', '528Hz', 'Delta', 'Gamma', '7D Protocol'].map((t, i) => (
                 <span key={i} className="flex items-center gap-2">
-                  <span className="w-1 h-1 rounded-full bg-[#A78BFA]" />{t}
+                  <span className="w-1 h-1 rounded-full bg-brand-accent" />{t}
                 </span>
               ))}
             </div>
@@ -202,107 +195,87 @@ const TrustBar = () => (
         </div>
       </div>
     </div>
-    <div className="container mx-auto px-6 relative py-10">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 items-center uppercase tracking-[0.2em] font-bold text-[10px]">
-        <div className="text-center">
-          <div className="text-3xl font-bold mb-1 sp-glow-text text-white">5,000+</div>
-          <div className="opacity-40 text-[#A78BFA]">Mulheres</div>
-        </div>
-        <div className="text-center">
-          <div className="text-3xl font-bold mb-1 sp-glow-text text-white">99.9%</div>
-          <div className="opacity-40 text-[#8B5CF6]">Confiabilidade</div>
-        </div>
-        <div className="text-center">
-          <div className="text-3xl font-bold mb-1 sp-glow-text text-white">21 Dias</div>
-          <div className="opacity-40 text-[#A78BFA]">Ciclo de Cura</div>
-        </div>
-        <div className="text-center">
-          <div className="text-3xl font-bold mb-1 sp-glow-text text-white">7D</div>
-          <div className="opacity-40 text-[#8B5CF6]">Dimensões</div>
-        </div>
+    <div className="container mx-auto px-6 relative py-12">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
+        {[
+          { value: '5,000+', label: 'Mulheres' },
+          { value: '99.9%', label: 'Confiabilidade' },
+          { value: '21 Dias', label: 'Ciclo de Cura' },
+          { value: '7D', label: 'Dimensões' },
+        ].map((s) => (
+          <div key={s.label} className="text-center">
+            <div className="sp-font-serif text-4xl font-bold mb-2 text-brand-text">{s.value}</div>
+            <div className="sp-kicker">{s.label}</div>
+          </div>
+        ))}
       </div>
     </div>
   </div>
 );
 
-const BenefitCard = ({ icon: Icon, title, description, color, index }: any) => (
-  <motion.div whileHover={{ y: -5 }} className="p-8 sp-glass flex flex-col items-start gap-4 h-full relative overflow-hidden group">
-    {/* Hover gradient sheen */}
-    <div className="absolute inset-0 bg-gradient-to-br from-[#8B5CF6]/0 via-[#A78BFA]/0 to-[#8B5CF6]/0 group-hover:from-[#8B5CF6]/5 group-hover:to-[#A78BFA]/10 transition-all duration-500 pointer-events-none" />
-    <span className="absolute top-4 right-4 text-[9px] sp-font-mono text-white/20">0{index}</span>
-    <div className={`p-4 rounded-2xl ${color} relative`}>
-      <Icon size={32} className="text-white relative z-10" />
-      <span className="absolute inset-0 rounded-2xl bg-white/5 blur-md" />
+const SectionHeader = ({ kicker, title, accent, description }: { kicker: string; title: string; accent?: string; description?: string }) => (
+  <div className="text-center mb-16">
+    <span className="sp-kicker inline-flex items-center gap-4 mb-4">
+      <span className="w-8 h-px bg-brand-border-strong" /> {kicker} <span className="w-8 h-px bg-brand-border-strong" />
+    </span>
+    <h2 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-brand-text">
+      {title} {accent && <span className="sp-text-gradient">{accent}</span>}
+    </h2>
+    {description && <p className="text-brand-muted max-w-2xl mx-auto leading-relaxed">{description}</p>}
+  </div>
+);
+
+const BenefitCard = ({ icon: Icon, title, description, index }: any) => (
+  <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.1 }} className="p-8 sp-glass flex flex-col items-start gap-4 h-full relative overflow-hidden text-left">
+    <span className="absolute top-4 right-4 text-xs sp-font-mono text-brand-muted">0{index}</span>
+    <div className="p-4 rounded-2xl bg-brand-secondary border border-brand-border">
+      <Icon size={32} className="text-brand-primary" />
     </div>
-    <h3 className="text-2xl font-bold tracking-tight text-white">{title}</h3>
-    <p className="text-white/50 text-sm leading-relaxed font-light">{description}</p>
+    <h3 className="text-2xl font-bold tracking-tight text-brand-text">{title}</h3>
+    <p className="text-brand-muted text-base leading-relaxed">{description}</p>
   </motion.div>
 );
 
 const BentoBenefits = () => (
   <section id="sobre" className="py-24 relative overflow-hidden">
     <div className="absolute inset-0 sp-dot-pattern opacity-50 pointer-events-none" />
-    <div className="sp-orb absolute -top-20 left-10 w-72 h-72 bg-[#8B5CF6]/40 sp-animate-float-slow" />
     <div className="container mx-auto px-6 relative">
-      <div className="text-center mb-16">
-        <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-[#A78BFA] font-bold mb-4">
-          <span className="w-8 h-px bg-[#A78BFA]" /> Benefícios <span className="w-8 h-px bg-[#A78BFA]" />
-        </span>
-        <h2 className="text-4xl md:text-7xl font-bold mb-6 sp-glow-text tracking-tighter text-white">
-          Adeus ao <span className="sp-text-gradient">Ciclo de Sofrimento</span>
-        </h2>
-        <p className="text-white/50 max-w-2xl mx-auto font-light leading-relaxed">
-          Frequências que atuam diretamente na vibração das suas células, promovendo cura real e definitiva.
-        </p>
-      </div>
+      <SectionHeader
+        kicker="Benefícios"
+        title="Adeus ao"
+        accent="Ciclo de Sofrimento"
+        description="Frequências que atuam diretamente na vibração das suas células, promovendo cura real e definitiva."
+      />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <BenefitCard index={1} icon={Brain} title="Ansiedade e Estresse" description="Elimine a angústia no peito e as crises de preocupação. Reestabeleça a calma profunda." color="bg-indigo-600/20" />
-        <BenefitCard index={2} icon={Activity} title="Dores Crônicas" description="Alívio real para dores nas costas, enxaquecas e tensões musculares sem medicamentos." color="bg-teal-600/20" />
-        <BenefitCard index={3} icon={CloudRain} title="Sono Reparador" description="Durma profundamente em minutos. Acabe com a insônia que te persegue há anos." color="bg-indigo-600/20" />
-        <BenefitCard index={4} icon={Heart} title="Equilíbrio Emocional" description="Liberte-se das oscilações de humor e encontre a paz interior que você merece." color="bg-teal-600/20" />
-        <BenefitCard index={5} icon={ShieldCheck} title="Sem Efeitos Colaterais" description="Tratamento 100% natural baseado em biofísica e neurociência. Seguro para todas." color="bg-indigo-600/20" />
-        <BenefitCard index={6} icon={Zap} title="Energia Vital" description="Aumente seu foco e disposição diária através da ressonância de alta frequência." color="bg-teal-600/20" />
+        <BenefitCard index={1} icon={Brain} title="Ansiedade e Estresse" description="Elimine a angústia no peito e as crises de preocupação. Reestabeleça a calma profunda." />
+        <BenefitCard index={2} icon={Activity} title="Dores Crônicas" description="Alívio real para dores nas costas, enxaquecas e tensões musculares sem medicamentos." />
+        <BenefitCard index={3} icon={CloudRain} title="Sono Reparador" description="Durma profundamente em minutos. Acabe com a insônia que te persegue há anos." />
+        <BenefitCard index={4} icon={Heart} title="Equilíbrio Emocional" description="Liberte-se das oscilações de humor e encontre a paz interior que você merece." />
+        <BenefitCard index={5} icon={ShieldCheck} title="Sem Efeitos Colaterais" description="Tratamento 100% natural baseado em biofísica e neurociência. Seguro para todas." />
+        <BenefitCard index={6} icon={Zap} title="Energia Vital" description="Aumente seu foco e disposição diária através da ressonância de alta frequência." />
       </div>
     </div>
   </section>
 );
 
 const ProcessStep = ({ number, title, description, isLast }: any) => (
-  <div className="relative flex flex-col items-center text-center p-6 sp-glass m-2 group">
-    {/* Connecting line for desktop */}
+  <div className="relative flex flex-col items-start text-left p-8 sp-glass">
     {!isLast && (
-      <div className="hidden md:block absolute top-1/2 -right-6 w-12 h-px">
-        <div className="h-px bg-gradient-to-r from-[#8B5CF6]/60 to-transparent" />
-        <ChevronRight className="absolute -top-2 right-0 text-[#8B5CF6]/60" size={16} />
+      <div className="hidden md:flex absolute top-1/2 -right-8 w-8 items-center justify-center text-brand-border-strong" aria-hidden="true">
+        <ChevronRight size={16} />
       </div>
     )}
-    <div className="relative mb-6">
-      <span className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#8B5CF6] to-[#A78BFA] blur-md opacity-50 group-hover:opacity-80 transition-opacity" />
-      <div className="relative w-12 h-12 rounded-xl bg-white flex items-center justify-center font-bold text-black">{number}</div>
-    </div>
-    <h3 className="text-xl font-bold mb-3 text-white">{title}</h3>
-    <p className="text-white/50 text-sm font-light">{description}</p>
+    <div className="sp-font-serif text-5xl font-black text-brand-primary mb-6 leading-none">{number}</div>
+    <h3 className="text-xl font-bold mb-2 text-brand-text">{title}</h3>
+    <p className="text-brand-muted text-base">{description}</p>
   </div>
 );
 
 const HowItWorks = () => (
   <section className="py-24 relative overflow-hidden">
-    {/* Decorative grid */}
     <div className="absolute inset-0 sp-grid-pattern opacity-30 pointer-events-none" />
-    {/* Decorative SVG circle (left) */}
-    <div className="hidden md:block absolute -left-40 top-1/2 -translate-y-1/2 sp-animate-spin-slow pointer-events-none">
-      <svg width="320" height="320" viewBox="0 0 320 320" fill="none">
-        <circle cx="160" cy="160" r="140" stroke="rgba(255,255,255,0.05)" strokeDasharray="2 6" />
-        <circle cx="160" cy="160" r="100" stroke="rgba(45,212,191,0.15)" />
-      </svg>
-    </div>
     <div className="container mx-auto px-6 relative">
-      <div className="text-center mb-16">
-        <span className="inline-block text-[10px] uppercase tracking-[0.3em] text-[#A78BFA] font-bold mb-4 sp-font-mono">// 03_PROCESSO</span>
-        <h2 className="text-4xl md:text-5xl font-bold sp-glow-text tracking-tighter text-white">
-          Protocolo <span className="sp-text-gradient">7D</span>
-        </h2>
-      </div>
+      <SectionHeader kicker="03 · Processo" title="Protocolo" accent="7D" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
         <ProcessStep number="01" title="Escolha sua necessidade" description="Ansiedade? Insônia? Dores? Selecione o protocolo inteligente para você." />
         <ProcessStep number="02" title="Ouça por 15-30 minutos" description="Use fones de ouvido. Deixe as ondas regenerativas atuarem no seu sistema." />
@@ -315,55 +288,43 @@ const HowItWorks = () => (
 const WalkingTherapy = () => (
   <section id="caminhadas" className="py-24 relative overflow-hidden">
     <div className="container mx-auto px-6 relative z-10">
-      <div className="sp-glass p-8 md:p-16" style={{ borderRadius: 40 }}>
-        <div className="flex flex-col md:flex-row items-center gap-12">
-          <div className="flex-1">
-            <span className="flex items-center gap-2 text-[#A78BFA] font-bold text-[10px] uppercase tracking-widest mb-4">
-              <Ear size={16} /> Bônus Exclusivo
+      <div className="sp-glass p-8 md:p-16 relative overflow-hidden" style={{ borderRadius: 40 }}>
+        <div className="sp-halo w-[420px] h-[420px] -right-24 -bottom-24" />
+        <div className="relative grid grid-cols-1 md:grid-cols-3 items-center gap-12">
+          <div className="md:col-span-2 text-left">
+            <span className="sp-kicker flex items-center gap-2 mb-4">
+              <Ear size={16} className="text-brand-accent" /> Bônus Exclusivo
             </span>
-            <h2 className="text-4xl md:text-6xl font-bold mb-8 sp-glow-text tracking-tighter text-white">
-              Caminhadas<br /><span className="sp-text-gradient">Terapêuticas</span>
+            <h2 className="text-brand-text mb-8" style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)' }}>
+              <span className="sp-hero-l1" style={{ fontSize: '0.6em' }}>Caminhadas</span>
+              <span className="sp-hero-l2">Terapêuticas</span>
             </h2>
-            <p className="text-white/50 text-lg mb-8 leading-relaxed font-light">
+            <p className="text-brand-muted text-lg mb-8 leading-relaxed max-w-xl">
               Uma revolução em terapia sonora: caminhadas guiadas que combinam movimento + frequências específicas para transformar estados emocionais.
             </p>
-            <ul className="space-y-4 mb-10 text-sm font-light">
+            <ul className="space-y-4 mb-12 text-base">
               {[
                 'Transforme o medo em coragem em 20 minutos',
                 'Liberte mágoas através de frequências bioacústicas',
                 'Aumente sua autoconfiança enquanto caminha',
                 'Sincronização entre corpo, mente e solo',
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-white/70">
-                  <CheckCircle2 className="text-[#A78BFA]" size={18} /> {item}
+                <li key={i} className="flex items-center gap-4 text-brand-text">
+                  <CheckCircle2 className="text-brand-primary flex-shrink-0" size={20} /> {item}
                 </li>
               ))}
             </ul>
-            <Link to="/auth" className="inline-block px-8 py-4 rounded-xl bg-white text-black font-bold text-sm hover:scale-105 transition-transform shadow-xl">
+            <Link to="/auth" className="sp-btn sp-btn-primary">
               Experimentar SentiPassos
             </Link>
           </div>
-          <div className="flex-1 grid grid-cols-2 gap-4">
-            <div className="space-y-4 pt-8">
-              <div className="sp-glass p-6 text-center sp-animate-bounce-slow">
-                <Play className="mx-auto mb-2 text-[#A78BFA]" fill="currentColor" size={24} />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Cultive a Paz</span>
+          <div className="grid grid-cols-2 gap-4">
+            {['Cultive a Paz', 'Autoestima +', 'Supere a Tristeza', 'Energia Vital'].map((label, i) => (
+              <div key={label} className={`sp-glass p-6 text-center ${i % 2 === 1 ? 'mt-8' : ''}`}>
+                <Play className="mx-auto mb-2 text-brand-primary" fill="currentColor" size={24} />
+                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted">{label}</span>
               </div>
-              <div className="sp-glass p-6 text-center">
-                <Play className="mx-auto mb-2 text-[#8B5CF6]" fill="currentColor" size={24} />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Supere a Tristeza</span>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <div className="sp-glass p-6 text-center">
-                <Play className="mx-auto mb-2 text-[#8B5CF6]" fill="currentColor" size={24} />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Autoestima +</span>
-              </div>
-              <div className="sp-glass p-6 text-center sp-animate-bounce-slow">
-                <Play className="mx-auto mb-2 text-[#A78BFA]" fill="currentColor" size={24} />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Energia Vital</span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -380,54 +341,33 @@ const ScientificProof = () => {
   ];
   return (
     <section className="py-24 relative overflow-hidden">
-      {/* Decorative waveform background */}
-      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 opacity-20 pointer-events-none" aria-hidden="true">
-        <svg viewBox="0 0 1200 200" className="w-full h-48" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="sp-wave-grad" x1="0" x2="1" y1="0" y2="0">
-              <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0" />
-              <stop offset="50%" stopColor="#A78BFA" stopOpacity="1" />
-              <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <path d="M0,100 Q150,20 300,100 T600,100 T900,100 T1200,100" stroke="url(#sp-wave-grad)" strokeWidth="1.5" fill="none" />
-          <path d="M0,100 Q150,180 300,100 T600,100 T900,100 T1200,100" stroke="url(#sp-wave-grad)" strokeWidth="1" fill="none" opacity="0.5" />
-        </svg>
-      </div>
-      <div className="sp-orb absolute top-10 right-10 w-72 h-72 bg-[#A78BFA]/30 sp-animate-float-rev" />
-
       <div className="container mx-auto px-6 relative">
-        <div className="text-center mb-16">
-          <span className="inline-flex items-center gap-3 text-[#A78BFA] font-bold text-[10px] uppercase tracking-[0.3em] mb-4">
-            <span className="w-8 h-px bg-[#A78BFA]" />Evidência Clínica<span className="w-8 h-px bg-[#A78BFA]" />
-          </span>
-          <h2 className="text-4xl md:text-7xl font-bold mb-6 sp-glow-text tracking-tighter text-white">
-            Neurobiologia <span className="sp-text-gradient">Aplicada</span>
-          </h2>
-          <p className="text-white/50 max-w-2xl mx-auto font-light">
-            Não é mágica, é ciência. Nossas frequências são baseadas em décadas de pesquisas em neurociência e medicina integrativa.
-          </p>
-        </div>
+        <SectionHeader
+          kicker="Evidência Clínica"
+          title="Neurobiologia"
+          accent="Aplicada"
+          description="Não é mágica, é ciência. Nossas frequências são baseadas em décadas de pesquisas em neurociência e medicina integrativa."
+        />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {data.map((item, i) => (
-            <div key={i} className="space-y-5 sp-glass p-8 relative overflow-hidden">
-              <span className="absolute top-3 right-3 text-[10px] sp-font-mono text-white/20">DATA_0{i + 1}</span>
-              <div className="flex justify-between items-end gap-4">
-                <span className="font-bold text-sm md:text-base uppercase tracking-widest text-white/70">{item.label}</span>
-                <span className="text-[#A78BFA] font-bold text-4xl md:text-5xl leading-none">{item.value}</span>
+            <div key={i} className="space-y-4 sp-glass p-8 relative overflow-hidden text-left">
+              <span className="absolute top-4 right-4 text-xs sp-font-mono text-brand-muted">DATA_0{i + 1}</span>
+              <div className="flex justify-between items-end gap-4 pt-4">
+                <span className="font-semibold text-sm md:text-base uppercase tracking-[0.12em] text-brand-text">{item.label}</span>
+                <span className="sp-font-serif text-brand-primary font-black text-5xl leading-none">{item.value}</span>
               </div>
-              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                <motion.div initial={{ width: 0 }} whileInView={{ width: item.value }} transition={{ duration: 1.5, ease: 'easeOut' }} className="h-full bg-gradient-to-r from-[#8B5CF6] to-[#A78BFA]" />
+              <div className="h-2 w-full bg-brand-secondary rounded-full overflow-hidden">
+                <motion.div initial={{ width: 0 }} whileInView={{ width: item.value }} transition={{ duration: 1.2, ease: 'easeOut' }} className="h-full bg-brand-primary rounded-full" />
               </div>
-              <p className="text-sm md:text-base text-white/60 leading-relaxed">{item.desc}</p>
+              <p className="text-base text-brand-muted leading-relaxed">{item.desc}</p>
             </div>
           ))}
         </div>
         <div className="sp-divider-line my-16 max-w-2xl mx-auto" />
-        <div className="flex flex-wrap justify-center gap-4 text-xs md:text-sm text-white/60 font-semibold uppercase tracking-wider">
-          <span className="px-5 py-2.5 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={14} className="text-[#A78BFA]" /> ISO 27001 Certified System</span>
-          <span className="px-5 py-2.5 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={14} className="text-[#A78BFA]" /> Peer-Reviewed Research</span>
-          <span className="px-5 py-2.5 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={14} className="text-[#A78BFA]" /> Clinical Compliance</span>
+        <div className="flex flex-wrap justify-center gap-4 text-sm text-brand-text font-semibold uppercase tracking-[0.08em]">
+          <span className="px-6 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={16} className="text-brand-primary" /> ISO 27001 Certified System</span>
+          <span className="px-6 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={16} className="text-brand-primary" /> Peer-Reviewed Research</span>
+          <span className="px-6 py-2 sp-glass rounded-full flex items-center gap-2"><CheckCircle2 size={16} className="text-brand-primary" /> Clinical Compliance</span>
         </div>
       </div>
     </section>
@@ -441,22 +381,24 @@ const Testimonials = () => {
     { name: 'Luciana A.', role: 'Arquiteta, 44 anos', text: 'Após um divórcio difícil, estava destruída emocionalmente. As frequências me ajudaram a processar a dor e encontrar paz.', stars: 5 },
   ];
   return (
-    <section id="testemunhos" className="py-24">
+    <section id="testemunhos" className="py-24 bg-brand-secondary border-y border-brand-border">
       <div className="container mx-auto px-6">
-        <h2 className="sp-font-serif text-4xl font-bold text-center mb-4 sp-glow-text tracking-tighter italic text-white">Histórias Reais</h2>
-        <p className="text-white/40 text-center mb-16 font-light uppercase tracking-widest text-[10px]">Depoimentos de transformação</p>
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-6xl font-bold italic tracking-tight text-brand-text mb-4">Histórias Reais</h2>
+          <p className="sp-kicker">Depoimentos de transformação</p>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {items.map((item, i) => (
-            <div key={i} className="p-8 sp-glass relative overflow-hidden h-full flex flex-col">
-              <div className="flex gap-1 mb-4">
+            <div key={i} className="p-8 rounded-3xl bg-brand-surface border border-brand-border relative overflow-hidden h-full flex flex-col text-left">
+              <div className="flex gap-1 mb-4" aria-label={`${item.stars} de 5 estrelas`}>
                 {[...Array(item.stars)].map((_, s) => (
-                  <Star key={s} size={12} fill="currentColor" className="text-[#A78BFA]" />
+                  <Star key={s} size={16} fill="currentColor" className="text-brand-accent" />
                 ))}
               </div>
-              <p className="text-white/70 italic mb-6 leading-relaxed font-light text-sm flex-grow">"{item.text}"</p>
+              <p className="text-brand-text italic mb-8 leading-relaxed text-base flex-grow">"{item.text}"</p>
               <div>
-                <p className="font-bold tracking-tight text-[#A78BFA] text-sm">{item.name}</p>
-                <p className="text-[10px] text-white/30 uppercase tracking-widest">{item.role}</p>
+                <p className="font-bold tracking-tight text-brand-text text-base">{item.name}</p>
+                <p className="text-xs text-brand-muted uppercase tracking-[0.12em]">{item.role}</p>
               </div>
             </div>
           ))}
@@ -470,43 +412,43 @@ const Pricing = () => (
   <section className="py-24">
     <div className="container mx-auto px-6">
       <div className="text-center mb-16">
-        <h2 className="sp-font-serif text-4xl md:text-7xl font-bold mb-4 sp-glow-text tracking-tighter italic text-white">Investimento</h2>
-        <p className="text-white/40 font-light text-sm uppercase tracking-widest">Escolha sua arquitetura de vida</p>
+        <h2 className="text-4xl md:text-6xl font-bold italic tracking-tight text-brand-text mb-4">Investimento</h2>
+        <p className="sp-kicker">Escolha sua arquitetura de vida</p>
       </div>
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="p-10 sp-glass border-white/5 relative" style={{ borderRadius: 40 }}>
-          <h3 className="font-bold text-2xl mb-2 text-white">Mensal</h3>
-          <p className="text-white/40 text-sm mb-8">Ideal para experimentar.</p>
-          <div className="mb-10">
-            <span className="text-4xl font-bold text-white">R$ 39,90</span>
-            <span className="text-white/40 text-sm"> /mês</span>
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center text-left">
+        <div className="p-8 md:p-12 rounded-[40px] bg-brand-surface border border-brand-border relative">
+          <h3 className="font-bold text-2xl mb-2 text-brand-text">Mensal</h3>
+          <p className="text-brand-muted text-base mb-8">Ideal para experimentar.</p>
+          <div className="mb-8">
+            <span className="sp-font-serif text-5xl font-bold text-brand-text">R$ 39,90</span>
+            <span className="text-brand-muted text-base"> /mês</span>
           </div>
-          <ul className="space-y-4 mb-10 text-sm font-light text-white">
-            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#8B5CF6]" /> Acesso total aos protocolos</li>
-            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#8B5CF6]" /> 21 dias de guia inicial</li>
-            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#8B5CF6]" /> Atualizações frequentes</li>
-            <li className="flex items-center gap-3 opacity-30"><X size={18} /> Caminhadas Terapêuticas (Bônus)</li>
+          <ul className="space-y-4 mb-12 text-base text-brand-text">
+            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-primary" /> Acesso total aos protocolos</li>
+            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-primary" /> 21 dias de guia inicial</li>
+            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-primary" /> Atualizações frequentes</li>
+            <li className="flex items-center gap-4 text-brand-muted line-through decoration-brand-border-strong"><X size={20} /> Caminhadas Terapêuticas (Bônus)</li>
           </ul>
-          <Link to="/auth" className="block text-center w-full py-4 rounded-xl border border-white/10 font-bold hover:bg-white/5 transition-colors text-sm text-white">
+          <Link to="/auth" className="sp-btn sp-btn-secondary w-full">
             Assinar Mensal
           </Link>
         </div>
 
-        <div className="p-10 sp-glass border-[#8B5CF6]/50 relative overflow-hidden md:scale-105 shadow-2xl shadow-[#8B5CF6]/20" style={{ borderRadius: 40 }}>
-          <div className="absolute top-6 right-6 px-4 py-1 bg-white text-black font-bold text-[8px] uppercase rounded-full tracking-widest">Mais Escolhido</div>
-          <h3 className="font-bold text-2xl mb-2 text-white">Anual</h3>
-          <p className="text-white/40 text-sm mb-8">Melhor custo-benefício.</p>
-          <div className="mb-10">
-            <span className="text-4xl font-bold text-white">R$ 199,00</span>
-            <span className="text-white/40 italic text-xs"> /ano (menos de R$ 17/mês)</span>
+        <div className="p-8 md:p-12 rounded-[40px] bg-brand-surface border-2 border-brand-primary relative overflow-hidden md:scale-105 shadow-[0_24px_64px_-24px_rgba(124,103,255,0.45)]">
+          <div className="absolute top-6 right-6 px-4 py-1 bg-brand-accent text-brand-on-primary font-bold text-xs uppercase rounded-full tracking-[0.12em]">Mais Escolhido</div>
+          <h3 className="font-bold text-2xl mb-2 text-brand-text">Anual</h3>
+          <p className="text-brand-muted text-base mb-8">Melhor custo-benefício.</p>
+          <div className="mb-8">
+            <span className="sp-font-serif text-5xl font-bold text-brand-text">R$ 199,00</span>
+            <span className="text-brand-muted italic text-sm"> /ano (menos de R$ 17/mês)</span>
           </div>
-          <ul className="space-y-4 mb-10 text-sm font-light text-white">
-            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#A78BFA]" /> Tudo do plano mensal</li>
-            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#A78BFA]" /> Caminhadas Terapêuticas (Bônus)</li>
-            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#A78BFA]" /> Acesso antecipado a novidades</li>
-            <li className="flex items-center gap-3"><CheckCircle2 size={18} className="text-[#A78BFA]" /> Suporte VIP via WhatsApp</li>
+          <ul className="space-y-4 mb-12 text-base text-brand-text">
+            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-primary" /> Tudo do plano mensal</li>
+            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-primary" /> Caminhadas Terapêuticas (Bônus)</li>
+            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-primary" /> Acesso antecipado a novidades</li>
+            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-primary" /> Suporte VIP via WhatsApp</li>
           </ul>
-          <Link to="/auth" className="block text-center w-full py-4 bg-white text-black rounded-xl font-bold hover:scale-105 transition-transform shadow-lg text-sm">
+          <Link to="/auth" className="sp-btn sp-btn-primary w-full">
             Assinar Anual com Desconto
           </Link>
         </div>
@@ -516,62 +458,56 @@ const Pricing = () => (
 );
 
 const Footer = () => (
-  <footer className="py-20 border-t border-white/5">
-    <div className="container mx-auto px-6">
+  <footer className="py-24 border-t border-brand-border">
+    <div className="container mx-auto px-6 text-left">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
-        {/* Brand */}
         <div className="md:col-span-4">
           <div className="flex items-center gap-2 mb-6">
-            <div className="relative w-12 h-12 flex items-center justify-center">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full animate-pulse" />
-              <AudioWaveform className="relative z-10 text-white" size={26} strokeWidth={2.5} />
-            </div>
-            <span className="sp-font-display font-bold text-2xl tracking-tighter">
-              <span className="text-purple-400">Frequency</span>
-              <span className="text-white ml-1">App</span>
+            <BrandMark size={48} />
+            <span className="font-bold text-2xl tracking-tight">
+              <span className="text-brand-primary">Frequency</span>
+              <span className="text-brand-text ml-1">App</span>
             </span>
           </div>
-          <p className="text-gray-400 leading-relaxed text-sm mb-4">
+          <p className="text-brand-muted leading-relaxed text-sm mb-4">
             Soluções tecnológicas que transformam frequências em bem-estar e qualidade de vida.
           </p>
-          <p className="text-xs text-gray-500 sp-font-mono">CNPJ: 14.164.334/0001-05</p>
+          <p className="text-xs text-brand-muted sp-font-mono">CNPJ: 14.164.334/0001-05</p>
         </div>
 
-        {/* Informações de contato */}
         <div className="md:col-span-5">
-          <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-white">Informações</h4>
-          <ul className="space-y-4 text-sm text-gray-400">
-            <li className="flex items-start gap-3">
-              <MapPin size={16} className="text-[#8B5CF6] mt-0.5 flex-shrink-0" />
+          <h4 className="sp-kicker text-brand-text mb-6">Informações</h4>
+          <ul className="space-y-4 text-sm text-brand-muted">
+            <li className="flex items-start gap-4">
+              <MapPin size={16} className="text-brand-primary mt-1 flex-shrink-0" />
               <span>Avenida Doutor Luiz Teixeira Mendes, 3096 — Zona 05, Maringá - PR, 87.015-001</span>
             </li>
-            <li className="flex items-center gap-3">
-              <Mail size={16} className="text-[#8B5CF6] flex-shrink-0" />
-              <a href="mailto:contato@kefersolucoes.com.br" className="hover:text-white transition-colors">contato@kefersolucoes.com.br</a>
+            <li className="flex items-center gap-4">
+              <Mail size={16} className="text-brand-primary flex-shrink-0" />
+              <a href="mailto:contato@kefersolucoes.com.br" className="hover:text-brand-text transition-colors">contato@kefersolucoes.com.br</a>
             </li>
-            <li className="flex items-center gap-3">
-              <Phone size={16} className="text-[#8B5CF6] flex-shrink-0" />
-              <a href="https://wa.me/5544997270698" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">WhatsApp: (44) 99727-0698</a>
+            <li className="flex items-center gap-4">
+              <Phone size={16} className="text-brand-primary flex-shrink-0" />
+              <a href="https://wa.me/5544997270698" target="_blank" rel="noopener noreferrer" className="hover:text-brand-text transition-colors">WhatsApp: (44) 99727-0698</a>
             </li>
           </ul>
         </div>
 
-        {/* Links */}
         <div className="md:col-span-3">
-          <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-white">Navegação</h4>
-          <ul className="space-y-3 text-sm text-gray-400">
-            <li><a href="#sobre" className="hover:text-[#8B5CF6] transition-colors">Protocolo 7D</a></li>
-            <li><a href="#caminhadas" className="hover:text-[#8B5CF6] transition-colors">Caminhadas</a></li>
-            <li><Link to="/scientific" className="hover:text-[#8B5CF6] transition-colors">Comprovação</Link></li>
-            <li><Link to="/terms" className="hover:text-[#8B5CF6] transition-colors">Termos</Link></li>
+          <h4 className="sp-kicker text-brand-text mb-6">Navegação</h4>
+          <ul className="space-y-4 text-sm text-brand-muted">
+            <li><a href="#sobre" className="hover:text-brand-text transition-colors">Protocolo 7D</a></li>
+            <li><a href="#caminhadas" className="hover:text-brand-text transition-colors">Caminhadas</a></li>
+            <li><Link to="/scientific" className="hover:text-brand-text transition-colors">Comprovação</Link></li>
+            <li><Link to="/terms" className="hover:text-brand-text transition-colors">Termos</Link></li>
           </ul>
         </div>
       </div>
-      <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-gray-600 uppercase tracking-[0.2em]">
+      <div className="pt-8 border-t border-brand-border flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-brand-muted uppercase tracking-[0.12em]">
         <p>© 2024 Frequency App. Todos os direitos reservados.</p>
         <div className="flex gap-8">
-          <Link to="/terms">Privacidade</Link>
-          <Link to="/terms">Termos</Link>
+          <Link to="/terms" className="hover:text-brand-text transition-colors">Privacidade</Link>
+          <Link to="/terms" className="hover:text-brand-text transition-colors">Termos</Link>
         </div>
       </div>
     </div>
@@ -580,7 +516,7 @@ const Footer = () => (
 
 export const SentiPassosLanding = () => {
   return (
-    <div className="min-h-screen relative font-sans" style={{ background: '#0A0B10', color: '#fff' }}>
+    <div className="min-h-screen relative font-sans bg-brand-bg text-brand-text">
       <div className="sp-mesh-bg" />
       <Navbar />
       <Hero />
@@ -593,36 +529,26 @@ export const SentiPassosLanding = () => {
       <Pricing />
 
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 sp-grid-pattern opacity-30 pointer-events-none" />
-        <div className="sp-orb absolute top-0 left-1/4 w-96 h-96 bg-[#8B5CF6]/40 sp-animate-float-slow" />
-        <div className="sp-orb absolute bottom-0 right-1/4 w-96 h-96 bg-[#A78BFA]/30 sp-animate-float-rev" />
-
         <div className="container mx-auto px-6 text-center relative">
-          <div className="max-w-4xl mx-auto sp-glass p-12 md:p-20 border-white/5 relative overflow-hidden" style={{ borderRadius: 50 }}>
+          <div className="max-w-4xl mx-auto sp-glass p-12 md:p-24 relative overflow-hidden" style={{ borderRadius: 48 }}>
             <span className="sp-corner-bracket tl" />
             <span className="sp-corner-bracket tr" />
             <span className="sp-corner-bracket bl" />
             <span className="sp-corner-bracket br" />
+            <div className="sp-halo w-[480px] h-[480px] left-1/2 -translate-x-1/2 -top-48" />
 
-            {/* Animated rings */}
-            <div className="absolute -top-20 -right-20 sp-animate-spin-slow opacity-30 pointer-events-none">
-              <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
-                <circle cx="100" cy="100" r="80" stroke="#A78BFA" strokeDasharray="2 8" />
-                <circle cx="100" cy="100" r="50" stroke="#8B5CF6" strokeDasharray="4 4" />
-              </svg>
-            </div>
-
-            <h2 className="text-4xl md:text-7xl font-bold mb-8 sp-glow-text tracking-tighter text-white relative">
-              Pronta para sua<br /><span className="sp-text-gradient">Transformação?</span>
+            <h2 className="text-brand-text mb-8 relative" style={{ fontSize: 'clamp(2.5rem, 7vw, 5rem)' }}>
+              <span className="sp-hero-l1" style={{ fontSize: '0.6em' }}>Pronta para sua</span>
+              <span className="sp-hero-l2">Transformação?</span>
             </h2>
-            <p className="text-white/50 text-lg mb-12 max-w-xl mx-auto font-light relative">
+            <p className="text-brand-muted text-lg mb-12 max-w-xl mx-auto relative">
               Junte-se a mais de 5.000 mulheres que já resgataram sua saúde emocional e física. Comece agora sua jornada de transformação.
             </p>
-            <Link to="/auth" className="relative inline-flex px-12 py-6 rounded-xl bg-white text-black font-bold text-lg hover:scale-105 transition-transform shadow-2xl items-center justify-center gap-3 mx-auto">
-              Começar Transformação <Zap size={24} fill="currentColor" />
+            <Link to="/auth" className="sp-btn sp-btn-primary relative">
+              Começar Transformação <Zap size={20} fill="currentColor" />
             </Link>
-            <p className="mt-8 text-[10px] text-white/30 uppercase tracking-[0.2em] flex items-center justify-center gap-2">
-              <ShieldCheck size={14} className="text-[#A78BFA]" /> Acesso imediato e seguro.
+            <p className="mt-8 sp-kicker flex items-center justify-center gap-2 relative">
+              <ShieldCheck size={16} className="text-brand-primary" /> Acesso imediato e seguro.
             </p>
           </div>
         </div>
@@ -634,7 +560,7 @@ export const SentiPassosLanding = () => {
         href="https://wa.me/5500000000000"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-8 right-8 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center text-white shadow-2xl hover:scale-110 transition-all z-40"
+        className="fixed bottom-8 right-8 w-14 h-14 bg-brand-secondary border border-brand-border-strong rounded-full flex items-center justify-center text-[#25D366] shadow-[0_12px_32px_-12px_rgba(13,15,23,0.9)] hover:bg-brand-surface transition-colors duration-100 z-40"
         aria-label="Chat"
       >
         <MessageCircle size={28} />

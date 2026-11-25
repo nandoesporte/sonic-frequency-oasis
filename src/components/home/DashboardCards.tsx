@@ -26,15 +26,6 @@ export function DashboardCategoryCard({ id, name, description, icon, index = 0 }
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  // Rotate gradients across cards for visual rhythm
-  const gradients = [
-    "linear-gradient(135deg, #8B5CF6, #A78BFA)",
-    "linear-gradient(135deg, #3B82F6, #818CF8)",
-    "linear-gradient(135deg, #A78BFA, #60A5FA)",
-    "linear-gradient(135deg, #818CF8, #8B5CF6)",
-  ];
-  const grad = gradients[index % gradients.length];
-
   useEffect(() => {
     let mounted = true;
     getCategoryCount(id)
@@ -54,26 +45,24 @@ export function DashboardCategoryCard({ id, name, description, icon, index = 0 }
     <button
       type="button"
       onClick={handleClick}
-      className="sp-glass group p-6 text-left hover:bg-white/[0.07] hover:-translate-y-0.5 transition-all duration-300 w-full"
+      data-index={index}
+      className="sp-glass group p-6 text-left hover:bg-brand-secondary hover:border-brand-border-strong hover:-translate-y-0.5 transition-[background-color,border-color,transform] duration-100 w-full"
     >
-      <div className="flex items-start justify-between mb-5">
-        <div
-          className="w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-lg"
-          style={{ background: grad, boxShadow: "0 8px 24px -8px rgba(139,92,246,0.4)" }}
-        >
+      <div className="flex items-start justify-between mb-6">
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-brand-secondary border border-brand-border text-brand-primary">
           {icon}
         </div>
-        <ChevronRight className="h-4 w-4 text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all" />
+        <ChevronRight className="h-4 w-4 text-brand-muted group-hover:text-brand-text group-hover:translate-x-1 transition-all duration-100" />
       </div>
 
-      <h3 className="text-lg font-semibold text-white mb-1.5 tracking-tight">{name}</h3>
-      <p className="text-xs text-white/50 leading-relaxed line-clamp-2 mb-4">{description}</p>
+      <h3 className="text-lg font-semibold text-brand-text mb-2 tracking-tight">{name}</h3>
+      <p className="text-sm text-brand-muted leading-relaxed line-clamp-2 mb-4">{description}</p>
 
-      <div className="flex items-center justify-between pt-3 border-t border-white/5">
-        <span className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+      <div className="flex items-center justify-between pt-4 border-t border-brand-border">
+        <span className="text-xs uppercase tracking-[0.12em] text-brand-muted">
           {count !== null ? `${count} ${t("dashboard.card.freq")}` : "—"}
         </span>
-        <span className="text-[10px] uppercase tracking-[0.2em] text-[#A78BFA] font-medium">
+        <span className="text-xs uppercase tracking-[0.12em] text-brand-text font-semibold">
           {t("dashboard.card.explore")}
         </span>
       </div>
@@ -130,24 +119,19 @@ export function DashboardFrequencyCard({ frequency, onBeforePlay }: DashboardFre
   return (
     <div
       className={cn(
-        "sp-glass p-4 transition-all duration-300 hover:bg-white/[0.07] flex items-center gap-3",
-        isCurrentlyPlaying && "ring-1 ring-[#A78BFA]/60"
+        "sp-glass p-4 transition-colors duration-100 hover:bg-brand-secondary flex items-center gap-4",
+        isCurrentlyPlaying && "border-brand-primary"
       )}
     >
       <button
         type="button"
         onClick={handlePlay}
         className={cn(
-          "relative w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all hover:scale-105",
+          "relative w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-100",
           isCurrentlyPlaying
-            ? "text-white shadow-lg"
-            : "bg-white/5 text-white border border-white/10 hover:border-white/20"
+            ? "bg-brand-primary text-brand-on-primary"
+            : "bg-transparent text-brand-text border border-brand-border-strong hover:bg-brand-surface"
         )}
-        style={
-          isCurrentlyPlaying
-            ? { background: "linear-gradient(135deg, #8B5CF6, #3B82F6)", boxShadow: "0 0 20px rgba(139,92,246,0.5)" }
-            : undefined
-        }
         aria-label={locked ? "Conteúdo premium" : "Tocar frequência"}
       >
         {locked ? <Lock className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
@@ -155,12 +139,12 @@ export function DashboardFrequencyCard({ frequency, onBeforePlay }: DashboardFre
 
       <div className="flex-grow min-w-0">
         <div className="flex items-center gap-1.5 mb-0.5">
-          <h3 className="font-semibold text-sm text-white truncate tracking-tight">{frequency.name}</h3>
-          {frequency.premium && <Crown className="w-3 h-3 text-[#A78BFA] flex-shrink-0" />}
+          <h3 className="font-semibold text-base text-brand-text truncate tracking-tight">{frequency.name}</h3>
+          {frequency.premium && <Crown className="w-4 h-4 text-brand-accent flex-shrink-0" />}
         </div>
-        <p className="text-[11px] text-white/45 truncate">
-          <span className="text-[#A78BFA] font-medium">{frequency.hz} Hz</span>
-          <span className="mx-1.5 text-white/20">•</span>
+        <p className="text-xs text-brand-muted truncate">
+          <span className="text-brand-text font-semibold">{frequency.hz} Hz</span>
+          <span className="mx-2 text-brand-border-strong">•</span>
           {frequency.purpose}
         </p>
       </div>
@@ -169,8 +153,8 @@ export function DashboardFrequencyCard({ frequency, onBeforePlay }: DashboardFre
         type="button"
         onClick={handleFav}
         className={cn(
-          "w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-colors",
-          isFavorite ? "text-rose-400" : "text-white/40 hover:text-white"
+          "w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-100",
+          isFavorite ? "text-brand-primary" : "text-brand-muted hover:text-brand-text"
         )}
         aria-label="Favoritar"
       >
@@ -188,23 +172,21 @@ interface DashboardQuickActionProps {
   icon: React.ReactNode;
   title: string;
   description: string;
-  gradient: string;
+  /** @deprecated mantido por compatibilidade; o visual usa os tokens da paleta */
+  gradient?: string;
 }
 
-export function DashboardQuickAction({ to, icon, title, description, gradient }: DashboardQuickActionProps) {
+export function DashboardQuickAction({ to, icon, title, description }: DashboardQuickActionProps) {
   return (
-    <Link to={to} className="sp-glass group p-6 hover:bg-white/[0.07] hover:-translate-y-0.5 transition-all duration-300">
+    <Link to={to} className="sp-glass group p-6 text-left hover:bg-brand-secondary hover:border-brand-border-strong hover:-translate-y-0.5 transition-[background-color,border-color,transform] duration-100">
       <div className="flex items-center justify-between mb-4">
-        <div
-          className="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-lg"
-          style={{ background: gradient, boxShadow: "0 8px 24px -8px rgba(139,92,246,0.4)" }}
-        >
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-brand-secondary border border-brand-border text-brand-primary">
           {icon}
         </div>
-        <ChevronRight className="h-4 w-4 text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all" />
+        <ChevronRight className="h-4 w-4 text-brand-muted group-hover:text-brand-text group-hover:translate-x-1 transition-all duration-100" />
       </div>
-      <h3 className="font-semibold text-white mb-1 tracking-tight">{title}</h3>
-      <p className="text-xs text-white/50 leading-relaxed">{description}</p>
+      <h3 className="font-semibold text-brand-text mb-2 tracking-tight">{title}</h3>
+      <p className="text-sm text-brand-muted leading-relaxed">{description}</p>
     </Link>
   );
 }
@@ -245,49 +227,42 @@ export function DashboardFeaturedCard({ frequency, durationLabel = "20 min" }: D
   return (
     <div
       className={cn(
-        "sp-glass relative overflow-hidden p-6 sm:p-8 transition-all duration-300",
-        isCurrent && "ring-1 ring-[#A78BFA]/60"
+        "sp-glass relative overflow-hidden p-6 sm:p-8 text-left transition-colors duration-100",
+        isCurrent && "border-brand-primary"
       )}
     >
-      {/* Ambient gradient */}
-      <div
-        className="absolute -top-24 -right-24 w-72 h-72 rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(139,92,246,0.35) 0%, transparent 70%)" }}
-      />
-      <div
-        className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(59,130,246,0.28) 0%, transparent 70%)" }}
-      />
+      {/* Halo de luz (claro-escuro) */}
+      <div className="sp-halo w-80 h-80 -top-32 -right-24" />
 
       <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-6">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[10px] uppercase tracking-[0.22em] text-white/80">
-              <Sparkles className="h-3 w-3 text-[#A78BFA]" />
+          <div className="flex items-center gap-2 mb-4 flex-wrap">
+            <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-brand-secondary border border-brand-border text-xs uppercase tracking-[0.12em] text-brand-text font-semibold">
+              <Sparkles className="h-3 w-3 text-brand-accent" />
               {t("dashboard.featured.badge")}
             </span>
             {frequency.premium && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-[#8B5CF6] to-[#3B82F6] text-[10px] uppercase tracking-[0.2em] text-white font-medium">
+              <span className="inline-flex items-center gap-1 px-4 py-1 rounded-full bg-brand-accent text-xs uppercase tracking-[0.12em] text-brand-on-primary font-semibold">
                 <Crown className="h-3 w-3" />
                 {t("dashboard.featured.premium")}
               </span>
             )}
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] uppercase tracking-[0.2em] text-white/70">
+            <span className="inline-flex items-center gap-1 px-4 py-1 rounded-full border border-brand-border text-xs uppercase tracking-[0.12em] text-brand-muted">
               <Clock className="h-3 w-3" />
               {durationLabel}
             </span>
           </div>
 
-          <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2 sp-glow-text">
+          <h3 className="sp-font-serif text-3xl sm:text-4xl font-bold tracking-tight text-brand-text mb-2">
             {frequency.name}
           </h3>
-          <p className="text-sm text-white/60 leading-relaxed max-w-xl mb-4 line-clamp-3">
+          <p className="text-base text-brand-muted leading-relaxed max-w-xl mb-4 line-clamp-3">
             {frequency.description}
           </p>
 
-          <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.2em] text-white/50">
-            <span className="text-[#A78BFA] font-medium">{frequency.hz} Hz</span>
-            <span className="text-white/20">•</span>
+          <div className="flex items-center gap-2 text-xs uppercase tracking-[0.12em] text-brand-muted">
+            <span className="text-brand-text font-semibold">{frequency.hz} Hz</span>
+            <span className="text-brand-border-strong">•</span>
             <span>{frequency.purpose}</span>
           </div>
         </div>
@@ -296,16 +271,7 @@ export function DashboardFeaturedCard({ frequency, durationLabel = "20 min" }: D
           <button
             type="button"
             onClick={handlePlay}
-            className={cn(
-              "group relative flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-medium text-white text-sm tracking-wide transition-all hover:scale-[1.03] active:scale-[0.98] shadow-lg",
-              "min-w-[180px]"
-            )}
-            style={{
-              background: locked
-                ? "linear-gradient(135deg, rgba(139,92,246,0.6), rgba(59,130,246,0.6))"
-                : "linear-gradient(135deg, #8B5CF6, #3B82F6)",
-              boxShadow: "0 12px 32px -10px rgba(139,92,246,0.55)",
-            }}
+            className="sp-btn sp-btn-primary min-w-[192px]"
             aria-label={locked ? "Conteúdo premium" : isCurrent ? "Tocando agora" : "Ouvir agora"}
           >
             {locked ? (
