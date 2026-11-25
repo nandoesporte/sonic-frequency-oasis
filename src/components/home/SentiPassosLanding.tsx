@@ -99,90 +99,91 @@ const Navbar = () => {
 };
 
 const Hero = () => (
-  <section id="inicio" className="relative pt-32 pb-16 md:pt-40 md:pb-32 overflow-hidden">
-    <div className="absolute inset-0 sp-grid-pattern opacity-40 pointer-events-none" />
+  <section id="inicio" className="relative overflow-hidden lg:min-h-[88vh] flex items-center pt-32 pb-16 md:pt-40 md:pb-24">
+    {/* Imagem de fundo: ondas de frequência e anéis sonoros (arte original, paleta musica-roxo) */}
+    <img
+      src="/images/hero-frequency.webp"
+      srcSet="/images/hero-frequency-1280.webp 1280w, /images/hero-frequency.webp 2560w"
+      sizes="100vw"
+      alt=""
+      aria-hidden="true"
+      fetchPriority="high"
+      decoding="async"
+      className="absolute inset-0 w-full h-full object-cover object-[66%_30%] md:object-[60%_center] pointer-events-none select-none"
+    />
+    {/* Véu de legibilidade: forte no celular (texto sobre a imagem), lateral no desktop */}
+    <div
+      className="absolute inset-0 pointer-events-none md:hidden"
+      style={{ background: 'linear-gradient(180deg, rgba(13,15,23,0.20) 0%, rgba(13,15,23,0.45) 38%, rgba(13,15,23,0.86) 62%, #0D0F17 100%)' }}
+    />
+    <div
+      className="absolute inset-0 pointer-events-none hidden md:block"
+      style={{ background: 'linear-gradient(90deg, #0D0F17 0%, rgba(13,15,23,0.92) 32%, rgba(13,15,23,0.35) 62%, rgba(13,15,23,0) 100%), linear-gradient(180deg, rgba(13,15,23,0) 70%, #0D0F17 100%)' }}
+    />
     <div className="sp-noise absolute inset-0" />
 
-    <div className="sp-container relative z-10">
-      {/* Composição 2/3 texto + 1/3 visual, fora do centro */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
-        <motion.div
-          className="lg:col-span-2 text-left"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full sp-glass mb-8">
-            <span className="relative flex">
-              <span className="absolute inset-0 rounded-full bg-brand-accent sp-animate-pulse-ring"></span>
-              <span className="w-2 h-2 rounded-full bg-brand-accent"></span>
-            </span>
-            <span className="sp-kicker">Sistema v4.2 Ativo</span>
+    <div className="sp-container relative z-10 w-full">
+      <motion.div
+        className="max-w-2xl text-left"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full sp-glass mb-8">
+          <span className="relative flex">
+            <span className="absolute inset-0 rounded-full bg-brand-accent sp-animate-pulse-ring"></span>
+            <span className="w-2 h-2 rounded-full bg-brand-accent"></span>
           </span>
+          <span className="sp-kicker">Sistema v4.2 Ativo</span>
+        </span>
 
-          <h1 className="text-brand-text mb-8" style={{ fontSize: 'clamp(3.5rem, 11vw, 7.5rem)' }}>
-            <span className="sp-hero-l1" style={{ fontSize: '0.55em' }}>Restaure sua</span>
-            <span className="sp-hero-l2">Saúde</span>
-          </h1>
+        <h1 className="sp-hero-title text-brand-text mb-8" style={{ fontSize: 'clamp(3.5rem, 11vw, 7.5rem)' }}>
+          <span className="sp-hero-l1" style={{ fontSize: '0.5em' }}>Restaure sua</span>
+          <span className="sp-hero-l2">Saúde</span>
+        </h1>
 
-          <p className="text-brand-muted text-lg md:text-xl max-w-xl mb-8 md:mb-12 leading-relaxed">
-            Elimine dores crônicas, ansiedade e estresse através de ondas sonoras direcionadas e neurociência aplicada.
-          </p>
+        <p className="text-brand-muted text-lg md:text-xl max-w-xl mb-8 md:mb-12 leading-relaxed">
+          Elimine dores crônicas, ansiedade e estresse através de ondas sonoras direcionadas e neurociência aplicada.
+        </p>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-            <Link to="/auth" className="sp-btn sp-btn-primary">
-              Transformar Minha Vida
-            </Link>
-            <Link to="/scientific" className="sp-btn sp-btn-secondary">
-              Comprovação Científica
-            </Link>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+          <Link to="/auth" className="sp-btn sp-btn-primary">
+            Transformar Minha Vida
+          </Link>
+          <Link to="/scientific" className="sp-btn sp-btn-secondary bg-brand-bg/60 backdrop-blur-sm">
+            Comprovação Científica
+          </Link>
+        </div>
+
+        {/* Pills de prova social */}
+        <div className="flex flex-wrap items-center gap-2 mt-8">
+          <span className="inline-flex items-center gap-2 h-8 px-4 rounded-full border border-brand-border bg-brand-bg/60 backdrop-blur-sm text-sm text-brand-muted">
+            <Star size={14} className="text-brand-accent" fill="currentColor" />
+            <strong className="text-brand-text font-semibold">+5.000</strong> mulheres transformadas
+          </span>
+          <span className="inline-flex items-center gap-2 h-8 px-4 rounded-full border border-brand-border bg-brand-bg/60 backdrop-blur-sm text-sm text-brand-muted">
+            <strong className="text-brand-text font-semibold">97%</strong> de satisfação
+          </span>
+        </div>
+      </motion.div>
+    </div>
+
+    {/* Legenda técnica (callout) no canto inferior direito, sobre a imagem */}
+    <div className="hidden lg:block absolute right-8 xl:right-16 bottom-16 z-10 w-80">
+      <div className="relative sp-glass p-6">
+        <span className="sp-corner-bracket tl" />
+        <span className="sp-corner-bracket br" />
+        <div className="flex flex-col gap-1 text-xs sp-font-mono text-brand-muted mb-4" aria-hidden="true">
+          <span>// PROTOCOLO_7D</span>
+          <span>$ status: <span className="text-brand-text">active</span></span>
+          <span>$ wavelength: 432Hz</span>
+        </div>
+        <p className="text-sm text-brand-muted italic mb-4">"A arquitetura do futuro não é apenas rápida, é intuitiva e autocurativa."</p>
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-brand-secondary border border-brand-border flex items-center justify-center">
+            <Star size={12} className="text-brand-accent" fill="currentColor" />
           </div>
-
-          {/* Pills de prova social */}
-          <div className="flex flex-wrap items-center gap-2 mt-8">
-            <span className="inline-flex items-center gap-2 h-8 px-4 rounded-full border border-brand-border text-sm text-brand-muted">
-              <Star size={14} className="text-brand-accent" fill="currentColor" />
-              <strong className="text-brand-text font-semibold">+5.000</strong> mulheres transformadas
-            </span>
-            <span className="inline-flex items-center gap-2 h-8 px-4 rounded-full border border-brand-border text-sm text-brand-muted">
-              <strong className="text-brand-text font-semibold">97%</strong> de satisfação
-            </span>
-          </div>
-        </motion.div>
-
-        {/* Visual: equalizador com halo de luz (claro-escuro) */}
-        <div className="relative hidden md:flex flex-col items-center lg:items-end">
-          <div className="sp-halo w-[360px] h-[360px] -top-12 left-1/2 -translate-x-1/2 lg:left-auto lg:right-0 lg:translate-x-0" />
-          <div className="relative sp-glass w-full max-w-sm p-8">
-            <span className="sp-corner-bracket tl" />
-            <span className="sp-corner-bracket tr" />
-            <span className="sp-corner-bracket bl" />
-            <span className="sp-corner-bracket br" />
-
-            <div className="flex flex-col gap-2 text-xs sp-font-mono text-brand-muted mb-8" aria-hidden="true">
-              <span>// PROTOCOLO_7D</span>
-              <span>$ status: <span className="text-brand-text">active</span></span>
-              <span>$ wavelength: 432Hz</span>
-            </div>
-
-            <div className="flex items-end justify-center gap-2 h-24 mb-8" aria-hidden="true">
-              {[0.4, 0.7, 1, 0.6, 0.9, 0.5, 0.8, 1, 0.55, 0.75, 0.4].map((h, i) => (
-                <span
-                  key={i}
-                  className="w-2 rounded-full bg-brand-border-strong sp-animate-wave-bar"
-                  style={{ height: `${h * 100}%`, animationDelay: `${i * 0.1}s`, opacity: 0.5 + h * 0.5 }}
-                />
-              ))}
-            </div>
-
-            <p className="text-sm text-brand-muted italic mb-4">"A arquitetura do futuro não é apenas rápida, é intuitiva e autocurativa."</p>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-brand-secondary border border-brand-border flex items-center justify-center">
-                <Star size={12} className="text-brand-accent" fill="currentColor" />
-              </div>
-              <p className="sp-kicker text-brand-text">Protocolo de Ressonância 7D</p>
-            </div>
-          </div>
+          <p className="sp-kicker text-brand-text">Protocolo de Ressonância 7D</p>
         </div>
       </div>
     </div>
