@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Play,
@@ -23,6 +23,18 @@ import {
   Phone,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import {
+  Reveal,
+  Stagger,
+  StaggerItem,
+  MaskLine,
+  Magnetic,
+  TiltCard,
+  CountUp,
+  ScrollProgress,
+  useHeroParallax,
+  EASE_OUT,
+} from '@/components/motion/primitives';
 
 /*
  * Página de vendas — paleta musica-roxo (tokens em src/index.css).
@@ -52,7 +64,7 @@ const Navbar = () => {
         <Link to="/" className="flex items-center gap-2">
           <BrandMark />
           <span className="font-bold text-xl tracking-tight">
-            <span className="text-brand-primary">Frequency</span>
+            <span className="text-brand-accent">Frequency</span>
             <span className="text-brand-text ml-1">App</span>
           </span>
         </Link>
@@ -98,10 +110,18 @@ const Navbar = () => {
   );
 };
 
-const Hero = () => (
-  <section id="inicio" className="relative overflow-hidden lg:min-h-[88vh] flex items-center pt-32 pb-16 md:pt-40 md:pb-24">
+const Hero = () => {
+  const ref = useRef<HTMLElement>(null);
+  const { bgY, contentY, contentOpacity, mouseX, mouseY, onMouseMove } = useHeroParallax(ref);
+  return (
+  <section ref={ref} onMouseMove={onMouseMove} id="inicio" className="relative overflow-hidden lg:min-h-[88vh] flex items-center pt-32 pb-16 md:pt-40 md:pb-24">
     {/* Imagem de fundo: ondas de frequência e anéis sonoros (arte original, paleta musica-roxo) */}
-    <img
+    <motion.div className="absolute inset-0 pointer-events-none" style={{ y: bgY }} aria-hidden="true">
+    <motion.div className="absolute -inset-6" style={{ x: mouseX, y: mouseY }}>
+    <motion.img
+      initial={{ opacity: 0, scale: 1.08 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 1.4, ease: EASE_OUT }}
       src="/images/hero-frequency.webp"
       srcSet="/images/hero-frequency-1280.webp 1280w, /images/hero-frequency.webp 2560w"
       sizes="100vw"
@@ -111,6 +131,8 @@ const Hero = () => (
       decoding="async"
       className="absolute inset-0 w-full h-full object-cover object-[66%_30%] md:object-[60%_center] pointer-events-none select-none"
     />
+    </motion.div>
+    </motion.div>
     {/* Véu de legibilidade: forte no celular (texto sobre a imagem), lateral no desktop */}
     <div
       className="absolute inset-0 pointer-events-none md:hidden"
@@ -122,41 +144,58 @@ const Hero = () => (
     />
     <div className="sp-noise absolute inset-0" />
 
-    <div className="sp-container relative z-10 w-full">
-      <motion.div
-        className="max-w-2xl text-left"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full sp-glass mb-8">
+    <motion.div className="sp-container relative z-10 w-full" style={{ y: contentY, opacity: contentOpacity }}>
+      <div className="max-w-2xl text-left">
+        <motion.span
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE_OUT }}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full sp-glass mb-8"
+        >
           <span className="relative flex">
             <span className="absolute inset-0 rounded-full bg-brand-accent sp-animate-pulse-ring"></span>
             <span className="w-2 h-2 rounded-full bg-brand-accent"></span>
           </span>
           <span className="sp-kicker">Sistema v4.2 Ativo</span>
-        </span>
+        </motion.span>
 
         <h1 className="sp-hero-title text-brand-text mb-8" style={{ fontSize: 'clamp(3.5rem, 11vw, 7.5rem)' }}>
-          <span className="sp-hero-l1" style={{ fontSize: '0.5em' }}>Restaure sua</span>
-          <span className="sp-hero-l2">Saúde</span>
+          <MaskLine className="sp-hero-l1" style={{ fontSize: '0.5em' }} delay={0.1}>Restaure sua</MaskLine>
+          <MaskLine className="sp-hero-l2" delay={0.22}>Saúde</MaskLine>
         </h1>
 
-        <p className="text-brand-muted text-lg md:text-xl max-w-xl mb-8 md:mb-12 leading-relaxed">
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.45, ease: EASE_OUT }}
+          className="text-brand-muted text-lg md:text-xl max-w-xl mb-8 md:mb-12 leading-relaxed"
+        >
           Elimine dores crônicas, ansiedade e estresse através de ondas sonoras direcionadas e neurociência aplicada.
-        </p>
+        </motion.p>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-          <Link to="/auth" className="sp-btn sp-btn-primary">
-            Transformar Minha Vida
-          </Link>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6, ease: EASE_OUT }}
+          className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4"
+        >
+          <Magnetic className="flex">
+            <Link to="/auth" className="sp-btn sp-btn-primary w-full sm:w-auto">
+              Transformar Minha Vida
+            </Link>
+          </Magnetic>
           <Link to="/scientific" className="sp-btn sp-btn-secondary bg-brand-bg/60 backdrop-blur-sm">
             Comprovação Científica
           </Link>
-        </div>
+        </motion.div>
 
         {/* Pills de prova social */}
-        <div className="flex flex-wrap items-center gap-2 mt-8">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="flex flex-wrap items-center gap-2 mt-8"
+        >
           <span className="inline-flex items-center gap-2 h-8 px-4 rounded-full border border-brand-border bg-brand-bg/60 backdrop-blur-sm text-sm text-brand-muted">
             <Star size={14} className="text-brand-accent" fill="currentColor" />
             <strong className="text-brand-text font-semibold">+5.000</strong> mulheres transformadas
@@ -164,13 +203,18 @@ const Hero = () => (
           <span className="inline-flex items-center gap-2 h-8 px-4 rounded-full border border-brand-border bg-brand-bg/60 backdrop-blur-sm text-sm text-brand-muted">
             <strong className="text-brand-text font-semibold">97%</strong> de satisfação
           </span>
-        </div>
-      </motion.div>
-    </div>
+        </motion.div>
+      </div>
+    </motion.div>
 
     {/* Legenda técnica (callout) no canto inferior direito, sobre a imagem */}
-    <div className="hidden lg:block absolute right-8 xl:right-16 bottom-16 z-10 w-80">
-      <div className="relative sp-glass p-6">
+    <motion.div
+      initial={{ opacity: 0, x: 24 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.8, delay: 0.9, ease: EASE_OUT }}
+      className="hidden lg:block absolute right-8 xl:right-16 bottom-16 z-10 w-80"
+    >
+      <div className="relative sp-glass p-6 sp-animate-float-slow" style={{ animationDuration: '9s' }}>
         <span className="sp-corner-bracket tl" />
         <span className="sp-corner-bracket br" />
         <div className="flex flex-col gap-1 text-xs sp-font-mono text-brand-muted mb-4" aria-hidden="true">
@@ -186,9 +230,10 @@ const Hero = () => (
           <p className="sp-kicker text-brand-text">Protocolo de Ressonância 7D</p>
         </div>
       </div>
-    </div>
+    </motion.div>
   </section>
-);
+  );
+};
 
 const TrustBar = () => (
   <div className="border-y border-brand-border bg-brand-secondary relative overflow-hidden">
@@ -216,7 +261,7 @@ const TrustBar = () => (
           { value: '7D', label: 'Dimensões' },
         ].map((s) => (
           <div key={s.label} className="text-center">
-            <div className="sp-font-serif text-3xl sm:text-4xl font-bold mb-2 text-brand-text">{s.value}</div>
+            <CountUp value={s.value} className="block sp-font-serif text-3xl sm:text-4xl font-bold mb-2 text-brand-text tabular-nums" />
             <div className="sp-kicker">{s.label}</div>
           </div>
         ))}
@@ -226,7 +271,7 @@ const TrustBar = () => (
 );
 
 const SectionHeader = ({ kicker, title, accent, description }: { kicker: string; title: string; accent?: string; description?: string }) => (
-  <div className="text-center mb-12 md:mb-16">
+  <Reveal className="text-center mb-12 md:mb-16">
     <span className="sp-kicker inline-flex items-center gap-4 mb-4">
       <span className="w-8 h-px bg-brand-border-strong" /> {kicker} <span className="w-8 h-px bg-brand-border-strong" />
     </span>
@@ -234,18 +279,20 @@ const SectionHeader = ({ kicker, title, accent, description }: { kicker: string;
       {title} {accent && <span className="sp-text-gradient">{accent}</span>}
     </h2>
     {description && <p className="text-brand-muted max-w-2xl mx-auto leading-relaxed">{description}</p>}
-  </div>
+  </Reveal>
 );
 
 const BenefitCard = ({ icon: Icon, title, description, index }: any) => (
-  <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.1 }} className="p-6 md:p-8 sp-glass flex flex-col items-start gap-4 h-full relative overflow-hidden text-left">
+  <StaggerItem className="h-full">
+  <TiltCard className="group p-6 md:p-8 sp-glass flex flex-col items-start gap-4 h-full overflow-hidden text-left">
     <span className="absolute top-4 right-4 text-xs sp-font-mono text-brand-muted">0{index}</span>
-    <div className="p-4 rounded-2xl bg-brand-secondary border border-brand-border">
-      <Icon size={32} className="text-brand-primary" />
+    <div className="p-4 rounded-2xl bg-brand-secondary border border-brand-border transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
+      <Icon size={32} className="text-brand-accent" />
     </div>
     <h3 className="text-2xl font-bold tracking-tight text-brand-text">{title}</h3>
     <p className="text-brand-muted text-base leading-relaxed">{description}</p>
-  </motion.div>
+  </TiltCard>
+  </StaggerItem>
 );
 
 const BentoBenefits = () => (
@@ -258,29 +305,31 @@ const BentoBenefits = () => (
         accent="Ciclo de Sofrimento"
         description="Frequências que atuam diretamente na vibração das suas células, promovendo cura real e definitiva."
       />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <BenefitCard index={1} icon={Brain} title="Ansiedade e Estresse" description="Elimine a angústia no peito e as crises de preocupação. Reestabeleça a calma profunda." />
         <BenefitCard index={2} icon={Activity} title="Dores Crônicas" description="Alívio real para dores nas costas, enxaquecas e tensões musculares sem medicamentos." />
         <BenefitCard index={3} icon={CloudRain} title="Sono Reparador" description="Durma profundamente em minutos. Acabe com a insônia que te persegue há anos." />
         <BenefitCard index={4} icon={Heart} title="Equilíbrio Emocional" description="Liberte-se das oscilações de humor e encontre a paz interior que você merece." />
         <BenefitCard index={5} icon={ShieldCheck} title="Sem Efeitos Colaterais" description="Tratamento 100% natural baseado em biofísica e neurociência. Seguro para todas." />
         <BenefitCard index={6} icon={Zap} title="Energia Vital" description="Aumente seu foco e disposição diária através da ressonância de alta frequência." />
-      </div>
+      </Stagger>
     </div>
   </section>
 );
 
 const ProcessStep = ({ number, title, description, isLast }: any) => (
-  <div className="relative flex flex-col items-start text-left p-6 md:p-8 sp-glass">
+  <StaggerItem className="h-full">
+  <TiltCard max={3} className="flex flex-col items-start text-left p-6 md:p-8 sp-glass h-full">
     {!isLast && (
       <div className="hidden md:flex absolute top-1/2 -right-8 w-8 items-center justify-center text-brand-border-strong" aria-hidden="true">
         <ChevronRight size={16} />
       </div>
     )}
-    <div className="sp-font-serif text-5xl font-black text-brand-primary mb-6 leading-none">{number}</div>
+    <div className="sp-font-serif text-5xl font-black text-brand-accent mb-6 leading-none">{number}</div>
     <h3 className="text-xl font-bold mb-2 text-brand-text">{title}</h3>
     <p className="text-brand-muted text-base">{description}</p>
-  </div>
+  </TiltCard>
+  </StaggerItem>
 );
 
 const HowItWorks = () => (
@@ -288,11 +337,21 @@ const HowItWorks = () => (
     <div className="absolute inset-0 sp-grid-pattern opacity-30 pointer-events-none" />
     <div className="sp-container relative">
       <SectionHeader kicker="03 · Processo" title="Protocolo" accent="7D" />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+      {/* Linha de progresso desenhada ao entrar na tela */}
+      <div className="hidden md:block relative h-px mb-8 bg-brand-border" aria-hidden="true">
+        <motion.div
+          className="absolute inset-0 bg-brand-primary origin-left"
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 1.4, ease: EASE_OUT }}
+        />
+      </div>
+      <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
         <ProcessStep number="01" title="Escolha sua necessidade" description="Ansiedade? Insônia? Dores? Selecione o protocolo inteligente para você." />
         <ProcessStep number="02" title="Ouça por 15-30 minutos" description="Use fones de ouvido. Deixe as ondas regenerativas atuarem no seu sistema." />
         <ProcessStep number="03" title="Sinta a Transformação" description="Sinta o alívio imediato e a harmonia florescer em todas as áreas da vida." isLast />
-      </div>
+      </Stagger>
     </div>
   </section>
 );
@@ -300,7 +359,7 @@ const HowItWorks = () => (
 const WalkingTherapy = () => (
   <section id="caminhadas" className="py-16 md:py-24 relative overflow-hidden">
     <div className="sp-container relative z-10">
-      <div className="sp-glass p-6 sm:p-8 md:p-16 relative overflow-hidden rounded-[32px] md:rounded-[40px]">
+      <Reveal className="sp-glass p-6 sm:p-8 md:p-16 relative overflow-hidden rounded-[32px] md:rounded-[40px]">
         <div className="sp-halo w-[420px] h-[420px] -right-24 -bottom-24" />
         <div className="relative grid grid-cols-1 md:grid-cols-3 items-center gap-12">
           <div className="md:col-span-2 text-left">
@@ -321,25 +380,39 @@ const WalkingTherapy = () => (
                 'Aumente sua autoconfiança enquanto caminha',
                 'Sincronização entre corpo, mente e solo',
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-4 text-brand-text">
-                  <CheckCircle2 className="text-brand-primary flex-shrink-0" size={20} /> {item}
-                </li>
+                <motion.li
+                  key={i}
+                  initial={{ opacity: 0, x: -16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.15 + i * 0.08, ease: EASE_OUT }}
+                  className="flex items-center gap-4 text-brand-text"
+                >
+                  <CheckCircle2 className="text-brand-accent flex-shrink-0" size={20} /> {item}
+                </motion.li>
               ))}
             </ul>
-            <Link to="/auth" className="sp-btn sp-btn-primary w-full sm:w-auto">
-              Experimentar SentiPassos
-            </Link>
+            <Magnetic className="flex">
+              <Link to="/auth" className="sp-btn sp-btn-primary w-full sm:w-auto">
+                Experimentar SentiPassos
+              </Link>
+            </Magnetic>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <Stagger className="grid grid-cols-2 gap-4">
             {['Cultive a Paz', 'Autoestima +', 'Supere a Tristeza', 'Energia Vital'].map((label, i) => (
-              <div key={label} className={`sp-glass p-6 text-center ${i % 2 === 1 ? 'mt-8' : ''}`}>
-                <Play className="mx-auto mb-2 text-brand-primary" fill="currentColor" size={24} />
-                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted">{label}</span>
-              </div>
+              <StaggerItem key={label} className={i % 2 === 1 ? 'mt-8' : ''}>
+                <TiltCard max={8} className="group sp-glass p-6 text-center">
+                  <span className="relative mx-auto mb-2 flex w-10 h-10 items-center justify-center">
+                    <span className="sp-ring-hover absolute inset-0 rounded-full border border-brand-primary" />
+                    <Play className="text-brand-accent transition-transform duration-300 group-hover:scale-125" fill="currentColor" size={24} />
+                  </span>
+                  <span className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted group-hover:text-brand-text transition-colors duration-100">{label}</span>
+                </TiltCard>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
-      </div>
+      </Reveal>
     </div>
   </section>
 );
@@ -360,27 +433,29 @@ const ScientificProof = () => {
           accent="Aplicada"
           description="Não é mágica, é ciência. Nossas frequências são baseadas em décadas de pesquisas em neurociência e medicina integrativa."
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <Stagger className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {data.map((item, i) => (
-            <div key={i} className="space-y-4 sp-glass p-6 md:p-8 relative overflow-hidden text-left">
+            <StaggerItem key={i} className="h-full">
+            <TiltCard max={3} className="space-y-4 sp-glass p-6 md:p-8 overflow-hidden text-left h-full">
               <span className="absolute top-4 right-4 text-xs sp-font-mono text-brand-muted">DATA_0{i + 1}</span>
               <div className="flex justify-between items-end gap-4 pt-4">
                 <span className="font-semibold text-sm md:text-base uppercase tracking-[0.12em] text-brand-text">{item.label}</span>
-                <span className="sp-font-serif text-brand-primary font-black text-4xl md:text-5xl leading-none">{item.value}</span>
+                <CountUp value={item.value} className="sp-font-serif text-brand-accent font-black text-4xl md:text-5xl leading-none tabular-nums" />
               </div>
               <div className="h-2 w-full bg-brand-secondary rounded-full overflow-hidden">
-                <motion.div initial={{ width: 0 }} whileInView={{ width: item.value }} transition={{ duration: 1.2, ease: 'easeOut' }} className="h-full bg-brand-primary rounded-full" />
+                <motion.div initial={{ width: 0 }} whileInView={{ width: item.value }} viewport={{ once: true }} transition={{ duration: 1.6, ease: EASE_OUT }} className="h-full bg-brand-primary rounded-full" />
               </div>
               <p className="text-base text-brand-muted leading-relaxed">{item.desc}</p>
-            </div>
+            </TiltCard>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
         <div className="sp-divider-line my-16 max-w-2xl mx-auto" />
-        <div className="flex flex-wrap justify-center gap-4 text-sm text-brand-text font-semibold uppercase tracking-[0.08em]">
-          <span className="px-4 sm:px-6 py-2 sp-glass rounded-full flex items-center gap-2 text-xs sm:text-sm"><CheckCircle2 size={16} className="text-brand-primary" /> ISO 27001 Certified System</span>
-          <span className="px-4 sm:px-6 py-2 sp-glass rounded-full flex items-center gap-2 text-xs sm:text-sm"><CheckCircle2 size={16} className="text-brand-primary" /> Peer-Reviewed Research</span>
-          <span className="px-4 sm:px-6 py-2 sp-glass rounded-full flex items-center gap-2 text-xs sm:text-sm"><CheckCircle2 size={16} className="text-brand-primary" /> Clinical Compliance</span>
-        </div>
+        <Reveal className="flex flex-wrap justify-center gap-4 text-sm text-brand-text font-semibold uppercase tracking-[0.08em]">
+          <span className="px-4 sm:px-6 py-2 sp-glass rounded-full flex items-center gap-2 text-xs sm:text-sm"><CheckCircle2 size={16} className="text-brand-accent" /> ISO 27001 Certified System</span>
+          <span className="px-4 sm:px-6 py-2 sp-glass rounded-full flex items-center gap-2 text-xs sm:text-sm"><CheckCircle2 size={16} className="text-brand-accent" /> Peer-Reviewed Research</span>
+          <span className="px-4 sm:px-6 py-2 sp-glass rounded-full flex items-center gap-2 text-xs sm:text-sm"><CheckCircle2 size={16} className="text-brand-accent" /> Clinical Compliance</span>
+        </Reveal>
       </div>
     </section>
   );
@@ -399,12 +474,21 @@ const Testimonials = () => {
           <h2 className="text-[2.5rem] leading-[1.1] md:text-6xl font-bold italic tracking-tight text-brand-text mb-4">Histórias Reais</h2>
           <p className="sp-kicker">Depoimentos de transformação</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {items.map((item, i) => (
-            <div key={i} className="p-6 md:p-8 rounded-3xl bg-brand-surface border border-brand-border relative overflow-hidden h-full flex flex-col text-left">
+            <StaggerItem key={i} className="h-full">
+            <TiltCard max={3} className="p-6 md:p-8 rounded-3xl bg-brand-surface border border-brand-border overflow-hidden h-full flex flex-col text-left">
               <div className="flex gap-1 mb-4" aria-label={`${item.stars} de 5 estrelas`}>
                 {[...Array(item.stars)].map((_, s) => (
-                  <Star key={s} size={16} fill="currentColor" className="text-brand-accent" />
+                  <motion.span
+                    key={s}
+                    initial={{ opacity: 0, scale: 0.4 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 14, delay: 0.2 + s * 0.06 }}
+                  >
+                    <Star size={16} fill="currentColor" className="text-brand-accent" />
+                  </motion.span>
                 ))}
               </div>
               <p className="text-brand-text italic mb-8 leading-relaxed text-base flex-grow">"{item.text}"</p>
@@ -412,9 +496,10 @@ const Testimonials = () => {
                 <p className="font-bold tracking-tight text-brand-text text-base">{item.name}</p>
                 <p className="text-xs text-brand-muted uppercase tracking-[0.12em]">{item.role}</p>
               </div>
-            </div>
+            </TiltCard>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </div>
     </section>
   );
@@ -427,7 +512,8 @@ const Pricing = () => (
         <h2 className="text-[2.5rem] leading-[1.1] md:text-6xl font-bold italic tracking-tight text-brand-text mb-4">Investimento</h2>
         <p className="sp-kicker">Escolha sua arquitetura de vida</p>
       </div>
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center text-left">
+      <Stagger className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center text-left">
+        <StaggerItem>
         <div className="p-6 sm:p-8 md:p-12 rounded-[32px] md:rounded-[40px] bg-brand-surface border border-brand-border relative">
           <h3 className="font-bold text-2xl mb-2 text-brand-text">Mensal</h3>
           <p className="text-brand-muted text-base mb-8">Ideal para experimentar.</p>
@@ -436,18 +522,26 @@ const Pricing = () => (
             <span className="text-brand-muted text-base"> /mês</span>
           </div>
           <ul className="space-y-4 mb-12 text-base text-brand-text">
-            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-primary" /> Acesso total aos protocolos</li>
-            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-primary" /> 21 dias de guia inicial</li>
-            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-primary" /> Atualizações frequentes</li>
+            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-accent" /> Acesso total aos protocolos</li>
+            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-accent" /> 21 dias de guia inicial</li>
+            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-accent" /> Atualizações frequentes</li>
             <li className="flex items-center gap-4 text-brand-muted line-through decoration-brand-border-strong"><X size={20} /> Caminhadas Terapêuticas (Bônus)</li>
           </ul>
           <Link to="/auth" className="sp-btn sp-btn-secondary w-full">
             Assinar Mensal
           </Link>
         </div>
+        </StaggerItem>
+        <StaggerItem>
+        <TiltCard max={3} className="rounded-[32px] md:rounded-[40px]">
 
         <div className="p-6 sm:p-8 md:p-12 pt-16 sm:pt-16 md:pt-12 rounded-[32px] md:rounded-[40px] bg-brand-surface border-2 border-brand-primary relative overflow-hidden lg:scale-105 shadow-[0_24px_64px_-24px_rgba(124,103,255,0.45)]">
-          <div className="absolute top-6 right-6 px-4 py-1 bg-brand-accent text-brand-on-primary font-bold text-xs uppercase rounded-full tracking-[0.12em]">Mais Escolhido</div>
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.5, ease: EASE_OUT }}
+            className="absolute top-6 right-6 px-4 py-1 bg-brand-primary text-brand-on-primary font-bold text-xs uppercase rounded-full tracking-[0.12em]">Mais Escolhido</motion.div>
           <h3 className="font-bold text-2xl mb-2 text-brand-text">Anual</h3>
           <p className="text-brand-muted text-base mb-8">Melhor custo-benefício.</p>
           <div className="mb-8">
@@ -455,16 +549,18 @@ const Pricing = () => (
             <span className="text-brand-muted italic text-sm"> /ano (menos de R$ 17/mês)</span>
           </div>
           <ul className="space-y-4 mb-12 text-base text-brand-text">
-            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-primary" /> Tudo do plano mensal</li>
-            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-primary" /> Caminhadas Terapêuticas (Bônus)</li>
-            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-primary" /> Acesso antecipado a novidades</li>
-            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-primary" /> Suporte VIP via WhatsApp</li>
+            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-accent" /> Tudo do plano mensal</li>
+            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-accent" /> Caminhadas Terapêuticas (Bônus)</li>
+            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-accent" /> Acesso antecipado a novidades</li>
+            <li className="flex items-center gap-4"><CheckCircle2 size={20} className="text-brand-accent" /> Suporte VIP via WhatsApp</li>
           </ul>
           <Link to="/auth" className="sp-btn sp-btn-primary w-full">
             Assinar Anual com Desconto
           </Link>
         </div>
-      </div>
+        </TiltCard>
+        </StaggerItem>
+      </Stagger>
     </div>
   </section>
 );
@@ -477,7 +573,7 @@ const Footer = () => (
           <div className="flex items-center gap-2 mb-6">
             <BrandMark size={48} />
             <span className="font-bold text-2xl tracking-tight">
-              <span className="text-brand-primary">Frequency</span>
+              <span className="text-brand-accent">Frequency</span>
               <span className="text-brand-text ml-1">App</span>
             </span>
           </div>
@@ -491,15 +587,15 @@ const Footer = () => (
           <h4 className="sp-kicker text-brand-text mb-6">Informações</h4>
           <ul className="space-y-4 text-sm text-brand-muted">
             <li className="flex items-start gap-4">
-              <MapPin size={16} className="text-brand-primary mt-1 flex-shrink-0" />
+              <MapPin size={16} className="text-brand-accent mt-1 flex-shrink-0" />
               <span>Avenida Doutor Luiz Teixeira Mendes, 3096 — Zona 05, Maringá - PR, 87.015-001</span>
             </li>
             <li className="flex items-center gap-4">
-              <Mail size={16} className="text-brand-primary flex-shrink-0" />
+              <Mail size={16} className="text-brand-accent flex-shrink-0" />
               <a href="mailto:contato@kefersolucoes.com.br" className="hover:text-brand-text transition-colors">contato@kefersolucoes.com.br</a>
             </li>
             <li className="flex items-center gap-4">
-              <Phone size={16} className="text-brand-primary flex-shrink-0" />
+              <Phone size={16} className="text-brand-accent flex-shrink-0" />
               <a href="https://wa.me/5544997270698" target="_blank" rel="noopener noreferrer" className="hover:text-brand-text transition-colors">WhatsApp: (44) 99727-0698</a>
             </li>
           </ul>
@@ -530,6 +626,7 @@ export const SentiPassosLanding = () => {
   return (
     <div className="min-h-screen relative font-sans bg-brand-bg text-brand-text">
       <div className="sp-mesh-bg" />
+      <ScrollProgress />
       <Navbar />
       <Hero />
       <TrustBar />
@@ -542,12 +639,16 @@ export const SentiPassosLanding = () => {
 
       <section className="py-16 md:py-24 relative overflow-hidden">
         <div className="sp-container text-center relative">
-          <div className="max-w-4xl mx-auto sp-glass px-6 py-16 sm:p-12 md:p-24 relative overflow-hidden rounded-[32px] md:rounded-[48px]">
+          <Reveal className="max-w-4xl mx-auto sp-glass px-6 py-16 sm:p-12 md:p-24 relative overflow-hidden rounded-[32px] md:rounded-[48px]">
             <span className="sp-corner-bracket tl" />
             <span className="sp-corner-bracket tr" />
             <span className="sp-corner-bracket bl" />
             <span className="sp-corner-bracket br" />
-            <div className="sp-halo w-[480px] h-[480px] left-1/2 -translate-x-1/2 -top-48" />
+            <motion.div
+              className="sp-halo w-[480px] h-[480px] left-1/2 -ml-[240px] -top-48"
+              animate={{ scale: [1, 1.12, 1], opacity: [0.8, 1, 0.8] }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+            />
 
             <h2 className="text-brand-text mb-8 relative" style={{ fontSize: 'clamp(1.75rem, 7vw, 5rem)' }}>
               <span className="sp-hero-l1" style={{ fontSize: '0.6em' }}>Pronta para sua</span>
@@ -556,13 +657,15 @@ export const SentiPassosLanding = () => {
             <p className="text-brand-muted text-lg mb-12 max-w-xl mx-auto relative">
               Junte-se a mais de 5.000 mulheres que já resgataram sua saúde emocional e física. Comece agora sua jornada de transformação.
             </p>
-            <Link to="/auth" className="sp-btn sp-btn-primary relative w-full sm:w-auto">
-              Começar Transformação <Zap size={20} fill="currentColor" />
-            </Link>
+            <Magnetic className="relative flex justify-center">
+              <Link to="/auth" className="sp-btn sp-btn-primary w-full sm:w-auto">
+                Começar Transformação <Zap size={20} fill="currentColor" />
+              </Link>
+            </Magnetic>
             <p className="mt-8 sp-kicker flex items-center justify-center gap-2 relative">
-              <ShieldCheck size={16} className="text-brand-primary" /> Acesso imediato e seguro.
+              <ShieldCheck size={16} className="text-brand-accent" /> Acesso imediato e seguro.
             </p>
-          </div>
+          </Reveal>
         </div>
       </section>
 

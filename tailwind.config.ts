@@ -78,8 +78,8 @@ export default {
 				},
 				purple: {
 					light: '#181C22',
-					DEFAULT: '#7C67FF',
-					dark: '#5B45E0'
+					DEFAULT: '#6A52F7',
+					dark: '#5F46EE'
 				},
 				blue: {
 					light: '#181C22'
@@ -89,9 +89,17 @@ export default {
 					dark: '#0D0F17'
 				},
 				premium: {
-					DEFAULT: '#7C67FF',
+					DEFAULT: '#6A52F7',
 					light: '#181C22',
 					dark: '#5B45E0'
+				}
+			},
+			// texto "primary" usa o roxo claro (legível sobre o fundo escuro);
+			// fundos "primary" (botões) usam o roxo aprofundado com rótulo branco
+			textColor: {
+				primary: {
+					DEFAULT: 'hsl(var(--primary-text))',
+					foreground: 'hsl(var(--primary-foreground))'
 				}
 			},
 			borderRadius: {

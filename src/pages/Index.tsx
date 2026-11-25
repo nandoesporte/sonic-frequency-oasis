@@ -23,6 +23,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useDebouncedEffect, useIsMobile } from "@/hooks";
 import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence, MotionConfig } from "motion/react";
+import { Reveal, Stagger, StaggerItem, MaskLine, EASE_OUT } from "@/components/motion/primitives";
 
 const Index = () => {
   const { t } = useTranslation();
@@ -104,6 +106,7 @@ const Index = () => {
 
   return (
     <AudioProvider>
+      <MotionConfig reducedMotion="user">
       <div className={`min-h-screen ${user ? 'pb-24 bg-brand-bg text-brand-text font-sans' : 'pb-0'}`}>
         <Header />
 
@@ -127,9 +130,9 @@ const Index = () => {
                     </div>
 
                     {/* Headline — fórmula Editorial */}
-                    <h1 className="text-brand-text mb-6" style={{ fontSize: 'clamp(2.5rem, 9vw, 5.5rem)' }}>
-                      <span className="sp-hero-l1" style={{ fontSize: '0.5em' }}>{t("dashboard.welcome")}</span>
-                      <span className="sp-hero-l2 break-words">{welcomeName}</span>
+                    <h1 className="sp-hero-title text-brand-text mb-6" style={{ fontSize: 'clamp(2.5rem, 9vw, 5.5rem)' }}>
+                      <MaskLine className="sp-hero-l1" style={{ fontSize: '0.5em' }} delay={0.05}>{t("dashboard.welcome")}</MaskLine>
+                      <MaskLine className="sp-hero-l2 break-words" delay={0.18}>{welcomeName}</MaskLine>
                     </h1>
 
                     <p className="text-brand-muted text-base sm:text-lg max-w-xl leading-relaxed">
@@ -151,32 +154,38 @@ const Index = () => {
 
                 {/* Featured highlight */}
                 {featured && (
-                  <div className="mb-8">
+                  <Reveal className="mb-8" delay={0.3}>
                     <DashboardFeaturedCard frequency={featured} durationLabel="20 min" />
-                  </div>
+                  </Reveal>
                 )}
 
                 {/* Quick actions */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Stagger className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <StaggerItem>
                   <DashboardQuickAction
                     to="/guide"
                     icon={<BookOpen className="h-5 w-5" />}
                     title={t("dashboard.quickActions.guide.title")}
                     description={t("dashboard.quickActions.guide.description")}
                   />
+                  </StaggerItem>
+                  <StaggerItem>
                   <DashboardQuickAction
                     to="/sentipasso"
                     icon={<Headphones className="h-5 w-5" />}
                     title={t("dashboard.quickActions.sentipasso.title")}
                     description={t("dashboard.quickActions.sentipasso.description")}
                   />
+                  </StaggerItem>
+                  <StaggerItem>
                   <DashboardQuickAction
                     to="/favorites"
                     icon={<Heart className="h-5 w-5" />}
                     title={t("dashboard.quickActions.favorites.title")}
                     description={t("dashboard.quickActions.favorites.description")}
                   />
-                </div>
+                  </StaggerItem>
+                </Stagger>
 
                 <div className="sp-divider-line mt-12 sm:mt-16" />
               </div>
@@ -320,7 +329,7 @@ const Index = () => {
               {/* Section header */}
               <div className="mb-12">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-border mb-6">
-                  <AudioWaveform size={14} className="text-brand-primary" />
+                  <AudioWaveform size={14} className="text-brand-accent" />
                   <span className="sp-kicker">Movimento + Frequência</span>
                 </div>
                 <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[0.95] mb-4">
@@ -332,25 +341,27 @@ const Index = () => {
               </div>
 
               {/* Emotion cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 {[
                   { icon: Heart, title: 'Cultive a Paz', freq: '40Hz · 528Hz', desc: 'Acalma a mente e restaura o equilíbrio interior' },
                   { icon: Waves, title: 'Transforme a Raiva', freq: '396Hz', desc: 'Libera tensões e dissolve energia densa' },
                   { icon: Sparkles, title: 'Supere a Tristeza', freq: '741Hz', desc: 'Eleva a vibração e renova a perspectiva' },
                 ].map((item, i) => (
-                  <div key={i} className="sp-glass p-6 hover:bg-brand-secondary transition-colors duration-100">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-brand-secondary border border-brand-border">
-                      <item.icon className="h-6 w-6 text-brand-primary" />
+                  <StaggerItem key={i}>
+                  <div className="sp-glass sp-spotlight group p-6 h-full hover:bg-brand-secondary hover:-translate-y-1 transition-[background-color,transform] duration-300" onMouseMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); e.currentTarget.style.setProperty('--mx', `${e.clientX - r.left}px`); e.currentTarget.style.setProperty('--my', `${e.clientY - r.top}px`); }}>
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-brand-secondary border border-brand-border transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
+                      <item.icon className="h-6 w-6 text-brand-accent" />
                     </div>
                     <div className="sp-kicker mb-2">{item.freq}</div>
                     <h4 className="text-lg font-semibold text-brand-text mb-2">{item.title}</h4>
                     <p className="text-sm text-brand-muted leading-relaxed">{item.desc}</p>
                   </div>
+                  </StaggerItem>
                 ))}
-              </div>
+              </Stagger>
 
               {/* How it works */}
-              <div className="sp-glass p-6 sm:p-8 mb-12">
+              <Reveal className="sp-glass p-6 sm:p-8 mb-12">
                 <h4 className="sp-kicker mb-6 flex items-center gap-2">
                   <span className="w-6 h-px bg-brand-primary" /> Como Funciona
                 </h4>
@@ -362,12 +373,12 @@ const Index = () => {
                     'Sinta a mudança acontecer naturalmente',
                   ].map((step, i) => (
                     <div key={i} className="flex items-start gap-4">
-                      <CheckCircle className="h-5 w-5 text-brand-primary mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-brand-accent mt-0.5 flex-shrink-0" />
                       <span className="text-brand-text text-sm leading-relaxed">{step}</span>
                     </div>
                   ))}
                 </div>
-              </div>
+              </Reveal>
 
               {/* CTA */}
               <div className="flex">
@@ -403,10 +414,11 @@ const Index = () => {
                 <div className="h-px flex-1 min-w-[64px] bg-brand-border" />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {categories.map((category, idx) => {
                   const CategoryIcon = category.icon;
                   return (
+                    <StaggerItem key={category.id} className="h-full">
                     <DashboardCategoryCard
                       key={category.id}
                       id={category.id}
@@ -415,9 +427,10 @@ const Index = () => {
                       icon={<CategoryIcon className="h-6 w-6" />}
                       index={idx}
                     />
+                    </StaggerItem>
                   );
                 })}
-              </div>
+              </Stagger>
             </div>
           </section>
         )}
@@ -457,23 +470,39 @@ const Index = () => {
                             role="tab"
                             aria-selected={active}
                             onClick={() => setActiveLibrary(cat.id)}
-                            className={`flex-shrink-0 inline-flex items-center h-11 px-4 rounded-full border text-sm font-semibold transition-colors duration-100 ${
+                            className={`relative flex-shrink-0 inline-flex items-center h-11 px-4 rounded-full border text-sm font-semibold transition-colors duration-100 ${
                               active
-                                ? 'bg-brand-secondary border-brand-primary text-brand-text'
+                                ? 'border-transparent text-brand-text'
                                 : 'border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-border-strong'
                             }`}
                           >
-                            {cat.name}
+                            {active && (
+                              <motion.span
+                                layoutId="library-chip-active"
+                                className="absolute inset-0 rounded-full bg-brand-secondary border border-brand-primary"
+                                transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                              />
+                            )}
+                            <span className="relative">{cat.name}</span>
                           </button>
                         );
                       })}
                     </div>
 
-                    <div className="sp-glass p-4 sm:p-8" role="tabpanel">
+                    <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={activeId}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.25, ease: EASE_OUT }}
+                      className="sp-glass p-4 sm:p-8"
+                      role="tabpanel"
+                    >
                       <div className="flex items-center justify-between mb-6 gap-4">
                         <div className="flex items-center gap-4 min-w-0">
                           <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-brand-secondary border border-brand-border flex-shrink-0">
-                            <CategoryIcon className="h-5 w-5 text-brand-primary" />
+                            <CategoryIcon className="h-5 w-5 text-brand-accent" />
                           </div>
                           <h3 className="text-xl font-semibold text-brand-text truncate">{category.name}</h3>
                         </div>
@@ -486,15 +515,22 @@ const Index = () => {
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {frequencies.map(frequency => (
-                          <DashboardFrequencyCard
+                        {frequencies.map((frequency, fi) => (
+                          <motion.div
                             key={frequency.id}
-                            frequency={frequency}
-                            onBeforePlay={handleFrequencyClick}
-                          />
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.35, delay: 0.05 + fi * 0.05, ease: EASE_OUT }}
+                          >
+                            <DashboardFrequencyCard
+                              frequency={frequency}
+                              onBeforePlay={handleFrequencyClick}
+                            />
+                          </motion.div>
                         ))}
                       </div>
-                    </div>
+                    </motion.div>
+                    </AnimatePresence>
                   </>
                 );
               })()}
@@ -508,6 +544,7 @@ const Index = () => {
         {/* Audio Player - Only show for logged in users */}
         {user && <AudioPlayer />}
       </div>
+      </MotionConfig>
     </AudioProvider>
   );
 };

@@ -8,6 +8,8 @@ import { toast } from "@/components/ui/sonner";
 import { getCategoryCount, FrequencyData } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { motion } from "motion/react";
+import { spotlightMove, Magnetic } from "@/components/motion/primitives";
 
 /**
  * Dark, glass-styled category card aligned with the landing page aesthetic.
@@ -45,11 +47,12 @@ export function DashboardCategoryCard({ id, name, description, icon, index = 0 }
     <button
       type="button"
       onClick={handleClick}
+      onMouseMove={spotlightMove}
       data-index={index}
-      className="sp-glass group p-6 text-left hover:bg-brand-secondary hover:border-brand-border-strong hover:-translate-y-0.5 transition-[background-color,border-color,transform] duration-100 w-full h-full flex flex-col"
+      className="sp-glass sp-spotlight group p-6 text-left hover:bg-brand-secondary hover:border-brand-border-strong hover:-translate-y-1 transition-[background-color,border-color,transform] duration-300 w-full h-full flex flex-col"
     >
       <div className="flex items-start justify-between mb-6">
-        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-brand-secondary border border-brand-border text-brand-primary">
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-brand-secondary border border-brand-border text-brand-accent transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
           {icon}
         </div>
         <ChevronRight className="h-4 w-4 text-brand-muted group-hover:text-brand-text group-hover:translate-x-1 transition-all duration-100" />
@@ -118,12 +121,14 @@ export function DashboardFrequencyCard({ frequency, onBeforePlay }: DashboardFre
 
   return (
     <div
+      onMouseMove={spotlightMove}
       className={cn(
-        "sp-glass p-4 transition-colors duration-100 hover:bg-brand-secondary flex items-center gap-4",
+        "sp-glass sp-spotlight p-4 transition-colors duration-100 hover:bg-brand-secondary flex items-center gap-4",
         isCurrentlyPlaying && "border-brand-primary"
       )}
     >
-      <button
+      <motion.button
+        whileTap={{ scale: 0.9 }}
         type="button"
         onClick={handlePlay}
         className={cn(
@@ -135,7 +140,7 @@ export function DashboardFrequencyCard({ frequency, onBeforePlay }: DashboardFre
         aria-label={locked ? "Conteúdo premium" : "Tocar frequência"}
       >
         {locked ? <Lock className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
-      </button>
+      </motion.button>
 
       <div className="flex-grow min-w-0">
         <div className="flex items-center gap-1.5 mb-0.5">
@@ -149,17 +154,26 @@ export function DashboardFrequencyCard({ frequency, onBeforePlay }: DashboardFre
         </p>
       </div>
 
-      <button
+      <motion.button
+        whileTap={{ scale: 0.8 }}
         type="button"
         onClick={handleFav}
         className={cn(
           "w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-100",
-          isFavorite ? "text-brand-primary" : "text-brand-muted hover:text-brand-text"
+          isFavorite ? "text-brand-accent" : "text-brand-muted hover:text-brand-text"
         )}
         aria-label="Favoritar"
       >
-        <Heart className={cn("h-4 w-4", isFavorite && "fill-current")} />
-      </button>
+        <motion.span
+          key={isFavorite ? "on" : "off"}
+          initial={{ scale: isFavorite ? 0.4 : 1 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 500, damping: 12 }}
+          className="flex"
+        >
+          <Heart className={cn("h-4 w-4", isFavorite && "fill-current")} />
+        </motion.span>
+      </motion.button>
     </div>
   );
 }
@@ -178,9 +192,9 @@ interface DashboardQuickActionProps {
 
 export function DashboardQuickAction({ to, icon, title, description }: DashboardQuickActionProps) {
   return (
-    <Link to={to} className="sp-glass group p-6 text-left hover:bg-brand-secondary hover:border-brand-border-strong hover:-translate-y-0.5 transition-[background-color,border-color,transform] duration-100">
+    <Link to={to} onMouseMove={spotlightMove} className="sp-glass sp-spotlight group p-6 text-left block h-full hover:bg-brand-secondary hover:border-brand-border-strong hover:-translate-y-1 transition-[background-color,border-color,transform] duration-300">
       <div className="flex items-center justify-between mb-4">
-        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-brand-secondary border border-brand-border text-brand-primary">
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-brand-secondary border border-brand-border text-brand-accent transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
           {icon}
         </div>
         <ChevronRight className="h-4 w-4 text-brand-muted group-hover:text-brand-text group-hover:translate-x-1 transition-all duration-100" />
@@ -226,13 +240,18 @@ export function DashboardFeaturedCard({ frequency, durationLabel = "20 min" }: D
 
   return (
     <div
+      onMouseMove={spotlightMove}
       className={cn(
-        "sp-glass relative overflow-hidden p-6 sm:p-8 text-left transition-colors duration-100",
+        "sp-glass sp-spotlight relative overflow-hidden p-6 sm:p-8 text-left transition-colors duration-100",
         isCurrent && "border-brand-primary"
       )}
     >
       {/* Halo de luz (claro-escuro) */}
-      <div className="sp-halo w-80 h-80 -top-32 -right-24" />
+      <motion.div
+        className="sp-halo w-80 h-80 -top-32 -right-24"
+        animate={{ scale: [1, 1.15, 1], opacity: [0.7, 1, 0.7] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      />
 
       <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-6">
         <div className="flex-1 min-w-0">
@@ -242,7 +261,7 @@ export function DashboardFeaturedCard({ frequency, durationLabel = "20 min" }: D
               {t("dashboard.featured.badge")}
             </span>
             {frequency.premium && (
-              <span className="inline-flex items-center gap-1 px-4 py-1 rounded-full bg-brand-accent text-xs uppercase tracking-[0.12em] text-brand-on-primary font-semibold">
+              <span className="inline-flex items-center gap-1 px-4 py-1 rounded-full bg-brand-primary text-xs uppercase tracking-[0.12em] text-brand-on-primary font-semibold">
                 <Crown className="h-3 w-3" />
                 {t("dashboard.featured.premium")}
               </span>
@@ -268,6 +287,7 @@ export function DashboardFeaturedCard({ frequency, durationLabel = "20 min" }: D
         </div>
 
         <div className="flex-shrink-0 flex w-full sm:w-auto sm:flex-col items-stretch sm:items-end gap-4">
+          <Magnetic className="flex w-full sm:w-auto">
           <button
             type="button"
             onClick={handlePlay}
@@ -286,6 +306,7 @@ export function DashboardFeaturedCard({ frequency, durationLabel = "20 min" }: D
               </>
             )}
           </button>
+          </Magnetic>
         </div>
       </div>
     </div>
