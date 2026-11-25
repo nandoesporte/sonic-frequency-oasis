@@ -122,7 +122,7 @@ const Hero = () => (
 
           <h1 className="text-brand-text mb-8" style={{ fontSize: 'clamp(3rem, 9vw, 7.5rem)' }}>
             <span className="sp-hero-l1" style={{ fontSize: '0.55em' }}>Restaure sua</span>
-            <span className="sp-hero-l2 text-brand-primary">Saúde</span>
+            <span className="sp-hero-l2">Saúde</span>
           </h1>
 
           <p className="text-brand-muted text-lg md:text-xl max-w-xl mb-12 leading-relaxed">
@@ -136,6 +136,17 @@ const Hero = () => (
             <Link to="/scientific" className="sp-btn sp-btn-secondary">
               Comprovação Científica
             </Link>
+          </div>
+
+          {/* Pills de prova social */}
+          <div className="flex flex-wrap items-center gap-2 mt-8">
+            <span className="inline-flex items-center gap-2 h-8 px-4 rounded-full border border-brand-border text-sm text-brand-muted">
+              <Star size={14} className="text-brand-accent" fill="currentColor" />
+              <strong className="text-brand-text font-semibold">+5.000</strong> mulheres transformadas
+            </span>
+            <span className="inline-flex items-center gap-2 h-8 px-4 rounded-full border border-brand-border text-sm text-brand-muted">
+              <strong className="text-brand-text font-semibold">97%</strong> de satisfação
+            </span>
           </div>
         </motion.div>
 
@@ -158,8 +169,8 @@ const Hero = () => (
               {[0.4, 0.7, 1, 0.6, 0.9, 0.5, 0.8, 1, 0.55, 0.75, 0.4].map((h, i) => (
                 <span
                   key={i}
-                  className="w-2 rounded-full bg-brand-primary sp-animate-wave-bar"
-                  style={{ height: `${h * 100}%`, animationDelay: `${i * 0.1}s`, opacity: 0.55 + h * 0.45 }}
+                  className="w-2 rounded-full bg-brand-border-strong sp-animate-wave-bar"
+                  style={{ height: `${h * 100}%`, animationDelay: `${i * 0.1}s`, opacity: 0.5 + h * 0.5 }}
                 />
               ))}
             </div>

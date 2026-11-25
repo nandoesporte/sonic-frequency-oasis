@@ -128,7 +128,7 @@ const Index = () => {
                     {/* Headline — fórmula Editorial */}
                     <h1 className="text-brand-text mb-6" style={{ fontSize: 'clamp(2.75rem, 8vw, 5.5rem)' }}>
                       <span className="sp-hero-l1" style={{ fontSize: '0.5em' }}>{t("dashboard.welcome")}</span>
-                      <span className="sp-hero-l2 text-brand-primary break-words">{welcomeName}</span>
+                      <span className="sp-hero-l2 break-words">{welcomeName}</span>
                     </h1>
 
                     <p className="text-brand-muted text-base sm:text-lg max-w-xl leading-relaxed">
@@ -141,8 +141,8 @@ const Index = () => {
                     {[0.4, 0.8, 0.6, 1, 0.7, 0.5, 0.9, 0.6, 0.4].map((h, i) => (
                       <span
                         key={i}
-                        className="w-2 rounded-full bg-brand-primary sp-animate-wave-bar"
-                        style={{ height: `${h * 100}%`, animationDelay: `${i * 0.12}s`, opacity: 0.55 + h * 0.45 }}
+                        className="w-2 rounded-full bg-brand-border-strong sp-animate-wave-bar"
+                        style={{ height: `${h * 100}%`, animationDelay: `${i * 0.12}s`, opacity: 0.5 + h * 0.5 }}
                       />
                     ))}
                   </div>
@@ -371,7 +371,6 @@ const Index = () => {
               {/* CTA */}
               <div className="flex">
                 <Link to="/sentipasso" className="group sp-btn sp-btn-primary">
-                  <Headphones size={18} />
                   Iniciar Caminhada SentiPasso
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform duration-100" />
                 </Link>

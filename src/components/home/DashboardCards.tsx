@@ -267,7 +267,7 @@ export function DashboardFeaturedCard({ frequency, durationLabel = "20 min" }: D
           </div>
         </div>
 
-        <div className="flex-shrink-0 flex sm:flex-col items-center sm:items-end gap-3">
+        <div className="flex-shrink-0 flex sm:flex-col items-center sm:items-end gap-4">
           <button
             type="button"
             onClick={handlePlay}
