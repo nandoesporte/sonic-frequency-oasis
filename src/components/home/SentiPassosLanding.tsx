@@ -159,7 +159,7 @@ const Hero = () => {
           <span className="sp-kicker">Sistema v4.2 Ativo</span>
         </motion.span>
 
-        <h1 className="sp-hero-title text-brand-text mb-8" style={{ fontSize: 'clamp(3.5rem, 11vw, 7.5rem)' }}>
+        <h1 className="sp-hero-title text-brand-text mb-8" style={{ fontSize: 'clamp(3.5rem, 15vw, 7.5rem)' }}>
           <MaskLine className="sp-hero-l1" style={{ fontSize: '0.5em' }} delay={0.1}>Restaure sua</MaskLine>
           <MaskLine className="sp-hero-l2" delay={0.22}>Saúde</MaskLine>
         </h1>

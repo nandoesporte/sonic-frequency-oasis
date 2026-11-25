@@ -100,6 +100,17 @@
   overflow-wrap: anywhere;
 }
 
+/* Máscara da revelação linha a linha: herda o tamanho do título
+   (a regra base `span { font-size: 1rem }` encolhia o título) */
+.sp-mask-line {
+  display: block;
+  overflow: hidden;
+  font-size: inherit;
+  line-height: inherit;
+  padding-right: 0.12em;
+  margin-right: -0.12em;
+}
+
 /* Container único das telas de vendas e dashboard (escala de 8) */
 .sp-container {
   width: 100%;

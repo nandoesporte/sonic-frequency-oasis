@@ -129,7 +129,7 @@ export function MaskLine({
     );
   }
   return (
-    <span className="block overflow-hidden pr-[0.12em] -mr-[0.12em]">
+    <span className="sp-mask-line">
       <motion.span
         className={className}
         style={style}
